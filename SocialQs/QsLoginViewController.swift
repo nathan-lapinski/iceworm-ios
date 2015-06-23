@@ -28,7 +28,7 @@ class QsLoginViewController: UIViewController {
         
         self.loginCancelled.hidden = true
         
-        var permissions = ["public_profile", "email"]//, "user_friends"]
+        var permissions = ["public_profile", "email", "user_friends"]
         
         PFFacebookUtils.logInInBackgroundWithReadPermissions(permissions) {
             (user: PFUser?, error: NSError?) -> Void in
