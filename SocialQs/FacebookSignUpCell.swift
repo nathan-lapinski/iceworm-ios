@@ -11,7 +11,7 @@ import UIKit
 class FacebookSignUpCell: UITableViewCell {
     
     @IBOutlet var facebookImage: UIImageView!
-    @IBOutlet var facebookText: UILabel!
+    @IBOutlet var facebookTextField: UILabel!
 
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -10,6 +10,10 @@ import UIKit
 
 class SignUpViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    var standardSignUpText = ["USERNAME","EMAIL","PASSWORD"]
+    var standardSignUpPlaceholderText = ["Your desired username", "Your email address", "Your desired password"]
+    //var standardSignUpUserText = ["", "", ""]
+    
     @IBOutlet var facebookSignUp: UITableView!
     @IBOutlet var standardSignUp: UITableView!
     
@@ -32,7 +36,16 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        
+        if tableView == facebookSignUp {
+            
+            return 1
+            
+        } else {
+            
+            return 3
+            
+        }
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -43,24 +56,31 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
         
         if tableView == facebookSignUp {
             
-            var cell = tableView.dequeueReusableCellWithIdentifier("facebookSignUp", forIndexPath: indexPath) as! FacebookSignUpCell
+            var cell1 = tableView.dequeueReusableCellWithIdentifier("facebookSignUp", forIndexPath: indexPath) as! FacebookSignUpCell
             
-            println("cell1")
+            cell1.facebookTextField.text = "Sign up with Facebook"
+            cell1.facebookImage.image = UIImage(named: "share_facebook.png")
             
-            cell.facebookText.text = "Sign up with Facebook"
-            cell.facebookImage.image = UIImage(named: "share_facebook.png")
-            
-            return cell
+            return cell1
             
         } else {
             
             var cell2 = tableView.dequeueReusableCellWithIdentifier("standardSignUp", forIndexPath: indexPath) as! StandardSignUpCell
-            
-            println("cell2")
+                        
+            cell2.standardTextField.textColor = UIColor.lightGrayColor()
+            cell2.standardTextLabel.text = standardSignUpText[indexPath.row]
+            cell2.standardTextField.text = standardSignUpPlaceholderText[indexPath.row]
+            cell2.standardTextField.tag = indexPath.row
+            //cell2.standardTextField.delegate = self
             
             return cell2
         }
     }
+    
+    
+    
+    
+    
     
 
     override func didReceiveMemoryWarning() {

@@ -10,9 +10,12 @@ import UIKit
 
 class StandardSignUpCell: UITableViewCell {
 
+    @IBOutlet var standardTextLabel: UILabel!
+    @IBOutlet var standardTextField: UITextField!
+    
     override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+        super.awakeFromNib()    
+        
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
