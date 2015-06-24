@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90135AB71B3A82AD00C9716F /* FacebookSignUpCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90135AB31B3A82AD00C9716F /* FacebookSignUpCell.swift */; };
+		90135AB81B3A82AD00C9716F /* SignInCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90135AB41B3A82AD00C9716F /* SignInCreateViewController.swift */; };
+		90135AB91B3A82AD00C9716F /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90135AB51B3A82AD00C9716F /* SignUpViewController.swift */; };
+		90135ABA1B3A82AD00C9716F /* StandardSignUpCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90135AB61B3A82AD00C9716F /* StandardSignUpCell.swift */; };
 		904123021B26A67C00397132 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123011B26A67C00397132 /* AppDelegate.swift */; };
 		904123041B26A67C00397132 /* AskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123031B26A67C00397132 /* AskViewController.swift */; };
 		904123061B26A67C00397132 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123051B26A67C00397132 /* ResultsViewController.swift */; };
@@ -53,6 +57,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		90135AB31B3A82AD00C9716F /* FacebookSignUpCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookSignUpCell.swift; sourceTree = "<group>"; };
+		90135AB41B3A82AD00C9716F /* SignInCreateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInCreateViewController.swift; sourceTree = "<group>"; };
+		90135AB51B3A82AD00C9716F /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		90135AB61B3A82AD00C9716F /* StandardSignUpCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardSignUpCell.swift; sourceTree = "<group>"; };
 		904122FC1B26A67B00397132 /* SocialQs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocialQs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		904123001B26A67C00397132 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		904123011B26A67C00397132 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -152,6 +160,10 @@
 			children = (
 				904123011B26A67C00397132 /* AppDelegate.swift */,
 				904123031B26A67C00397132 /* AskViewController.swift */,
+				90135AB31B3A82AD00C9716F /* FacebookSignUpCell.swift */,
+				90135AB41B3A82AD00C9716F /* SignInCreateViewController.swift */,
+				90135AB51B3A82AD00C9716F /* SignUpViewController.swift */,
+				90135AB61B3A82AD00C9716F /* StandardSignUpCell.swift */,
 				905B2D951B322625001A74EE /* Globals.swift */,
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
@@ -328,11 +340,15 @@
 			files = (
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
 				905CB19A1B31144000947487 /* TheirQuestionsTableViewController.swift in Sources */,
+				90135AB81B3A82AD00C9716F /* SignInCreateViewController.swift in Sources */,
 				904123061B26A67C00397132 /* ResultsViewController.swift in Sources */,
 				9096430D1B3365680029E008 /* MyQuestionsCell.swift in Sources */,
 				90F11AA01B3A4B7200AB1914 /* MyQuestionsTableViewController.swift in Sources */,
+				90135AB71B3A82AD00C9716F /* FacebookSignUpCell.swift in Sources */,
 				9065E3F01B34AC8500F85D3B /* TestActiveViewController.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
+				90135AB91B3A82AD00C9716F /* SignUpViewController.swift in Sources */,
+				90135ABA1B3A82AD00C9716F /* StandardSignUpCell.swift in Sources */,
 				904123041B26A67C00397132 /* AskViewController.swift in Sources */,
 				90DE6C211B30E9CC004F3BA0 /* QsLoginViewController.swift in Sources */,
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
