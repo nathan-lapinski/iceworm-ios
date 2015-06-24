@@ -11,8 +11,8 @@ import Parse
 
 class TheirQuestionsTableViewController: UITableViewController {
     
-    var questions = [String]()
     var questionIds = [String]()
+    var questions = [String]()
     var option1s = [String]()
     var option2s = [String]()
     var option1Stats = [Int]()
@@ -47,8 +47,65 @@ class TheirQuestionsTableViewController: UITableViewController {
         castVote(sender.tag, optionId: 2)
         
     }
+    
+    
+    // Function to process the casting of votes
+    func castVote(questionId: Int, optionId: Int) {
+        
+        var voteId = "stats\(optionId)"
+        
+        var query = PFQuery(className: "SocialQs")
+        
+        query.whereKey("objectId", equalTo: questionIds[questionId])
+        
+        query.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
+            
+            if error == nil {
+                
+                if let temp = questionObjects {
+                    
+                    for questionObject in temp {
+                        
+                        // Increment vote counter --------------------------------
+                        var statsQuery = PFQuery(className: "SocialQs")
+                        
+                        statsQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (object, error) -> Void in
+                            
+                            object!.incrementKey(voteId)
+                            object!.saveInBackgroundWithBlock {
+                                
+                                (success: Bool, error: NSError?) -> Void in
+                                if (success) { // The score key has been incremented
+                                    
+                                    //println("refreshing table")
+                                    self.refresh()
+                                    self.tableView.reloadData()
+                                    self.tableView.reloadInputViews()
+                                    
+                                } else { // There was a problem, check error.description
+                                    
+                                    println("Increment error:")
+                                    println(error)
+                                    
+                                }
+                            }
+                        })
+                    }
+                }
+                
+            } else {
+                
+                println("SocialQs query error:")
+                println(error)
+                
+            }
+        }
+        
+    }
+
 
     
+    /*
     @IBAction func deleteQuestions(sender: AnyObject) {
         
         deletedQuestions.append(questionIds[sender.tag])
@@ -61,6 +118,8 @@ class TheirQuestionsTableViewController: UITableViewController {
         self.tableView.reloadInputViews()
         
     }
+    */
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,19 +130,6 @@ class TheirQuestionsTableViewController: UITableViewController {
         refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView.addSubview(refresher)
         // Pull to refresh --------------------------------------------------------
-        
-        // Recall deleted/dismissed data
-        if NSUserDefaults.standardUserDefaults().objectForKey(deletedStorageKey) != nil {
-            
-            deletedQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedStorageKey)! as! [(String)]
-            
-        }
-        
-        if NSUserDefaults.standardUserDefaults().objectForKey(dismissedStorageKey) != nil {
-            
-            dismissedQuestions = NSUserDefaults.standardUserDefaults().objectForKey(dismissedStorageKey)! as! [(String)]
-            
-        }
         
         // Set table background image
         self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs.png"))
@@ -100,59 +146,32 @@ class TheirQuestionsTableViewController: UITableViewController {
     }
     
     
-    // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
-    func refresh() {
+    // Delete functionality
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
-        var getSocialQsQuery = PFQuery(className: "SocialQs")
-        
-        // Sort by newest created-date first
-        getSocialQsQuery.orderByDescending("createdAt")
-        
-        getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
+        if editingStyle == UITableViewCellEditingStyle.Delete {
             
-            if let questionTemp = questionObjects {
-                
-                self.questions.removeAll(keepCapacity: true)
-                self.questionIds.removeAll(keepCapacity: true)
-                self.option1s.removeAll(keepCapacity: true)
-                self.option2s.removeAll(keepCapacity: true)
-                self.option1Stats.removeAll(keepCapacity: true)
-                self.option2Stats.removeAll(keepCapacity: true)
-                //self.users.removeAll(keepCapacity: true)
-                self.askers.removeAll(keepCapacity: true)
-                
-                for questionObject in questionTemp {
-                    
-                    // Filter out MY questions
-                    if questionObject["askername"] as! String != myName {
-                        
-                        // Filter out DELETED questions
-                        if contains(self.deletedQuestions, questionObject.objectId!!) == false {
-                        
-                            self.questions.append(questionObject["question"] as! String)
-                            self.questionIds.append(questionObject.objectId!!)
-                            self.option1s.append(questionObject["option1"] as! String)
-                            self.option2s.append(questionObject["option2"] as! String)
-                            self.option1Stats.append(questionObject["stats1"] as! Int)
-                            self.option2Stats.append(questionObject["stats2"] as! Int)
-                            self.askers.append(questionObject["askername"] as! String)
-                            
-                        }
-                    }
-                    
-                    // Ensure all queries have completed THEN refresh the table!
-                    if self.questions.count == self.askers.count {
-                        
-                        self.tableView.reloadData()
-                        self.tableView.reloadInputViews()
-                        
-                        // Kill refresher when query finished
-                        self.refresher.endRefreshing()
-                        
-                    }
-                }
-            }
+            deletedQuestions.append(questionIds[indexPath.row])
+            
+            self.questionIds.removeAtIndex(indexPath.row)
+            self.questions.removeAtIndex(indexPath.row)
+            self.option1s.removeAtIndex(indexPath.row)
+            self.option2s.removeAtIndex(indexPath.row)
+            self.option1Stats.removeAtIndex(indexPath.row)
+            self.option2Stats.removeAtIndex(indexPath.row)
+            self.askers.removeAtIndex(indexPath.row)
+            
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            
         }
+        
+        // Store updated array locally
+        NSUserDefaults.standardUserDefaults().setObject(deletedQuestions, forKey: deletedStorageKey)
+        
+        //println("refreshing table")
+        self.tableView.reloadData()
+        self.tableView.reloadInputViews()
+        
     }
 
     
@@ -195,7 +214,7 @@ class TheirQuestionsTableViewController: UITableViewController {
             cell.dismiss.backgroundColor = bgColor
             cell.forward.backgroundColor = bgColor
             
-            // Compute and set results image view widths
+            // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
             var width1 = cell.option1ImageView.frame.width
             var width2 = cell.option2ImageView.frame.width
             
@@ -307,64 +326,77 @@ class TheirQuestionsTableViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         self.tableView.reloadData()
         
+        // Recall deleted/dismissed data
+        if NSUserDefaults.standardUserDefaults().objectForKey(deletedStorageKey) != nil {
+            
+            deletedQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedStorageKey)! as! [(String)]
+            
+        }
+        
+        if NSUserDefaults.standardUserDefaults().objectForKey(dismissedStorageKey) != nil {
+            
+            dismissedQuestions = NSUserDefaults.standardUserDefaults().objectForKey(dismissedStorageKey)! as! [(String)]
+            
+        }
+        
         // Manually call refresh upon loading to get most up to datest datas
         refresh()
         
     }
     
     
-    // Function to process the casting of votes
-    func castVote(questionId: Int, optionId: Int) {
+    // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
+    func refresh() {
         
-        var voteId = "stats\(optionId)"
+        var getSocialQsQuery = PFQuery(className: "SocialQs")
         
-        var query = PFQuery(className: "SocialQs")
+        // Sort by newest created-date first
+        getSocialQsQuery.orderByDescending("createdAt")
         
-        query.whereKey("objectId", equalTo: questionIds[questionId])
-        
-        query.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
+        getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
             
-            if error == nil {
+            if let questionTemp = questionObjects {
                 
-                if let temp = questionObjects {
+                self.questionIds.removeAll(keepCapacity: true)
+                self.questions.removeAll(keepCapacity: true)
+                self.option1s.removeAll(keepCapacity: true)
+                self.option2s.removeAll(keepCapacity: true)
+                self.option1Stats.removeAll(keepCapacity: true)
+                self.option2Stats.removeAll(keepCapacity: true)
+                self.askers.removeAll(keepCapacity: true)
+                
+                for questionObject in questionTemp {
                     
-                    for questionObject in temp {
+                    // Filter out MY questions
+                    if questionObject["askername"] as! String != myName {
                         
-                        // Increment vote counter --------------------------------
-                        var statsQuery = PFQuery(className: "SocialQs")
-                        
-                        statsQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (object, error) -> Void in
+                        // Filter out DELETED questions
+                        if contains(self.deletedQuestions, questionObject.objectId!!) == false {
                             
-                            object!.incrementKey(voteId)
-                            object!.saveInBackgroundWithBlock {
-                                
-                                (success: Bool, error: NSError?) -> Void in
-                                if (success) { // The score key has been incremented
-                                    
-                                    println("refreshing table")
-                                    self.refresh()
-                                    self.tableView.reloadData()
-                                    self.tableView.reloadInputViews()
-                                    
-                                } else { // There was a problem, check error.description
-                                    
-                                    println("Increment error:")
-                                    println(error)
-                                    
-                                }
-                            }
-                        })
+                            self.questionIds.append(questionObject.objectId!!)
+                            self.questions.append(questionObject["question"] as! String)
+                            self.option1s.append(questionObject["option1"] as! String)
+                            self.option2s.append(questionObject["option2"] as! String)
+                            self.option1Stats.append(questionObject["stats1"] as! Int)
+                            self.option2Stats.append(questionObject["stats2"] as! Int)
+                            self.askers.append(questionObject["askername"] as! String)
+                            
+                        }
+                    }
+                    
+                    // Ensure all queries have completed THEN refresh the table!
+                    if self.questions.count == self.askers.count {
+                        
+                        self.tableView.reloadData()
+                        self.tableView.reloadInputViews()
+                        
+                        // Kill refresher when query finished
+                        self.refresher.endRefreshing()
+                        
                     }
                 }
-                
-            } else {
-                
-                println("SocialQs query error:")
-                println(error)
-                
             }
         }
-        
     }
     
 

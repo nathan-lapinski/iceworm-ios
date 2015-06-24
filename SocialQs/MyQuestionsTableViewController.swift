@@ -22,6 +22,9 @@ class MyQuestionsTableViewController: UITableViewController {
     var deletedStorageKey = myName + "deletedMyPermanent"
     var refresher: UIRefreshControl!
     
+
+    /*
+>>>>>>> 40680cfe774c7be534c46905c077bd739c6a9751
     @IBAction func deleteQuestions(sender: AnyObject) {
         
         deletedQuestions.append(questionIds[sender.tag])
@@ -34,7 +37,11 @@ class MyQuestionsTableViewController: UITableViewController {
         self.tableView.reloadInputViews()
         
     }
+<<<<<<< HEAD
     
+=======
+        */
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +67,34 @@ class MyQuestionsTableViewController: UITableViewController {
         
     }
     
+    
+
+    // Delete functionality
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if editingStyle == UITableViewCellEditingStyle.Delete {
+            
+            deletedQuestions.append(questionIds[indexPath.row])
+            
+            self.questions.removeAtIndex(indexPath.row)
+            self.questionIds.removeAtIndex(indexPath.row)
+            self.option1s.removeAtIndex(indexPath.row)
+            self.option2s.removeAtIndex(indexPath.row)
+            self.option1Stats.removeAtIndex(indexPath.row)
+            self.option2Stats.removeAtIndex(indexPath.row)
+            
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            
+        }
+        
+        // Store updated array locally
+        NSUserDefaults.standardUserDefaults().setObject(deletedQuestions, forKey: deletedStorageKey)
+        
+        //println("refreshing table")
+        self.tableView.reloadData()
+        self.tableView.reloadInputViews()
+    }
+
     
     override func viewWillAppear(animated: Bool) {
         
@@ -104,9 +139,7 @@ class MyQuestionsTableViewController: UITableViewController {
                         // Filter out DELETED questions
                         if contains(self.deletedQuestions, questionObject.objectId!!) == false ||
                             self.deletedQuestions.count == 0 {
-                            
-                            println(questionObject)
-                            
+
                             self.questions.append(questionObject["question"] as! String)
                             self.questionIds.append(questionObject.objectId!!)
                             self.option1s.append(questionObject["option1"] as! String)
@@ -176,6 +209,7 @@ class MyQuestionsTableViewController: UITableViewController {
         myCell.delete.backgroundColor = bgColor
         myCell.forward.layer.cornerRadius = cornerRadius
         myCell.forward.backgroundColor = bgColor
+
 
         // Compute and set results image view widths
         var width1 = myCell.option1ImageView.frame.width

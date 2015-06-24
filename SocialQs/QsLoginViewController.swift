@@ -116,13 +116,17 @@ class QsLoginViewController: UIViewController {
                     // Stop animation - hides when stopped (above) hides spinner automatically
                     self.activityIndicator.stopAnimating()
                     
-                    // Release app input
+                    // Release lock on app input
                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
                     
                     if user != nil {
                         
                         // login successful
                         myName = self.username.text.lowercaseString
+                        
+                        // Store username locally
+                        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+                        
                         println("Welcome " + myName)
                         self.performSegueWithIdentifier("login", sender: self)
                         
@@ -176,6 +180,14 @@ class QsLoginViewController: UIViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
+        
+        // Recal myName if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey("myName") != nil {
+            
+            println("Recalling myName")
+            myName = NSUserDefaults.standardUserDefaults().objectForKey("myName")! as! String
+            
+        }
         
         // Format buttons
         loginButton.layer.cornerRadius = cornerRadius
