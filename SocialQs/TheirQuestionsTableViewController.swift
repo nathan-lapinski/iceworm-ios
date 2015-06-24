@@ -78,7 +78,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 if (success) { // The score key has been incremented
                                     
                                     //println("refreshing table")
-                                    self.refresh()
+                                    //self.refresh()
                                     self.tableView.reloadData()
                                     self.tableView.reloadInputViews()
                                     
@@ -151,6 +151,8 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         if editingStyle == UITableViewCellEditingStyle.Delete {
             
+            tableView.beginUpdates()
+                
             deletedQuestions.append(questionIds[indexPath.row])
             
             self.questionIds.removeAtIndex(indexPath.row)
@@ -162,6 +164,8 @@ class TheirQuestionsTableViewController: UITableViewController {
             self.askers.removeAtIndex(indexPath.row)
             
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+        
+            tableView.endUpdates()
             
         }
         

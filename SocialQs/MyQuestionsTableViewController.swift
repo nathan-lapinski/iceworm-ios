@@ -68,6 +68,8 @@ class MyQuestionsTableViewController: UITableViewController {
         
         if editingStyle == UITableViewCellEditingStyle.Delete {
             
+            tableView.beginUpdates()
+            
             deletedQuestions.append(questionIds[indexPath.row])
             
             self.questions.removeAtIndex(indexPath.row)
@@ -78,6 +80,7 @@ class MyQuestionsTableViewController: UITableViewController {
             self.option2Stats.removeAtIndex(indexPath.row)
             
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            tableView.endUpdates()
             
         }
         
@@ -165,7 +168,6 @@ class MyQuestionsTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Potentially incomplete method implementation.
@@ -258,68 +260,6 @@ class MyQuestionsTableViewController: UITableViewController {
         
         return myCell
     }
-    
-    
-    /*
-    // Interaction when tapping on row (ie: view results)
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        // Get cell that has been tapped on
-        var cell: UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
-        
-        
-        
-        let followedObjectId = userids[indexPath.row]
-        
-        // Check if already following and UNFOLLOW instead
-        if isFollowing[followedObjectId] == false {
-            
-            isFollowing[followedObjectId] = true
-            
-            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-            
-            var follow = PFObject(className: "Follow")
-            follow["following"] = userids[indexPath.row]
-            follow["follower"] = PFUser.currentUser()?.objectId
-            
-            // This has to be here or the "delete" section creates an empty entry in the DB
-            follow.saveInBackground()
-            
-        } else {
-            
-            isFollowing[followedObjectId] = false
-            
-            cell.accessoryType = UITableViewCellAccessoryType.None
-            
-            // Check if this user is being following by the current user
-            var query = PFQuery(className: "Follow")
-            
-            // Set query keys
-            // Error here was from the login check not functioning properly, so
-            // we reached this point even though we weren't logged in
-            query.whereKey("follower", equalTo: PFUser.currentUser()!.objectId!)
-            query.whereKey("following", equalTo: userids[indexPath.row])
-            
-            // This happen in random order, so we can't guarantee the results will
-            // match the local arrays that determine who is following whom! (username/userids)
-            query.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-                
-                // if objects = objects it must be the case that this user is being followed
-                if let temp = objects {
-                    
-                    for object in temp {
-                        
-                        object.deleteInBackground()
-                        
-                    }
-                }
-            })
-        }
-    
-        
-        
-    }
-    */
     
 
     /*
