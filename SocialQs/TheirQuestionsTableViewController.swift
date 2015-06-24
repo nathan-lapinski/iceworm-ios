@@ -93,7 +93,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(0,0,48,0)
+        self.tableView.contentInset = UIEdgeInsetsMake(12,0,48,0)
         // Disable auto inset adjust
         self.automaticallyAdjustsScrollViewInsets = false
         

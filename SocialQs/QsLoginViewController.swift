@@ -26,35 +26,7 @@ class QsLoginViewController: UIViewController {
     
     @IBAction func facebookLoginButton(sender: AnyObject) {
         
-        self.loginCancelled.hidden = true
         
-        var permissions = ["public_profile", "email", "user_friends"]
-        
-        PFFacebookUtils.logInInBackgroundWithReadPermissions(permissions) {
-            (user: PFUser?, error: NSError?) -> Void in
-            
-            if let user = user {
-                
-                if user.isNew {
-                    
-                    println("User signed up and logged in through Facebook!")
-                    self.performSegueWithIdentifier("signUp", sender: self)
-                    
-                } else {
-                    
-                    println("User logged in through Facebook!")
-                    // Pre-existing user
-                    self.performSegueWithIdentifier("signUp", sender: self)
-                    
-                }
-            } else {
-                
-                println("Uh oh. The user cancelled the Facebook login.")
-                self.loginCancelled.hidden = false
-                
-            }
-        }
-
         
     }
     
