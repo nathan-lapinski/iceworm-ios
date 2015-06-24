@@ -32,12 +32,13 @@ class SettingsViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
+        println(myName)
         
+        let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String
+        appInfo.text = "Version: " + version! + "\nBuild: (" + build! + ")"
         
         logout.setTitle("Logout " + myName, forState: UIControlState.Normal)
-        appInfo.text = "Version: " + version! + "\nBuild: (" + build! + ")"
         
     }
 
