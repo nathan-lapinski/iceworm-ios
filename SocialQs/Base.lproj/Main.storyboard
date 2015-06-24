@@ -919,7 +919,6 @@
         <!--Sign Up View Controller-->
         <scene sceneID="1G0-PL-9Nu">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="H2z-yK-qpd" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="RyR-Kl-FlO" customClass="SignUpViewController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="uRc-Oz-akX"/>
@@ -955,7 +954,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="standardTextField" destination="r4D-sX-Eui" id="gLT-4K-4yv"/>
+                                            <outlet property="standardTextField" destination="r4D-sX-Eui" id="heB-Om-RiG"/>
                                             <outlet property="standardTextLabel" destination="Arr-GC-stX" id="M67-Xf-esl"/>
                                         </connections>
                                     </tableViewCell>
@@ -987,7 +986,7 @@
                                 </items>
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="none" sectionIndexMinimumDisplayRowCount="1" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Sry-bz-8TA">
-                                <rect key="frame" x="37" y="112" width="300" height="42"/>
+                                <rect key="frame" x="37" y="112" width="300" height="44"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
@@ -1005,6 +1004,15 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xod-uZ-erz">
+                                                    <rect key="frame" x="0.0" y="0.0" width="300" height="43"/>
+                                                    <state key="normal">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="facebookSignUpButton:" destination="RyR-Kl-FlO" eventType="touchUpInside" id="YCu-WE-jL7"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
@@ -1015,6 +1023,15 @@
                                 </prototypes>
                                 <sections/>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mmh-Ia-JFg">
+                                <rect key="frame" x="164" y="376" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="standardSignUpButton:" destination="RyR-Kl-FlO" eventType="touchUpInside" id="kKX-QK-zl5"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -1030,6 +1047,7 @@
                         <outlet property="standardSignUp" destination="78v-GB-QdB" id="yry-dO-jMb"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="H2z-yK-qpd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-2351.5" y="-1591.5"/>
         </scene>
