@@ -78,7 +78,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 if (success) { // The score key has been incremented
                                     
                                     //println("refreshing table")
-                                    //self.refresh()
+                                    self.refresh()
                                     self.tableView.reloadData()
                                     self.tableView.reloadInputViews()
                                     
@@ -103,23 +103,54 @@ class TheirQuestionsTableViewController: UITableViewController {
         
     }
 
-
     
-    /*
-    @IBAction func deleteQuestions(sender: AnyObject) {
+    
+    // Swipe to display options functions ----------------------------------------------------------------------------------
+    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
+    
+        /*
+        let forward = UITableViewRowAction(style: .Normal, title: "Forward") { action, index in
+            println("forward button tapped")
+        }
         
-        deletedQuestions.append(questionIds[sender.tag])
+        forward.backgroundColor = UIColor.grayColor()
+        */
         
-        // Store updated array locally
-        NSUserDefaults.standardUserDefaults().setObject(deletedQuestions, forKey: deletedStorageKey)
+        let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
+            
+            self.deletedQuestions.append(self.questionIds[indexPath.row])
+            
+            self.questionIds.removeAtIndex(indexPath.row)
+            self.questions.removeAtIndex(indexPath.row)
+            self.option1s.removeAtIndex(indexPath.row)
+            self.option2s.removeAtIndex(indexPath.row)
+            self.option1Stats.removeAtIndex(indexPath.row)
+            self.option2Stats.removeAtIndex(indexPath.row)
+            self.askers.removeAtIndex(indexPath.row)
+            
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            
+            // Store updated array locally
+            NSUserDefaults.standardUserDefaults().setObject(self.deletedQuestions, forKey: self.deletedStorageKey)
+            //println("refreshing table")
+            self.tableView.reloadData()
+            self.tableView.reloadInputViews()
+            
+        }
         
-        refresh()
-        self.tableView.reloadData()
-        self.tableView.reloadInputViews()
+        delete.backgroundColor = UIColor.redColor()
         
+        return [delete]//, forward] // Order = appearance order, right to left on screen
     }
-    */
-
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        // the cells you would like the actions to appear needs to be editable
+        return true
+    }
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        // you need to implement this method too or you can't swipe to display the actions
+    }
+    // Swipe to display options functions ----------------------------------------------------------------------------------
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -144,40 +175,6 @@ class TheirQuestionsTableViewController: UITableViewController {
         self.automaticallyAdjustsScrollViewInsets = false
         
     }
-    
-    
-    // Delete functionality
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        
-        if editingStyle == UITableViewCellEditingStyle.Delete {
-            
-            tableView.beginUpdates()
-                
-            deletedQuestions.append(questionIds[indexPath.row])
-            
-            self.questionIds.removeAtIndex(indexPath.row)
-            self.questions.removeAtIndex(indexPath.row)
-            self.option1s.removeAtIndex(indexPath.row)
-            self.option2s.removeAtIndex(indexPath.row)
-            self.option1Stats.removeAtIndex(indexPath.row)
-            self.option2Stats.removeAtIndex(indexPath.row)
-            self.askers.removeAtIndex(indexPath.row)
-            
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
-        
-            tableView.endUpdates()
-            
-        }
-        
-        // Store updated array locally
-        NSUserDefaults.standardUserDefaults().setObject(deletedQuestions, forKey: deletedStorageKey)
-        
-        //println("refreshing table")
-        self.tableView.reloadData()
-        self.tableView.reloadInputViews()
-        
-    }
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -212,12 +209,6 @@ class TheirQuestionsTableViewController: UITableViewController {
             // Make cells non-selectable
             cell.selectionStyle = UITableViewCellSelectionStyle.None
             
-            // Format buttons
-            cell.dismiss.layer.cornerRadius = cornerRadius
-            cell.forward.layer.cornerRadius = cornerRadius
-            cell.dismiss.backgroundColor = bgColor
-            cell.forward.backgroundColor = bgColor
-            
             // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
             var width1 = cell.option1ImageView.frame.width
             var width2 = cell.option2ImageView.frame.width
@@ -248,27 +239,24 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 width1 = CGFloat(cell.option1ImageView.bounds.width)
                 width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-                cell.option1ImageView.backgroundColor = bgColor
+                cell.option1ImageView.backgroundColor = winColor
                 cell.option2ImageView.backgroundColor = loseColor
                 
             } else if option2Percent > option1Percent {
                 
                 width2 = CGFloat(cell.option2ImageView.bounds.width)
                 width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-                cell.option1ImageView.backgroundColor = bgColor
+                cell.option1ImageView.backgroundColor = winColor
                 cell.option2ImageView.backgroundColor = loseColor
                 
             } else {
                 
                 width1 = CGFloat(cell.option1ImageView.bounds.width)
                 width2 = width1
-                cell.option1ImageView.backgroundColor = bgColor
-                cell.option2ImageView.backgroundColor = bgColor
+                cell.option1ImageView.backgroundColor = winColor
+                cell.option2ImageView.backgroundColor = winColor
                 
             }
-            
-            // Tag buttons
-            cell.delete.tag = indexPath.row
             
         } else {
             
@@ -283,10 +271,10 @@ class TheirQuestionsTableViewController: UITableViewController {
             cell.option2.enabled = true
             cell.option1.layer.cornerRadius = cornerRadius
             cell.option2.layer.cornerRadius = cornerRadius
-            cell.option1.backgroundColor = bgColor
-            cell.option2.backgroundColor = bgColor
-            cell.option1.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-            cell.option2.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+            cell.option1.backgroundColor = buttonBackgroundColor
+            cell.option2.backgroundColor = buttonBackgroundColor
+            cell.option1.setTitleColor(buttonTextColor, forState: UIControlState.Normal)
+            cell.option2.setTitleColor(buttonTextColor, forState: UIControlState.Normal)
             cell.option1.titleLabel?.numberOfLines = 0 // Dynamic number of lines
             cell.option2.titleLabel?.numberOfLines = 0 // Dynamic number of lines
             cell.option1.titleLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping

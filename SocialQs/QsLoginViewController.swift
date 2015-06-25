@@ -14,7 +14,6 @@ class QsLoginViewController: UIViewController {
     var activityIndicator = UIActivityIndicatorView()
     var signUpActive = false
     
-    @IBOutlet var loginCancelled: UILabel!
     @IBOutlet var logoImageView: UIImageView!
     @IBOutlet var username: UITextField!
     @IBOutlet var password: UITextField!
@@ -24,6 +23,7 @@ class QsLoginViewController: UIViewController {
     
     @IBOutlet var logoVerticalSpace: NSLayoutConstraint!
     
+    /*
     @IBAction func facebookLoginButton(sender: AnyObject) {
         
         self.loginCancelled.hidden = true
@@ -54,9 +54,8 @@ class QsLoginViewController: UIViewController {
                 
             }
         }
-
-        
     }
+    */
     
     // This function switches the login page between "login" and "signup"
     @IBAction func signupButtonPressed(sender: AnyObject) {
