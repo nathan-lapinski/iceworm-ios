@@ -21,21 +21,6 @@ class MyQuestionsTableViewController: UITableViewController {
     var dismissedStorageKey = myName + "dismissedMyPermanent"
     var deletedStorageKey = myName + "deletedMyPermanent"
     var refresher: UIRefreshControl!
-    
-    /*
-    @IBAction func deleteQuestions(sender: AnyObject) {
-        
-        deletedQuestions.append(questionIds[sender.tag])
-        
-        // Store updated array locally
-        NSUserDefaults.standardUserDefaults().setObject(deletedQuestions, forKey: deletedStorageKey)
-        
-        refresh()
-        self.tableView.reloadData()
-        self.tableView.reloadInputViews()
-        
-    }
-        */
 
     
     override func viewDidLoad() {
@@ -63,14 +48,22 @@ class MyQuestionsTableViewController: UITableViewController {
     }
     
     
-    // Delete functionality
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    
+    
+    // Swipe to display options functions ----------------------------------------------------------------------------------
+    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         
-        if editingStyle == UITableViewCellEditingStyle.Delete {
+        /*
+        let forward = UITableViewRowAction(style: .Normal, title: "Forward") { action, index in
+            println("forward button tapped")
+        }
+        
+        forward.backgroundColor = UIColor.grayColor()
+        */
+        
+        let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
             
-            tableView.beginUpdates()
-            
-            deletedQuestions.append(questionIds[indexPath.row])
+            self.deletedQuestions.append(self.questionIds[indexPath.row])
             
             self.questions.removeAtIndex(indexPath.row)
             self.questionIds.removeAtIndex(indexPath.row)
@@ -80,17 +73,37 @@ class MyQuestionsTableViewController: UITableViewController {
             self.option2Stats.removeAtIndex(indexPath.row)
             
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
-            tableView.endUpdates()
+            
+            // Store updated array locally
+            NSUserDefaults.standardUserDefaults().setObject(self.deletedQuestions, forKey: self.deletedStorageKey)
+            //println("refreshing table")
+            self.tableView.reloadData()
+            self.tableView.reloadInputViews()
             
         }
         
-        // Store updated array locally
-        NSUserDefaults.standardUserDefaults().setObject(deletedQuestions, forKey: deletedStorageKey)
+        delete.backgroundColor = UIColor.redColor()
         
-        //println("refreshing table")
-        self.tableView.reloadData()
-        self.tableView.reloadInputViews()
+        return [delete]//, forward] // Order = appearance order, right to left on screen
     }
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        // the cells you would like the actions to appear needs to be editable
+        return true
+    }
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        // you need to implement this method too or you can't swipe to display the actions
+    }
+    // Swipe to display options functions ----------------------------------------------------------------------------------
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     override func viewWillAppear(animated: Bool) {
@@ -136,7 +149,7 @@ class MyQuestionsTableViewController: UITableViewController {
                         // Filter out DELETED questions
                         if contains(self.deletedQuestions, questionObject.objectId!!) == false ||
                             self.deletedQuestions.count == 0 {
-                            
+
                             self.questions.append(questionObject["question"] as! String)
                             self.questionIds.append(questionObject.objectId!!)
                             self.option1s.append(questionObject["option1"] as! String)
@@ -168,6 +181,7 @@ class MyQuestionsTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Potentially incomplete method implementation.
@@ -200,13 +214,8 @@ class MyQuestionsTableViewController: UITableViewController {
             
         }
         
-        // Format buttons
-        myCell.delete.layer.cornerRadius = cornerRadius
-        myCell.delete.backgroundColor = bgColor
-        myCell.forward.layer.cornerRadius = cornerRadius
-        myCell.forward.backgroundColor = bgColor
 
-        // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
+        // Compute and set results image view widths
         var width1 = myCell.option1ImageView.frame.width
         var width2 = myCell.option2ImageView.frame.width
         
@@ -236,22 +245,22 @@ class MyQuestionsTableViewController: UITableViewController {
             
             width1 = CGFloat(myCell.option1ImageView.bounds.width)
             width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-            myCell.option1ImageView.backgroundColor = bgColor
+            myCell.option1ImageView.backgroundColor = winColor
             myCell.option2ImageView.backgroundColor = loseColor
             
         } else if option2Percent > option1Percent {
             
             width2 = CGFloat(myCell.option2ImageView.bounds.width)
             width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-            myCell.option1ImageView.backgroundColor = bgColor
+            myCell.option1ImageView.backgroundColor = winColor
             myCell.option2ImageView.backgroundColor = loseColor
             
         } else {
             
             width1 = CGFloat(myCell.option1ImageView.bounds.width)
             width2 = width1
-            myCell.option1ImageView.backgroundColor = bgColor
-            myCell.option2ImageView.backgroundColor = bgColor
+            myCell.option1ImageView.backgroundColor = winColor
+            myCell.option2ImageView.backgroundColor = winColor
             
         }
         
@@ -260,6 +269,68 @@ class MyQuestionsTableViewController: UITableViewController {
         
         return myCell
     }
+    
+    
+    /*
+    // Interaction when tapping on row (ie: view results)
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        // Get cell that has been tapped on
+        var cell: UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
+        
+        
+        
+        let followedObjectId = userids[indexPath.row]
+        
+        // Check if already following and UNFOLLOW instead
+        if isFollowing[followedObjectId] == false {
+            
+            isFollowing[followedObjectId] = true
+            
+            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+            
+            var follow = PFObject(className: "Follow")
+            follow["following"] = userids[indexPath.row]
+            follow["follower"] = PFUser.currentUser()?.objectId
+            
+            // This has to be here or the "delete" section creates an empty entry in the DB
+            follow.saveInBackground()
+            
+        } else {
+            
+            isFollowing[followedObjectId] = false
+            
+            cell.accessoryType = UITableViewCellAccessoryType.None
+            
+            // Check if this user is being following by the current user
+            var query = PFQuery(className: "Follow")
+            
+            // Set query keys
+            // Error here was from the login check not functioning properly, so
+            // we reached this point even though we weren't logged in
+            query.whereKey("follower", equalTo: PFUser.currentUser()!.objectId!)
+            query.whereKey("following", equalTo: userids[indexPath.row])
+            
+            // This happen in random order, so we can't guarantee the results will
+            // match the local arrays that determine who is following whom! (username/userids)
+            query.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                
+                // if objects = objects it must be the case that this user is being followed
+                if let temp = objects {
+                    
+                    for object in temp {
+                        
+                        object.deleteInBackground()
+                        
+                    }
+                }
+            })
+        }
+    
+        
+        
+    }
+    */
     
 
     /*

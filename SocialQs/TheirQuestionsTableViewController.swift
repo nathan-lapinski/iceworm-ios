@@ -27,22 +27,12 @@ class TheirQuestionsTableViewController: UITableViewController {
     
     @IBAction func voteOption1(sender: AnyObject) {
         
-        dismissedQuestions.append(questionIds[sender.tag])
-        
-        // Store updated array locally
-        NSUserDefaults.standardUserDefaults().setObject(dismissedQuestions, forKey: dismissedStorageKey)
-        
         castVote(sender.tag, optionId: 1)
         
     }
     
     
     @IBAction func voteOption2(sender: AnyObject) {
-        
-        dismissedQuestions.append(questionIds[sender.tag])
-        
-        // Store updated array locally
-        NSUserDefaults.standardUserDefaults().setObject(dismissedQuestions, forKey: dismissedStorageKey)
         
         castVote(sender.tag, optionId: 2)
         
@@ -66,21 +56,42 @@ class TheirQuestionsTableViewController: UITableViewController {
                     
                     for questionObject in temp {
                         
-                        // Increment vote counter --------------------------------
+                        // Increment vote counter ---------------------------------
                         var statsQuery = PFQuery(className: "SocialQs")
                         
                         statsQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (object, error) -> Void in
                             
                             object!.incrementKey(voteId)
-                            object!.saveInBackgroundWithBlock {
+                            object!.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
                                 
-                                (success: Bool, error: NSError?) -> Void in
                                 if (success) { // The score key has been incremented
                                     
-                                    //println("refreshing table")
-                                    self.refresh()
-                                    self.tableView.reloadData()
-                                    self.tableView.reloadInputViews()
+                                    //println("reloading table")
+                                    //self.tableView.reloadData()
+                                    //self.tableView.reloadInputViews()
+                                    self.dismissedQuestions.append(questionObject.objectId!!)
+                                    
+                                    // Store updated array locally
+                                    NSUserDefaults.standardUserDefaults().setObject(self.dismissedQuestions, forKey: self.dismissedStorageKey)
+                                    
+                                    // ---------------------------------------------------------------------------------------------------------------
+                                    // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
+                                    var singleQuery = PFQuery(className: "SocialQs")
+                                    
+                                    singleQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (singleObjects, singleError) -> Void in
+                                        
+                                        if let singleIndex = find(self.questionIds, questionObject.objectId!!) {
+                                            
+                                            self.option1Stats[singleIndex] = singleObjects!["stats1"]! as! Int
+                                            self.option2Stats[singleIndex] = singleObjects!["stats2"]! as! Int
+                                            
+                                            // Update table row
+                                            var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                                            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                                            
+                                        }
+                                    })
+                                    // ---------------------------------------------------------------------------------------------------------------
                                     
                                 } else { // There was a problem, check error.description
                                     
@@ -100,7 +111,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             }
         }
-        
     }
 
     
