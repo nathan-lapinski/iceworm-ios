@@ -140,6 +140,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         if warnComplete == false {
+            /*
             warnComplete = true
             var title = "Limitation of this test"
             var message = "Please note that, for this test, " +
@@ -149,7 +150,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                 "Have fun and feel free to be goofy and/or mildly innapropriate " +
                 "but remain thoughtful of yourself and fellow testers. Thank you!"
             displayAlert(title, message: message)
-            
+            */
         }
         
         // Setup keyboard control delegates

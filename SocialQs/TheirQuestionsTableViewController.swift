@@ -354,6 +354,8 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         // Sort by newest created-date first
         getSocialQsQuery.orderByDescending("createdAt")
+        getSocialQsQuery.whereKey("askername", notEqualTo: myName)
+        getSocialQsQuery.limit = 1000
         
         getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
             
@@ -370,7 +372,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                 for questionObject in questionTemp {
                     
                     // Filter out MY questions
-                    if questionObject["askername"] as! String != myName {
+                    //if questionObject["askername"] as! String != myName {
                         
                         // Filter out DELETED questions
                         if contains(self.deletedQuestions, questionObject.objectId!!) == false {
@@ -384,7 +386,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                             self.askers.append(questionObject["askername"] as! String)
                             
                         }
-                    }
+                    //}
                     
                     // Ensure all queries have completed THEN refresh the table!
                     if self.questions.count == self.askers.count {

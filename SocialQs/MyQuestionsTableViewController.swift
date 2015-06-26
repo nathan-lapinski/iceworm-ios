@@ -128,6 +128,8 @@ class MyQuestionsTableViewController: UITableViewController {
         
         // Sort by newest created-date first
         getSocialQsQuery.orderByDescending("createdAt")
+        getSocialQsQuery.whereKey("askername", equalTo: myName)
+        getSocialQsQuery.limit = 1000
         
         getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
             
@@ -144,7 +146,7 @@ class MyQuestionsTableViewController: UITableViewController {
                     // Check for user == current user ------------------------------------
                     
                     // Filter out THEIR questions
-                    if questionObject["askername"] as! String == myName {
+                    //if questionObject["askername"] as! String == myName {
                         
                         // Filter out DELETED questions
                         if contains(self.deletedQuestions, questionObject.objectId!!) == false ||
@@ -158,7 +160,7 @@ class MyQuestionsTableViewController: UITableViewController {
                             self.option2Stats.append(questionObject["stats2"] as! Int)
                             
                         }
-                    }
+                    //}
                     
                     // Ensure all queries have completed THEN refresh the table!
                     if self.questions.count == self.option2Stats.count {
