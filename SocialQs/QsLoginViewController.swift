@@ -69,14 +69,18 @@ class QsLoginViewController: UIViewController {
                 
                 if user != nil {
                     
+                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     // login successful
                     myName = self.username.text.lowercaseString
                     uId = PFUser.currentUser()!.objectId!
                     
                     // Store username locally
                     NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+                    NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     
-                    //println("Welcome " + myName)
                     self.performSegueWithIdentifier("signedIn", sender: self)
                     
                 } else {
@@ -124,30 +128,17 @@ class QsLoginViewController: UIViewController {
         // Recal myName if applicable
         if NSUserDefaults.standardUserDefaults().objectForKey("myName") != nil {
             
-            println("Recalling myName")
             myName = NSUserDefaults.standardUserDefaults().objectForKey("myName")! as! String
             
         }
+        
+        // Recal uId if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey("uId") != nil {
+            
+            myName = NSUserDefaults.standardUserDefaults().objectForKey("uId")! as! String
+            
+        }
     }
-    
-    
-    override func viewDidLayoutSubviews() {
-        
-        //self.logoVerticalSpace.constant = 0
-        //self.logoImageView.layoutIfNeeded()
-        
-        /*
-        logoImageView.center = CGPointMake(view.bounds.width/2, logoImageView.center.y)
-        username.center = CGPointMake(username.center.x-view.bounds.width, username.center.y)
-        password.center = CGPointMake(password.center.x+view.bounds.width, password.center.y)
-        
-        registeredTextField.alpha = 0.0
-        signupButton.alpha = 0.0
-        */
-        //loginButton.alpha = 0.0
-        
-    }
-    
     
     override func viewDidAppear(animated: Bool) {
         
@@ -161,31 +152,7 @@ class QsLoginViewController: UIViewController {
             
         }
         
-        UIView.animateWithDuration(1.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-            
-            //self.logoVerticalSpace.constant = -100
-            //self.logoImageView.layoutIfNeeded()
-            
-            //self.logoImageView.center = CGPointMake(self.logoImageView.center.x, self.logoImageView.center.y - 75)
-            
-            //self.username.center = CGPointMake(self.username.center.x+self.view.bounds.width, self.username.center.y)
-            //self.password.center = CGPointMake(self.password.center.x-self.view.bounds.width, self.password.center.y)
-            
-            }, completion: { finished in
         
-            UIView.animateWithDuration(1.5, delay: 1.0, options: nil, animations: { () -> Void in
-                
-                //self.loginButton.alpha = 1.0
-                //self.registeredTextField.alpha = 1.0
-                //self.signupButton.alpha = 1.0
-                
-                }, completion: { finished in
-                    
-                    println("Animation finished")
-                    //self.loginButton.alpha = 1.0
-                    
-            })
-        })
     }
         
     /*

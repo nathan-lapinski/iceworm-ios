@@ -115,6 +115,18 @@ class TheirQuestionsTableViewController: UITableViewController {
 
     
     
+    /*
+    // Override to support editing the table view.
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    if editingStyle == .Delete {
+    // Delete the row from the data source
+    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+    } else if editingStyle == .Insert {
+    // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }
+    }
+    */
+    
     // Swipe to display options functions ----------------------------------------------------------------------------------
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
     
@@ -138,7 +150,7 @@ class TheirQuestionsTableViewController: UITableViewController {
             self.option2Stats.removeAtIndex(indexPath.row)
             self.askers.removeAtIndex(indexPath.row)
             
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             
             // Store updated array locally
             NSUserDefaults.standardUserDefaults().setObject(self.deletedQuestions, forKey: self.deletedStorageKey)
@@ -152,10 +164,12 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         return [delete]//, forward] // Order = appearance order, right to left on screen
     }
+    
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // the cells you would like the actions to appear needs to be editable
         return true
     }
+    
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         // you need to implement this method too or you can't swipe to display the actions
     }
@@ -173,10 +187,10 @@ class TheirQuestionsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "splash_no_logo.png"))
         
         // Set separator color
-        tableView.separatorColor = UIColor.whiteColor()
+        tableView.separatorColor = UIColor.lightGrayColor()
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
         
         // Adjust top and bottom bounds of table for nav and tab bars
@@ -184,11 +198,6 @@ class TheirQuestionsTableViewController: UITableViewController {
         // Disable auto inset adjust
         self.automaticallyAdjustsScrollViewInsets = false
         
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     
@@ -403,24 +412,17 @@ class TheirQuestionsTableViewController: UITableViewController {
         }
     }
     
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
 
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // Return NO if you do not want the specified item to be editable.
         return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
     }
     */
 

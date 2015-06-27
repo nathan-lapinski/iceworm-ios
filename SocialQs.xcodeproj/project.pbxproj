@@ -18,6 +18,7 @@
 		902B34CF1B3E543800B67ACE /* QsSignInCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CE1B3E543800B67ACE /* QsSignInCreateViewController.swift */; };
 		902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */; };
 		902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */; };
+		902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D41B3EA21300B67ACE /* TabBarController.swift */; };
 		904123021B26A67C00397132 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123011B26A67C00397132 /* AppDelegate.swift */; };
 		904123041B26A67C00397132 /* AskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123031B26A67C00397132 /* AskViewController.swift */; };
 		904123061B26A67C00397132 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123051B26A67C00397132 /* ResultsViewController.swift */; };
@@ -68,6 +69,7 @@
 		902B34CE1B3E543800B67ACE /* QsSignInCreateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsSignInCreateViewController.swift; sourceTree = "<group>"; };
 		902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesTableViewController.swift; sourceTree = "<group>"; };
 		902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesCell.swift; sourceTree = "<group>"; };
+		902B34D41B3EA21300B67ACE /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		904122FC1B26A67B00397132 /* SocialQs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocialQs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		904123001B26A67C00397132 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		904123011B26A67C00397132 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
 				902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */,
+				902B34D41B3EA21300B67ACE /* TabBarController.swift */,
 				902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */,
 				9096430C1B3365680029E008 /* MyQuestionsCell.swift */,
 				901263181B3BA73600AA2058 /* MyQuestionsTableViewController.swift */,
@@ -344,6 +347,7 @@
 				9096430D1B3365680029E008 /* MyQuestionsCell.swift in Sources */,
 				902B34CF1B3E543800B67ACE /* QsSignInCreateViewController.swift in Sources */,
 				9065E3F01B34AC8500F85D3B /* TestActiveViewController.swift in Sources */,
+				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,
 				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
 				904123041B26A67C00397132 /* AskViewController.swift in Sources */,

@@ -26,8 +26,12 @@ class QsSignInCreateViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
+    }
+    
+    
+    override func viewDidLayoutSubviews() {
+        
     }
     
     
@@ -36,14 +40,45 @@ class QsSignInCreateViewController: UIViewController {
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
             
-            // Not part of test env
             myName = (PFUser.currentUser()!.username!)
             uId = PFUser.currentUser()!.objectId!
-            //println("Welcome " + myName)
+            
             self.performSegueWithIdentifier("alreadySignedIn", sender: self)
             
         }
+        
+        // ANIMATION STUFFS -------------------------------------------------------------
+        /*
+        UIView.animateWithDuration(1.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+            
+            //self.logoVerticalSpace.constant = -100
+            //self.logoImageView.layoutIfNeeded()
+            
+            //self.logoImageView.center = CGPointMake(self.logoImageView.center.x, self.logoImageView.center.y - 75)
+            
+            //self.username.center = CGPointMake(self.username.center.x+self.view.bounds.width, self.username.center.y)
+            //self.password.center = CGPointMake(self.password.center.x-self.view.bounds.width, self.password.center.y)
+            
+            }, completion: { finished in
+                
+                UIView.animateWithDuration(1.5, delay: 1.0, options: nil, animations: { () -> Void in
+                    
+                    //self.loginButton.alpha = 1.0
+                    //self.registeredTextField.alpha = 1.0
+                    //self.signupButton.alpha = 1.0
+                    
+                    }, completion: { finished in
+                        
+                        println("Animation finished")
+                        //self.loginButton.alpha = 1.0
+                        
+                })
+        })
+        */
+        // ANIMATION STUFFS -------------------------------------------------------------
+        
     }
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

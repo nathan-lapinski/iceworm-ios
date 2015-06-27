@@ -34,10 +34,10 @@ class MyQuestionsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "splash_no_logo_reverse.png"))
         
         // Set separator color
-        tableView.separatorColor = UIColor.whiteColor()
+        tableView.separatorColor = UIColor.lightGrayColor()
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
         
         // Adjust top and bottom bounds of table for nav and tab bars
@@ -72,7 +72,7 @@ class MyQuestionsTableViewController: UITableViewController {
             self.option1Stats.removeAtIndex(indexPath.row)
             self.option2Stats.removeAtIndex(indexPath.row)
             
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             
             // Store updated array locally
             NSUserDefaults.standardUserDefaults().setObject(self.deletedQuestions, forKey: self.deletedStorageKey)

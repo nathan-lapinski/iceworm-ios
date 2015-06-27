@@ -12,7 +12,7 @@ import Parse
 class AskViewController: UIViewController, UITextFieldDelegate {
     
     //var myQuestion = socialQuestionModel()
-    var warnComplete = false
+    //var warnComplete = false
     
     @IBOutlet var whatIsQuestionTextField: UILabel!
     @IBOutlet var whatAreOptionsTextField: UILabel!
@@ -26,10 +26,6 @@ class AskViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func groupButtonAction(sender: AnyObject) {
         
-        //let title = "Future GROUP functionality may include:"
-        //let message = "Selecting friends to whom your question will be sent, building custom groups of friends from contacts or Facebook, or other options for which YOU voice desires!"
-        //displayAlert(title, message: message)
-        
     }
     
     @IBAction func privacyButtonAction(sender: AnyObject) {
@@ -37,6 +33,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         let title = "Future PRIVACY functionality may include:"
         let message = "Selecting if users can forward your question, sending question anonymously, or other options for which YOU voice desires!"
         displayAlert(title, message: message)
+        
     }
     
     @IBAction func cancelButtonAction(sender: AnyObject) {
@@ -57,47 +54,50 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         //myQuestion.option1Text = option1TextField.text
         //myQuestion.option2Text = option2TextField.text
         
-        // PARSE -------------------------------------------------------------
-        var socialQ = PFObject(className: "SocialQs")
-        
-        socialQ["question"] = questionTextField.text
-        socialQ["option1"] = option1TextField.text
-        socialQ["option2"] = option2TextField.text
-        socialQ["stats1"] = 0
-        socialQ["stats2"] = 0
-        //socialQ["UserId"] = PFUser.currentUser()!.objectId!
-        socialQ["askername"] = PFUser.currentUser()!["username"]
-        
-        socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
+        if questionTextField.text == "" || option1TextField.text == "" || option2TextField.text == "" {
             
-            if error == nil {
+            let title = "Well that was silly!"
+            let message = "You need to provide a Q and two options!"
+            displayAlert(title, message: message)
+            
+        } else {
+        
+            // PARSE -------------------------------------------------------------
+            var socialQ = PFObject(className: "SocialQs")
+            
+            socialQ["question"] = questionTextField.text
+            socialQ["option1"] = option1TextField.text
+            socialQ["option2"] = option2TextField.text
+            socialQ["stats1"] = 0
+            socialQ["stats2"] = 0
+            socialQ["askerId"] = PFUser.currentUser()!.objectId!
+            socialQ["askername"] = PFUser.currentUser()!["username"]
+            
+            socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
                 
-                // Reset all fields after submitting
-                self.questionTextField.text = ""
-                self.option1TextField.text = ""
-                self.option2TextField.text = ""
-                
-                // Resign keyboard/reset cursor
-                self.questionTextField.resignFirstResponder()
-                self.option1TextField.resignFirstResponder()
-                self.option2TextField.resignFirstResponder()
-                
-                // Mark question as active
-                //myQuestion.questionActive = true
-                
-                // Switch to results tab when question is submitted
-                // - Had to make storyboard ID for the tabBarController = "tabBarController"
-                self.tabBarController?.selectedIndex = 1
-                
+                if error == nil {
+                    
+                    // Reset all fields after submitting
+                    self.questionTextField.text = ""
+                    self.option1TextField.text = ""
+                    self.option2TextField.text = ""
+                    
+                    // Resign keyboard/reset cursor
+                    self.questionTextField.resignFirstResponder()
+                    self.option1TextField.resignFirstResponder()
+                    self.option2TextField.resignFirstResponder()
+                    
+                    // Mark question as active
+                    //myQuestion.questionActive = true
+                    
+                    // Switch to results tab when question is submitted
+                    // - Had to make storyboard ID for the tabBarController = "tabBarController"
+                    self.tabBarController?.selectedIndex = 1
+                    
+                }
             }
+            // PARSE -------------------------------------------------------------
         }
-        // PARSE -------------------------------------------------------------
-        
-        
-    }
-    
-    
-    override func viewDidLayoutSubviews() {
     }
     
     
@@ -118,10 +118,10 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         */
         
         // Format buttons -----------------------------
-        //groupButton.layer.cornerRadius = cornerRadius
-        //privacyButton.layer.cornerRadius = cornerRadius
-        //cancelButton.layer.cornerRadius = cornerRadius
-        //submitButton.layer.cornerRadius = cornerRadius
+        groupButton.layer.cornerRadius = cornerRadius
+        privacyButton.layer.cornerRadius = cornerRadius
+        cancelButton.layer.cornerRadius = cornerRadius
+        submitButton.layer.cornerRadius = cornerRadius
         
         groupButton.backgroundColor = buttonBackgroundColor
         privacyButton.backgroundColor = buttonBackgroundColor
@@ -145,7 +145,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         
         super.viewDidLoad()
         
-        if warnComplete == false {
+        //if warnComplete == false {
             /*
             warnComplete = true
             var title = "Limitation of this test"
@@ -157,7 +157,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                 "but remain thoughtful of yourself and fellow testers. Thank you!"
             displayAlert(title, message: message)
             */
-        }
+        //}
         
         // Setup keyboard control delegates
         //questionTextField.delegate = self

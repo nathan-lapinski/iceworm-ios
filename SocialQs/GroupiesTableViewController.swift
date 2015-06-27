@@ -10,10 +10,10 @@ import UIKit
 
 class GroupiesTableViewController: UITableViewController {
     
-    var refresher: UIRefreshControl!
+    //var refresher: UIRefreshControl!
     var usernames = [""]
     var userids = [""]
-    var isFollowing = ["":false]
+    var isGroupie = ["":false]
     
     @IBOutlet var doneButton: UIBarButtonItem!
     
@@ -27,6 +27,10 @@ class GroupiesTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()// Do any additional setup after loading the view.
         
+        println("QsSigninCreateViewController")
+        println(myName)
+        if myName == "" { println("myName is empty!") }
+        
         // Title table controller
         self.title = "Select Groupies"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
@@ -35,23 +39,21 @@ class GroupiesTableViewController: UITableViewController {
         navigationItem.leftBarButtonItem = doneButton
         navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: 16)!], forState: UIControlState.Normal)
         
+        /*
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
         refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView.addSubview(refresher)
         // Pull to refresh --------------------------------------------------------
+        */
         
         // Set table background image
         self.tableView.backgroundView = UIImageView(image: UIImage(named: "splash_no_logo.png"))
         
         // Set separator color
-        tableView.separatorColor = UIColor.whiteColor()
+        tableView.separatorColor = UIColor.lightGrayColor()
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
-        
-        // Manually call refresh upon loading to get most up to datest datas
-        //refresh()
-        // ----------------------------------------------------------------------------
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -73,22 +75,28 @@ class GroupiesTableViewController: UITableViewController {
                 
                 self.usernames.removeAll(keepCapacity: true)
                 self.userids.removeAll(keepCapacity: true)
-                self.isFollowing.removeAll(keepCapacity: true)
+                self.isGroupie.removeAll(keepCapacity: true)
                 
                 for object in users {
                     
                     if let user = object as? PFUser {
                         
-                        println(user.objectId!)
-                        
-                        self.isFollowing[user.objectId!] = false
-                        
-                        
+                        self.isGroupie[user.objectId!] = false
                         
                         // Do check to make sure these exist!!!!!!!!!!!!!!!!!!!!!!!!!!
                         //
                         self.usernames.append(user.username!)
                         self.userids.append(user.objectId!)
+                        
+                        
+                        self.tableView.reloadData()
+                        
+                        
+                        // SEND DATA BACK ----------------------------------------------------------
+                        // SEND DATA BACK ----------------------------------------------------------
+                        
+                        
+                        
                         
                         /*
                         // Check if this user is being following by the current user
@@ -119,8 +127,7 @@ class GroupiesTableViewController: UITableViewController {
                             // The way this check is done doesn't make sense....???
                             // Check to ensure following query has completed before refreshing table (or breaks)
                             if self.isFollowing.count == self.usernames.count {
-                                
-                                self.tableView.reloadData()
+                        
                                 
                                 // End refreshing following table reload
                                 self.refresher.endRefreshing()
@@ -169,7 +176,7 @@ class GroupiesTableViewController: UITableViewController {
         
         let followedObjectId = userids[indexPath.row]
         
-        if isFollowing[followedObjectId] == true {
+        if isGroupie[followedObjectId] == true {
             
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
             
@@ -207,25 +214,28 @@ class GroupiesTableViewController: UITableViewController {
         let followedObjectId = userids[indexPath.row]
         
         // Check if already following and UNFOLLOW instead
-        if isFollowing[followedObjectId] == false {
+        if isGroupie[followedObjectId] == false {
             
-            isFollowing[followedObjectId] = true
+            isGroupie[followedObjectId] = true
             
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
             
+            /*
             var follow = PFObject(className: "Follow")
             follow["following"] = userids[indexPath.row]
             follow["follower"] = PFUser.currentUser()?.objectId
             
             // This has to be here or the "delete" section creates an empty entry in the DB
             follow.saveInBackground()
+            */
             
         } else {
             
-            isFollowing[followedObjectId] = false
+            isGroupie[followedObjectId] = false
             
             cell.accessoryType = UITableViewCellAccessoryType.None
             
+            /*
             // Check if this user is being following by the current user
             var query = PFQuery(className: "Follow")
             
@@ -249,7 +259,12 @@ class GroupiesTableViewController: UITableViewController {
                     }
                 }
             })
+            */
         }
+        
+        // SEND DATA BACK -------------------------------------------------------------------------
+        // SEND DATA BACK -------------------------------------------------------------------------
+        
     }
 
 

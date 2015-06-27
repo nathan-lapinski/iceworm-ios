@@ -233,7 +233,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Amo-91-rBz">
-                                            <rect key="frame" x="8" y="11" width="326" height="21"/>
+                                            <rect key="frame" x="26" y="11" width="323" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -418,7 +418,7 @@
                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="responses" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I68-WH-Nxd">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="responses" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I68-WH-Nxd">
                                             <rect key="frame" x="286" y="58" width="81" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="81" id="97t-B2-jKc"/>
@@ -449,6 +449,7 @@
                                         <constraint firstItem="N2Y-Mh-cmG" firstAttribute="trailing" secondItem="7GB-Oz-O9Z" secondAttribute="trailing" constant="-5" id="TeY-qO-adP"/>
                                         <constraint firstItem="N2Y-Mh-cmG" firstAttribute="leading" secondItem="MlS-5W-Nmi" secondAttribute="leadingMargin" constant="5" id="UOh-Js-9hx"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="nyr-R5-CU0" secondAttribute="bottom" constant="-2" id="WYz-2s-gmy"/>
+                                        <constraint firstItem="N2Y-Mh-cmG" firstAttribute="top" secondItem="I68-WH-Nxd" secondAttribute="bottom" constant="8" id="Wpk-eE-Gdb"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="rMF-rM-c6d" secondAttribute="bottom" constant="-2" id="dc4-6j-rnp"/>
                                         <constraint firstItem="I68-WH-Nxd" firstAttribute="top" secondItem="8wQ-G8-jeh" secondAttribute="bottom" constant="8" id="eqw-PN-K4G"/>
                                         <constraint firstItem="8wQ-G8-jeh" firstAttribute="top" secondItem="MlS-5W-Nmi" secondAttribute="topMargin" constant="7" id="h1I-Fr-fug"/>
@@ -731,8 +732,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="splash_no_logo" translatesAutoresizingMaskIntoConstraints="NO" id="teb-Nr-4cT">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash_no_logo" translatesAutoresizingMaskIntoConstraints="NO" id="teb-Nr-4cT">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="667" id="6ea-cL-dKt"/>
+                                </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="splash_only_logo" translatesAutoresizingMaskIntoConstraints="NO" id="RUR-YB-je1">
                                 <rect key="frame" x="0.0" y="-75" width="375" height="667"/>
@@ -771,6 +775,11 @@
                             <constraint firstItem="Mt5-on-MR2" firstAttribute="top" secondItem="teb-Nr-4cT" secondAttribute="bottom" id="dvd-qt-4x1"/>
                             <constraint firstItem="teb-Nr-4cT" firstAttribute="leading" secondItem="EOD-l8-AKz" secondAttribute="leadingMargin" constant="-16" id="mHo-qi-niI"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="dvd-qt-4x1"/>
+                            </mask>
+                        </variation>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
@@ -883,7 +892,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
             <objects>
-                <tabBarController storyboardIdentifier="tabBarController" modalTransitionStyle="crossDissolve" id="49e-Tb-3d3" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="tabBarController" modalTransitionStyle="crossDissolve" id="49e-Tb-3d3" customClass="TabBarController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
                     <keyCommands/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
@@ -915,11 +924,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="splash_no_logo" translatesAutoresizingMaskIntoConstraints="NO" id="tub-91-Wzs">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash_no_logo" translatesAutoresizingMaskIntoConstraints="NO" id="tub-91-Wzs">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="splash_only_logo" translatesAutoresizingMaskIntoConstraints="NO" id="HCb-e2-MtU">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash_only_logo" translatesAutoresizingMaskIntoConstraints="NO" id="HCb-e2-MtU">
                                 <rect key="frame" x="0.0" y="-75" width="375" height="667"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="667" id="M45-wU-wQh"/>
+                                </constraints>
                             </imageView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="J3j-Xt-bEK">
                                 <rect key="frame" x="48" y="193" width="278" height="30"/>
@@ -982,6 +994,11 @@
                             <constraint firstAttribute="trailingMargin" secondItem="tub-91-Wzs" secondAttribute="trailing" constant="-16" id="y8o-sY-thG"/>
                             <constraint firstItem="tub-91-Wzs" firstAttribute="top" secondItem="vBM-mf-glG" secondAttribute="topMargin" id="zXA-eP-Fbw"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="LQo-vm-mwj"/>
+                            </mask>
+                        </variation>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
@@ -1008,7 +1025,7 @@
         <image name="splash_only_logo" width="621" height="1104"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="1bi-rT-Rup"/>
-        <segue reference="u0a-cW-CdR"/>
+        <segue reference="NZC-74-hhY"/>
+        <segue reference="bsk-xp-zGx"/>
     </inferredMetricsTieBreakers>
 </document>

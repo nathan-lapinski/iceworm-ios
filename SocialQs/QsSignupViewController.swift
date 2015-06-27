@@ -26,8 +26,6 @@ class QsSignupViewController: UIViewController {
     // This function processes the login procedure
     @IBAction func loginButtonPressed(sender: AnyObject) {
         
-        println("signUpButton pressed!")
-        
         // Error out with pop-up if username and/or password are missing
         if username.text == "" || password.text == "" || passwordConfirm.text == "" || emailAddress.text == "" {
             
@@ -76,7 +74,17 @@ class QsSignupViewController: UIViewController {
                 
                 if error == nil { // Signup successful!
                     
+                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
                     myName = self.username.text.lowercaseString
+                    uId = user.objectId!
+                    
+                    // Store username locally
+                    NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+                    NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                    
                     self.performSegueWithIdentifier("signedUp", sender: self)
                     
                 } else { // Signup failed
@@ -124,14 +132,6 @@ class QsSignupViewController: UIViewController {
     
     
     override func viewWillAppear(animated: Bool) {
-        
-        // Recal myName if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey("myName") != nil {
-            
-            println("Recalling myName")
-            myName = NSUserDefaults.standardUserDefaults().objectForKey("myName")! as! String
-            
-        }
         
     }
     
