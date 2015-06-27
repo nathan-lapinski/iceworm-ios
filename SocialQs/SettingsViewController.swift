@@ -25,8 +25,9 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        logout.layer.cornerRadius = cornerRadius
-        logout.backgroundColor = bgColor
+        //logout.layer.cornerRadius = cornerRadius
+        logout.backgroundColor = buttonBackgroundColor
+        logout.titleLabel?.textColor = buttonTextColor
 
     }
     

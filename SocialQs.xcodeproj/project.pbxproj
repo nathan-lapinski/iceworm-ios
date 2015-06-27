@@ -14,6 +14,10 @@
 		90135AC21B3AD4F400C9716F /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABD1B3AD4F400C9716F /* FBSDKLoginKit.framework */; };
 		90135AC31B3AD4F400C9716F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABE1B3AD4F400C9716F /* Parse.framework */; };
 		90135AC41B3AD4F400C9716F /* ParseFacebookUtilsV4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */; };
+		902B34CD1B3E4FB800B67ACE /* QsSignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */; };
+		902B34CF1B3E543800B67ACE /* QsSignInCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CE1B3E543800B67ACE /* QsSignInCreateViewController.swift */; };
+		902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */; };
+		902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */; };
 		904123021B26A67C00397132 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123011B26A67C00397132 /* AppDelegate.swift */; };
 		904123041B26A67C00397132 /* AskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123031B26A67C00397132 /* AskViewController.swift */; };
 		904123061B26A67C00397132 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123051B26A67C00397132 /* ResultsViewController.swift */; };
@@ -60,6 +64,10 @@
 		90135ABD1B3AD4F400C9716F /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = SocialQs/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		90135ABE1B3AD4F400C9716F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = SocialQs/Parse.framework; sourceTree = "<group>"; };
 		90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtilsV4.framework; path = SocialQs/ParseFacebookUtilsV4.framework; sourceTree = "<group>"; };
+		902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsSignupViewController.swift; sourceTree = "<group>"; };
+		902B34CE1B3E543800B67ACE /* QsSignInCreateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsSignInCreateViewController.swift; sourceTree = "<group>"; };
+		902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesTableViewController.swift; sourceTree = "<group>"; };
+		902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesCell.swift; sourceTree = "<group>"; };
 		904122FC1B26A67B00397132 /* SocialQs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocialQs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		904123001B26A67C00397132 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		904123011B26A67C00397132 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -156,9 +164,13 @@
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
+				902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */,
+				902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */,
 				9096430C1B3365680029E008 /* MyQuestionsCell.swift */,
 				901263181B3BA73600AA2058 /* MyQuestionsTableViewController.swift */,
 				90DE6C201B30E9CC004F3BA0 /* QsLoginViewController.swift */,
+				902B34CE1B3E543800B67ACE /* QsSignInCreateViewController.swift */,
+				902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */,
 				904123051B26A67C00397132 /* ResultsViewController.swift */,
 				904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */,
 				90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */,
@@ -330,12 +342,16 @@
 				901263171B3BA33B00AA2058 /* TheirQuestionsTableViewController.swift in Sources */,
 				904123061B26A67C00397132 /* ResultsViewController.swift in Sources */,
 				9096430D1B3365680029E008 /* MyQuestionsCell.swift in Sources */,
+				902B34CF1B3E543800B67ACE /* QsSignInCreateViewController.swift in Sources */,
 				9065E3F01B34AC8500F85D3B /* TestActiveViewController.swift in Sources */,
+				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
 				904123041B26A67C00397132 /* AskViewController.swift in Sources */,
 				901263191B3BA73600AA2058 /* MyQuestionsTableViewController.swift in Sources */,
 				90DE6C211B30E9CC004F3BA0 /* QsLoginViewController.swift in Sources */,
+				902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */,
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
+				902B34CD1B3E4FB800B67ACE /* QsSignupViewController.swift in Sources */,
 				905CB19C1B31193700947487 /* TheirQuestionsCell.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,
 			);

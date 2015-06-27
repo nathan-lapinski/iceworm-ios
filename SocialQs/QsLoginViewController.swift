@@ -12,71 +12,29 @@ import Parse
 class QsLoginViewController: UIViewController {
     
     var activityIndicator = UIActivityIndicatorView()
-    var signUpActive = false
+    //var signUpActive = false
     
     @IBOutlet var logoImageView: UIImageView!
     @IBOutlet var username: UITextField!
     @IBOutlet var password: UITextField!
     @IBOutlet var loginButton: UIButton!
-    @IBOutlet var signupButton: UIButton!
-    @IBOutlet var registeredTextField: UILabel!
-    
+    @IBOutlet var cancelButton: UIButton!
+    //@IBOutlet var registeredTextField: UILabel!
     @IBOutlet var logoVerticalSpace: NSLayoutConstraint!
     
-    /*
-    @IBAction func facebookLoginButton(sender: AnyObject) {
-        
-        self.loginCancelled.hidden = true
-        
-        var permissions = ["public_profile", "email"]//, "user_friends"]
-        
-        PFFacebookUtils.logInInBackgroundWithReadPermissions(permissions) {
-            (user: PFUser?, error: NSError?) -> Void in
-            
-            if let user = user {
-                
-                if user.isNew {
-                    
-                    println("User signed up and logged in through Facebook!")
-                    self.performSegueWithIdentifier("signUp", sender: self)
-                    
-                } else {
-                    
-                    println("User logged in through Facebook!")
-                    // Pre-existing user
-                    self.performSegueWithIdentifier("signUp", sender: self)
-                    
-                }
-            } else {
-                
-                println("Uh oh. The user cancelled the Facebook login.")
-                self.loginCancelled.hidden = false
-                
-            }
-        }
-    }
-    */
     
-    // This function switches the login page between "login" and "signup"
-    @IBAction func signupButtonPressed(sender: AnyObject) {
+    @IBAction func cancelButtonPressed(sender: AnyObject) {
         
-        if signUpActive == true {
-            
-            loginButton.setTitle("Login", forState: UIControlState.Normal)
-            signupButton.setTitle("Sign Up", forState: UIControlState.Normal)
-            registeredTextField.text = "Not Registered?"
-            signUpActive = false
-            
-        } else {
-            
-            signupButton.setTitle("Login", forState: UIControlState.Normal)
-            loginButton.setTitle("Sign Up", forState: UIControlState.Normal)
-            registeredTextField.text = "Already Registered?"
-            signUpActive = true
-            
-        }
+        username.text = ""
+        password.text = ""
+        
+        username.resignFirstResponder()
+        password.resignFirstResponder()
+        
+        performSegueWithIdentifier("cancelLogIn", sender: self)
         
     }
+    
     
     // This function processes the login procedure
     @IBAction func loginButtonPressed(sender: AnyObject) {
@@ -84,7 +42,7 @@ class QsLoginViewController: UIViewController {
         // Error out with pop-up if username and/or password are missing
         if username.text == "" || password.text == "" {
             
-            displayAlert("Error", message: "Please enter a username and password")
+            displayAlert("Way to go Rain Man", message: "I think you forgot something. Please enter a username and password.")
             
         } else {
             
@@ -100,78 +58,42 @@ class QsLoginViewController: UIViewController {
             // Generic error - this will be changed below based on error returned from Parse.com
             var errorMessage = "Please try again later"
             
-            if signUpActive == true { // this means the signup was actually function as SIGNUP
+            // Run Parse.com login procedure
+            PFUser.logInWithUsernameInBackground(username.text.lowercaseString, password: password.text, block: { (user, error) -> Void in
                 
-                // Create user account on Parse.com
-                var user = PFUser()
-                user.username = username.text.lowercaseString
-                user.password = password.text
-                user.signUpInBackgroundWithBlock({ (success, error) -> Void in
+                // Stop animation - hides when stopped (above) hides spinner automatically
+                self.activityIndicator.stopAnimating()
+                
+                // Release lock on app input
+                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                
+                if user != nil {
                     
-                    // Stop animation - hides when stopped (above) hides spinner automatically
-                    self.activityIndicator.stopAnimating()
+                    // login successful
+                    myName = self.username.text.lowercaseString
+                    uId = PFUser.currentUser()!.objectId!
                     
-                    // Release app input block
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                    // Store username locally
+                    NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
                     
-                    if error == nil {
+                    //println("Welcome " + myName)
+                    self.performSegueWithIdentifier("signedIn", sender: self)
+                    
+                } else {
+                    
+                    if let errorString = error!.userInfo?["error"] as? String {
                         
-                        // Signup successful!
-                        myName = self.username.text.lowercaseString
-                        self.performSegueWithIdentifier("login", sender: self)
-                        
-                    } else {
-                        
-                        // Signup failed
-                        if let errorString = error!.userInfo?["error"] as? String {
-                            
-                            errorMessage = errorString
-                            
-                        }
-                        
-                        self.displayAlert("Failed Signup", message: errorMessage)
+                        errorMessage = errorString
                         
                     }
                     
-                })
-                
-            } else { // This means "signupButton" is functioning as login
-                
-                // Run Parse.com login procedure
-                PFUser.logInWithUsernameInBackground(username.text.lowercaseString, password: password.text, block: { (user, error) -> Void in
+                    self.displayAlert("Failed Login", message: errorMessage)
                     
-                    // Stop animation - hides when stopped (above) hides spinner automatically
-                    self.activityIndicator.stopAnimating()
-                    
-                    // Release lock on app input
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                    
-                    if user != nil {
-                        
-                        // login successful
-                        myName = self.username.text.lowercaseString
-                        
-                        // Store username locally
-                        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-                        
-                        println("Welcome " + myName)
-                        self.performSegueWithIdentifier("login", sender: self)
-                        
-                    } else {
-                        
-                        if let errorString = error!.userInfo?["error"] as? String {
-                            
-                            errorMessage = errorString
-                            
-                        }
-                        
-                        self.displayAlert("Failed Login", message: errorMessage)
-                        
-                    }
-                })
-            }
+                }
+            })
         }
     }
+    
     
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
@@ -182,9 +104,6 @@ class QsLoginViewController: UIViewController {
         
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
             
-            // idk why this was in teh tutorial... causes a revert to previous view controller
-            //self.dismissViewControllerAnimated(true, completion: nil)
-            
         }))
         
         self.presentViewController(alert, animated: true, completion: nil)
@@ -193,18 +112,12 @@ class QsLoginViewController: UIViewController {
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        /*
-        var push = PFPush()
-        push.setMessage("This is a test Push")
-        push.sendPushInBackgroundWithBlock { (isSuccessful, error) -> Void in
-            println("Successful Push")
-        }
-        */
-        
     }
+    
     
     override func viewWillAppear(animated: Bool) {
         
@@ -215,14 +128,6 @@ class QsLoginViewController: UIViewController {
             myName = NSUserDefaults.standardUserDefaults().objectForKey("myName")! as! String
             
         }
-        
-        // Format buttons
-        loginButton.layer.cornerRadius = cornerRadius
-        loginButton.backgroundColor = bgColor
-        signupButton.layer.cornerRadius = cornerRadius
-        signupButton.backgroundColor = bgColor
-        
-        
     }
     
     
@@ -252,7 +157,7 @@ class QsLoginViewController: UIViewController {
             // Not part of test env
             myName = (PFUser.currentUser()!.username!)
             println("Welcome " + myName)
-            self.performSegueWithIdentifier("login", sender: self)
+            self.performSegueWithIdentifier("signedIn", sender: self)
             
         }
         
@@ -298,6 +203,8 @@ class QsLoginViewController: UIViewController {
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         self.view.endEditing(true)
     }
+    
+    
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true

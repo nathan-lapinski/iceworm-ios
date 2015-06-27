@@ -20,13 +20,10 @@ class TheirQuestionsCell: UITableViewCell {
     //@IBOutlet var results: UIButton!
     
     // Cell2
-    @IBOutlet var forward: UIButton!
-    @IBOutlet var dismiss: UIButton!
     @IBOutlet var option1ImageView: UIImageView!
     @IBOutlet var option2ImageView: UIImageView!
     @IBOutlet var option1Text: UILabel!
     @IBOutlet var option2Text: UILabel!
     @IBOutlet var numberOfResponses: UILabel!
-    @IBOutlet var delete: UIButton!
     
 }

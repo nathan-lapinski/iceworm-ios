@@ -11,17 +11,176 @@ import Parse
 
 class QsSignupViewController: UIViewController {
     
+    var activityIndicator = UIActivityIndicatorView()
+    //var signUpActive = false
     
-
+    //@IBOutlet var logoImageView: UIImageView!
+    @IBOutlet var username: UITextField!
+    @IBOutlet var password: UITextField!
+    @IBOutlet var passwordConfirm: UITextField!
+    @IBOutlet var emailAddress: UITextField!
+    @IBOutlet var signUpButton: UIButton!
+    @IBOutlet var cancelButton: UIButton!
+    
+    
+    // This function processes the login procedure
+    @IBAction func loginButtonPressed(sender: AnyObject) {
+        
+        println("signUpButton pressed!")
+        
+        // Error out with pop-up if username and/or password are missing
+        if username.text == "" || password.text == "" || passwordConfirm.text == "" || emailAddress.text == "" {
+            
+            displayAlert("Ok, Rain Man...", message: "It's not that hard. Just enter a username, password and email address!")
+            
+        } else if isValidEmail(emailAddress.text!) == false {
+            
+            displayAlert("Don't be a tool.", message: "Please enter a valid email address (hint: this will allow you to find your friends)")
+            
+        } else if password.text != passwordConfirm.text {
+            
+            displayAlert("Way to go, fat fingers.", message: "Maybe try typing the same password twice")
+            
+        //} else if EMAIL ALREADY USED {
+            
+        //} else if USERNAME ALREADY USED {
+            
+        } else {
+        
+            // Setup spinner and block application input
+            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 200, 200))
+            activityIndicator.center = self.view.center
+            activityIndicator.hidesWhenStopped = true
+            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.White
+            view.addSubview(activityIndicator)
+            activityIndicator.startAnimating()
+            UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+            
+            // Generic error - this will be changed below based on error returned from Parse.com
+            var errorMessage = "Please try again later"
+            
+            // Create user account on Parse.com
+            var user = PFUser()
+            
+            user.username = username.text.lowercaseString
+            user.password = password.text
+            user.email = emailAddress.text.lowercaseString
+            
+            user.signUpInBackgroundWithBlock({ (success, error) -> Void in
+                
+                // Stop animation - hides when stopped (above) hides spinner automatically
+                self.activityIndicator.stopAnimating()
+                
+                // Release app input block
+                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                
+                if error == nil { // Signup successful!
+                    
+                    myName = self.username.text.lowercaseString
+                    self.performSegueWithIdentifier("signedUp", sender: self)
+                    
+                } else { // Signup failed
+                    
+                    if let errorString = error!.userInfo?["error"] as? String {
+                        
+                        errorMessage = errorString
+                        
+                    }
+                    
+                    self.displayAlert("Failed Signup", message: errorMessage)
+                    
+                }
+            })
+        }
+    }
+    
+    
+    func isValidEmail(testStr:String) -> Bool {
+        // println("validate calendar: \(testStr)")
+        let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+        
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        
+        return emailTest.evaluateWithObject(testStr)
+        
+    }
+    
+    
+    @IBAction func cancelButtonPressed(sender: AnyObject) {
+        
+        username.text = ""
+        password.text = ""
+        passwordConfirm.text = ""
+        emailAddress.text = ""
+        
+        username.resignFirstResponder()
+        password.resignFirstResponder()
+        passwordConfirm.resignFirstResponder()
+        emailAddress.resignFirstResponder()
+        
+        performSegueWithIdentifier("cancelSignUp", sender: self)
+        
+    }
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        // Recal myName if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey("myName") != nil {
+            
+            println("Recalling myName")
+            myName = NSUserDefaults.standardUserDefaults().objectForKey("myName")! as! String
+            
+        }
+        
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
     }
-
+    
+    
+    override func viewDidAppear(animated: Bool) {
+        
+    }
+    
+    
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // Function for displaying pop-up
+    func displayAlert(title: String, message: String) {
+        
+        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            
+            // idk why this was in teh tutorial... causes a revert to previous view controller
+            //self.dismissViewControllerAnimated(true, completion: nil)
+            
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+        
+    }
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    // Hide keyboard when touching outside keyboard
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        self.view.endEditing(true)
+    }
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
     
 

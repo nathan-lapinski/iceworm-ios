@@ -26,9 +26,9 @@ class AskViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func groupButtonAction(sender: AnyObject) {
         
-        let title = "Future GROUP functionality may include:"
-        let message = "Selecting friends to whom your question will be sent, building custom groups of friends from contacts or Facebook, or other options for which YOU voice desires!"
-        displayAlert(title, message: message)
+        //let title = "Future GROUP functionality may include:"
+        //let message = "Selecting friends to whom your question will be sent, building custom groups of friends from contacts or Facebook, or other options for which YOU voice desires!"
+        //displayAlert(title, message: message)
         
     }
     
@@ -77,9 +77,10 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                 self.option1TextField.text = ""
                 self.option2TextField.text = ""
                 
-                //questionTextField.resignFirstResponder()
-                //option1TextField.resignFirstResponder()
-                //option2TextField.resignFirstResponder()
+                // Resign keyboard/reset cursor
+                self.questionTextField.resignFirstResponder()
+                self.option1TextField.resignFirstResponder()
+                self.option2TextField.resignFirstResponder()
                 
                 // Mark question as active
                 //myQuestion.questionActive = true
@@ -117,15 +118,20 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         */
         
         // Format buttons -----------------------------
-        groupButton.layer.cornerRadius = cornerRadius
-        groupButton.backgroundColor = bgColor
-        privacyButton.layer.cornerRadius = cornerRadius
-        privacyButton.backgroundColor = bgColor
+        //groupButton.layer.cornerRadius = cornerRadius
+        //privacyButton.layer.cornerRadius = cornerRadius
+        //cancelButton.layer.cornerRadius = cornerRadius
+        //submitButton.layer.cornerRadius = cornerRadius
         
-        cancelButton.layer.cornerRadius = cornerRadius
-        cancelButton.backgroundColor = bgColor
-        submitButton.layer.cornerRadius = cornerRadius
-        submitButton.backgroundColor = bgColor
+        groupButton.backgroundColor = buttonBackgroundColor
+        privacyButton.backgroundColor = buttonBackgroundColor
+        cancelButton.backgroundColor = buttonBackgroundColor
+        submitButton.backgroundColor = buttonBackgroundColor
+        
+        groupButton.titleLabel?.textColor = buttonTextColor
+        privacyButton.titleLabel?.textColor = buttonTextColor
+        cancelButton.titleLabel?.textColor = buttonTextColor
+        submitButton.titleLabel?.textColor = buttonTextColor
         
     }
     
