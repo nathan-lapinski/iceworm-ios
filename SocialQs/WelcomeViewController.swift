@@ -1,5 +1,5 @@
 //
-//  QsSignInCreateViewController.swift
+//  WelcomeViewController.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 6/26/15.
@@ -8,7 +8,10 @@
 
 import UIKit
 
-class QsSignInCreateViewController: UIViewController {
+class WelcomeViewController: UIViewController {
+    
+    @IBOutlet var signInButton: UIButton!
+    @IBOutlet var createAccountButton: UIButton!
     
     @IBAction func signInButton(sender: AnyObject) {
         
@@ -26,7 +29,10 @@ class QsSignInCreateViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        signInButton.layer.cornerRadius = cornerRadius
+        createAccountButton.layer.cornerRadius = cornerRadius
+        
     }
     
     

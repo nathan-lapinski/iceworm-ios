@@ -29,7 +29,7 @@ class QsSignupViewController: UIViewController {
         // Error out with pop-up if username and/or password are missing
         if username.text == "" || password.text == "" || passwordConfirm.text == "" || emailAddress.text == "" {
             
-            displayAlert("Ok, Rain Man...", message: "It's not that hard. Just enter a username, password and email address!")
+            displayAlert("WTF, mate", message: "It's not that hard. Just enter a username, password and email address!")
             
         } else if isValidEmail(emailAddress.text!) == false {
             
@@ -39,9 +39,10 @@ class QsSignupViewController: UIViewController {
             
             displayAlert("Way to go, fat fingers.", message: "Maybe try typing the same password twice")
             
-        //} else if EMAIL ALREADY USED {
-            
-        //} else if USERNAME ALREADY USED {
+            // ALREADY IN PLACE THROUGH PARSE ------
+            //} else if EMAIL ALREADY USED {
+            //} else if USERNAME ALREADY USED {
+            // ALREADY IN PLACE THROUGH PARSE ------
             
         } else {
         

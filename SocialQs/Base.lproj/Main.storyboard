@@ -720,10 +720,10 @@
             </objects>
             <point key="canvasLocation" x="-333.5" y="-777.5"/>
         </scene>
-        <!--Qs Sign In Create View Controller-->
+        <!--Welcome View Controller-->
         <scene sceneID="5Jd-ub-8fd">
             <objects>
-                <viewController modalTransitionStyle="flipHorizontal" id="keB-Ft-4UR" customClass="QsSignInCreateViewController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Welcome View Controller" modalTransitionStyle="flipHorizontal" id="keB-Ft-4UR" customClass="WelcomeViewController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3qc-9P-A2V"/>
                         <viewControllerLayoutGuide type="bottom" id="Mt5-on-MR2"/>
@@ -783,6 +783,8 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
+                        <outlet property="createAccountButton" destination="THj-hZ-wlM" id="vgi-6e-DV1"/>
+                        <outlet property="signInButton" destination="oNk-hc-SR7" id="ndz-DU-bZg"/>
                         <segue destination="49e-Tb-3d3" kind="show" identifier="alreadySignedIn" id="1bi-rT-Rup"/>
                     </connections>
                 </viewController>
@@ -1025,7 +1027,7 @@
         <image name="splash_only_logo" width="621" height="1104"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="NZC-74-hhY"/>
+        <segue reference="1bi-rT-Rup"/>
         <segue reference="bsk-xp-zGx"/>
     </inferredMetricsTieBreakers>
 </document>

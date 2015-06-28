@@ -15,7 +15,7 @@
 		90135AC31B3AD4F400C9716F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABE1B3AD4F400C9716F /* Parse.framework */; };
 		90135AC41B3AD4F400C9716F /* ParseFacebookUtilsV4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */; };
 		902B34CD1B3E4FB800B67ACE /* QsSignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */; };
-		902B34CF1B3E543800B67ACE /* QsSignInCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CE1B3E543800B67ACE /* QsSignInCreateViewController.swift */; };
+		902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */; };
 		902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */; };
 		902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */; };
 		902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D41B3EA21300B67ACE /* TabBarController.swift */; };
@@ -66,7 +66,7 @@
 		90135ABE1B3AD4F400C9716F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = SocialQs/Parse.framework; sourceTree = "<group>"; };
 		90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtilsV4.framework; path = SocialQs/ParseFacebookUtilsV4.framework; sourceTree = "<group>"; };
 		902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsSignupViewController.swift; sourceTree = "<group>"; };
-		902B34CE1B3E543800B67ACE /* QsSignInCreateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsSignInCreateViewController.swift; sourceTree = "<group>"; };
+		902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesTableViewController.swift; sourceTree = "<group>"; };
 		902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesCell.swift; sourceTree = "<group>"; };
 		902B34D41B3EA21300B67ACE /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -163,24 +163,24 @@
 				904123011B26A67C00397132 /* AppDelegate.swift */,
 				904123031B26A67C00397132 /* AskViewController.swift */,
 				905B2D951B322625001A74EE /* Globals.swift */,
+				902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */,
+				902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */,
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
-				902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */,
-				902B34D41B3EA21300B67ACE /* TabBarController.swift */,
-				902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */,
 				9096430C1B3365680029E008 /* MyQuestionsCell.swift */,
 				901263181B3BA73600AA2058 /* MyQuestionsTableViewController.swift */,
 				90DE6C201B30E9CC004F3BA0 /* QsLoginViewController.swift */,
-				902B34CE1B3E543800B67ACE /* QsSignInCreateViewController.swift */,
 				902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */,
 				904123051B26A67C00397132 /* ResultsViewController.swift */,
 				904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */,
 				90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */,
 				904122FF1B26A67C00397132 /* Supporting Files */,
+				902B34D41B3EA21300B67ACE /* TabBarController.swift */,
 				9065E3EF1B34AC8500F85D3B /* TestActiveViewController.swift */,
 				905CB19B1B31193700947487 /* TheirQuestionsCell.swift */,
 				901263161B3BA33B00AA2058 /* TheirQuestionsTableViewController.swift */,
+				902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */,
 			);
 			path = SocialQs;
 			sourceTree = "<group>";
@@ -345,7 +345,7 @@
 				901263171B3BA33B00AA2058 /* TheirQuestionsTableViewController.swift in Sources */,
 				904123061B26A67C00397132 /* ResultsViewController.swift in Sources */,
 				9096430D1B3365680029E008 /* MyQuestionsCell.swift in Sources */,
-				902B34CF1B3E543800B67ACE /* QsSignInCreateViewController.swift in Sources */,
+				902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */,
 				9065E3F01B34AC8500F85D3B /* TestActiveViewController.swift in Sources */,
 				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,
 				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
