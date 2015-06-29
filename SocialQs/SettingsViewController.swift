@@ -17,7 +17,18 @@ class SettingsViewController: UIViewController {
     @IBAction func logoutButton(sender: AnyObject) {
         
         myName = ""
+        uId = ""
+        uQId = ""
+        
+        // Logout PFUser
         PFUser.logOut()
+        
+        // Clear username, uId and uQId locally
+        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "")
+        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "")
+        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "")
+        
+        // Switch back to welcome screen
         performSegueWithIdentifier("logout", sender: self)
         
     }

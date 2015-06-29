@@ -24,6 +24,7 @@ class TheirQuestionsTableViewController: UITableViewController {
     var dismissedStorageKey = myName + "dismissedTheirPermanent"
     var deletedStorageKey = myName + "deletedTheirPermanent"
     var refresher: UIRefreshControl!
+    var activityIndicator = UIActivityIndicatorView()
     
     @IBAction func voteOption1(sender: AnyObject) {
         
@@ -42,20 +43,80 @@ class TheirQuestionsTableViewController: UITableViewController {
     // Function to process the casting of votes
     func castVote(questionId: Int, optionId: Int) {
         
-        var voteId = "stats\(optionId)"
         
+        var voteId = "stats\(optionId)" // remove??
+        
+        // Query Q table to get vote table Id
+        // The access Vote table and do stuffs
         var query = PFQuery(className: "SocialQs")
         
         query.whereKey("objectId", equalTo: questionIds[questionId])
-        
         query.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
             
             if error == nil {
+                
+                // ------------------------------------------------------------------------------------
+                // All this logic is not necessary - need to figure out how to unwrap "questionObjects"
+                // ------------------------------------------------------------------------------------
                 
                 if let temp = questionObjects {
                     
                     for questionObject in temp {
                         
+                        var vId = questionObject["votesId"]!! as! String
+                        
+                        var votesQuery = PFQuery(className: "Votes")
+                        votesQuery.whereKey("objectId", equalTo: vId)
+                        
+                        votesQuery.getObjectInBackgroundWithId(vId, block: { (voteObjects, error) -> Void in
+                            
+                            if error == nil {
+                                
+                                println("Doing votey stuffs")
+                                println(voteObjects)
+                                
+                                voteObjects!.addObject(uId, forKey: "voterId")
+                                voteObjects!.saveInBackground()
+                                voteObjects!.addObject([myName], forKey: "voterName")
+                                voteObjects!.saveInBackground()
+                                voteObjects!.addObject([optionId], forKey: "vote")
+                                voteObjects!.saveInBackground()
+                                
+                                // Store updated array locally
+                                self.dismissedQuestions.append(questionObject.objectId!!)
+                                NSUserDefaults.standardUserDefaults().setObject(self.dismissedQuestions, forKey: self.dismissedStorageKey)
+                                
+                            } else {
+                                
+                                println("Votes Table query error")
+                                println(error)
+                                
+                            }
+                            
+                        })
+                        
+                        
+                        /*
+                        votesQuery.getObjectInBackgroundWithId(vId, block: { (voteObject, error) -> Void in
+                            
+                            if error == nil {
+                            
+                                println("Doing votey stuffs")
+                                
+                                voteObject!.addObject([uId], forKey: "voterId")
+                                voteObject!.addObject([myName], forKey: "voterName")
+                                voteObject!.addObject([optionId], forKey: "vote")
+                                
+                                // Store updated array locally
+                                self.dismissedQuestions.append(questionObject.objectId!!)
+                                NSUserDefaults.standardUserDefaults().setObject(self.dismissedQuestions, forKey: self.dismissedStorageKey)
+                                
+                            }
+                        })
+                        */
+                        
+                        
+                        // REMOVE THIS AND REWORK TABLE UPDATE MATH TO USE "VOTES" TABLE + VOTE[INT]
                         // Increment vote counter ---------------------------------
                         var statsQuery = PFQuery(className: "SocialQs")
                         
@@ -69,10 +130,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                                     //println("reloading table")
                                     //self.tableView.reloadData()
                                     //self.tableView.reloadInputViews()
-                                    self.dismissedQuestions.append(questionObject.objectId!!)
                                     
-                                    // Store updated array locally
-                                    NSUserDefaults.standardUserDefaults().setObject(self.dismissedQuestions, forKey: self.dismissedStorageKey)
                                     
                                     // ---------------------------------------------------------------------------------------------------------------
                                     // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
@@ -101,12 +159,13 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 }
                             }
                         })
+                        // REMOVE THIS AND REWORK TABLE UPDATE MATH TO USE "VOTES" TABLE + VOTE[INT]
                     }
                 }
                 
             } else {
                 
-                println("SocialQs query error:")
+                println("SocialQs Table query error:")
                 println(error)
                 
             }
@@ -350,6 +409,15 @@ class TheirQuestionsTableViewController: UITableViewController {
             
         }
         
+        // Setup spinner and black application input
+        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        //UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        
         // Manually call refresh upon loading to get most up to datest datas
         refresh()
         
@@ -379,23 +447,19 @@ class TheirQuestionsTableViewController: UITableViewController {
                 self.askers.removeAll(keepCapacity: true)
                 
                 for questionObject in questionTemp {
-                    
-                    // Filter out MY questions
-                    //if questionObject["askername"] as! String != myName {
                         
-                        // Filter out DELETED questions
-                        if contains(self.deletedQuestions, questionObject.objectId!!) == false {
-                            
-                            self.questionIds.append(questionObject.objectId!!)
-                            self.questions.append(questionObject["question"] as! String)
-                            self.option1s.append(questionObject["option1"] as! String)
-                            self.option2s.append(questionObject["option2"] as! String)
-                            self.option1Stats.append(questionObject["stats1"] as! Int)
-                            self.option2Stats.append(questionObject["stats2"] as! Int)
-                            self.askers.append(questionObject["askername"] as! String)
-                            
-                        }
-                    //}
+                    // Filter out DELETED questions
+                    if contains(self.deletedQuestions, questionObject.objectId!!) == false {
+                        
+                        self.questionIds.append(questionObject.objectId!!)
+                        self.questions.append(questionObject["question"] as! String)
+                        self.option1s.append(questionObject["option1"] as! String)
+                        self.option2s.append(questionObject["option2"] as! String)
+                        self.option1Stats.append(questionObject["stats1"] as! Int)
+                        self.option2Stats.append(questionObject["stats2"] as! Int)
+                        self.askers.append(questionObject["askername"] as! String)
+                        
+                    }
                     
                     // Ensure all queries have completed THEN refresh the table!
                     if self.questions.count == self.askers.count {
@@ -405,6 +469,12 @@ class TheirQuestionsTableViewController: UITableViewController {
                         
                         // Kill refresher when query finished
                         self.refresher.endRefreshing()
+                        
+                        // Stop animation - hides when stopped (above) hides spinner automatically
+                        self.activityIndicator.stopAnimating()
+                        
+                        // Release app input
+                        //UIApplication.sharedApplication().endIgnoringInteractionEvents()
                         
                     }
                 }

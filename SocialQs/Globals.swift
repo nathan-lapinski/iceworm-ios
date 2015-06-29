@@ -9,9 +9,10 @@
 //import Foundation
 import UIKit
 
-//
+// Database values for local storage
 var myName = ""
 var uId = ""
+var uQId = ""
 
 // Set constants for formatting buttons - universal settings
 let bgAlpha: CGFloat = 0.7

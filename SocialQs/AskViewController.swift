@@ -63,90 +63,59 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         } else {
         
             // PARSE -------------------------------------------------------------
-            var socialQ = PFObject(className: "SocialQs")
-            
-            socialQ["question"] = questionTextField.text
-            socialQ["option1"] = option1TextField.text
-            socialQ["option2"] = option2TextField.text
-            socialQ["stats1"] = 0
-            socialQ["stats2"] = 0
-            //socialQ["privacyOptions"] = ???
-            socialQ["askerId"] = PFUser.currentUser()!.objectId!
-            socialQ["askername"] = PFUser.currentUser()!["username"]
-            
-            var qId = PFUser.currentUser()!.objectId!
-            println(qId)
-            
-            socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
+            // Add to "Votes Table"
+            var votes = PFObject(className: "Votes")
+            //votes[""] // Stats???
+            votes.saveInBackgroundWithBlock({ (success, error) -> Void in
                 
                 if error == nil {
                     
-                    // Reset all fields after submitting
-                    self.questionTextField.text = ""
-                    self.option1TextField.text = ""
-                    self.option2TextField.text = ""
+                    // Add questionId to myQs within UserQs table
+                    var qData = PFQuery(className: "UserQs")
+                    qData.whereKey("objectId", equalTo: uQId)
                     
-                    // Resign keyboard/reset cursor
-                    self.questionTextField.resignFirstResponder()
-                    self.option1TextField.resignFirstResponder()
-                    self.option2TextField.resignFirstResponder()
+                    println(votes.objectId!)
                     
-                    // Create "Votes Table" - titled by qId
-                    /*
-                    var qId = socialQ.objectId!
-                    var tableTitle = "Votes" + qId
-                    var votes = PFObject(className: tableTitle)
-                    */
-                    /*
-                    votes["voterId"] = String()
-                    votes["voterName"] = String()
-                    votes["vote"] = Int()
-                    votes.saveInBackground() // Save in background with block?? - probably not necessary
-                    */
+                    //socialQ = PFObject(className: "SocialQs")
+                    //socialQ["votesId"] = votes.objectId!
                     
-                    //user table = "_User"
-                    // Pull "myQsId", append this Q to it, and resave it
-                    var user = PFUser.currentUser()
+                    var socialQ = PFObject(className: "SocialQs")
                     
-                    if let myQs = PFUser.currentUser()?["myQsId"] as? PFObject {
+                    socialQ["question"] = self.questionTextField.text
+                    socialQ["option1"] = self.option1TextField.text
+                    socialQ["option2"] = self.option2TextField.text
+                    socialQ["stats1"] = 0
+                    socialQ["stats2"] = 0
+                    //socialQ["privacyOptions"] = ???
+                    socialQ["askerId"] = PFUser.currentUser()!.objectId!
+                    socialQ["askername"] = PFUser.currentUser()!["username"]
+                    socialQ["votesId"] = votes.objectId!
+                    
+                    socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
                         
-                            println(myQs)
-                        
-                    } else {
-                        
-                        println("sadf")
-                        
-                    }
-                    
-                    
-                    //var temp = user["myQsId"] as! String
-                    //println(temp)
-                    
-                    
-                    /*
-                    user!.setObject(test, forKey: "myQsId")
-                    
-                    user!.saveInBackgroundWithBlock({ (success, error) -> Void in
-                        
-                        if success {
+                        if error == nil {
                             
-                            // myQsId successfully updated
+                            var qId = socialQ.objectId!
+                            
+                            // Reset all fields after submitting
+                            self.questionTextField.text = ""
+                            self.option1TextField.text = ""
+                            self.option2TextField.text = ""
+                            
+                            // Resign keyboard/reset cursor
+                            self.questionTextField.resignFirstResponder()
+                            self.option1TextField.resignFirstResponder()
+                            self.option2TextField.resignFirstResponder()
+                            
+                            
+                            // Switch to results tab when question is submitted
+                            // - Had to make storyboard ID for the tabBarController = "tabBarController"
+                            self.tabBarController?.selectedIndex = 1
                             
                         }
-                        
-                    })*/
-                    
-                    //
-                    //
-                    //
-                    
-                    // Switch to results tab when question is submitted
-                    // - Had to make storyboard ID for the tabBarController = "tabBarController"
-                    self.tabBarController?.selectedIndex = 1
-                    
+                    }
                 }
-            }
-            
+            })
             // PARSE -------------------------------------------------------------
         }
     }

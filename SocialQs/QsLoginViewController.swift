@@ -47,10 +47,10 @@ class QsLoginViewController: UIViewController {
         } else {
             
             // Setup spinner and block application input
-            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 200, 200))
+            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
             activityIndicator.center = self.view.center
             activityIndicator.hidesWhenStopped = true
-            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.White
+            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
             view.addSubview(activityIndicator)
             activityIndicator.startAnimating()
             UIApplication.sharedApplication().beginIgnoringInteractionEvents()
@@ -74,10 +74,12 @@ class QsLoginViewController: UIViewController {
                     // login successful
                     myName = self.username.text.lowercaseString
                     uId = PFUser.currentUser()!.objectId!
+                    uQId = PFUser.currentUser()?["uQId"]! as! String
                     
                     // Store username locally
                     NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
                     NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+                    NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
                     // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     

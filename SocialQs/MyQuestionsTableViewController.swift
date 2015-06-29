@@ -21,6 +21,7 @@ class MyQuestionsTableViewController: UITableViewController {
     var dismissedStorageKey = myName + "dismissedMyPermanent"
     var deletedStorageKey = myName + "deletedMyPermanent"
     var refresher: UIRefreshControl!
+    var activityIndicator = UIActivityIndicatorView()
 
     
     override func viewDidLoad() {
@@ -115,6 +116,15 @@ class MyQuestionsTableViewController: UITableViewController {
             
         }
         
+        // Setup spinner and black application input
+        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        //UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        
         // Manually call refresh upon loading to get most up to datest datas
         refresh()
         
@@ -143,15 +153,11 @@ class MyQuestionsTableViewController: UITableViewController {
                 self.option2Stats.removeAll(keepCapacity: true)
                 
                 for questionObject in questionTemp {
-                    // Check for user == current user ------------------------------------
                     
-                    // Filter out THEIR questions
-                    //if questionObject["askername"] as! String == myName {
-                        
-                        // Filter out DELETED questions
-                        if contains(self.deletedQuestions, questionObject.objectId!!) == false ||
-                            self.deletedQuestions.count == 0 {
-
+                    // Filter out DELETED questions - use a whereKey instead??
+                    if contains(self.deletedQuestions, questionObject.objectId!!) == false ||
+                        self.deletedQuestions.count == 0 {
+                            
                             self.questions.append(questionObject["question"] as! String)
                             self.questionIds.append(questionObject.objectId!!)
                             self.option1s.append(questionObject["option1"] as! String)
@@ -159,8 +165,7 @@ class MyQuestionsTableViewController: UITableViewController {
                             self.option1Stats.append(questionObject["stats1"] as! Int)
                             self.option2Stats.append(questionObject["stats2"] as! Int)
                             
-                        }
-                    //}
+                    }
                     
                     // Ensure all queries have completed THEN refresh the table!
                     if self.questions.count == self.option2Stats.count {
@@ -170,6 +175,12 @@ class MyQuestionsTableViewController: UITableViewController {
                         
                         // Kill refresher when query finished
                         self.refresher.endRefreshing()
+                        
+                        // Stop animation - hides when stopped (above) hides spinner automatically
+                        self.activityIndicator.stopAnimating()
+                        
+                        // Release app input
+                        //UIApplication.sharedApplication().endIgnoringInteractionEvents()
                         
                     }
                 }

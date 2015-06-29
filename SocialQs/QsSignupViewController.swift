@@ -47,10 +47,10 @@ class QsSignupViewController: UIViewController {
         } else {
         
             // Setup spinner and block application input
-            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 200, 200))
+            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
             activityIndicator.center = self.view.center
             activityIndicator.hidesWhenStopped = true
-            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.White
+            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
             view.addSubview(activityIndicator)
             activityIndicator.startAnimating()
             UIApplication.sharedApplication().beginIgnoringInteractionEvents()
@@ -67,33 +67,15 @@ class QsSignupViewController: UIViewController {
             
             user.signUpInBackgroundWithBlock({ (success, error) -> Void in
                 
-                // Stop animation - hides when stopped (above) hides spinner automatically
-                self.activityIndicator.stopAnimating()
-                
-                // Release app input block
-                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                
                 if error == nil { // Signup successful!
                     
-                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                    myName = self.username.text.lowercaseString
-                    uId = user.objectId!
-                    
-                    // Store username locally
-                    NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-                    NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
-                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                    
-                    // Create Users Q entry
+                    // Create UsersQs entry
                     var userQ = PFObject(className: "UserQs")
                     userQ.saveInBackgroundWithBlock({ (success, error) -> Void in
                         
                         if error == nil {
                             
                             var userQId = userQ.objectId!
-                            println(userQId)
                             
                             // Store userQ enrty identifier back in Users table
                             var user = PFUser.currentUser()
@@ -102,20 +84,35 @@ class QsSignupViewController: UIViewController {
                                 
                                 if error == nil {
                                     
-                                    println("User table successfully updated")
+                                    //println("User table successfully updated")
+                                    
+                                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                                    myName = self.username.text.lowercaseString
+                                    uId = user!.objectId!
+                                    uQId = userQ.objectId!
+                                    
+                                    // Store username locally
+                                    NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+                                    NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+                                    NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
+                                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                                    
+                                    // Stop animation - hides when stopped (above) hides spinner automatically
+                                    self.activityIndicator.stopAnimating()
+                                    
+                                    // Release app input block
+                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                    
+                                    // Segue "ask" tab
+                                    self.performSegueWithIdentifier("signedUp", sender: self)
                                     
                                 } else {
                                     
                                 }
                                 
                             })
-                            
-                            
-                            //println(userQId)
-                            //user["uQId"] = userQId
-                            
-                            // Segue "ask" tab
-                            self.performSegueWithIdentifier("signedUp", sender: self)
                             
                         } else {
                             
@@ -131,6 +128,13 @@ class QsSignupViewController: UIViewController {
                         errorMessage = errorString
                         
                     }
+                    
+                    
+                    // Stop animation - hides when stopped (above) hides spinner automatically
+                    self.activityIndicator.stopAnimating()
+                    
+                    // Release app input block
+                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
                     
                     self.displayAlert("Failed Signup", message: errorMessage)
                     
