@@ -86,7 +86,43 @@ class QsSignupViewController: UIViewController {
                     // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
                     // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
                     
-                    self.performSegueWithIdentifier("signedUp", sender: self)
+                    // Create Users Q entry
+                    var userQ = PFObject(className: "UserQs")
+                    userQ.saveInBackgroundWithBlock({ (success, error) -> Void in
+                        
+                        if error == nil {
+                            
+                            var userQId = userQ.objectId!
+                            println(userQId)
+                            
+                            // Store userQ enrty identifier back in Users table
+                            var user = PFUser.currentUser()
+                            user!.setObject(userQId, forKey: "uQId")
+                            user!.saveInBackgroundWithBlock({ (success, error) -> Void in
+                                
+                                if error == nil {
+                                    
+                                    println("User table successfully updated")
+                                    
+                                } else {
+                                    
+                                }
+                                
+                            })
+                            
+                            
+                            //println(userQId)
+                            //user["uQId"] = userQId
+                            
+                            // Segue "ask" tab
+                            self.performSegueWithIdentifier("signedUp", sender: self)
+                            
+                        } else {
+                            
+                            println(error)
+                            
+                        }
+                    })
                     
                 } else { // Signup failed
                     

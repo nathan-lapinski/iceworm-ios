@@ -70,8 +70,12 @@ class AskViewController: UIViewController, UITextFieldDelegate {
             socialQ["option2"] = option2TextField.text
             socialQ["stats1"] = 0
             socialQ["stats2"] = 0
+            //socialQ["privacyOptions"] = ???
             socialQ["askerId"] = PFUser.currentUser()!.objectId!
             socialQ["askername"] = PFUser.currentUser()!["username"]
+            
+            var qId = PFUser.currentUser()!.objectId!
+            println(qId)
             
             socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
                 
@@ -87,8 +91,54 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                     self.option1TextField.resignFirstResponder()
                     self.option2TextField.resignFirstResponder()
                     
-                    // Mark question as active
-                    //myQuestion.questionActive = true
+                    // Create "Votes Table" - titled by qId
+                    /*
+                    var qId = socialQ.objectId!
+                    var tableTitle = "Votes" + qId
+                    var votes = PFObject(className: tableTitle)
+                    */
+                    /*
+                    votes["voterId"] = String()
+                    votes["voterName"] = String()
+                    votes["vote"] = Int()
+                    votes.saveInBackground() // Save in background with block?? - probably not necessary
+                    */
+                    
+                    //user table = "_User"
+                    // Pull "myQsId", append this Q to it, and resave it
+                    var user = PFUser.currentUser()
+                    
+                    if let myQs = PFUser.currentUser()?["myQsId"] as? PFObject {
+                        
+                            println(myQs)
+                        
+                    } else {
+                        
+                        println("sadf")
+                        
+                    }
+                    
+                    
+                    //var temp = user["myQsId"] as! String
+                    //println(temp)
+                    
+                    
+                    /*
+                    user!.setObject(test, forKey: "myQsId")
+                    
+                    user!.saveInBackgroundWithBlock({ (success, error) -> Void in
+                        
+                        if success {
+                            
+                            // myQsId successfully updated
+                            
+                        }
+                        
+                    })*/
+                    
+                    //
+                    //
+                    //
                     
                     // Switch to results tab when question is submitted
                     // - Had to make storyboard ID for the tabBarController = "tabBarController"
@@ -96,6 +146,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                     
                 }
             }
+            
             // PARSE -------------------------------------------------------------
         }
     }
