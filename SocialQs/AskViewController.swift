@@ -86,8 +86,11 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                     socialQ["option2"] = self.option2TextField.text
                     socialQ["stats1"] = 0
                     socialQ["stats2"] = 0
-                    //socialQ["privacyOptions"] = ???
+                    //------------
+                    // socialQ["privacyOptions"] = ???
+                    //------------
                     socialQ["askerId"] = PFUser.currentUser()!.objectId!
+                    // Continue to use "askername" - username change will require the app to filter through questions and change the "username" entry
                     socialQ["askername"] = PFUser.currentUser()!["username"]
                     socialQ["votesId"] = votes.objectId!
                     

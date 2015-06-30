@@ -180,6 +180,9 @@ class QsSignupViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        signUpButton.layer.cornerRadius = cornerRadius
+        cancelButton.layer.cornerRadius = cornerRadius
+        
     }
     
     

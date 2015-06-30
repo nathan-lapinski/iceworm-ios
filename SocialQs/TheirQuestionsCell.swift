@@ -25,5 +25,9 @@ class TheirQuestionsCell: UITableViewCell {
     @IBOutlet var option1Text: UILabel!
     @IBOutlet var option2Text: UILabel!
     @IBOutlet var numberOfResponses: UILabel!
+    @IBOutlet var myVote1: UILabel!
+    @IBOutlet var myVote2: UILabel!
+    @IBOutlet var bar1Width: NSLayoutConstraint!
+    @IBOutlet var bar2Width: NSLayoutConstraint!
     
 }

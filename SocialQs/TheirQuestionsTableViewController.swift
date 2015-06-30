@@ -19,12 +19,14 @@ class TheirQuestionsTableViewController: UITableViewController {
     var option2Stats = [Int]()
     //var users = [String: String]()
     var askers = [String]()
-    var dismissedQuestions = [String]() // questions ANSWERED by current user
-    var deletedQuestions = [String]() // questions DELETED by current user
-    var dismissedStorageKey = myName + "dismissedTheirPermanent"
-    var deletedStorageKey = myName + "deletedTheirPermanent"
+    // Variable to track how user voted - store to NSUserDefaults //
+    var myVotes = Dictionary<String, Int>()
+    var dismissedTheirStorageKey = myName + "dismissedTheirPermanent"
+    var deletedTheirStorageKey = myName + "deletedTheirPermanent"
+    var myVotesStorageKey = myName + "votes"
     var refresher: UIRefreshControl!
     var activityIndicator = UIActivityIndicatorView()
+    
     
     @IBAction func voteOption1(sender: AnyObject) {
         
@@ -43,8 +45,11 @@ class TheirQuestionsTableViewController: UITableViewController {
     // Function to process the casting of votes
     func castVote(questionId: Int, optionId: Int) {
         
-        
         var voteId = "stats\(optionId)" // remove??
+        
+        // Update internal and local storage of "myVotes"
+        myVotes[questionIds[questionId]] = optionId
+        NSUserDefaults.standardUserDefaults().setObject(myVotes, forKey: self.myVotesStorageKey)
         
         // Query Q table to get vote table Id
         // The access Vote table and do stuffs
@@ -57,6 +62,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 // ------------------------------------------------------------------------------------
                 // All this logic is not necessary - need to figure out how to unwrap "questionObjects"
+                // Only one item should exist when pulled with this whereKey to no for loop needed.
                 // ------------------------------------------------------------------------------------
                 
                 if let temp = questionObjects {
@@ -72,9 +78,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                             
                             if error == nil {
                                 
-                                println("Doing votey stuffs")
-                                println(voteObjects)
-                                
                                 voteObjects!.addObject(uId, forKey: "voterId")
                                 voteObjects!.saveInBackground()
                                 voteObjects!.addObject([myName], forKey: "voterName")
@@ -83,8 +86,12 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 voteObjects!.saveInBackground()
                                 
                                 // Store updated array locally
-                                self.dismissedQuestions.append(questionObject.objectId!!)
-                                NSUserDefaults.standardUserDefaults().setObject(self.dismissedQuestions, forKey: self.dismissedStorageKey)
+                                dismissedTheirQuestions.append(questionObject.objectId!!)
+                                NSUserDefaults.standardUserDefaults().setObject(dismissedTheirQuestions, forKey: self.dismissedTheirStorageKey)
+                                
+                                // Update table row
+                                var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                                self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
                                 
                             } else {
                                 
@@ -143,9 +150,11 @@ class TheirQuestionsTableViewController: UITableViewController {
                                             self.option1Stats[singleIndex] = singleObjects!["stats1"]! as! Int
                                             self.option2Stats[singleIndex] = singleObjects!["stats2"]! as! Int
                                             
+                                            /* MOVED ABOVE!!
                                             // Update table row
                                             var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
                                             self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                                            */
                                             
                                         }
                                     })
@@ -188,18 +197,20 @@ class TheirQuestionsTableViewController: UITableViewController {
     
     // Swipe to display options functions ----------------------------------------------------------------------------------
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
-    
-        /*
-        let forward = UITableViewRowAction(style: .Normal, title: "Forward") { action, index in
-            println("forward button tapped")
+        
+        let more = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "More") { (action, index) -> Void in
+            println("more button tapped")
         }
+        more.backgroundColor = UIColor.orangeColor()
         
-        forward.backgroundColor = UIColor.grayColor()
-        */
+        let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
+            println("share button tapped")
+        }
+        share.backgroundColor = UIColor.grayColor()
         
-        let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
+        let trash = UITableViewRowAction(style: .Normal, title: "Trash") { action, index in
             
-            self.deletedQuestions.append(self.questionIds[indexPath.row])
+          deletedTheirQuestions.append(self.questionIds[indexPath.row])
             
             self.questionIds.removeAtIndex(indexPath.row)
             self.questions.removeAtIndex(indexPath.row)
@@ -212,16 +223,16 @@ class TheirQuestionsTableViewController: UITableViewController {
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             
             // Store updated array locally
-            NSUserDefaults.standardUserDefaults().setObject(self.deletedQuestions, forKey: self.deletedStorageKey)
+            NSUserDefaults.standardUserDefaults().setObject(deletedTheirQuestions, forKey: self.deletedTheirStorageKey)
             //println("refreshing table")
             self.tableView.reloadData()
             self.tableView.reloadInputViews()
             
         }
         
-        delete.backgroundColor = UIColor.redColor()
+        trash.backgroundColor = UIColor.redColor()
         
-        return [delete]//, forward] // Order = appearance order, right to left on screen
+        return [trash, share, more] // Order = appearance order, right to left on screen
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -277,19 +288,20 @@ class TheirQuestionsTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = TheirQuestionsCell()//.dequeueReusableCellWithIdentifier("cell1", forIndexPath: indexPath) as! TheirQuestionsCell
+        var cell = TheirQuestionsCell()
         
-        if contains(self.dismissedQuestions, questionIds[indexPath.row]) == true {
+        let maxBarWidth = cell.contentView.bounds.width// - 2*(8) // CHANGE 8 to NSLayout leading
+        
+        if contains(dismissedTheirQuestions, questionIds[indexPath.row]) == true { // Already voted setup
             
-            // Already voted setup
             cell = tableView.dequeueReusableCellWithIdentifier("cell2", forIndexPath: indexPath) as! TheirQuestionsCell
             
             // Make cells non-selectable
             cell.selectionStyle = UITableViewCellSelectionStyle.None
             
             // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
-            var width1 = cell.option1ImageView.frame.width
-            var width2 = cell.option2ImageView.frame.width
+            var width1 = maxBarWidth //cell.option1ImageView.bounds.width
+            var width2 = maxBarWidth //cell.option2ImageView.bounds.width
             
             var totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
             var option1Percent = Float(0.0)
@@ -308,37 +320,63 @@ class TheirQuestionsTableViewController: UITableViewController {
             
             var resp = "responses"
             if totalResponses == 1 {
+                
                 resp = "response"
+                
             }
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
             if option1Percent > option2Percent {
                 
-                width1 = CGFloat(cell.option1ImageView.bounds.width)
+                width1 = maxBarWidth
                 width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
                 cell.option1ImageView.backgroundColor = winColor
                 cell.option2ImageView.backgroundColor = loseColor
                 
             } else if option2Percent > option1Percent {
                 
-                width2 = CGFloat(cell.option2ImageView.bounds.width)
+                width2 = maxBarWidth
                 width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-                cell.option1ImageView.backgroundColor = winColor
-                cell.option2ImageView.backgroundColor = loseColor
+                cell.option1ImageView.backgroundColor = loseColor
+                cell.option2ImageView.backgroundColor = winColor
                 
             } else {
                 
-                width1 = CGFloat(cell.option1ImageView.bounds.width)
-                width2 = width1
-                cell.option1ImageView.backgroundColor = winColor
-                cell.option2ImageView.backgroundColor = winColor
+                //cell.bar1Width.constant = 10//width1/10000
+                //cell.layoutIfNeeded()
+                //cell.bar2Width.constant = width2/10000
+                //cell.layoutIfNeeded()
+                
+                //width1 = maxBarWidth
+                //width2 = maxBarWidth
+                //cell.option1ImageView.backgroundColor = winColor
+                //cell.option2ImageView.backgroundColor = winColor
                 
             }
             
-        } else {
+            println(width1)
+            println(width2)
             
-            // Yet to vote setup
+            //cell.option1ImageView.frame = CGRectMake(cell.option1ImageView.frame.origin.x, cell.option1ImageView.frame.origin.y, width1, cell.option1ImageView.frame.height)
+            //cell.option2ImageView.frame = CGRectMake(cell.option2ImageView.frame.origin.x, cell.option2ImageView.frame.origin.y, width2, cell.option2ImageView.frame.height)
+            
+            
+            // Color user's choice
+            if myVotes[questionIds[indexPath.row]] == 1 {
+                
+                cell.myVote1.text = "✔"
+                cell.myVote2.text = ""
+                
+            } else {
+                
+                cell.myVote2.text = "✔"
+                cell.myVote1.text = ""
+                
+            }
+            
+        } else { // Yet to vote setup
+            
             cell = tableView.dequeueReusableCellWithIdentifier("cell1", forIndexPath: indexPath) as! TheirQuestionsCell
             
             // Make cells non-selectable
@@ -396,18 +434,26 @@ class TheirQuestionsTableViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         self.tableView.reloadData()
         
+        // MAKE FUNCTION -----------------------------------------------------------
         // Recall deleted/dismissed data
-        if NSUserDefaults.standardUserDefaults().objectForKey(deletedStorageKey) != nil {
+        if NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey) != nil {
             
-            deletedQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedStorageKey)! as! [(String)]
+            deletedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey)! as! [(String)]
             
         }
         
-        if NSUserDefaults.standardUserDefaults().objectForKey(dismissedStorageKey) != nil {
+        if NSUserDefaults.standardUserDefaults().objectForKey(dismissedTheirStorageKey) != nil {
             
-            dismissedQuestions = NSUserDefaults.standardUserDefaults().objectForKey(dismissedStorageKey)! as! [(String)]
+            dismissedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(dismissedTheirStorageKey)! as! [(String)]
             
         }
+        
+        if NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey) != nil {
+            
+            myVotes = NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey)! as! Dictionary
+            
+        }
+        // MAKE FUNCTION -----------------------------------------------------------
         
         // Setup spinner and black application input
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
@@ -431,7 +477,15 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         // Sort by newest created-date first
         getSocialQsQuery.orderByDescending("createdAt")
+        
+        // implement the following whereKey to filter myQs OUT of this list
         getSocialQsQuery.whereKey("askername", notEqualTo: myName)
+        
+        // Add whereKey for deleted/dismissed Qs here
+        // Will also need myQs deleted info
+        // Global vars??
+        //
+        
         getSocialQsQuery.limit = 1000
         
         getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
@@ -448,8 +502,11 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 for questionObject in questionTemp {
                         
-                    // Filter out DELETED questions
-                    if contains(self.deletedQuestions, questionObject.objectId!!) == false {
+                    // Filter out DELETED questions (also need DELETED from myQs tab!!!!)
+                    //
+                    //
+                    //
+                    if contains(deletedTheirQuestions, questionObject.objectId!!) == false { // && contains(self.dismissedQuestions, questionObject.objectId!!) {
                         
                         self.questionIds.append(questionObject.objectId!!)
                         self.questions.append(questionObject["question"] as! String)

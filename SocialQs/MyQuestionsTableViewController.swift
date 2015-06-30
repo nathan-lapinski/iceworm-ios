@@ -17,9 +17,9 @@ class MyQuestionsTableViewController: UITableViewController {
     var option2s = [String]()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
-    var deletedQuestions = [String]() // questions DELETED by current user
-    var dismissedStorageKey = myName + "dismissedMyPermanent"
-    var deletedStorageKey = myName + "deletedMyPermanent"
+    var deletedMyQuestions = [String]() // questions DELETED by current user
+    //var dismissedMyStorageKey = myName + "dismissedMyPermanent"
+    var deletedMyStorageKey = myName + "deletedMyPermanent"
     var refresher: UIRefreshControl!
     var activityIndicator = UIActivityIndicatorView()
 
@@ -54,17 +54,20 @@ class MyQuestionsTableViewController: UITableViewController {
     // Swipe to display options functions ----------------------------------------------------------------------------------
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         
-        /*
-        let forward = UITableViewRowAction(style: .Normal, title: "Forward") { action, index in
-            println("forward button tapped")
+        let more = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "More") { (action, index) -> Void in
+            println("more button tapped")
         }
+        more.backgroundColor = UIColor.orangeColor()
         
-        forward.backgroundColor = UIColor.grayColor()
-        */
+        let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
+            println("share button tapped")
+        }
+        share.backgroundColor = UIColor.grayColor()
         
-        let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
+        let trash = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Trash") { (action, index) -> Void in
+        //let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
             
-            self.deletedQuestions.append(self.questionIds[indexPath.row])
+            self.deletedMyQuestions.append(self.questionIds[indexPath.row])
             
             self.questions.removeAtIndex(indexPath.row)
             self.questionIds.removeAtIndex(indexPath.row)
@@ -76,16 +79,15 @@ class MyQuestionsTableViewController: UITableViewController {
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             
             // Store updated array locally
-            NSUserDefaults.standardUserDefaults().setObject(self.deletedQuestions, forKey: self.deletedStorageKey)
+            NSUserDefaults.standardUserDefaults().setObject(self.deletedMyQuestions, forKey: self.deletedMyStorageKey)
             //println("refreshing table")
             self.tableView.reloadData()
             self.tableView.reloadInputViews()
             
         }
+        trash.backgroundColor = UIColor.redColor()
         
-        delete.backgroundColor = UIColor.redColor()
-        
-        return [delete]//, forward] // Order = appearance order, right to left on screen
+        return [trash, share, more] // Order = appearance order, right to left on screen
     }
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // the cells you would like the actions to appear needs to be editable
@@ -110,9 +112,9 @@ class MyQuestionsTableViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         
         // Recall deleted/dismissed data
-        if NSUserDefaults.standardUserDefaults().objectForKey(deletedStorageKey) != nil {
+        if NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey) != nil {
             
-            deletedQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedStorageKey)! as! [(String)]
+            deletedMyQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey)! as! [(String)]
             
         }
         
@@ -155,8 +157,11 @@ class MyQuestionsTableViewController: UITableViewController {
                 for questionObject in questionTemp {
                     
                     // Filter out DELETED questions - use a whereKey instead??
-                    if contains(self.deletedQuestions, questionObject.objectId!!) == false ||
-                        self.deletedQuestions.count == 0 {
+                    //
+                    //
+                    //
+                    if contains(self.deletedMyQuestions, questionObject.objectId!!) == false ||
+                        self.deletedMyQuestions.count == 0 {
                             
                             self.questions.append(questionObject["question"] as! String)
                             self.questionIds.append(questionObject.objectId!!)

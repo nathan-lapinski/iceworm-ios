@@ -122,6 +122,9 @@ class QsLoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        loginButton.layer.cornerRadius = cornerRadius
+        cancelButton.layer.cornerRadius = cornerRadius
+        
     }
     
     
