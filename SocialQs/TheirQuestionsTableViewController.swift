@@ -355,8 +355,8 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             }
             
-            println(width1)
-            println(width2)
+            //println(width1)
+            //println(width2)
             
             //cell.option1ImageView.frame = CGRectMake(cell.option1ImageView.frame.origin.x, cell.option1ImageView.frame.origin.y, width1, cell.option1ImageView.frame.height)
             //cell.option2ImageView.frame = CGRectMake(cell.option2ImageView.frame.origin.x, cell.option2ImageView.frame.origin.y, width2, cell.option2ImageView.frame.height)
