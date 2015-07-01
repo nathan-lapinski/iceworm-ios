@@ -1,5 +1,5 @@
 //
-//  VotesNavigationController.swift
+//  VotesTheirNavigationController.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 6/30/15.
@@ -8,16 +8,10 @@
 
 import UIKit
 
-class VotesNavigationController: UINavigationController {
-    
-    var dataPassed: String!
-    //var secondDataPassed: String!
+class VotesTheirNavigationController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        println("nav controller:")
-        println(dataPassed)
     }
     
     override func viewWillAppear(animated: Bool) {

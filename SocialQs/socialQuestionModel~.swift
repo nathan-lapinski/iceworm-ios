@@ -15,7 +15,7 @@ class socialQuestionModel: NSObject {
     var option2Text:String = ""
     //var option1Percent:Int = 0
     //var option2Percent:Int = 0
-    //var questionActive:Bool = false
+    var questionActive:Bool = false
     
     /*
     func parameters() -> String {//, String, String) {

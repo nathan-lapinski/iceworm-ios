@@ -23,13 +23,38 @@ class GroupiesTableViewController: UITableViewController {
         
     }
     
+    
+    
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // Function for displaying pop-up
+    func displayAlert(title: String, message: String) {
+        
+        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            
+            //self.dismissViewControllerAnimated(true, completion: nil)
+            
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+        
+    }
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()// Do any additional setup after loading the view.
         
-        println("QsSigninCreateViewController")
-        println(myName)
         if myName == "" { println("myName is empty!") }
+        
+        
+        let title = "Warning:"
+        let message = "This page is for testing only. Selecting users will not currently filter by whom your Q is seen."
+        displayAlert(title, message: message)
+        
         
         // Title table controller
         self.title = "Select Groupies"
@@ -38,15 +63,6 @@ class GroupiesTableViewController: UITableViewController {
         // Format Done button
         navigationItem.leftBarButtonItem = doneButton
         navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: 16)!], forState: UIControlState.Normal)
-        
-        /*
-        // Pull to refresh --------------------------------------------------------
-        refresher = UIRefreshControl()
-        refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
-        self.tableView.addSubview(refresher)
-        // Pull to refresh --------------------------------------------------------
-        */
         
         // Set table background image
         self.tableView.backgroundView = UIImageView(image: UIImage(named: "splash_no_logo.png"))

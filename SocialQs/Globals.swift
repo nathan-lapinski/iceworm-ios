@@ -35,7 +35,12 @@ let cornerRadius: CGFloat = 2.0
 let insets: CGFloat = 5
 let buttonEdge = UIEdgeInsetsMake(insets, insets, insets, insets)
 
-
+// Arrays for displaying questions
 var deletedMyQuestions = [String]() // questions DELETED by current user
 var dismissedTheirQuestions = [String]() // questions ANSWERED by current user
 var deletedTheirQuestions = [String]() // questions DELETED by current user
+
+// Value for passing qId to results display
+var requestedQId = ""
+
+var warningSeen = false

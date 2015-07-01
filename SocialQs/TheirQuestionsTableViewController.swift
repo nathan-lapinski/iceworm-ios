@@ -25,37 +25,7 @@ class TheirQuestionsTableViewController: UITableViewController {
     var deletedTheirStorageKey = myName + "deletedTheirPermanent"
     var myVotesStorageKey = myName + "votes"
     var refresher: UIRefreshControl!
-    var activityIndicator = UIActivityIndicatorView()
-    
-    /*
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-        
-        if (segue.identifier == "viewVotes") {
-            
-            //var svc = segue.destinationViewController as! VotesNavigationController
-            //svc.dataPassed = "test2"
-            //svc.secondDataPassed = "test2"
-            //let popoverSegue = segue as! UIStoryboardPopoverSegue
-            
-            if let destination = segue.destinationViewController as? VotesNavigationController {
-                
-                if let qIndex = tableView.indexPathForSelectedRow()?.row {
-                    
-                    destination.dataPassed = questions[qIndex]
-                    
-                }
-                
-                
-                //destination.delegate = self
-                
-                //self.popoverController = popoverSegue.popoverController
-            
-            }
-            
-        }
-    }
-    */
-    
+    //var activityIndicator = UIActivityIndicatorView()
     
     
     @IBAction func voteOption1(sender: AnyObject) {
@@ -110,9 +80,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 
                                 voteObjects!.addObject(uId, forKey: "voterId")
                                 voteObjects!.saveInBackground()
-                                voteObjects!.addObject([myName], forKey: "voterName")
+                                voteObjects!.addObject(myName, forKey: "voterName")
                                 voteObjects!.saveInBackground()
-                                voteObjects!.addObject([optionId], forKey: "vote")
+                                voteObjects!.addObject(optionId, forKey: "vote")
                                 voteObjects!.saveInBackground()
                                 
                                 // Store updated array locally
@@ -231,14 +201,11 @@ class TheirQuestionsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
-            //VotesTableViewController.test = "test"
-            
-            
-            
+            requestedQId = self.questionIds[indexPath.row]
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
-                self.performSegueWithIdentifier("viewVotes", sender: self)
+                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
                 
             })
             
@@ -270,19 +237,24 @@ class TheirQuestionsTableViewController: UITableViewController {
             //println("refreshing table")
             self.tableView.reloadData()
             self.tableView.reloadInputViews()
-            
         }
         
         trash.backgroundColor = UIColor.redColor()
         
-        return [trash, share, view] // Order = appearance order, right to left on screen
+        if contains(dismissedTheirQuestions, questionIds[indexPath.row]) == true {
+            
+            return [trash, view] // Order = appearance order, right to left on screen
+            
+        } else {
+            
+            return [trash] // Order = appearance order, right to left on screen
+        }
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // the cells you would like the actions to appear needs to be editable
         return true
     }
-    
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         // you need to implement this method too or you can't swipe to display the actions
     }
@@ -300,7 +272,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "splash_no_logo.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs.png"))
         
         // Set separator color
         tableView.separatorColor = UIColor.lightGrayColor()
@@ -498,6 +470,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         }
         // MAKE FUNCTION -----------------------------------------------------------
         
+        /*
         // Setup spinner and black application input
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
         activityIndicator.center = self.view.center
@@ -506,6 +479,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
         //UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        */
         
         // Manually call refresh upon loading to get most up to datest datas
         refresh()
@@ -571,7 +545,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                         self.refresher.endRefreshing()
                         
                         // Stop animation - hides when stopped (above) hides spinner automatically
-                        self.activityIndicator.stopAnimating()
+                        //self.activityIndicator.stopAnimating()
                         
                         // Release app input
                         //UIApplication.sharedApplication().endIgnoringInteractionEvents()

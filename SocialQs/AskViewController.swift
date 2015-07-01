@@ -31,7 +31,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
     @IBAction func privacyButtonAction(sender: AnyObject) {
         
         let title = "Future PRIVACY functionality may include:"
-        let message = "Selecting if users can forward your question, sending question anonymously, or other options for which YOU voice desires!"
+        let message = "Selecting if users can forward your question, sending question anonymously, or other options for which you voice desires!"
         displayAlert(title, message: message)
         
     }
@@ -73,8 +73,6 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                     // Add questionId to myQs within UserQs table
                     var qData = PFQuery(className: "UserQs")
                     qData.whereKey("objectId", equalTo: uQId)
-                    
-                    println(votes.objectId!)
                     
                     //socialQ = PFObject(className: "SocialQs")
                     //socialQ["votesId"] = votes.objectId!

@@ -30,10 +30,42 @@ class WelcomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
+        
+        if warningSeen == false {
+            let title = "Welcome to SocialQs v\(version!)!"
+            let message = "This version of SocialQs has been rewritten to allow for new/future functionality. Because of this all testers will need to signup for a new account. However, all previous usernames are open and free for reuse! We apologize for any inconvenience and, as usual, appreciate your time, effort and input! Enjoy! \n \n - SocialQs Dev Team"
+            displayAlert(title, message: message)
+        }
+        
+        
         signInButton.layer.cornerRadius = cornerRadius
         createAccountButton.layer.cornerRadius = cornerRadius
         
     }
+    
+    
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // Function for displaying pop-up
+    func displayAlert(title: String, message: String) {
+        
+        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            
+            //self.dismissViewControllerAnimated(true, completion: nil)
+            
+        }))
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            self.presentViewController(alert, animated: true, completion: nil)
+            warningSeen = true
+        })
+        
+    }
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     
     
     override func viewDidLayoutSubviews() {

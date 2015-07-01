@@ -21,7 +21,7 @@ class MyQuestionsTableViewController: UITableViewController {
     //var dismissedMyStorageKey = myName + "dismissedMyPermanent"
     var deletedMyStorageKey = myName + "deletedMyPermanent"
     var refresher: UIRefreshControl!
-    var activityIndicator = UIActivityIndicatorView()
+    //var activityIndicator = UIActivityIndicatorView()
 
     
     override func viewDidLoad() {
@@ -35,7 +35,7 @@ class MyQuestionsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "splash_no_logo_reverse.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs_reverse.png"))
         
         // Set separator color
         tableView.separatorColor = UIColor.lightGrayColor()
@@ -54,15 +54,28 @@ class MyQuestionsTableViewController: UITableViewController {
     // Swipe to display options functions ----------------------------------------------------------------------------------
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         
-        let more = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "More") { (action, index) -> Void in
-            println("more button tapped")
+        
+        //"More"
+        let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
+            
+            requestedQId = self.questionIds[indexPath.row]
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                
+                self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
+                
+            })
+            
+            
         }
-        more.backgroundColor = UIColor.orangeColor()
+        view.backgroundColor = UIColor.orangeColor()
+        
         
         let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
             println("share button tapped")
         }
         share.backgroundColor = UIColor.grayColor()
+        
         
         let trash = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Trash") { (action, index) -> Void in
         //let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
@@ -87,8 +100,9 @@ class MyQuestionsTableViewController: UITableViewController {
         }
         trash.backgroundColor = UIColor.redColor()
         
-        return [trash, share, more] // Order = appearance order, right to left on screen
+        return [trash, view] // Order = appearance order, right to left on screen
     }
+    
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // the cells you would like the actions to appear needs to be editable
         return true
@@ -97,15 +111,6 @@ class MyQuestionsTableViewController: UITableViewController {
         // you need to implement this method too or you can't swipe to display the actions
     }
     // Swipe to display options functions ----------------------------------------------------------------------------------
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -118,6 +123,7 @@ class MyQuestionsTableViewController: UITableViewController {
             
         }
         
+        /*
         // Setup spinner and black application input
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
         activityIndicator.center = self.view.center
@@ -126,6 +132,7 @@ class MyQuestionsTableViewController: UITableViewController {
         view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
         //UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        */
         
         // Manually call refresh upon loading to get most up to datest datas
         refresh()
@@ -182,7 +189,7 @@ class MyQuestionsTableViewController: UITableViewController {
                         self.refresher.endRefreshing()
                         
                         // Stop animation - hides when stopped (above) hides spinner automatically
-                        self.activityIndicator.stopAnimating()
+                        //self.activityIndicator.stopAnimating()
                         
                         // Release app input
                         //UIApplication.sharedApplication().endIgnoringInteractionEvents()

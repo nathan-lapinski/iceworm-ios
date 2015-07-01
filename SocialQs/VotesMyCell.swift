@@ -1,5 +1,5 @@
 //
-//  VotesCell.swift
+//  VotesMyCell.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 6/30/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VotesCell: UITableViewCell {
+class VotesMyCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
