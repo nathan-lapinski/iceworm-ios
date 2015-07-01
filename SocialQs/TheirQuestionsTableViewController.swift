@@ -27,6 +27,36 @@ class TheirQuestionsTableViewController: UITableViewController {
     var refresher: UIRefreshControl!
     var activityIndicator = UIActivityIndicatorView()
     
+    /*
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+        
+        if (segue.identifier == "viewVotes") {
+            
+            //var svc = segue.destinationViewController as! VotesNavigationController
+            //svc.dataPassed = "test2"
+            //svc.secondDataPassed = "test2"
+            //let popoverSegue = segue as! UIStoryboardPopoverSegue
+            
+            if let destination = segue.destinationViewController as? VotesNavigationController {
+                
+                if let qIndex = tableView.indexPathForSelectedRow()?.row {
+                    
+                    destination.dataPassed = questions[qIndex]
+                    
+                }
+                
+                
+                //destination.delegate = self
+                
+                //self.popoverController = popoverSegue.popoverController
+            
+            }
+            
+        }
+    }
+    */
+    
+    
     
     @IBAction func voteOption1(sender: AnyObject) {
         
@@ -198,10 +228,23 @@ class TheirQuestionsTableViewController: UITableViewController {
     // Swipe to display options functions ----------------------------------------------------------------------------------
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         
-        let more = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "More") { (action, index) -> Void in
-            println("more button tapped")
+        //"More"
+        let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
+            
+            //VotesTableViewController.test = "test"
+            
+            
+            
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                
+                self.performSegueWithIdentifier("viewVotes", sender: self)
+                
+            })
+            
+            
         }
-        more.backgroundColor = UIColor.orangeColor()
+        view.backgroundColor = UIColor.orangeColor()
         
         let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
             println("share button tapped")
@@ -232,7 +275,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         trash.backgroundColor = UIColor.redColor()
         
-        return [trash, share, more] // Order = appearance order, right to left on screen
+        return [trash, share, view] // Order = appearance order, right to left on screen
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
