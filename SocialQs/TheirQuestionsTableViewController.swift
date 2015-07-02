@@ -54,7 +54,6 @@ class TheirQuestionsTableViewController: UITableViewController {
         // Query Q table to get vote table Id
         // The access Vote table and do stuffs
         var query = PFQuery(className: "SocialQs")
-        
         query.whereKey("objectId", equalTo: questionIds[questionId])
         query.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
             
@@ -69,11 +68,10 @@ class TheirQuestionsTableViewController: UITableViewController {
                     
                     for questionObject in temp {
                         
+                        // Update vote data in Votes table (store what user voted)
                         var vId = questionObject["votesId"]!! as! String
-                        
                         var votesQuery = PFQuery(className: "Votes")
                         votesQuery.whereKey("objectId", equalTo: vId)
-                        
                         votesQuery.getObjectInBackgroundWithId(vId, block: { (voteObjects, error) -> Void in
                             
                             if error == nil {
@@ -89,9 +87,10 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 dismissedTheirQuestions.append(questionObject.objectId!!)
                                 NSUserDefaults.standardUserDefaults().setObject(dismissedTheirQuestions, forKey: self.dismissedTheirStorageKey)
                                 
+                                // BRING BACK WHEN CHANGING STATS COMPUTATION LOGIC
                                 // Update table row
-                                var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
-                                self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                                //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                                //self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
                                 
                             } else {
                                 
@@ -100,6 +99,20 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 
                             }
                             
+                        })
+                        
+                        // Update data in UserQs table (store on what Qs user already voted )
+                        var userQsQuery = PFQuery(className: "UserQs")
+                        userQsQuery.whereKey("objectId", equalTo: uQId)
+                        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
+                            
+                            if error == nil {
+                                
+                                // Store questionId into "votedOnId" array
+                                userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOnId")
+                                userQsObjects!.saveInBackground()
+                                
+                            }
                         })
                         
                         
@@ -150,11 +163,10 @@ class TheirQuestionsTableViewController: UITableViewController {
                                             self.option1Stats[singleIndex] = singleObjects!["stats1"]! as! Int
                                             self.option2Stats[singleIndex] = singleObjects!["stats2"]! as! Int
                                             
-                                            /* MOVED ABOVE!!
                                             // Update table row
                                             var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
                                             self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
-                                            */
+
                                             
                                         }
                                     })
@@ -201,7 +213,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
-            requestedQId = self.questionIds[indexPath.row]
+            theirRequestedQId = self.questionIds[indexPath.row]
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
@@ -234,6 +246,25 @@ class TheirQuestionsTableViewController: UITableViewController {
             
             // Store updated array locally
             NSUserDefaults.standardUserDefaults().setObject(deletedTheirQuestions, forKey: self.deletedTheirStorageKey)
+            
+            // Append qId to "deleted" array in database
+            var deletedQuery = PFQuery(className: "UserQs")
+            deletedQuery.whereKey("objectId", equalTo: uQId)
+            deletedQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
+                
+                if error == nil {
+                    
+                    userQsObjects!.addObject(self.questionIds[indexPath.row], forKey: "deletedId")
+                    userQsObjects!.saveInBackground()
+                    
+                } else {
+                    
+                    println("Error adding qId to UserQs/deletedId")
+                    
+                }
+                
+            })
+            
             //println("refreshing table")
             self.tableView.reloadData()
             self.tableView.reloadInputViews()

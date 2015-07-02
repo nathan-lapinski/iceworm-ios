@@ -42,8 +42,8 @@ class VotesMyTableViewController: UITableViewController {
         var option2Text = ""
         // PARSE ----------------------------------------------------
         var query = PFQuery(className: "SocialQs")
-        query.whereKey("objectId", equalTo: requestedQId)
-        query.getFirstObjectInBackgroundWithBlock { (objects, error) -> Void in
+        query.whereKey("objectId", equalTo: myRequestedQId)
+        query.getObjectInBackgroundWithId(myRequestedQId, block: { (objects, error) -> Void in
             
             if error == nil {
                 
@@ -62,7 +62,6 @@ class VotesMyTableViewController: UITableViewController {
                         if error == nil {
                             var votes = objects!["vote"] as! [Int]
                             var voters = objects!["voterName"] as! [String]
-                            println(voters)
                             var voter1s = [""]
                             var voter2s = [""]
                             voter1s.removeAll(keepCapacity: true)
@@ -95,7 +94,7 @@ class VotesMyTableViewController: UITableViewController {
                     }
                 })
             }
-        }
+        })
     }
     
     

@@ -22,9 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Initialize Parse - currently linked to 
         // SocialQs Dev --------------------------------------------------------------------------------------------------------------
-        //Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
+        Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
         // SocialQs Test 2 -----------------------------------------------------------------------------------------------------------
-        Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
+        //Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
         
         
         
@@ -34,17 +34,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // SocialQs Test 1 -----------------------------------------------------------------------------------------------------------
         ////Parse.setApplicationId("nTXG2Y80Wmwf2mLlz10BG7Zg432pKAvHDFgEV2KO", clientKey: "qh3ok20M0rsOvD1JXSRkFAslJ1gtTGJuc4mwK3jF")
         
-        PFFacebookUtils.initializeFacebookWithApplicationLaunchOptions(launchOptions)
+        //PFFacebookUtils.initializeFacebookWithApplicationLaunchOptions(launchOptions)
         
         // [Optional] Track statistics around application opens.
-        PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
+        //PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
         
-        /*
         // Setup push
         var pushSettings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: UIUserNotificationType.Alert, categories: nil)
         application.registerUserNotificationSettings(pushSettings)
         application.registerForRemoteNotifications()
-        */
         
         return true
     }
@@ -56,10 +54,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     
-    /*
+    // MORE PUSH STUFFS ----------------------
     func application( application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData ) {
         
-        println("Success")
+        // Store the deviceToken in the current Installation and save it to Parse
+        let installation = PFInstallation.currentInstallation()
+        installation.setDeviceTokenFromData(deviceToken)
+        installation.saveInBackground()
         
     }
     
@@ -68,7 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         println(error)
         
     }
-    */
+    // MORE PUSH STUFFS ----------------------
+    
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

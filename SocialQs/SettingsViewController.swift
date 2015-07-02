@@ -24,9 +24,9 @@ class SettingsViewController: UIViewController {
         PFUser.logOut()
         
         // Clear username, uId and uQId locally
-        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "")
-        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "")
-        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "")
+        //NSUserDefaults.standardUserDefaults().setObject("", forKey: "myName")
+        //NSUserDefaults.standardUserDefaults().setObject("", forKey: "uId")
+        //NSUserDefaults.standardUserDefaults().setObject("", forKey: "uQId")
         
         // Switch back to welcome screen
         performSegueWithIdentifier("logout", sender: self)

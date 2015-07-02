@@ -5,7 +5,7 @@
 //  Created by Brett Wiesman on 6/19/15.
 //  Copyright (c) 2015 BookSix. All rights reserved.
 //
-
+/*
 import UIKit
 import Parse
 
@@ -60,3 +60,4 @@ class TestActiveViewController: UIViewController {
     */
 
 }
+*/

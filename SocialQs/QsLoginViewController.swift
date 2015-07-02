@@ -152,7 +152,7 @@ class QsLoginViewController: UIViewController {
             
             // Not part of test env
             myName = (PFUser.currentUser()!.username!)
-            println("Welcome " + myName)
+            //println("Welcome " + myName)
             self.performSegueWithIdentifier("signedIn", sender: self)
             
         }

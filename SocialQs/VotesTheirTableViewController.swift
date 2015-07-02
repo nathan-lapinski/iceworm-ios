@@ -37,65 +37,6 @@ class VotesTheirTableViewController: UITableViewController {
         
         //objectsArray = [Objects(sectionName: "Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1", sectionObjects: ["1", "2", "3"]), Objects(sectionName: "Section 2", sectionObjects: ["a", "b", "c"])]
         
-        
-        var votesId = ""
-        var option1Text = ""
-        var option2Text = ""
-        // PARSE ----------------------------------------------------
-        var query = PFQuery(className: "SocialQs")
-        query.whereKey("objectId", equalTo: requestedQId)
-        query.getFirstObjectInBackgroundWithBlock { (objects, error) -> Void in
-            
-            if error == nil {
-                
-                votesId = objects!["votesId"] as! String
-                option1Text = objects!["option1"] as! String
-                option2Text = objects!["option2"] as! String
-                
-                // CHANGE TO LOOK UP USERNAME FROM OBJECTID!!!
-                //
-                //
-                //
-                query = PFQuery(className: "Votes")
-                query.getObjectInBackgroundWithId(votesId, block: { (objects, error) -> Void in
-                    
-                    if objects!["vote"] != nil {
-                        if error == nil {
-                            var votes = objects!["vote"] as! [Int]
-                            var voters = objects!["voterName"] as! [String]
-                            println(voters)
-                            var voter1s = [""]
-                            var voter2s = [""]
-                            voter1s.removeAll(keepCapacity: true)
-                            voter2s.removeAll(keepCapacity: true)
-                            
-                            // Build arrays of names for each voteId (1 and 2)
-                            for var ii = 0; ii < votes.count; ii++ {
-                                if votes[ii] == 1 {
-                                    voter1s.append(voters[ii])
-                                } else {
-                                    voter2s.append(voters[ii])
-                                }
-                            }
-                            
-                            self.objectsArray = [Objects(sectionName: option1Text, sectionObjects: voter1s), Objects(sectionName: option2Text, sectionObjects: voter2s)]
-                            
-                            self.tableView.reloadData()
-                            self.tableView.reloadInputViews()
-                            
-                        } else {
-                            println("Voter retreival error")
-                            println(error)
-                        }
-                    } else {
-                        
-                        let title = "Sorry!"
-                        let message = "No one has voted on your Q yet."
-                        self.displayAlert(title, message: message)
-                    }
-                })
-            }
-        }
     }
     
     
@@ -120,6 +61,67 @@ class VotesTheirTableViewController: UITableViewController {
     
     
     override func viewWillAppear(animated: Bool) {
+        
+        var votesId = ""
+        var option1Text = ""
+        var option2Text = ""
+        
+        // PARSE ----------------------------------------------------
+        var query = PFQuery(className: "SocialQs")
+        query.whereKey("objectId", equalTo: theirRequestedQId)
+        query.getObjectInBackgroundWithId(theirRequestedQId, block: { (objects, error) -> Void in
+            
+            if error == nil {
+                
+                votesId = objects!["votesId"] as! String
+                option1Text = objects!["option1"] as! String
+                option2Text = objects!["option2"] as! String
+                
+                // CHANGE TO LOOK UP USERNAME FROM OBJECTID!!!
+                //
+                //
+                //
+                query = PFQuery(className: "Votes")
+                query.getObjectInBackgroundWithId(votesId, block: { (objects, error) -> Void in
+                    
+                    if objects!["vote"]!.count > 0 {
+                        if error == nil {
+                            var votes = objects!["vote"] as! [Int]
+                            var voters = objects!["voterName"] as! [String]
+                            var voter1s = [""]
+                            var voter2s = [""]
+                            voter1s.removeAll(keepCapacity: true)
+                            voter2s.removeAll(keepCapacity: true)
+                            
+                            // Build arrays of names for each voteId (1 and 2)
+                            for var ii = 0; ii < votes.count; ii++ {
+                                if votes[ii] == 1 {
+                                    voter1s.append(voters[ii])
+                                } else {
+                                    voter2s.append(voters[ii])
+                                }
+                            }
+                            
+                            self.objectsArray = [Objects(sectionName: option1Text, sectionObjects: voter1s), Objects(sectionName: option2Text, sectionObjects: voter2s)]
+                            
+                            self.tableView.reloadData()
+                            self.tableView.reloadInputViews()
+                            
+                        } else {
+                            println("Voter retreival error")
+                            println(error)
+                        }
+                        
+                    } else {
+                        
+                        let title = "Sorry!"
+                        let message = "No one has voted on this Q yet."
+                        self.displayAlert(title, message: message)
+                        
+                    }
+                })
+            }
+        })
     }
 
     // MARK: - Table view data source

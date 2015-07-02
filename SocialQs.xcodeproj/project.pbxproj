@@ -192,12 +192,12 @@
 				9065E3EF1B34AC8500F85D3B /* TestActiveViewController.swift */,
 				905CB19B1B31193700947487 /* TheirQuestionsCell.swift */,
 				901263161B3BA33B00AA2058 /* TheirQuestionsTableViewController.swift */,
-				90FE1F181B42E8AE005F2D68 /* VotesTheirCell.swift */,
 				90FE1F1E1B43A89F005F2D68 /* VotesMyCell.swift */,
-				90FE1F1C1B43431B005F2D68 /* VotesTheirNavigationController.swift */,
 				90FE1F201B43A91F005F2D68 /* VotesMyNavigationController.swift */,
-				90FE1F161B42E831005F2D68 /* VotesTheirTableViewController.swift */,
 				90FE1F221B43A941005F2D68 /* VotesMyTableViewController.swift */,
+				90FE1F181B42E8AE005F2D68 /* VotesTheirCell.swift */,
+				90FE1F1C1B43431B005F2D68 /* VotesTheirNavigationController.swift */,
+				90FE1F161B42E831005F2D68 /* VotesTheirTableViewController.swift */,
 				902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */,
 			);
 			path = SocialQs;
@@ -522,7 +522,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9506e38a-38a9-4029-8e45-5e378f904e17";
+				PROVISIONING_PROFILE = "979e0a71-064a-4e6f-b0a8-4ed3fcfe597a";
 				SWIFT_OBJC_BRIDGING_HEADER = "SocialQs/SocialQs-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -544,7 +544,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9506e38a-38a9-4029-8e45-5e378f904e17";
+				PROVISIONING_PROFILE = "979e0a71-064a-4e6f-b0a8-4ed3fcfe597a";
 				SWIFT_OBJC_BRIDGING_HEADER = "SocialQs/SocialQs-Bridging-Header.h";
 			};
 			name = Release;

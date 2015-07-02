@@ -58,6 +58,9 @@ class WelcomeViewController: UIViewController {
             
         }))
         
+        // Delay view of ViewController until next loop to prevent:
+        // "Warning: Attempt to present UIALertController on xViewController 
+        //           whose view is not in the window hierarchy!"
         dispatch_async(dispatch_get_main_queue(), {
             self.presentViewController(alert, animated: true, completion: nil)
             warningSeen = true
@@ -78,8 +81,16 @@ class WelcomeViewController: UIViewController {
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
             
-            myName = (PFUser.currentUser()!.username!)
+            myName = PFUser.currentUser()!.username!
             uId = PFUser.currentUser()!.objectId!
+            uQId = PFUser.currentUser()!["uQId"]! as! String
+            
+            var uQIdString = myName + "uQId"
+            if NSUserDefaults.standardUserDefaults().objectForKey(uQIdString) != nil {
+                
+                uQId = NSUserDefaults.standardUserDefaults().objectForKey(uQIdString)! as! (String)
+                
+            }
             
             self.performSegueWithIdentifier("alreadySignedIn", sender: self)
             

@@ -5,7 +5,7 @@
 //  Created by Brett Wiesman on 6/9/15.
 //  Copyright (c) 2015 BookSix. All rights reserved.
 //
-
+/*
 import UIKit
 
 class socialQuestionModel: NSObject {
@@ -24,3 +24,4 @@ class socialQuestionModel: NSObject {
     */
    
 }
+*/

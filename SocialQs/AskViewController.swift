@@ -50,22 +50,16 @@ class AskViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func submitButtonAction(sender: AnyObject) {
         
-        //myQuestion.questionText = questionTextField.text
-        //myQuestion.option1Text = option1TextField.text
-        //myQuestion.option2Text = option2TextField.text
-        
         if questionTextField.text == "" || option1TextField.text == "" || option2TextField.text == "" {
             
-            let title = "Well that was silly!"
-            let message = "You need to provide a Q and two options!"
-            displayAlert(title, message: message)
             
         } else {
         
             // PARSE -------------------------------------------------------------
-            // Add to "Votes Table"
+            
+            // Add to "Votes Table" ----------------
             var votes = PFObject(className: "Votes")
-            //votes[""] // Stats???
+            
             votes.saveInBackgroundWithBlock({ (success, error) -> Void in
                 
                 if error == nil {
@@ -84,19 +78,47 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                     socialQ["option2"] = self.option2TextField.text
                     socialQ["stats1"] = 0
                     socialQ["stats2"] = 0
-                    //------------
-                    // socialQ["privacyOptions"] = ???
-                    //------------
+                    socialQ["privacyOptions"] = 1
                     socialQ["askerId"] = PFUser.currentUser()!.objectId!
                     // Continue to use "askername" - username change will require the app to filter through questions and change the "username" entry
+                    //
+                    //
+                    //
                     socialQ["askername"] = PFUser.currentUser()!["username"]
                     socialQ["votesId"] = votes.objectId!
                     
                     socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
                         
+                        var qId = socialQ.objectId!
+                        
                         if error == nil {
                             
-                            var qId = socialQ.objectId!
+                            // Add qId to "UserQs" table
+                            var userQsQuery = PFQuery(className: "UserQs")
+                            //userQsQuery.whereKey("objectId", equalTo: uQId)
+                            userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
+                                
+                                if error == nil {
+                                    if let temp = userQsObjects {
+                                        for userQsObject in temp {
+                                            
+                                            if userQsObject.objectId!! != uQId { // Append qId to theirQs within UserQs table
+                                                userQsObject.addObject(qId, forKey: "theirQsId")
+                                                userQsObject.saveInBackground()
+                                            } else { // Append qId to myQs within UserQs table
+                                                userQsObject.addObject(qId, forKey: "myQsId")
+                                                userQsObject.saveInBackground()
+                                            }
+                                        }
+                                    
+                                } else {
+                                        
+                                    println("Error updating UserQs Table")
+                                    println(error)
+                            
+                                }
+                            }
+                        })
                             
                             // Reset all fields after submitting
                             self.questionTextField.text = ""
@@ -108,10 +130,21 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                             self.option1TextField.resignFirstResponder()
                             self.option2TextField.resignFirstResponder()
                             
+                            // SEND PUSH NOTIFICATION ------------------------------------------------
+                            var push = PFPush()
+                            push.setMessage("You've receieved a new Q from \(myName)")
+                            push.sendPushInBackgroundWithBlock { (success, error) -> Void in }
+                            // SEND PUSH NOTIFICATION ------------------------------------------------
+                            
                             
                             // Switch to results tab when question is submitted
                             // - Had to make storyboard ID for the tabBarController = "tabBarController"
                             self.tabBarController?.selectedIndex = 1
+                            
+                        } else {
+                            
+                            println("Write to SocialQs Table error:")
+                            println(error)
                             
                         }
                     }

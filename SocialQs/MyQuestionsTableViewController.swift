@@ -58,7 +58,7 @@ class MyQuestionsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
-            requestedQId = self.questionIds[indexPath.row]
+            myRequestedQId = self.questionIds[indexPath.row]
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 

@@ -41,6 +41,7 @@ var dismissedTheirQuestions = [String]() // questions ANSWERED by current user
 var deletedTheirQuestions = [String]() // questions DELETED by current user
 
 // Value for passing qId to results display
-var requestedQId = ""
+var myRequestedQId = ""
+var theirRequestedQId = ""
 
 var warningSeen = false
