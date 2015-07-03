@@ -13,6 +13,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
     
     //var myQuestion = socialQuestionModel()
     //var warnComplete = false
+    var activityIndicator = UIActivityIndicatorView()
     
     @IBOutlet var whatIsQuestionTextField: UILabel!
     @IBOutlet var whatAreOptionsTextField: UILabel!
@@ -54,9 +55,18 @@ class AskViewController: UIViewController, UITextFieldDelegate {
             
             
         } else {
-        
-            // PARSE -------------------------------------------------------------
             
+            // Setup spinner and block application input
+            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+            activityIndicator.center = self.view.center
+            activityIndicator.hidesWhenStopped = true
+            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+            view.addSubview(activityIndicator)
+            activityIndicator.startAnimating()
+            UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        
+            
+            // PARSE -------------------------------------------------------------
             // Add to "Votes Table" ----------------
             var votes = PFObject(className: "Votes")
             
@@ -132,9 +142,23 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                             
                             // SEND PUSH NOTIFICATION ------------------------------------------------
                             var push = PFPush()
-                            push.setMessage("You've receieved a new Q from \(myName)")
-                            push.sendPushInBackgroundWithBlock { (success, error) -> Void in }
+                            
+                            // Set push channel to equal qId
+                            //push.setChannel(qId)
+                            
+                            //var data: Dictionary = ["alert":"", "badge":"0", "content-available":"1", "sound":""]
+                            
+                            //push.setData(data)
+                            push.setMessage("You've received a new Q from \(myName)!")
+                            push.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                                println("Push notification sent!")
+                            })
                             // SEND PUSH NOTIFICATION ------------------------------------------------
+                            
+                            
+                            // Unlock application interaction and halt spinner
+                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                            self.activityIndicator.stopAnimating()
                             
                             
                             // Switch to results tab when question is submitted

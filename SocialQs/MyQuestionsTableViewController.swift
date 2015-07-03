@@ -124,7 +124,7 @@ class MyQuestionsTableViewController: UITableViewController {
         }
         
         /*
-        // Setup spinner and black application input
+        // Setup spinner and block application input
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true

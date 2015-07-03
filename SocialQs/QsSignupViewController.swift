@@ -105,6 +105,16 @@ class QsSignupViewController: UIViewController {
                                     // Release app input block
                                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                     
+                                    
+                                    //****************************
+                                    // Register user for push notifications
+                                    var installation = PFInstallation.currentInstallation()
+                                    //installation.addUniqueObject(<#object: AnyObject#>, forKey: <#String#>)
+                                    installation["userId"] = PFUser.currentUser()?.objectId!
+                                    installation.saveInBackground()
+                                    //****************************
+                                    
+                                    
                                     // Segue "ask" tab
                                     self.performSegueWithIdentifier("signedUp", sender: self)
                                     
@@ -170,12 +180,6 @@ class QsSignupViewController: UIViewController {
         performSegueWithIdentifier("cancelSignUp", sender: self)
         
     }
-    
-    
-    override func viewWillAppear(animated: Bool) {
-        
-    }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()

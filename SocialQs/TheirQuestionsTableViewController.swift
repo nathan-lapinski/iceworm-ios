@@ -25,7 +25,7 @@ class TheirQuestionsTableViewController: UITableViewController {
     var deletedTheirStorageKey = myName + "deletedTheirPermanent"
     var myVotesStorageKey = myName + "votes"
     var refresher: UIRefreshControl!
-    //var activityIndicator = UIActivityIndicatorView()
+    var activityIndicator = UIActivityIndicatorView()
     
     
     @IBAction func voteOption1(sender: AnyObject) {
@@ -44,6 +44,15 @@ class TheirQuestionsTableViewController: UITableViewController {
     
     // Function to process the casting of votes
     func castVote(questionId: Int, optionId: Int) {
+        
+        // Setup spinner and black application input
+        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
         var voteId = "stats\(optionId)" // remove??
         
@@ -116,28 +125,10 @@ class TheirQuestionsTableViewController: UITableViewController {
                         })
                         
                         
-                        /*
-                        votesQuery.getObjectInBackgroundWithId(vId, block: { (voteObject, error) -> Void in
-                            
-                            if error == nil {
-                            
-                                println("Doing votey stuffs")
-                                
-                                voteObject!.addObject([uId], forKey: "voterId")
-                                voteObject!.addObject([myName], forKey: "voterName")
-                                voteObject!.addObject([optionId], forKey: "vote")
-                                
-                                // Store updated array locally
-                                self.dismissedQuestions.append(questionObject.objectId!!)
-                                NSUserDefaults.standardUserDefaults().setObject(self.dismissedQuestions, forKey: self.dismissedStorageKey)
-                                
-                            }
-                        })
-                        */
-                        
-                        
                         // REMOVE THIS AND REWORK TABLE UPDATE MATH TO USE "VOTES" TABLE + VOTE[INT]
                         // Increment vote counter ---------------------------------
+                        // NOTE: This doesn't have to be nested in the previous (votes table) as displaying
+                        // results is not dependent on logging the userQs table - only on filling the SocialQs table
                         var statsQuery = PFQuery(className: "SocialQs")
                         
                         statsQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (object, error) -> Void in
@@ -145,12 +136,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                             object!.incrementKey(voteId)
                             object!.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
                                 
-                                if (success) { // The score key has been incremented
-                                    
-                                    //println("reloading table")
-                                    //self.tableView.reloadData()
-                                    //self.tableView.reloadInputViews()
-                                    
+                                if (success) { // The score key has been incremented\
                                     
                                     // ---------------------------------------------------------------------------------------------------------------
                                     // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
@@ -166,6 +152,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                                             // Update table row
                                             var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
                                             self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                                            
+                                            self.activityIndicator.stopAnimating()
+                                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
 
                                             
                                         }
@@ -176,6 +165,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                                     
                                     println("Increment error:")
                                     println(error)
+                                    
+                                    self.activityIndicator.stopAnimating()
+                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                     
                                 }
                             }
@@ -394,10 +386,10 @@ class TheirQuestionsTableViewController: UITableViewController {
                 //cell.bar2Width.constant = width2/10000
                 //cell.layoutIfNeeded()
                 
-                //width1 = maxBarWidth
-                //width2 = maxBarWidth
-                //cell.option1ImageView.backgroundColor = winColor
-                //cell.option2ImageView.backgroundColor = winColor
+                width1 = maxBarWidth
+                width2 = maxBarWidth
+                cell.option1ImageView.backgroundColor = winColor
+                cell.option2ImageView.backgroundColor = winColor
                 
             }
             
@@ -500,17 +492,6 @@ class TheirQuestionsTableViewController: UITableViewController {
             
         }
         // MAKE FUNCTION -----------------------------------------------------------
-        
-        /*
-        // Setup spinner and black application input
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        //UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-        */
         
         // Manually call refresh upon loading to get most up to datest datas
         refresh()

@@ -47,10 +47,10 @@
 		90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */; };
 		90FE1F171B42E831005F2D68 /* VotesTheirTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F161B42E831005F2D68 /* VotesTheirTableViewController.swift */; };
 		90FE1F191B42E8AE005F2D68 /* VotesTheirCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F181B42E8AE005F2D68 /* VotesTheirCell.swift */; };
-		90FE1F1D1B43431B005F2D68 /* VotesTheirNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F1C1B43431B005F2D68 /* VotesTheirNavigationController.swift */; };
 		90FE1F1F1B43A89F005F2D68 /* VotesMyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F1E1B43A89F005F2D68 /* VotesMyCell.swift */; };
 		90FE1F211B43A91F005F2D68 /* VotesMyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F201B43A91F005F2D68 /* VotesMyNavigationController.swift */; };
 		90FE1F231B43A941005F2D68 /* VotesMyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F221B43A941005F2D68 /* VotesMyTableViewController.swift */; };
+		90FE1F271B463755005F2D68 /* VotesTheirNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F261B463755005F2D68 /* VotesTheirNavigationController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,10 +109,10 @@
 		90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = socialQuestionModel.swift; sourceTree = "<group>"; };
 		90FE1F161B42E831005F2D68 /* VotesTheirTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesTheirTableViewController.swift; sourceTree = "<group>"; };
 		90FE1F181B42E8AE005F2D68 /* VotesTheirCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesTheirCell.swift; sourceTree = "<group>"; };
-		90FE1F1C1B43431B005F2D68 /* VotesTheirNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VotesTheirNavigationController.swift; path = ../VotesTheirNavigationController.swift; sourceTree = "<group>"; };
 		90FE1F1E1B43A89F005F2D68 /* VotesMyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesMyCell.swift; sourceTree = "<group>"; };
 		90FE1F201B43A91F005F2D68 /* VotesMyNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesMyNavigationController.swift; sourceTree = "<group>"; };
 		90FE1F221B43A941005F2D68 /* VotesMyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesMyTableViewController.swift; sourceTree = "<group>"; };
+		90FE1F261B463755005F2D68 /* VotesTheirNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesTheirNavigationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,7 +196,7 @@
 				90FE1F201B43A91F005F2D68 /* VotesMyNavigationController.swift */,
 				90FE1F221B43A941005F2D68 /* VotesMyTableViewController.swift */,
 				90FE1F181B42E8AE005F2D68 /* VotesTheirCell.swift */,
-				90FE1F1C1B43431B005F2D68 /* VotesTheirNavigationController.swift */,
+				90FE1F261B463755005F2D68 /* VotesTheirNavigationController.swift */,
 				90FE1F161B42E831005F2D68 /* VotesTheirTableViewController.swift */,
 				902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */,
 			);
@@ -367,6 +367,7 @@
 				90FE1F171B42E831005F2D68 /* VotesTheirTableViewController.swift in Sources */,
 				9065E3F01B34AC8500F85D3B /* TestActiveViewController.swift in Sources */,
 				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,
+				90FE1F271B463755005F2D68 /* VotesTheirNavigationController.swift in Sources */,
 				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
 				904123041B26A67C00397132 /* AskViewController.swift in Sources */,
@@ -381,7 +382,6 @@
 				90FE1F191B42E8AE005F2D68 /* VotesTheirCell.swift in Sources */,
 				905CB19C1B31193700947487 /* TheirQuestionsCell.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,
-				90FE1F1D1B43431B005F2D68 /* VotesTheirNavigationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,8 +511,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Brett Wiesman (G2GNJP8DZS)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brett Wiesman (G2GNJP8DZS)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Brett Wiesman (7GUCS6C8B3)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Brett Wiesman (7GUCS6C8B3)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -522,9 +522,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "979e0a71-064a-4e6f-b0a8-4ed3fcfe597a";
+				PROVISIONING_PROFILE = "20c2c96f-b5dc-4bf5-bddc-45e86cf20b91";
 				SWIFT_OBJC_BRIDGING_HEADER = "SocialQs/SocialQs-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VALIDATE_PRODUCT = NO;
 			};
 			name = Debug;
 		};
@@ -533,8 +534,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Brett Wiesman (G2GNJP8DZS)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Brett Wiesman (G2GNJP8DZS)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Brett Wiesman (7GUCS6C8B3)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Brett Wiesman (7GUCS6C8B3)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -544,7 +545,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "979e0a71-064a-4e6f-b0a8-4ed3fcfe597a";
+				PROVISIONING_PROFILE = "20c2c96f-b5dc-4bf5-bddc-45e86cf20b91";
 				SWIFT_OBJC_BRIDGING_HEADER = "SocialQs/SocialQs-Bridging-Header.h";
 			};
 			name = Release;

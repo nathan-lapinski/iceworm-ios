@@ -17,7 +17,6 @@ class TheirQuestionsCell: UITableViewCell {
     // Cell1
     @IBOutlet var option1: UIButton!
     @IBOutlet var option2: UIButton!
-    //@IBOutlet var results: UIButton!
     
     // Cell2
     @IBOutlet var option1ImageView: UIImageView!

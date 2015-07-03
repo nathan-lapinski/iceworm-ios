@@ -27,10 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
         
         
-        
-        
-        
-        
         // SocialQs Test 1 -----------------------------------------------------------------------------------------------------------
         ////Parse.setApplicationId("nTXG2Y80Wmwf2mLlz10BG7Zg432pKAvHDFgEV2KO", clientKey: "qh3ok20M0rsOvD1JXSRkFAslJ1gtTGJuc4mwK3jF")
         
@@ -40,21 +36,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
         
         // Setup push
-        var pushSettings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: UIUserNotificationType.Alert, categories: nil)
-        application.registerUserNotificationSettings(pushSettings)
+        let userNotificationTypes = (UIUserNotificationType.Alert |  UIUserNotificationType.Badge |  UIUserNotificationType.Sound);
+        let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
+        application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
         
         return true
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
-        
         return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
-        
     }
 
     
     // MORE PUSH STUFFS ----------------------
+    func application(application: UIApplication, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings) {
+        
+        UIApplication.sharedApplication().registerForRemoteNotifications()
+        
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        
+        var temp: NSDictionary = userInfo as NSDictionary
+        var notification: NSDictionary = temp.objectForKey("aps") as! NSDictionary
+        
+        if (notification.objectForKey("content-available") != nil) {
+            
+            if (notification.objectForKey("content-available")?.isEqualToNumber(1) != nil) {
+                // Then this is a silent notification - post local notification
+                // This can be used to trigger a function and reload data within the app when a push is recieved
+                NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil)
+                
+            } else {
+                // Else this is a standard notification - standard display of push message/badge/alertview
+                PFPush.handlePush(userInfo)
+                
+            }
+        }
+    }
+    
     func application( application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData ) {
         
         // Store the deviceToken in the current Installation and save it to Parse
@@ -62,6 +83,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         installation.setDeviceTokenFromData(deviceToken)
         installation.saveInBackground()
         
+        println("Push setup successful")
+
     }
     
     func application( application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError ) {
