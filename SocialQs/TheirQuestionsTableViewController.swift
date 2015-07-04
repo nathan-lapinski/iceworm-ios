@@ -287,6 +287,14 @@ class TheirQuestionsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Reload data upon first entry to view
+        refresh()
+        
+        
+        // PUSH - Set up the reload to trigger off the push for "reloadTable"
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
+        
+        
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
         refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -475,26 +483,25 @@ class TheirQuestionsTableViewController: UITableViewController {
         // MAKE FUNCTION -----------------------------------------------------------
         // Recall deleted/dismissed data
         if NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey) != nil {
-            
             deletedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey)! as! [(String)]
-            
         }
         
         if NSUserDefaults.standardUserDefaults().objectForKey(dismissedTheirStorageKey) != nil {
-            
             dismissedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(dismissedTheirStorageKey)! as! [(String)]
-            
         }
         
         if NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey) != nil {
-            
             myVotes = NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey)! as! Dictionary
-            
         }
         // MAKE FUNCTION -----------------------------------------------------------
         
+        
+        
+        // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
-        refresh()
+        // - this needs to be skipped when push is allowed and used when push has been declined
+        //refresh()
+        // **********************************************************************************************
         
     }
     

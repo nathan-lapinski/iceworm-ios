@@ -143,16 +143,24 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                             // SEND PUSH NOTIFICATION ------------------------------------------------
                             var push = PFPush()
                             
-                            // Set push channel to equal qId
+                            // Set push channel to equal qId - this step creates a new channel for each new Q
+                            // Then, based on who the Q is sent to the app will subscribe those users to this 
+                            // channel, resulting in directed pushes for each Q
+                            // NOTE: this should default to ALL users for testing
                             //push.setChannel(qId)
+                            push.setChannel("reloadTheirTable")
                             
-                            //var data: Dictionary = ["alert":"", "badge":"0", "content-available":"1", "sound":""]
+                            // Create dictionary to send JSON to parse/to other devices
+                            var data: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
                             
-                            //push.setData(data)
-                            push.setMessage("You've received a new Q from \(myName)!")
+                            push.setData(data)
+                            //push.setMessage("You've received a new Q from \(myName)!")
                             push.sendPushInBackgroundWithBlock({ (success, error) -> Void in
                                 println("Push notification sent!")
                             })
+                            
+                            // Subscribe users - For now, only subscribe BRETT
+                            
                             // SEND PUSH NOTIFICATION ------------------------------------------------
                             
                             
@@ -222,6 +230,26 @@ class AskViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        //println("Subscribing to reloadTable for \(myName)")
+        //****************************
+        // Register user for push notifications
+        var installation = PFInstallation.currentInstallation()
+        installation.addUniqueObject("reloadTheirTable", forKey: "channels")
+        //installation["user"] = PFUser.currentUser()//?.objectId!
+        installation.saveInBackgroundWithBlock { (success, error) -> Void in
+            
+            if error == nil {
+                println("Installation Success")
+                println(success)
+            } else {
+                println("Installation Error")
+                println(error)
+            }
+        }
+        //****************************
+        //println("Finished subscribing to reloadTable for \(myName)")
+        
         
         //if warnComplete == false {
             /*

@@ -106,15 +106,6 @@ class QsSignupViewController: UIViewController {
                                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                     
                                     
-                                    //****************************
-                                    // Register user for push notifications
-                                    var installation = PFInstallation.currentInstallation()
-                                    //installation.addUniqueObject(<#object: AnyObject#>, forKey: <#String#>)
-                                    installation["userId"] = PFUser.currentUser()?.objectId!
-                                    installation.saveInBackground()
-                                    //****************************
-                                    
-                                    
                                     // Segue "ask" tab
                                     self.performSegueWithIdentifier("signedUp", sender: self)
                                     

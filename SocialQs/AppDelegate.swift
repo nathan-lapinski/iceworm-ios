@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
         
         // Setup push
-        let userNotificationTypes = (UIUserNotificationType.Alert |  UIUserNotificationType.Badge |  UIUserNotificationType.Sound);
+        let userNotificationTypes = (UIUserNotificationType.Alert |  UIUserNotificationType.Badge |  UIUserNotificationType.Sound)
         let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
@@ -44,46 +44,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    /*
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
         return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
     }
-
+    */
     
     // MORE PUSH STUFFS ----------------------
     func application(application: UIApplication, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings) {
-        
         UIApplication.sharedApplication().registerForRemoteNotifications()
-        
     }
+    
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         
         var temp: NSDictionary = userInfo as NSDictionary
         var notification: NSDictionary = temp.objectForKey("aps") as! NSDictionary
         
+        println("-------NOTIFICATION-------")
+        println(notification)
+        println("-------NOTIFICATION-------")
+        
+        println((notification.objectForKey("content-available")) != nil)
+        
         if (notification.objectForKey("content-available") != nil) {
             
+            // if equal to one, silent notification is telling us there is a new Q
             if (notification.objectForKey("content-available")?.isEqualToNumber(1) != nil) {
                 // Then this is a silent notification - post local notification
                 // This can be used to trigger a function and reload data within the app when a push is recieved
-                NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil)
-                
+                NSNotificationCenter.defaultCenter().postNotificationName("reloadTheirTable", object: nil)
+                println("content-available")
             } else {
                 // Else this is a standard notification - standard display of push message/badge/alertview
+                // ie: we can set "content-available" to nil and make the push a standard message or some shit
                 PFPush.handlePush(userInfo)
-                
+                println("Standard Push")
             }
         }
     }
     
+    
     func application( application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData ) {
         
         // Store the deviceToken in the current Installation and save it to Parse
+        // This lets parse know which user is using which device(s) so it knows where to send pushes
         let installation = PFInstallation.currentInstallation()
         installation.setDeviceTokenFromData(deviceToken)
         installation.saveInBackground()
         
-        println("Push setup successful")
+        println("AppDelegate")
+        println(installation)
 
     }
     
