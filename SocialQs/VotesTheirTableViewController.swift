@@ -68,7 +68,7 @@ class VotesTheirTableViewController: UITableViewController {
         
         // PARSE ----------------------------------------------------
         var query = PFQuery(className: "SocialQs")
-        query.whereKey("objectId", equalTo: theirRequestedQId)
+        //query.whereKey("objectId", equalTo: theirRequestedQId)
         query.getObjectInBackgroundWithId(theirRequestedQId, block: { (objects, error) -> Void in
             
             if error == nil {
@@ -84,41 +84,48 @@ class VotesTheirTableViewController: UITableViewController {
                 query = PFQuery(className: "Votes")
                 query.getObjectInBackgroundWithId(votesId, block: { (objects, error) -> Void in
                     
-                    if objects!["vote"]!.count > 0 {
-                        if error == nil {
-                            var votes = objects!["vote"] as! [Int]
-                            var voters = objects!["voterName"] as! [String]
-                            var voter1s = [""]
-                            var voter2s = [""]
-                            voter1s.removeAll(keepCapacity: true)
-                            voter2s.removeAll(keepCapacity: true)
-                            
-                            // Build arrays of names for each voteId (1 and 2)
-                            for var ii = 0; ii < votes.count; ii++ {
-                                if votes[ii] == 1 {
-                                    voter1s.append(voters[ii])
-                                } else {
-                                    voter2s.append(voters[ii])
-                                }
-                            }
-                            
-                            self.objectsArray = [Objects(sectionName: option1Text, sectionObjects: voter1s), Objects(sectionName: option2Text, sectionObjects: voter2s)]
-                            
-                            self.tableView.reloadData()
-                            self.tableView.reloadInputViews()
-                            
-                        } else {
-                            println("Voter retreival error")
-                            println(error)
+                    if error == nil {
+                        
+                        var voter1s = [""]
+                        var voter2s = [""]
+                        voter1s.removeAll(keepCapacity: true)
+                        voter2s.removeAll(keepCapacity: true)
+                        
+                        // Fill voter1 array - use "?" as it may not exist
+                        if objects!["option1VoterName"]?.count > 0 {
+                            voter1s = objects!["option1VoterName"] as! [String]
                         }
                         
+                        // Fill voter2 array - use "?" as it may not exist
+                        if objects!["option2VoterName"]?.count > 0 {
+                            voter2s = objects!["option2VoterName"] as! [String]
+                        }
+                        
+                        // Build table view objects
+                        if voter1s.count > 0 && voter2s.count > 0 {
+                            self.objectsArray = [Objects(sectionName: option1Text, sectionObjects: voter1s), Objects(sectionName: option2Text, sectionObjects: voter2s)]
+                        } else if voter1s.count > 0 && voter2s.count < 1 {
+                            self.objectsArray = [Objects(sectionName: option1Text, sectionObjects: voter1s)]
+                        } else if voter1s.count < 1 && voter2s.count > 0 {
+                            self.objectsArray = [Objects(sectionName: option2Text, sectionObjects: voter2s)]
+                        }
+                        
+                        // Reload table data
+                        self.tableView.reloadData()
+                        self.tableView.reloadInputViews()
+                        
                     } else {
-                        
-                        let title = "Sorry!"
-                        let message = "No one has voted on this Q yet."
-                        self.displayAlert(title, message: message)
-                        
+                        println("Voter retreival error")
+                        println(error)
                     }
+                    
+                        //} else {
+                        //
+                        //    let title = "Sorry!"
+                        //    let message = "No one has voted on this Q yet."
+                        //    self.displayAlert(title, message: message)
+                        //
+                    //}
                 })
             }
         })

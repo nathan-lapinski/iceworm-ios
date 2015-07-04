@@ -49,8 +49,6 @@ class MyQuestionsTableViewController: UITableViewController {
     }
     
     
-    
-    
     // Swipe to display options functions ----------------------------------------------------------------------------------
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         
@@ -63,10 +61,7 @@ class MyQuestionsTableViewController: UITableViewController {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
                 self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
-                
             })
-            
-            
         }
         view.backgroundColor = UIColor.orangeColor()
         
@@ -78,7 +73,6 @@ class MyQuestionsTableViewController: UITableViewController {
         
         
         let trash = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Trash") { (action, index) -> Void in
-        //let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
             
             self.deletedMyQuestions.append(self.questionIds[indexPath.row])
             
@@ -123,20 +117,8 @@ class MyQuestionsTableViewController: UITableViewController {
             
         }
         
-        /*
-        // Setup spinner and block application input
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        //UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-        */
-        
         // Manually call refresh upon loading to get most up to datest datas
         refresh()
-        
     }
     
     
@@ -147,55 +129,55 @@ class MyQuestionsTableViewController: UITableViewController {
         
         // Sort by newest created-date first
         getSocialQsQuery.orderByDescending("createdAt")
+        // Filter to only get MY Qs
         getSocialQsQuery.whereKey("askername", equalTo: myName)
+        // Filter off Qs I've deleted from my view
+        getSocialQsQuery.whereKey("objectId", notContainedIn: deletedMyQuestions)
+        // Set query limit to max
         getSocialQsQuery.limit = 1000
-        
+        // Pull objects
         getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
             
-            if let questionTemp = questionObjects {
-                
-                self.questions.removeAll(keepCapacity: true)
-                self.questionIds.removeAll(keepCapacity: true)
-                self.option1s.removeAll(keepCapacity: true)
-                self.option2s.removeAll(keepCapacity: true)
-                self.option1Stats.removeAll(keepCapacity: true)
-                self.option2Stats.removeAll(keepCapacity: true)
-                
-                for questionObject in questionTemp {
+            if error == nil {
+                if let questionTemp = questionObjects {
                     
-                    // Filter out DELETED questions - use a whereKey instead??
-                    //
-                    //
-                    //
-                    if contains(self.deletedMyQuestions, questionObject.objectId!!) == false ||
-                        self.deletedMyQuestions.count == 0 {
-                            
-                            self.questions.append(questionObject["question"] as! String)
-                            self.questionIds.append(questionObject.objectId!!)
-                            self.option1s.append(questionObject["option1"] as! String)
-                            self.option2s.append(questionObject["option2"] as! String)
-                            self.option1Stats.append(questionObject["stats1"] as! Int)
-                            self.option2Stats.append(questionObject["stats2"] as! Int)
-                            
-                    }
+                    self.questions.removeAll(keepCapacity: true)
+                    self.questionIds.removeAll(keepCapacity: true)
+                    self.option1s.removeAll(keepCapacity: true)
+                    self.option2s.removeAll(keepCapacity: true)
+                    self.option1Stats.removeAll(keepCapacity: true)
+                    self.option2Stats.removeAll(keepCapacity: true)
                     
-                    // Ensure all queries have completed THEN refresh the table!
-                    if self.questions.count == self.option2Stats.count {
+                    for questionObject in questionTemp {
                         
-                        self.tableView.reloadData()
-                        self.tableView.reloadInputViews()
+                        self.questions.append(questionObject["question"] as! String)
+                        self.questionIds.append(questionObject.objectId!!)
+                        self.option1s.append(questionObject["option1"] as! String)
+                        self.option2s.append(questionObject["option2"] as! String)
+                        self.option1Stats.append(questionObject["stats1"] as! Int)
+                        self.option2Stats.append(questionObject["stats2"] as! Int)
                         
-                        // Kill refresher when query finished
-                        self.refresher.endRefreshing()
-                        
-                        // Stop animation - hides when stopped (above) hides spinner automatically
-                        //self.activityIndicator.stopAnimating()
-                        
-                        // Release app input
-                        //UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                        
+                        // Ensure all queries have completed THEN refresh the table!
+                        if self.questions.count == self.option2Stats.count {
+                            
+                            self.tableView.reloadData()
+                            self.tableView.reloadInputViews()
+                            
+                            // Kill refresher when query finished
+                            self.refresher.endRefreshing()
+                            
+                            // Stop animation - hides when stopped (above) hides spinner automatically
+                            //self.activityIndicator.stopAnimating()
+                            
+                            // Release app input
+                            //UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                            
+                        }
                     }
                 }
+            } else {
+                println("SocialQs Table Error")
+                println(error)
             }
         }
     }
@@ -209,14 +191,10 @@ class MyQuestionsTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
-        // Return the number of sections.
         return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete method implementation.
-        // Return the number of rows in the section.
         return questions.count
     }
 
@@ -252,7 +230,6 @@ class MyQuestionsTableViewController: UITableViewController {
             
             option1Percent = Float(option1Stats[indexPath.row])/Float(totalResponses)*100
             option2Percent = Float(option2Stats[indexPath.row])/Float(totalResponses)*100
-            
         }
         
         myCell.question.text = questions[indexPath.row]
@@ -296,68 +273,6 @@ class MyQuestionsTableViewController: UITableViewController {
     }
     
     
-    /*
-    // Interaction when tapping on row (ie: view results)
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        // Get cell that has been tapped on
-        var cell: UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
-        
-        
-        
-        let followedObjectId = userids[indexPath.row]
-        
-        // Check if already following and UNFOLLOW instead
-        if isFollowing[followedObjectId] == false {
-            
-            isFollowing[followedObjectId] = true
-            
-            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-            
-            var follow = PFObject(className: "Follow")
-            follow["following"] = userids[indexPath.row]
-            follow["follower"] = PFUser.currentUser()?.objectId
-            
-            // This has to be here or the "delete" section creates an empty entry in the DB
-            follow.saveInBackground()
-            
-        } else {
-            
-            isFollowing[followedObjectId] = false
-            
-            cell.accessoryType = UITableViewCellAccessoryType.None
-            
-            // Check if this user is being following by the current user
-            var query = PFQuery(className: "Follow")
-            
-            // Set query keys
-            // Error here was from the login check not functioning properly, so
-            // we reached this point even though we weren't logged in
-            query.whereKey("follower", equalTo: PFUser.currentUser()!.objectId!)
-            query.whereKey("following", equalTo: userids[indexPath.row])
-            
-            // This happen in random order, so we can't guarantee the results will
-            // match the local arrays that determine who is following whom! (username/userids)
-            query.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-                
-                // if objects = objects it must be the case that this user is being followed
-                if let temp = objects {
-                    
-                    for object in temp {
-                        
-                        object.deleteInBackground()
-                        
-                    }
-                }
-            })
-        }
-    
-        
-        
-    }
-    */
-    
-
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {

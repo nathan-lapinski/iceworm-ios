@@ -69,6 +69,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
             // PARSE -------------------------------------------------------------
             // Add to "Votes Table" ----------------
             var votes = PFObject(className: "Votes")
+            //votes["votes"] = Dictionary<String, String>()
             
             votes.saveInBackgroundWithBlock({ (success, error) -> Void in
                 
