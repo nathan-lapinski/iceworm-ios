@@ -12,7 +12,6 @@ import Parse
 class TheirQuestionsTableViewController: UITableViewController {
     
     var questionIds = [String]()
-    var vIds = [String]()
     var questions = [String]()
     var option1s = [String]()
     var option2s = [String]()
@@ -115,11 +114,8 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 
                                 // BRING BACK WHEN CHANGING STATS COMPUTATION LOGIC
                                 // Update table row
-                                var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
-                                self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
-                                
-                                self.activityIndicator.stopAnimating()
-                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                                //self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
                                 
                             } else {
                                 
@@ -129,6 +125,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                             }
                             
                         })
+                        
                         
                         // Update data in UserQs table (store on what Qs user already voted )
                         var userQsQuery = PFQuery(className: "UserQs")
@@ -141,36 +138,24 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOnId")
                                 userQsObjects!.saveInBackground()
                                 
-                                
-                                
                                 /*
                                 // ---------------------------------------------------------------------------------------------------------------
                                 // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
-                                var singleQuery = PFQuery(className: "Votes")
+                                var singleQuery = PFQuery(className: "SocialQs")
                                 
-                                singleQuery.getObjectInBackgroundWithId(vId, block: { (singleObjects, singleError) -> Void in
-                                    
-                                    println(singleObjects)
+                                singleQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (singleObjects, singleError) -> Void in
                                     
                                     if let singleIndex = find(self.questionIds, questionObject.objectId!!) {
                                         
-                                        if let temp1 = singleObjects!["option1VoterName"] as? [String] {
-                                            self.option1Stats[singleIndex] = temp1.count
-                                        } else {
-                                            self.option1Stats[singleIndex] = 0
-                                        }
-                                        if let temp2 = singleObjects!["option2VoterName"] as? [String] {
-                                            self.option2Stats[singleIndex] = temp2.count
-                                        } else {
-                                            self.option2Stats[singleIndex] = 0
-                                        }
+                                        self.option1Stats[singleIndex] = singleObjects!["stats1"]! as! Int
+                                        self.option2Stats[singleIndex] = singleObjects!["stats2"]! as! Int
                                         
                                         // Update table row
-                                        //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
-                                        //self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                                        var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
                                         
-                                        //self.activityIndicator.stopAnimating()
-                                        //UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                        self.activityIndicator.stopAnimating()
+                                        UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                         
                                     }
                                 })
@@ -180,8 +165,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                             }
                         })
                         
-                        /*
-                        // REMOVE THIS AND REWORK TABLE UPDATE MATH TO USE "VOTES" TABLE + VOTE[INT]
+                        
                         // Increment vote counter ---------------------------------
                         // NOTE: This doesn't have to be nested in the previous (votes table) as displaying
                         // results is not dependent on logging the userQs table - only on filling the SocialQs table
@@ -228,8 +212,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 }
                             }
                         })
-                        // REMOVE THIS AND REWORK TABLE UPDATE MATH TO USE "VOTES" TABLE + VOTE[INT]
-                        */
+                        
                     }
                 }
                 
@@ -408,12 +391,6 @@ class TheirQuestionsTableViewController: UITableViewController {
             var width1 = maxBarWidth //cell.option1ImageView.bounds.width
             var width2 = maxBarWidth //cell.option2ImageView.bounds.width
             
-            //println(option1Stats)
-            //println(option2Stats)
-            //println(indexPath.row)
-            
-            
-            
             var totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
             var option1Percent = Float(0.0)
             var option2Percent = Float(0.0)
@@ -430,7 +407,11 @@ class TheirQuestionsTableViewController: UITableViewController {
             cell.option2Text.text = option2s[indexPath.row] + "  \(Int(option2Percent))%"
             
             var resp = "responses"
-            if totalResponses == 1 { resp = "response" }
+            if totalResponses == 1 {
+                
+                resp = "response"
+                
+            }
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
@@ -571,20 +552,25 @@ class TheirQuestionsTableViewController: UITableViewController {
     func refresh() {
         
         var getSocialQsQuery = PFQuery(className: "SocialQs")
+        
         // Sort by newest created-date first
         getSocialQsQuery.orderByDescending("createdAt")
-        // Implement the following whereKey to filter myQs OUT of this list
+        
+        // implement the following whereKey to filter myQs OUT of this list
         getSocialQsQuery.whereKey("askername", notEqualTo: myName)
-        // Add whereKey for deleted Qs here
-        getSocialQsQuery.whereKey("objectId", notContainedIn: deletedMyQuestions)
+        
+        // Add whereKey for dismissed Qs here
+        getSocialQsQuery.whereKey("objectId", notContainedIn: deletedTheirQuestions)
+        
         // Set query limit to max
         getSocialQsQuery.limit = 1000
+        
+        // Pull data
         getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
             
             if let questionTemp = questionObjects {
                 
                 self.questionIds.removeAll(keepCapacity: true)
-                //self.vIds.removeAll(keepCapacity: true)
                 self.questions.removeAll(keepCapacity: true)
                 self.option1s.removeAll(keepCapacity: true)
                 self.option2s.removeAll(keepCapacity: true)
@@ -594,65 +580,30 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 for questionObject in questionTemp {
                         
-                    // Filter out DELETED questions (also need DELETED from myQs tab!!!!)
-                    //
-                    //
-                    //
-                    //if contains(deletedTheirQuestions, questionObject.objectId!!) == false { // && contains(self.dismissedQuestions, questionObject.objectId!!) {
-                    
                     self.questionIds.append(questionObject.objectId!!)
-                    //self.vIds.append(questionObject["votesId"] as! String)
                     self.questions.append(questionObject["question"] as! String)
                     self.option1s.append(questionObject["option1"] as! String)
                     self.option2s.append(questionObject["option2"] as! String)
-                    //self.option1Stats.append(questionObject["stats1"] as! Int)
-                    //self.option2Stats.append(questionObject["stats2"] as! Int)
+                    self.option1Stats.append(questionObject["stats1"] as! Int)
+                    self.option2Stats.append(questionObject["stats2"] as! Int)
                     self.askers.append(questionObject["askername"] as! String)
                     
-                    //}
-                    
-                    var votesQuery = PFQuery(className: "Votes")
-                    //votesQuery.whereKey("objectId", equalTo: questionObject["votesId"]!!)
-                    votesQuery.getObjectInBackgroundWithId(questionObject["votesId"]!! as! String, block: { (votesObjects, error) -> Void in
+                    // Ensure all queries have completed THEN refresh the table!
+                    if self.questions.count == self.askers.count {
                         
-                        if error == nil {
-                            
-                            println(votesObjects!["option1VoterName"]?.count! > 0)
-                            
-                            if votesObjects!["option1VoterName"]?.count! > 0 {
-                                self.option1Stats.append(votesObjects!["option1VoterName"]!.count as Int)
-                            } else {
-                                self.option1Stats.append(0)
-                            }
-                            
-                            if votesObjects!["option2VoterName"]?.count! > 0 {
-                                self.option2Stats.append(votesObjects!["option2VoterName"]!.count as Int)
-                            } else {
-                                self.option2Stats.append(0)
-                            }
-                            
-                        } else {
-                            println("Votes Table for stats gathering failed")
-                            println(error)
-                        }
+                        self.tableView.reloadData()
+                        self.tableView.reloadInputViews()
                         
-                        // Ensure all Q and Votes queries have completed then refresh
-                        if self.questionIds.count == self.option1Stats.count {
-                            
-                            self.tableView.reloadData()
-                            self.tableView.reloadInputViews()
-                            
-                            // Kill refresher when query finished
-                            self.refresher.endRefreshing()
-                            
-                            // Stop animation - hides when stopped (above) hides spinner automatically
-                            //self.activityIndicator.stopAnimating()
-                            
-                            // Release app input
-                            //UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                            
-                        }
-                    })
+                        // Kill refresher when query finished
+                        self.refresher.endRefreshing()
+                        
+                        // Stop animation - hides when stopped (above) hides spinner automatically
+                        //self.activityIndicator.stopAnimating()
+                        
+                        // Release app input
+                        //UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                        
+                    }
                 }
             }
         }

@@ -77,10 +77,6 @@ class VotesTheirTableViewController: UITableViewController {
                 option1Text = objects!["option1"] as! String
                 option2Text = objects!["option2"] as! String
                 
-                // CHANGE TO LOOK UP USERNAME FROM OBJECTID!!!
-                //
-                //
-                //
                 query = PFQuery(className: "Votes")
                 query.getObjectInBackgroundWithId(votesId, block: { (objects, error) -> Void in
                     
