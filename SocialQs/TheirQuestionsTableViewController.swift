@@ -190,7 +190,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                                             
                                             // Update table row
                                             var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                                            self.tableView.beginUpdates()
                                             self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                                            self.tableView.endUpdates()
                                             
                                             self.activityIndicator.stopAnimating()
                                             UIApplication.sharedApplication().endIgnoringInteractionEvents()
@@ -275,7 +277,9 @@ class TheirQuestionsTableViewController: UITableViewController {
             self.option2Stats.removeAtIndex(indexPath.row)
             self.askers.removeAtIndex(indexPath.row)
             
+            tableView.beginUpdates()
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+            tableView.endUpdates()
             
             // Store updated array locally
             NSUserDefaults.standardUserDefaults().setObject(deletedTheirQuestions, forKey: self.deletedTheirStorageKey)
