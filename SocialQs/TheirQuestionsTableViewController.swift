@@ -112,7 +112,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 dismissedTheirQuestions.append(questionObject.objectId!!)
                                 NSUserDefaults.standardUserDefaults().setObject(dismissedTheirQuestions, forKey: self.dismissedTheirStorageKey)
                                 
-                                // BRING BACK WHEN CHANGING STATS COMPUTATION LOGIC
                                 // Update table row
                                 //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
                                 //self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
@@ -332,9 +331,12 @@ class TheirQuestionsTableViewController: UITableViewController {
         // Reload data upon first entry to view
         refresh()
         
-        
         // PUSH - Set up the reload to trigger off the push for "reloadTable"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
+        
+        // Setup push observer for items directly related to user (ie: Qs to user of votes on user's Qs)
+        //NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "brett", object: nil)
+        
         
         
         // Pull to refresh --------------------------------------------------------
@@ -357,6 +359,11 @@ class TheirQuestionsTableViewController: UITableViewController {
         self.automaticallyAdjustsScrollViewInsets = false
         
     }
+    
+    
+    
+    
+    
 
     
     // MARK: - Table view data source
@@ -542,7 +549,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
         // - this needs to be skipped when push is allowed and used when push has been declined
-        //refresh()
+        if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false { refresh() }
         // **********************************************************************************************
         
     }
@@ -613,6 +620,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
 
     /*

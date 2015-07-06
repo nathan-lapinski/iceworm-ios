@@ -92,6 +92,15 @@ class WelcomeViewController: UIViewController {
                 
             }
             
+            // Set PFInstallation pointer to user table
+            let installation = PFInstallation.currentInstallation()
+            installation["user"] = PFUser.currentUser()
+            installation.saveInBackground()
+            
+            // Add user-specific channel to installation
+            //installation.addUniqueObject(myName, forKey: "channels")
+            //installation.saveInBackground()
+            
             self.performSegueWithIdentifier("alreadySignedIn", sender: self)
             
         }

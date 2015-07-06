@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
         
         // Setup push
-        let userNotificationTypes = (UIUserNotificationType.Alert |  UIUserNotificationType.Badge |  UIUserNotificationType.Sound)
+        let userNotificationTypes = (UIUserNotificationType.Alert | UIUserNotificationType.Badge |  UIUserNotificationType.Sound)
         let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
@@ -61,25 +61,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var temp: NSDictionary = userInfo as NSDictionary
         var notification: NSDictionary = temp.objectForKey("aps") as! NSDictionary
         
-        println("-------NOTIFICATION-------")
-        println(notification)
-        println("-------NOTIFICATION-------")
-        
-        println((notification.objectForKey("content-available")) != nil)
+        //println("-------NOTIFICATION-------")
+        //println(notification)
+        //println("-------NOTIFICATION-------")
+        //println((notification.objectForKey("content-available")) != nil)
         
         if (notification.objectForKey("content-available") != nil) {
             
+            // *** KEEP THIS FOR WHEN WE WANT TO SEND GLOBAL Qs FROM THE SOCIALQS TEAM
             // if equal to one, silent notification is telling us there is a new Q
             if (notification.objectForKey("content-available")?.isEqualToNumber(1) != nil) {
                 // Then this is a silent notification - post local notification
                 // This can be used to trigger a function and reload data within the app when a push is recieved
                 NSNotificationCenter.defaultCenter().postNotificationName("reloadTheirTable", object: nil)
-                println("content-available")
             } else {
                 // Else this is a standard notification - standard display of push message/badge/alertview
                 // ie: we can set "content-available" to nil and make the push a standard message or some shit
                 PFPush.handlePush(userInfo)
-                println("Standard Push")
             }
         }
     }
@@ -92,9 +90,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let installation = PFInstallation.currentInstallation()
         installation.setDeviceTokenFromData(deviceToken)
         installation.saveInBackground()
-        
-        println("AppDelegate")
-        println(installation)
 
     }
     
@@ -123,7 +118,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
-        FBSDKAppEvents.activateApp()
+        //FBSDKAppEvents.activateApp()
     
     }
 

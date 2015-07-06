@@ -11,6 +11,8 @@ import Parse
 
 class VotesTheirTableViewController: UITableViewController {
     
+    let tableFontSize = CGFloat(16)
+    
     var objectsArray = [Objects]()
     
     struct Objects {
@@ -34,8 +36,6 @@ class VotesTheirTableViewController: UITableViewController {
         // Format Done button
         navigationItem.leftBarButtonItem = doneButton
         navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: 16)!], forState: UIControlState.Normal)
-        
-        //objectsArray = [Objects(sectionName: "Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1", sectionObjects: ["1", "2", "3"]), Objects(sectionName: "Section 2", sectionObjects: ["a", "b", "c"])]
         
     }
     
@@ -68,7 +68,7 @@ class VotesTheirTableViewController: UITableViewController {
         
         // PARSE ----------------------------------------------------
         var query = PFQuery(className: "SocialQs")
-        //query.whereKey("objectId", equalTo: theirRequestedQId)
+        
         query.getObjectInBackgroundWithId(theirRequestedQId, block: { (objects, error) -> Void in
             
             if error == nil {
@@ -114,15 +114,10 @@ class VotesTheirTableViewController: UITableViewController {
                         println("Voter retreival error")
                         println(error)
                     }
-                    
-                        //} else {
-                        //
-                        //    let title = "Sorry!"
-                        //    let message = "No one has voted on this Q yet."
-                        //    self.displayAlert(title, message: message)
-                        //
-                    //}
                 })
+            } else {
+                println("Error while attempting to votesId data from SocialQs table.")
+                println(error)
             }
         })
     }
@@ -186,7 +181,8 @@ class VotesTheirTableViewController: UITableViewController {
         header.textLabel.textAlignment = NSTextAlignment.Left
         header.textLabel.numberOfLines = 10 // Dynamic number of lines
         header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
-        header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: 16)!
+        //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+        header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
         header.textLabel.text = objectsArray[section].sectionName
 
     }

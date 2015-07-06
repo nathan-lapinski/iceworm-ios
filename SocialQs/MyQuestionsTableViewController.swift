@@ -117,8 +117,11 @@ class MyQuestionsTableViewController: UITableViewController {
             
         }
         
+        // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
-        refresh()
+        // - this needs to be skipped when push is allowed and used when push has been declined
+        if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false { refresh() }
+        // **********************************************************************************************
     }
     
     

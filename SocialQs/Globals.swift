@@ -44,4 +44,8 @@ var deletedTheirQuestions = [String]() // questions DELETED by current user
 var myRequestedQId = ""
 var theirRequestedQId = ""
 
+// Groupies variable
+var isGroupie = [String]()//Dictionary<String, Bool>() //["":false]
+//var isNotGroupie = [String]()//var sendToGroupies = [""]
+
 var warningSeen = false

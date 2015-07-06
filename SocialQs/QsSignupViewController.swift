@@ -104,7 +104,10 @@ class QsSignupViewController: UIViewController {
                                     
                                     // Release app input block
                                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                    
+                                                                        
+                                    let installation = PFInstallation.currentInstallation()
+                                    installation["user"] = PFUser.currentUser()
+                                    installation.saveInBackground()
                                     
                                     // Segue "ask" tab
                                     self.performSegueWithIdentifier("signedUp", sender: self)

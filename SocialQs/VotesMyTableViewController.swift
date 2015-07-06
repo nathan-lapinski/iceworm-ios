@@ -10,6 +10,7 @@ import UIKit
 
 class VotesMyTableViewController: UITableViewController {
     
+    let tableFontSize = CGFloat(16)
     var objectsArray = [Objects]()
     
     struct Objects {
@@ -34,10 +35,6 @@ class VotesMyTableViewController: UITableViewController {
         navigationItem.leftBarButtonItem = doneButton
         navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: 16)!], forState: UIControlState.Normal)
         
-        //objectsArray = [Objects(sectionName: "Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1 Section 1", sectionObjects: ["1", "2", "3"]), Objects(sectionName: "Section 2", sectionObjects: ["a", "b", "c"])]
-        
-        
-       
     }
     
     
@@ -69,7 +66,7 @@ class VotesMyTableViewController: UITableViewController {
         
         // PARSE ----------------------------------------------------
         var query = PFQuery(className: "SocialQs")
-        //query.whereKey("objectId", equalTo: myRequestedQId)
+        
         query.getObjectInBackgroundWithId(myRequestedQId, block: { (objects, error) -> Void in
             
             if error == nil {
@@ -115,8 +112,10 @@ class VotesMyTableViewController: UITableViewController {
                         println("Voter retreival error")
                         println(error)
                     }
-                    
                 })
+            } else {
+                println("Error while attempting to votesId data from SocialQs table.")
+                println(error)
             }
         })
     }
@@ -180,7 +179,8 @@ class VotesMyTableViewController: UITableViewController {
         header.textLabel.textAlignment = NSTextAlignment.Left
         header.textLabel.numberOfLines = 10 // Dynamic number of lines
         header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
-        header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: 16)!
+        //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+        header.textLabel.font = UIFont(name: "HelveticaNeue", size: tableFontSize)!
         header.textLabel.text = objectsArray[section].sectionName
         
     }
@@ -189,7 +189,7 @@ class VotesMyTableViewController: UITableViewController {
     // Set section header heights
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return CGFloat(60)
+        return CGFloat(40)
     }
     
     

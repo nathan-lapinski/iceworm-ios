@@ -147,16 +147,18 @@ class QsLoginViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         
+        /*
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil && myName != "" {
             
             // Not part of test env
             myName = (PFUser.currentUser()!.username!)
             //println("Welcome " + myName)
+            
             self.performSegueWithIdentifier("signedIn", sender: self)
             
         }
-        
+        */
         
     }
         
