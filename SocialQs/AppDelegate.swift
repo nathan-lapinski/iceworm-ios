@@ -22,13 +22,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Initialize Parse - currently linked to 
         // SocialQs Dev --------------------------------------------------------------------------------------------------------------
-        Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
+        //Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
         // SocialQs Test 2 -----------------------------------------------------------------------------------------------------------
-        //Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
+        Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
         
         
-        // SocialQs Test 1 -----------------------------------------------------------------------------------------------------------
-        ////Parse.setApplicationId("nTXG2Y80Wmwf2mLlz10BG7Zg432pKAvHDFgEV2KO", clientKey: "qh3ok20M0rsOvD1JXSRkFAslJ1gtTGJuc4mwK3jF")
         
         //PFFacebookUtils.initializeFacebookWithApplicationLaunchOptions(launchOptions)
         

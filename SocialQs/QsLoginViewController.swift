@@ -83,6 +83,10 @@ class QsLoginViewController: UIViewController {
                     // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     
+                    let installation = PFInstallation.currentInstallation()
+                    installation["user"] = PFUser.currentUser()
+                    installation.saveInBackground()
+                    
                     self.performSegueWithIdentifier("signedIn", sender: self)
                     
                 } else {

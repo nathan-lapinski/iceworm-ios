@@ -115,7 +115,6 @@ class QsSignupViewController: UIViewController {
                                 } else {
                                     
                                 }
-                                
                             })
                             
                         } else {
