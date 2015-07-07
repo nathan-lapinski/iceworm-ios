@@ -184,7 +184,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             
             let followedObjectId = objectsArray[indexPath.section].sectionObjects[indexPath.row] as String
             
-            if contains(isGroupie, followedObjectId) {
+            if contains(isGroupieName, followedObjectId) {
                 
                 cell.accessoryType = UITableViewCellAccessoryType.Checkmark
                 
@@ -216,13 +216,13 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             let followedObjectId = usernames[indexPath.row] as String
             
             // Check if already following and UNFOLLOW instead
-            if contains(isGroupie, followedObjectId) {
+            if contains(isGroupieName, followedObjectId) {
                 
                 //println("\(followedObjectId) is no longer being followed")
                 
                 // Remove user from isGroupie
-                if var removeIndex = find(isGroupie, followedObjectId) {
-                    isGroupie.removeAtIndex(removeIndex)
+                if var removeIndex = find(isGroupieName, followedObjectId) {
+                    isGroupieName.removeAtIndex(removeIndex)
                 }
                 
             } else {
@@ -230,12 +230,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 //println("\(followedObjectId) is now being followed")
                 
                 // Add user to isGroupie
-                isGroupie.append(followedObjectId)
+                isGroupieName.append(followedObjectId)
                 
             }
             
             // Set allSelected checkmark if all users are manually selected
-            if isGroupie.count == usernames.count && allSelected == false {
+            if isGroupieName.count == usernames.count && allSelected == false {
                 
                 allSelected = true
                 
@@ -246,7 +246,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 
             }
             
-            if isGroupie.count != usernames.count && allSelected == true {
+            if isGroupieName.count != usernames.count && allSelected == true {
                 
                 allSelected = false
                 
@@ -262,12 +262,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             if allSelected == false {
                 
                 allSelected = true
-                isGroupie = usernames
+                isGroupieName = usernames
                 
             } else if allSelected == true {
                 
                 allSelected = false
-                isGroupie.removeAll(keepCapacity: true)
+                isGroupieName.removeAll(keepCapacity: true)
                 
             }
             

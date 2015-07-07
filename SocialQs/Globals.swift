@@ -45,7 +45,8 @@ var myRequestedQId = ""
 var theirRequestedQId = ""
 
 // Groupies variable
-var isGroupie = [String]()//Dictionary<String, Bool>() //["":false]
+var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
+var isGroupieVoteId = [String]()
 //var isNotGroupie = [String]()//var sendToGroupies = [""]
 
 var warningSeen = false

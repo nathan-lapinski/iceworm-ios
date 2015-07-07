@@ -144,13 +144,13 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                             // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
                             // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
                             var toUsers: PFQuery = PFUser.query()!
-                            toUsers.whereKey("username", containedIn: isGroupie)
+                            toUsers.whereKey("username", containedIn: isGroupieName)
                             
                             var pushQuery: PFQuery = PFInstallation.query()!
-                            if !isGroupie.isEmpty {
+                            if !isGroupieName.isEmpty {
                                 pushQuery.whereKey("user", matchesQuery: toUsers)
                             } else { // If sendToGroupies is not empty, filter push to users
-                                pushQuery.whereKey("user", notContainedIn: isGroupie)
+                                pushQuery.whereKey("user", notContainedIn: isGroupieName)
                             }
                             
                             
@@ -167,7 +167,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                                 if error == nil { println("Directed push notification sent!") }
                             })
                             
-                            isGroupie.removeAll(keepCapacity: true)
+                            isGroupieName.removeAll(keepCapacity: true)
                             // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
                             
                             

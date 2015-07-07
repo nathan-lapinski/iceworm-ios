@@ -136,31 +136,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 // Store questionId into "votedOnId" array
                                 userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOnId")
                                 userQsObjects!.saveInBackground()
-                                
-                                /*
-                                // ---------------------------------------------------------------------------------------------------------------
-                                // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
-                                var singleQuery = PFQuery(className: "SocialQs")
-                                
-                                singleQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (singleObjects, singleError) -> Void in
-                                    
-                                    if let singleIndex = find(self.questionIds, questionObject.objectId!!) {
-                                        
-                                        self.option1Stats[singleIndex] = singleObjects!["stats1"]! as! Int
-                                        self.option2Stats[singleIndex] = singleObjects!["stats2"]! as! Int
-                                        
-                                        // Update table row
-                                        var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
-                                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
-                                        
-                                        self.activityIndicator.stopAnimating()
-                                        UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                        
-                                    }
-                                })
-                                // ---------------------------------------------------------------------------------------------------------------
-                                */
-                                
                             }
                         })
                         
@@ -196,8 +171,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                                             
                                             self.activityIndicator.stopAnimating()
                                             UIApplication.sharedApplication().endIgnoringInteractionEvents()
-
-                                            
                                         }
                                     })
                                     // ---------------------------------------------------------------------------------------------------------------
@@ -209,11 +182,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                                     
                                     self.activityIndicator.stopAnimating()
                                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                    
                                 }
                             }
                         })
-                        
                     }
                 }
                 
@@ -223,27 +194,21 @@ class TheirQuestionsTableViewController: UITableViewController {
                 // - may need this if/when admins have to delete Qs?
                 println("SocialQs Table query error:")
                 println(error)
-                
             }
         }
     }
-
     
-    
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-    if editingStyle == .Delete {
-    // Delete the row from the data source
-    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-    } else if editingStyle == .Insert {
-    // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }
-    }
-    */
     
     // Swipe to display options functions ----------------------------------------------------------------------------------
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
+        
+        // Determine which state (unvote or voted on) the cell is in before deleting from arrays
+        var votedOn = false
+        if contains(dismissedTheirQuestions, self.questionIds[indexPath.row]) == true {
+            votedOn = true
+        } else {
+            votedOn = false
+        }
         
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
@@ -253,36 +218,19 @@ class TheirQuestionsTableViewController: UITableViewController {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
                 self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
-                
             })
-            
-            
         }
+        
         view.backgroundColor = UIColor.orangeColor()
         
         let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
+            
             println("share button tapped")
         }
         share.backgroundColor = UIColor.grayColor()
         
+        
         let trash = UITableViewRowAction(style: .Normal, title: "Trash") { action, index in
-            
-          deletedTheirQuestions.append(self.questionIds[indexPath.row])
-            
-            self.questionIds.removeAtIndex(indexPath.row)
-            self.questions.removeAtIndex(indexPath.row)
-            self.option1s.removeAtIndex(indexPath.row)
-            self.option2s.removeAtIndex(indexPath.row)
-            self.option1Stats.removeAtIndex(indexPath.row)
-            self.option2Stats.removeAtIndex(indexPath.row)
-            self.askers.removeAtIndex(indexPath.row)
-            
-            tableView.beginUpdates()
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
-            tableView.endUpdates()
-            
-            // Store updated array locally
-            NSUserDefaults.standardUserDefaults().setObject(deletedTheirQuestions, forKey: self.deletedTheirStorageKey)
             
             // Append qId to "deleted" array in database
             var deletedQuery = PFQuery(className: "UserQs")
@@ -291,25 +239,35 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 if error == nil {
                     
-                    userQsObjects!.addObject(self.questionIds[indexPath.row], forKey: "deletedId")
+                    userQsObjects!.addUniqueObject(self.questionIds[indexPath.row], forKey: "deletedTheirQsId")
                     userQsObjects!.saveInBackground()
+                    
+                    deletedTheirQuestions.append(self.questionIds[indexPath.row])
+                    
+                    // Store updated array locally
+                    NSUserDefaults.standardUserDefaults().setObject(deletedTheirQuestions, forKey: self.deletedTheirStorageKey)
+                    
+                    self.questionIds.removeAtIndex(indexPath.row)
+                    self.questions.removeAtIndex(indexPath.row)
+                    self.option1s.removeAtIndex(indexPath.row)
+                    self.option2s.removeAtIndex(indexPath.row)
+                    self.option1Stats.removeAtIndex(indexPath.row)
+                    self.option2Stats.removeAtIndex(indexPath.row)
+                    self.askers.removeAtIndex(indexPath.row)
+                    
+                    tableView.beginUpdates()
+                    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+                    tableView.endUpdates()
                     
                 } else {
                     
-                    println("Error adding qId to UserQs/deletedId")
-                    
+                    println("Error adding qId to UserQs/deletedTheirQsId")
                 }
-                
             })
-            
-            //println("refreshing table")
-            self.tableView.reloadData()
-            self.tableView.reloadInputViews()
         }
-        
         trash.backgroundColor = UIColor.redColor()
         
-        if contains(dismissedTheirQuestions, questionIds[indexPath.row]) == true {
+        if votedOn {
             
             return [trash, view] // Order = appearance order, right to left on screen
             
@@ -553,72 +511,112 @@ class TheirQuestionsTableViewController: UITableViewController {
         // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
         // - this needs to be skipped when push is allowed and used when push has been declined
-        if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false { refresh() }
-        // **********************************************************************************************
+        if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
+            
+            refresh()
         
+        }
+        // **********************************************************************************************
     }
     
     
     // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
-        var getSocialQsQuery = PFQuery(className: "SocialQs")
+        var pullIds = [String]()
         
-        // Sort by newest created-date first
-        getSocialQsQuery.orderByDescending("createdAt")
-        
-        // implement the following whereKey to filter myQs OUT of this list
-        getSocialQsQuery.whereKey("askername", notEqualTo: myName)
-        
-        // Add whereKey for dismissed Qs here
-        getSocialQsQuery.whereKey("objectId", notContainedIn: deletedTheirQuestions)
-        
-        // Set query limit to max
-        getSocialQsQuery.limit = 1000
-        
-        // Pull data
-        getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
+        var userQsQuery = PFQuery(className: "UserQs")
+        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
             
-            if let questionTemp = questionObjects {
+            if error != nil {
                 
-                self.questionIds.removeAll(keepCapacity: true)
-                self.questions.removeAll(keepCapacity: true)
-                self.option1s.removeAll(keepCapacity: true)
-                self.option2s.removeAll(keepCapacity: true)
-                self.option1Stats.removeAll(keepCapacity: true)
-                self.option2Stats.removeAll(keepCapacity: true)
-                self.askers.removeAll(keepCapacity: true)
+                println("Error accessing UserQs/theirQsId")
+                println(error)
                 
-                for questionObject in questionTemp {
-                        
-                    self.questionIds.append(questionObject.objectId!!)
-                    self.questions.append(questionObject["question"] as! String)
-                    self.option1s.append(questionObject["option1"] as! String)
-                    self.option2s.append(questionObject["option2"] as! String)
-                    self.option1Stats.append(questionObject["stats1"] as! Int)
-                    self.option2Stats.append(questionObject["stats2"] as! Int)
-                    self.askers.append(questionObject["askername"] as! String)
+            } else {
+                
+                if userQsObjects!["theirQsId"] == nil {
+                    // Add UIAlert for this:
+                    //
+                    println("User has recieved no Qs")
+                    //
+                    //
+                } else {
+                
+                    pullIds = userQsObjects!["theirQsId"]! as! [String]
+                    //println(pullIds)
                     
-                    // Ensure all queries have completed THEN refresh the table!
-                    if self.questions.count == self.askers.count {
+                    // Pull Qs with Id in pullIds
+                    var getSocialQsQuery = PFQuery(className: "SocialQs")
+                    
+                    // Sort by newest created-date first
+                    getSocialQsQuery.orderByDescending("createdAt")
+                    
+                    // implement the following whereKey to filter myQs OUT of this list
+                    getSocialQsQuery.whereKey("askername", notEqualTo: myName)
+                    getSocialQsQuery.whereKey("objectId", containedIn: pullIds)
+                    
+                    // Add whereKey for dismissed Qs here
+                    // **** Remove this after changing vote/delete to modify UserQs table ****
+                    // -- can't upload to server at signout as the user may simply kill app,
+                    //    then be able to revote
+                    //getSocialQsQuery.whereKey("objectId", notContainedIn: deletedTheirQuestions)
+                    //
+                    //
+                    
+                    // Set query limit to max
+                    getSocialQsQuery.limit = 1000
+                    
+                    // Pull data
+                    getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
                         
-                        self.tableView.reloadData()
-                        self.tableView.reloadInputViews()
-                        
-                        // Kill refresher when query finished
-                        self.refresher.endRefreshing()
-                        
-                        // Stop animation - hides when stopped (above) hides spinner automatically
-                        //self.activityIndicator.stopAnimating()
-                        
-                        // Release app input
-                        //UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                        
+                        if let questionTemp = questionObjects {
+                            
+                            self.questionIds.removeAll(keepCapacity: true)
+                            self.questions.removeAll(keepCapacity: true)
+                            self.option1s.removeAll(keepCapacity: true)
+                            self.option2s.removeAll(keepCapacity: true)
+                            self.option1Stats.removeAll(keepCapacity: true)
+                            self.option2Stats.removeAll(keepCapacity: true)
+                            self.askers.removeAll(keepCapacity: true)
+                            
+                            for questionObject in questionTemp {
+                                
+                                self.questionIds.append(questionObject.objectId!!)
+                                self.questions.append(questionObject["question"] as! String)
+                                self.option1s.append(questionObject["option1"] as! String)
+                                self.option2s.append(questionObject["option2"] as! String)
+                                self.option1Stats.append(questionObject["stats1"] as! Int)
+                                self.option2Stats.append(questionObject["stats2"] as! Int)
+                                self.askers.append(questionObject["askername"] as! String)
+                                
+                                // Ensure all queries have completed THEN refresh the table!
+                                // CHANGED THIS TO MATCH NEW PULL METHOD - WAS "ASKERS"
+                                //
+                                if self.questions.count == pullIds.count {
+                                    //
+                                    //
+                                    
+                                    self.tableView.reloadData()
+                                    self.tableView.reloadInputViews()
+                                    
+                                    // Kill refresher when query finished
+                                    self.refresher.endRefreshing()
+                                    
+                                    // Stop animation - hides when stopped (above) hides spinner automatically
+                                    //self.activityIndicator.stopAnimating()
+                                    
+                                    // Release app input
+                                    //UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
+        })
     }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
