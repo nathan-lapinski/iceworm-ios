@@ -110,12 +110,14 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 if let users = userObjects {
                     
                     self.usernames.removeAll(keepCapacity: true)
+                    self.userids.removeAll(keepCapacity: true)
                     
                     for object in users {
                         
                         if let user = object as? PFUser {
                             
                             self.usernames.append(user.username!)
+                            self.userids.append(user["uQId"]! as! String)
                             
                         }
                     }
@@ -182,9 +184,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             
             cell.usernameLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)
             
-            let followedObjectId = objectsArray[indexPath.section].sectionObjects[indexPath.row] as String
+            let followedObjectName = objectsArray[indexPath.section].sectionObjects[indexPath.row] as String
             
-            if contains(isGroupieName, followedObjectId) {
+            if contains(isGroupieName, followedObjectName) {
                 
                 cell.accessoryType = UITableViewCellAccessoryType.Checkmark
                 
@@ -213,24 +215,37 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         
         if indexPath.section == 1 {
             
-            let followedObjectId = usernames[indexPath.row] as String
+            let followedObjectName = usernames[indexPath.row] as String
+            let followedObjectId = userids[indexPath.row] as String
             
             // Check if already following and UNFOLLOW instead
-            if contains(isGroupieName, followedObjectId) {
+            if contains(isGroupieName, followedObjectName) {
                 
-                //println("\(followedObjectId) is no longer being followed")
+                //println("\(followedObjectName) is no longer being followed")
                 
-                // Remove user from isGroupie
-                if var removeIndex = find(isGroupieName, followedObjectId) {
+                // Remove user from isGroupieName
+                if var removeIndex = find(isGroupieName, followedObjectName) {
+                    
                     isGroupieName.removeAtIndex(removeIndex)
+                    
+                }
+                
+                // Remove user from isGroupieQId
+                if var removeIndex = find(isGroupieQId, followedObjectId) {
+                    
+                    isGroupieQId.removeAtIndex(removeIndex)
+                    
                 }
                 
             } else {
                 
-                //println("\(followedObjectId) is now being followed")
+                //println("\(followedObjectName) is now being followed")
                 
-                // Add user to isGroupie
-                isGroupieName.append(followedObjectId)
+                // Add user to isGroupieName
+                isGroupieName.append(followedObjectName)
+                
+                // Add user to isGroupieQId
+                isGroupieQId.append(followedObjectId)
                 
             }
             
@@ -263,11 +278,13 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 
                 allSelected = true
                 isGroupieName = usernames
+                isGroupieQId = userids
                 
             } else if allSelected == true {
                 
                 allSelected = false
                 isGroupieName.removeAll(keepCapacity: true)
+                isGroupieQId.removeAll(keepCapacity: true)
                 
             }
             
@@ -281,6 +298,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         tableView.beginUpdates()
         tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
         tableView.endUpdates()
+        
+        println(isGroupieName)
+        println(isGroupieQId)
         
         // SEND DATA BACK -------------------------------------------------------------------------
         // SEND DATA BACK -------------------------------------------------------------------------

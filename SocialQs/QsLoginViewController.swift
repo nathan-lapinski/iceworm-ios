@@ -80,12 +80,34 @@ class QsLoginViewController: UIViewController {
                     NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
                     NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
                     NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
-                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     
+                    // Store votedOnIds locally
+                    var userQsQuery = PFQuery(className: "UserQs")
+                    userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
+                        
+                        if error != nil {
+                            
+                            println("Error loading UserQs/votedOnId")
+                            println(error)
+                            
+                        } else {
+                            
+                            if let votedOnId = userQsObjects!["votedOnId"] as? [String] {
+                                
+                                votedOnIds = votedOnId
+                                
+                                NSUserDefaults.standardUserDefaults().setObject(votedOnIds, forKey: "votedOnIds")
+                                
+                            }
+                        }
+                    })
+                    
+                    // Set PFInstallation pointer to user table
                     let installation = PFInstallation.currentInstallation()
                     installation["user"] = PFUser.currentUser()
                     installation.saveInBackground()
+                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     
                     self.performSegueWithIdentifier("signedIn", sender: self)
                     
@@ -98,7 +120,6 @@ class QsLoginViewController: UIViewController {
                     }
                     
                     self.displayAlert("Failed Login", message: errorMessage)
-                    
                 }
             })
         }
@@ -144,10 +165,26 @@ class QsLoginViewController: UIViewController {
         // Recal uId if applicable
         if NSUserDefaults.standardUserDefaults().objectForKey("uId") != nil {
             
-            myName = NSUserDefaults.standardUserDefaults().objectForKey("uId")! as! String
+            uId = NSUserDefaults.standardUserDefaults().objectForKey("uId")! as! String
+            
+        }
+        
+        // Recal uQId if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey("uQId") != nil {
+            
+            uQId = NSUserDefaults.standardUserDefaults().objectForKey("uQId")! as! String
+            
+        }
+        
+        // Recal uQId if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey("votedOnIds") != nil {
+            
+            votedOnIds = NSUserDefaults.standardUserDefaults().objectForKey("votedOnIds")! as! [String]
+            println(votedOnIds)
             
         }
     }
+    
     
     override func viewDidAppear(animated: Bool) {
         

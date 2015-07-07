@@ -75,17 +75,28 @@ class MyQuestionsTableViewController: UITableViewController {
             // Append qId to "deleted" array in database
             var deletedQuery = PFQuery(className: "UserQs")
             deletedQuery.whereKey("objectId", equalTo: uQId)
+            
             deletedQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
                 if error == nil {
                     
+                    // Add Q to deleted
                     userQsObjects!.addUniqueObject(self.questionIds[indexPath.row], forKey: "deletedMyQsId")
                     userQsObjects!.saveInBackground()
                     
-                    deletedMyQuestions.append(self.questionIds[indexPath.row])
+                    // Remove Q from myQs (my active Qs)
+                    userQsObjects!.removeObject(self.questionIds[indexPath.row], forKey: "myQsId")
+                    userQsObjects!.saveInBackground()
                     
+                    
+                    
+                    
+                    //deletedMyQuestions.append(self.questionIds[indexPath.row])
                     // Store updated array locally
-                    NSUserDefaults.standardUserDefaults().setObject(deletedMyQuestions, forKey: self.deletedMyStorageKey)
+                    //NSUserDefaults.standardUserDefaults().setObject(deletedMyQuestions, forKey: self.deletedMyStorageKey)
+                    
+                    
+                    
                     
                     self.questionIds.removeAtIndex(indexPath.row)
                     self.questions.removeAtIndex(indexPath.row)
@@ -122,12 +133,20 @@ class MyQuestionsTableViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
+        /*
         // Recall deleted/dismissed data
         if NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey) != nil {
             
+            
+            
+            
             deletedMyQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey)! as! [(String)]
             
+            
+            
+            
         }
+        */
         
         // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
@@ -143,56 +162,74 @@ class MyQuestionsTableViewController: UITableViewController {
     // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
-        var getSocialQsQuery = PFQuery(className: "SocialQs")
-        
-        // Sort by newest created-date first
-        getSocialQsQuery.orderByDescending("createdAt")
-        // Filter to only get MY Qs
-        getSocialQsQuery.whereKey("askername", equalTo: myName)
-        // Filter off Qs I've deleted from my view
-        getSocialQsQuery.whereKey("objectId", notContainedIn: deletedMyQuestions)
-        // Set query limit to max
-        getSocialQsQuery.limit = 1000
-        // Pull objects
-        getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
+        // Get list of Qs to pull from UserQs
+        var getMyQsQuery = PFQuery(className: "UserQs")
+        getMyQsQuery.getObjectInBackgroundWithId(uQId, block: { (myQsObjects, error) -> Void in
             
-            if let questionTemp = questionObjects {
+            if error != nil {
                 
-                self.questions.removeAll(keepCapacity: true)
-                self.questionIds.removeAll(keepCapacity: true)
-                self.option1s.removeAll(keepCapacity: true)
-                self.option2s.removeAll(keepCapacity: true)
-                self.option1Stats.removeAll(keepCapacity: true)
-                self.option2Stats.removeAll(keepCapacity: true)
+                println("Error accessing UserQs/theirQsId")
+                println(error)
                 
-                for questionObject in questionTemp {
+            } else {
+                
+                if let myQs = myQsObjects!["myQsId"] as? [String] {
+                
+                    // Get Qs from SocialsQs based on myQsId
+                    var getSocialQsQuery = PFQuery(className: "SocialQs")
                     
-                    self.questions.append(questionObject["question"] as! String)
-                    self.questionIds.append(questionObject.objectId!!)
-                    self.option1s.append(questionObject["option1"] as! String)
-                    self.option2s.append(questionObject["option2"] as! String)
-                    self.option1Stats.append(questionObject["stats1"] as! Int)
-                    self.option2Stats.append(questionObject["stats2"] as! Int)
+                    // Sort by newest created-date first
+                    getSocialQsQuery.orderByDescending("createdAt")
+                    // Filter to only get MY Qs
+                    //getSocialQsQuery.whereKey("askername", equalTo: myName)
                     
-                    // Ensure all queries have completed THEN refresh the table!
-                    if self.questions.count == self.option2Stats.count {
+                    // Filter off Qs I've deleted from my view
+                    getSocialQsQuery.whereKey("objectId", containedIn: myQs)
+                    
+                    // Set query limit to max
+                    getSocialQsQuery.limit = 1000
+                    // Pull objects
+                    getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
                         
-                        self.tableView.reloadData()
-                        self.tableView.reloadInputViews()
-                        
-                        // Kill refresher when query finished
-                        self.refresher.endRefreshing()
-                        
-                        // Stop animation - hides when stopped (above) hides spinner automatically
-                        //self.activityIndicator.stopAnimating()
-                        
-                        // Release app input
-                        //UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                        
+                        if let questionTemp = questionObjects {
+                            
+                            self.questions.removeAll(keepCapacity: true)
+                            self.questionIds.removeAll(keepCapacity: true)
+                            self.option1s.removeAll(keepCapacity: true)
+                            self.option2s.removeAll(keepCapacity: true)
+                            self.option1Stats.removeAll(keepCapacity: true)
+                            self.option2Stats.removeAll(keepCapacity: true)
+                            
+                            for questionObject in questionTemp {
+                                
+                                self.questions.append(questionObject["question"] as! String)
+                                self.questionIds.append(questionObject.objectId!!)
+                                self.option1s.append(questionObject["option1"] as! String)
+                                self.option2s.append(questionObject["option2"] as! String)
+                                self.option1Stats.append(questionObject["stats1"] as! Int)
+                                self.option2Stats.append(questionObject["stats2"] as! Int)
+                                
+                                // Ensure all queries have completed THEN refresh the table!
+                                if self.questions.count == self.option2Stats.count {
+                                    
+                                    self.tableView.reloadData()
+                                    self.tableView.reloadInputViews()
+                                    
+                                    // Kill refresher when query finished
+                                    self.refresher.endRefreshing()
+                                    
+                                    // Stop animation - hides when stopped (above) hides spinner automatically
+                                    //self.activityIndicator.stopAnimating()
+                                    
+                                    // Release app input
+                                    //UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
+        })
     }
     
 

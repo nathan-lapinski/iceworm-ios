@@ -84,7 +84,7 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                     socialQ["option2"] = self.option2TextField.text
                     socialQ["stats1"] = 0
                     socialQ["stats2"] = 0
-                    socialQ["privacyOptions"] = 1
+                    socialQ["privacyOptions"] = -1
                     socialQ["askerId"] = PFUser.currentUser()!.objectId!
                     socialQ["askername"] = PFUser.currentUser()!["username"]
                     socialQ["votesId"] = votes.objectId!
@@ -95,9 +95,15 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                         
                         if error == nil {
                             
-                            // Add qId to "UserQs" table
+                            // Add qId to "UserQs" table ------
                             var userQsQuery = PFQuery(className: "UserQs")
-                            //userQsQuery.whereKey("objectId", equalTo: uQId)
+                            
+                            // Query all "groupies" and myself (to add to myQs)
+                            var usersToQuery = isGroupieQId + [uQId]
+                            println(usersToQuery)
+                            userQsQuery.whereKey("objectId", containedIn: usersToQuery)
+                            
+                            // Execute query
                             userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
                                 
                                 if error == nil {
@@ -106,11 +112,22 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                                         
                                         for userQsObject in temp {
                                             
-                                            if userQsObject.objectId!! != uQId { // Append qId to theirQs within UserQs table
-                                                userQsObject.addObject(qId, forKey: "theirQsId")
+                                            println("-----")
+                                            println(userQsObject.objectId!!)
+                                            println("-----")
+                                            
+                                            if userQsObject.objectId!! == uQId { // Append qId to myQs within UserQs table
+                                                
+                                                println("Saving to \(userQsObject.objectId!!) myQsId")
+                                                
+                                                userQsObject.addUniqueObject(qId, forKey: "myQsId")
                                                 userQsObject.saveInBackground()
-                                            } else { // Append qId to myQs within UserQs table
-                                                userQsObject.addObject(qId, forKey: "myQsId")
+                                                
+                                            } else { // Append qId to theirQs within UserQs table
+                                                
+                                                println("Saving to \(userQsObject.objectId!!) theirQsId")
+                                                
+                                                userQsObject.addUniqueObject(qId, forKey: "theirQsId")
                                                 userQsObject.saveInBackground()
                                             }
                                         }

@@ -21,13 +21,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Parse.enableLocalDatastore()
         
         // SocialQs Dev --------------------------------------------------------------------------------------------------------------
-        //arse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
+        //Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
         
         // SocialQs Blackula ---------------------------------------------------------------------------------------------------------
-        Parse.setApplicationId("7aEu2aiPHAun7HWnN42hWJ4eQuZueBiHZoGq7GZb", clientKey: "FU38Qh4hHo0LDGLAQP8PKB8wtjzwhPFGArpwqj7t")
+        //Parse.setApplicationId("7aEu2aiPHAun7HWnN42hWJ4eQuZueBiHZoGq7GZb", clientKey: "FU38Qh4hHo0LDGLAQP8PKB8wtjzwhPFGArpwqj7t")
         
         // SocialQs Test 2 -----------------------------------------------------------------------------------------------------------
-        //Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
+        Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
         
         
         

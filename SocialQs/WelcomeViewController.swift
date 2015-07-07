@@ -81,28 +81,51 @@ class WelcomeViewController: UIViewController {
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
             
+            // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+            // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+            // login successful
             myName = PFUser.currentUser()!.username!
             uId = PFUser.currentUser()!.objectId!
-            uQId = PFUser.currentUser()!["uQId"]! as! String
+            uQId = PFUser.currentUser()?["uQId"]! as! String
             
-            var uQIdString = myName + "uQId"
-            if NSUserDefaults.standardUserDefaults().objectForKey(uQIdString) != nil {
+            // Store username locally
+            NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+            NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+            NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
+            
+            // Store votedOnIds locally
+            var userQsQuery = PFQuery(className: "UserQs")
+            userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
-                uQId = NSUserDefaults.standardUserDefaults().objectForKey(uQIdString)! as! (String)
-                
-            }
+                if error != nil {
+                    
+                    println("Error loading UserQs/votedOnId")
+                    println(error)
+                    
+                } else {
+                    
+                    if let votedOnId = userQsObjects!["votedOnId"] as? [String] {
+                        
+                        votedOnIds = votedOnId
+                        
+                        NSUserDefaults.standardUserDefaults().setObject(votedOnIds, forKey: "votedOnIds")
+                        
+                    }
+                }
+            })
             
             // Set PFInstallation pointer to user table
             let installation = PFInstallation.currentInstallation()
             installation["user"] = PFUser.currentUser()
             installation.saveInBackground()
+            // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+            // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
             
             // Add user-specific channel to installation
             //installation.addUniqueObject(myName, forKey: "channels")
             //installation.saveInBackground()
             
             self.performSegueWithIdentifier("alreadySignedIn", sender: self)
-            
         }
         
         // ANIMATION STUFFS -------------------------------------------------------------

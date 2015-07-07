@@ -22,7 +22,6 @@ class QsSignupViewController: UIViewController {
     @IBOutlet var signUpButton: UIButton!
     @IBOutlet var cancelButton: UIButton!
     
-    
     // This function processes the login procedure
     @IBAction func loginButtonPressed(sender: AnyObject) {
         
@@ -84,8 +83,6 @@ class QsSignupViewController: UIViewController {
                                 
                                 if error == nil {
                                     
-                                    //println("User table successfully updated")
-                                    
                                     // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
                                     // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
                                     myName = self.username.text.lowercaseString
@@ -104,7 +101,7 @@ class QsSignupViewController: UIViewController {
                                     
                                     // Release app input block
                                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                                                        
+                                    
                                     let installation = PFInstallation.currentInstallation()
                                     installation["user"] = PFUser.currentUser()
                                     installation.saveInBackground()
@@ -114,11 +111,15 @@ class QsSignupViewController: UIViewController {
                                     
                                 } else {
                                     
+                                    println("Error storing uQId to UserQs table")
+                                    println(error)
+                                    
                                 }
                             })
                             
                         } else {
                             
+                            println("Error creating UserQs entry for new user")
                             println(error)
                             
                         }
@@ -132,7 +133,6 @@ class QsSignupViewController: UIViewController {
                         
                     }
                     
-                    
                     // Stop animation - hides when stopped (above) hides spinner automatically
                     self.activityIndicator.stopAnimating()
                     
@@ -140,7 +140,6 @@ class QsSignupViewController: UIViewController {
                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
                     
                     self.displayAlert("Failed Signup", message: errorMessage)
-                    
                 }
             })
         }
@@ -154,7 +153,6 @@ class QsSignupViewController: UIViewController {
         let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         
         return emailTest.evaluateWithObject(testStr)
-        
     }
     
     
@@ -171,8 +169,8 @@ class QsSignupViewController: UIViewController {
         emailAddress.resignFirstResponder()
         
         performSegueWithIdentifier("cancelSignUp", sender: self)
-        
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

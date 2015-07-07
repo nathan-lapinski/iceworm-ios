@@ -37,8 +37,9 @@ let buttonEdge = UIEdgeInsetsMake(insets, insets, insets, insets)
 
 // Arrays for displaying questions
 var deletedMyQuestions = [String]() // questions DELETED by current user
-var dismissedTheirQuestions = [String]() // questions ANSWERED by current user
+//var dismissedTheirQuestions = [String]() // questions ANSWERED by current user
 var deletedTheirQuestions = [String]() // questions DELETED by current user
+var votedOnIds = [String]() // questions VOTED-UPON by current user
 
 // Value for passing qId to results display
 var myRequestedQId = ""
@@ -46,7 +47,7 @@ var theirRequestedQId = ""
 
 // Groupies variable
 var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
-var isGroupieVoteId = [String]()
+var isGroupieQId = [String]()
 //var isNotGroupie = [String]()//var sendToGroupies = [""]
 
 var warningSeen = false

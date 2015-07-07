@@ -21,7 +21,7 @@ class TheirQuestionsTableViewController: UITableViewController {
     var askers = [String]()
     // Variable to track how user voted - store to NSUserDefaults //
     var myVotes = Dictionary<String, Int>()
-    var dismissedTheirStorageKey = myName + "dismissedTheirPermanent"
+    //var dismissedTheirStorageKey = myName + "dismissedTheirPermanent"
     var deletedTheirStorageKey = myName + "deletedTheirPermanent"
     var myVotesStorageKey = myName + "votes"
     var refresher: UIRefreshControl!
@@ -94,27 +94,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                                     voteObjects!.saveInBackground()
                                 }
                                 
-                                
-                                /*
-                                // DELETE ONCE ABOVE IS WORKING ------------------------------------
-                                // OLD VOTES TABLE
-                                voteObjects!.addObject(uId, forKey: "voterId")
-                                voteObjects!.saveInBackground()
-                                voteObjects!.addObject(myName, forKey: "voterName")
-                                voteObjects!.saveInBackground()
-                                voteObjects!.addObject(optionId, forKey: "vote")
-                                voteObjects!.saveInBackground()
-                                // -----------------------------------------------------------------
-                                */
-                                
-                                
                                 // Store updated array locally
-                                dismissedTheirQuestions.append(questionObject.objectId!!)
-                                NSUserDefaults.standardUserDefaults().setObject(dismissedTheirQuestions, forKey: self.dismissedTheirStorageKey)
-                                
-                                // Update table row
-                                //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
-                                //self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                                //dismissedTheirQuestions.append(questionObject.objectId!!)
+                                //NSUserDefaults.standardUserDefaults().setObject(dismissedTheirQuestions, forKey: self.dismissedTheirStorageKey)
                                 
                             } else {
                                 
@@ -122,7 +104,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 println(error)
                                 
                             }
-                            
                         })
                         
                         
@@ -136,13 +117,14 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 // Store questionId into "votedOnId" array
                                 userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOnId")
                                 userQsObjects!.saveInBackground()
+                                
+                                votedOnIds.append(self.questionIds[questionId])
                             }
                         })
                         
                         
                         // Increment vote counter ---------------------------------
-                        // NOTE: This doesn't have to be nested in the previous (votes table) as displaying
-                        // results is not dependent on logging the userQs table - only on filling the SocialQs table
+                        // Should this be nested in the above so all query/writes to DBare completed before switching views?
                         var statsQuery = PFQuery(className: "SocialQs")
                         
                         statsQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (object, error) -> Void in
@@ -204,7 +186,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         // Determine which state (unvote or voted on) the cell is in before deleting from arrays
         var votedOn = false
-        if contains(dismissedTheirQuestions, self.questionIds[indexPath.row]) == true {
+        if contains(votedOnIds, self.questionIds[indexPath.row]) == true {
             votedOn = true
         } else {
             votedOn = false
@@ -239,13 +221,18 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 if error == nil {
                     
+                    // Add Q to deleted
                     userQsObjects!.addUniqueObject(self.questionIds[indexPath.row], forKey: "deletedTheirQsId")
                     userQsObjects!.saveInBackground()
                     
-                    deletedTheirQuestions.append(self.questionIds[indexPath.row])
+                    // Remove Q from theirQs (their active Qs)
+                    userQsObjects!.removeObject(self.questionIds[indexPath.row], forKey: "theirQsId")
+                    userQsObjects!.saveInBackground()
+                    
+                    //deletedTheirQuestions.append(self.questionIds[indexPath.row])
                     
                     // Store updated array locally
-                    NSUserDefaults.standardUserDefaults().setObject(deletedTheirQuestions, forKey: self.deletedTheirStorageKey)
+                    //NSUserDefaults.standardUserDefaults().setObject(deletedTheirQuestions, forKey: self.deletedTheirStorageKey)
                     
                     self.questionIds.removeAtIndex(indexPath.row)
                     self.questions.removeAtIndex(indexPath.row)
@@ -295,9 +282,6 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         // PUSH - Set up the reload to trigger off the push for "reloadTable"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
-        
-        // Setup push observer for items directly related to user (ie: Qs to user of votes on user's Qs)
-        //NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "brett", object: nil)
         
         
         
@@ -349,7 +333,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         let maxBarWidth = cell.contentView.bounds.width// - 2*(8) // CHANGE 8 to NSLayout leading
         
-        if contains(dismissedTheirQuestions, questionIds[indexPath.row]) == true { // Already voted setup
+        if contains(votedOnIds, questionIds[indexPath.row]) == true { // Already voted setup
             
             cell = tableView.dequeueReusableCellWithIdentifier("cell2", forIndexPath: indexPath) as! TheirQuestionsCell
             
@@ -497,10 +481,6 @@ class TheirQuestionsTableViewController: UITableViewController {
             deletedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey)! as! [(String)]
         }
         
-        if NSUserDefaults.standardUserDefaults().objectForKey(dismissedTheirStorageKey) != nil {
-            dismissedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(dismissedTheirStorageKey)! as! [(String)]
-        }
-        
         if NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey) != nil {
             myVotes = NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey)! as! Dictionary
         }
@@ -523,8 +503,7 @@ class TheirQuestionsTableViewController: UITableViewController {
     // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
-        var pullIds = [String]()
-        
+        // Get list of Qs to pull from UserQs
         var userQsQuery = PFQuery(className: "UserQs")
         userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
             
@@ -535,15 +514,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             } else {
                 
-                if userQsObjects!["theirQsId"] == nil {
-                    // Add UIAlert for this:
-                    //
-                    println("User has recieved no Qs")
-                    //
-                    //
-                } else {
-                
-                    pullIds = userQsObjects!["theirQsId"]! as! [String]
+                if let pullIds = userQsObjects!["theirQsId"] as? [String] {
                     //println(pullIds)
                     
                     // Pull Qs with Id in pullIds
@@ -612,6 +583,8 @@ class TheirQuestionsTableViewController: UITableViewController {
                             }
                         }
                     }
+                } else {
+                    // NO Qs
                 }
             }
         })
