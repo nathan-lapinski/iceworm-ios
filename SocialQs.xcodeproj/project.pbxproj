@@ -31,6 +31,8 @@
 		905CB19C1B31193700947487 /* TheirQuestionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905CB19B1B31193700947487 /* TheirQuestionsCell.swift */; };
 		9065E3F01B34AC8500F85D3B /* TestActiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9065E3EF1B34AC8500F85D3B /* TestActiveViewController.swift */; };
 		9096430D1B3365680029E008 /* MyQuestionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9096430C1B3365680029E008 /* MyQuestionsCell.swift */; };
+		9099E5E61B4CCC9A00A1887E /* NEWAskTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9099E5E51B4CCC9A00A1887E /* NEWAskTableViewController.swift */; };
+		9099E5E81B4CCCFA00A1887E /* NEWAskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */; };
 		90A1473D1B2E4CBA00947B33 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */; };
 		90A1473F1B2E4CBF00947B33 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473E1B2E4CBF00947B33 /* CFNetwork.framework */; };
 		90A147411B2E4CC500947B33 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A147401B2E4CC500947B33 /* CoreGraphics.framework */; };
@@ -92,6 +94,8 @@
 		905CB19B1B31193700947487 /* TheirQuestionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TheirQuestionsCell.swift; sourceTree = "<group>"; };
 		9065E3EF1B34AC8500F85D3B /* TestActiveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestActiveViewController.swift; sourceTree = "<group>"; };
 		9096430C1B3365680029E008 /* MyQuestionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyQuestionsCell.swift; sourceTree = "<group>"; };
+		9099E5E51B4CCC9A00A1887E /* NEWAskTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWAskTableViewController.swift; sourceTree = "<group>"; };
+		9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWAskTableViewCell.swift; sourceTree = "<group>"; };
 		90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		90A1473E1B2E4CBF00947B33 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		90A147401B2E4CC500947B33 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -180,6 +184,8 @@
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
+				9099E5E51B4CCC9A00A1887E /* NEWAskTableViewController.swift */,
+				9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */,
 				9096430C1B3365680029E008 /* MyQuestionsCell.swift */,
 				901263181B3BA73600AA2058 /* MyQuestionsTableViewController.swift */,
 				90DE6C201B30E9CC004F3BA0 /* QsLoginViewController.swift */,
@@ -361,6 +367,7 @@
 			files = (
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
 				901263171B3BA33B00AA2058 /* TheirQuestionsTableViewController.swift in Sources */,
+				9099E5E61B4CCC9A00A1887E /* NEWAskTableViewController.swift in Sources */,
 				904123061B26A67C00397132 /* ResultsViewController.swift in Sources */,
 				9096430D1B3365680029E008 /* MyQuestionsCell.swift in Sources */,
 				902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */,
@@ -373,6 +380,7 @@
 				904123041B26A67C00397132 /* AskViewController.swift in Sources */,
 				901263191B3BA73600AA2058 /* MyQuestionsTableViewController.swift in Sources */,
 				90DE6C211B30E9CC004F3BA0 /* QsLoginViewController.swift in Sources */,
+				9099E5E81B4CCCFA00A1887E /* NEWAskTableViewCell.swift in Sources */,
 				90FE1F1F1B43A89F005F2D68 /* VotesMyCell.swift in Sources */,
 				90FE1F231B43A941005F2D68 /* VotesMyTableViewController.swift in Sources */,
 				902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */,
