@@ -16,7 +16,6 @@ class NEWAskTableViewController: UITableViewController {
     
     @IBAction func qPhotoButtonPressed(sender: AnyObject) {
         switchCell(&qCell, rowNumber: 0)
-        println(qCell)
     }
     
     @IBAction func qCameraButtonPressed(sender: AnyObject) {
@@ -25,32 +24,30 @@ class NEWAskTableViewController: UITableViewController {
     
     @IBAction func qTextButtonPressed(sender: AnyObject) {
         switchCell(&qCell, rowNumber: 0)
-        println(qCell)
     }
     
-    
     @IBAction func oPhotoButtonPressed(sender: AnyObject) {
-        if sender.tag == 1 {
+        //if sender.tag == 1 {
             switchCell(&o1Cell, rowNumber: sender.tag)
-        } else {
-            switchCell(&o1Cell, rowNumber: sender.tag)
-        }
+        //} else {
+        //    switchCell(&o2Cell, rowNumber: sender.tag)
+        //}
     }
     
     @IBAction func oCameraButtonPressed(sender: AnyObject) {
-        if sender.tag == 1 {
+        //if sender.tag == 1 {
             switchCell(&o1Cell, rowNumber: sender.tag)
-        } else {
-            switchCell(&o1Cell, rowNumber: sender.tag)
-        }
+        //} else {
+        //    switchCell(&o2Cell, rowNumber: sender.tag)
+        //}
     }
     
     @IBAction func oTextButtonPressed(sender: AnyObject) {
-        if sender.tag == 1 {
+        //if sender.tag == 1 {
             switchCell(&o1Cell, rowNumber: sender.tag)
-        } else {
-            switchCell(&o1Cell, rowNumber: sender.tag)
-        }
+        //} else {
+        //    switchCell(&o2Cell, rowNumber: sender.tag)
+        //}
     }
     
     
@@ -61,7 +58,7 @@ class NEWAskTableViewController: UITableViewController {
         var indexPathOther = NSIndexPath(forRow: rowNumber, inSection: 0)
         tableView.reloadRowsAtIndexPaths([indexPathOther], withRowAnimation: UITableViewRowAnimation.Middle)
         
-        // TEMP - to make options switch together
+        // TEMP - to make options switch together // *************
         if rowNumber == 1 {
             indexPathOther = NSIndexPath(forRow: 2, inSection: 0)
             tableView.reloadRowsAtIndexPaths([indexPathOther], withRowAnimation: UITableViewRowAnimation.Middle)
@@ -77,7 +74,7 @@ class NEWAskTableViewController: UITableViewController {
         
         // Set table background image
         self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg.png"))
-
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -101,7 +98,7 @@ class NEWAskTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
-        return 3
+        return 5
     }
 
     
@@ -111,12 +108,12 @@ class NEWAskTableViewController: UITableViewController {
         
         switch indexPath.row {
         case 0:
-            println("qCell = \(qCell)")
             if qCell == 0 {
                 cell = tableView.dequeueReusableCellWithIdentifier("qCell1", forIndexPath: indexPath) as! NEWAskTableViewCell
             } else {
                 cell = tableView.dequeueReusableCellWithIdentifier("qCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
             }
+            cell.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.6))
         case 1:
             if o1Cell == 0 {
                 cell = tableView.dequeueReusableCellWithIdentifier("oCell1", forIndexPath: indexPath) as! NEWAskTableViewCell
@@ -126,6 +123,7 @@ class NEWAskTableViewController: UITableViewController {
                 cell = tableView.dequeueReusableCellWithIdentifier("oCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
                 cell.textOutlet.tag = indexPath.row
             }
+            cell.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.6))
         case 2:
             if o1Cell == 0 { //if o2Cell == 0 {
                 cell = tableView.dequeueReusableCellWithIdentifier("oCell1", forIndexPath: indexPath) as! NEWAskTableViewCell
@@ -135,12 +133,17 @@ class NEWAskTableViewController: UITableViewController {
                 cell = tableView.dequeueReusableCellWithIdentifier("oCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
                 cell.textOutlet.tag = indexPath.row
             }
+            cell.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.6))
+        case 3:
+            cell = tableView.dequeueReusableCellWithIdentifier("buttonCell1", forIndexPath: indexPath) as! NEWAskTableViewCell
+            cell.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.0))
+        case 4:
+            cell = tableView.dequeueReusableCellWithIdentifier("buttonCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
+            cell.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.0))
         default:
             cell = tableView.dequeueReusableCellWithIdentifier("qCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
         }
         
-        // Set cell bg color
-        cell.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.6))
         
         // Set separator color
         tableView.separatorColor = UIColor.clearColor()

@@ -19,11 +19,8 @@ class TheirQuestionsTableViewController: UITableViewController {
     var option2Stats = [Int]()
     //var users = [String: String]()
     var askers = [String]()
-    // Variable to track how user voted - store to NSUserDefaults //
-    var myVotes = Dictionary<String, Int>()
     //var dismissedTheirStorageKey = myName + "dismissedTheirPermanent"
     var deletedTheirStorageKey = myName + "deletedTheirPermanent"
-    var myVotesStorageKey = myName + "votes"
     var refresher: UIRefreshControl!
     var activityIndicator = UIActivityIndicatorView()
     
@@ -58,7 +55,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         // Update internal and local storage of "myVotes"
         myVotes[questionIds[questionId]] = optionId
-        NSUserDefaults.standardUserDefaults().setObject(myVotes, forKey: self.myVotesStorageKey)
+        NSUserDefaults.standardUserDefaults().setObject(myVotes, forKey: myVotesStorageKey)
         
         // Query Q table to get vote table Id
         // The access Vote table and do stuffs
@@ -72,7 +69,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                 // All this logic is not necessary - need to figure out how to unwrap "questionObjects"
                 // Only one item should exist when pulled with this whereKey, so no for loop needed.
                 // ------------------------------------------------------------------------------------
-                
                 if let temp = questionObjects {
                     
                     for questionObject in temp {
@@ -94,6 +90,80 @@ class TheirQuestionsTableViewController: UITableViewController {
                                     voteObjects!.saveInBackground()
                                 }
                                 
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                //asdfasdf
+                                // Increment vote counter ---------------------------------
+                                // Should this be nested in the above so all query/writes to DBare completed before switching views?
+                                var statsQuery = PFQuery(className: "SocialQs")
+                                
+                                statsQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (object, error) -> Void in
+                                    
+                                    object!.incrementKey(voteId)
+                                    object!.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
+                                        
+                                        if (success) { // The score key has been incremented
+                                            
+                                            //
+                                            //
+                                            println(object!["stats1"]) // if this works no need for query below
+                                            //
+                                            //
+                                            
+                                            
+                                            // ---------------------------------------------------------------------------------------------------------------
+                                            // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
+                                            var singleQuery = PFQuery(className: "SocialQs")
+                                            
+                                            singleQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (singleObjects, singleError) -> Void in
+                                                
+                                                // if singleError... // *********
+                                                
+                                                if let singleIndex = find(self.questionIds, questionObject.objectId!!) {
+                                                    
+                                                    self.option1Stats[singleIndex] = singleObjects!["stats1"]! as! Int
+                                                    self.option2Stats[singleIndex] = singleObjects!["stats2"]! as! Int
+                                                    
+                                                    // Update table row
+                                                    var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                                                    self.tableView.beginUpdates()
+                                                    self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                                                    self.tableView.endUpdates()
+                                                    
+                                                    self.activityIndicator.stopAnimating()
+                                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                                }
+                                            })
+                                            // ---------------------------------------------------------------------------------------------------------------
+                                            
+                                        } else { // There was a problem, check error.description
+                                            
+                                            println("Increment error:")
+                                            println(error)
+                                            
+                                            self.activityIndicator.stopAnimating()
+                                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                        }
+                                    }
+                                })
+                                //asdfasdf
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
                                 // Store updated array locally
                                 //dismissedTheirQuestions.append(questionObject.objectId!!)
                                 //NSUserDefaults.standardUserDefaults().setObject(dismissedTheirQuestions, forKey: self.dismissedTheirStorageKey)
@@ -109,64 +179,42 @@ class TheirQuestionsTableViewController: UITableViewController {
                         
                         // Update data in UserQs table (store on what Qs user already voted )
                         var userQsQuery = PFQuery(className: "UserQs")
-                        userQsQuery.whereKey("objectId", equalTo: uQId)
+                        //userQsQuery.whereKey("objectId", equalTo: uQId)
                         userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                             
                             if error == nil {
                                 
                                 // Store questionId into "votedOnId" array
-                                userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOnId")
-                                userQsObjects!.saveInBackground()
-                                
-                                votedOnIds.append(self.questionIds[questionId])
-                            }
-                        })
-                        
-                        
-                        // Increment vote counter ---------------------------------
-                        // Should this be nested in the above so all query/writes to DBare completed before switching views?
-                        var statsQuery = PFQuery(className: "SocialQs")
-                        
-                        statsQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (object, error) -> Void in
-                            
-                            object!.incrementKey(voteId)
-                            object!.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
-                                
-                                if (success) { // The score key has been incremented\
+                                if optionId == 1 {
                                     
-                                    // ---------------------------------------------------------------------------------------------------------------
-                                    // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
-                                    var singleQuery = PFQuery(className: "SocialQs")
+                                    userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOn1Id")
+                                    userQsObjects!.saveInBackground()
                                     
-                                    singleQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (singleObjects, singleError) -> Void in
-                                        
-                                        if let singleIndex = find(self.questionIds, questionObject.objectId!!) {
-                                            
-                                            self.option1Stats[singleIndex] = singleObjects!["stats1"]! as! Int
-                                            self.option2Stats[singleIndex] = singleObjects!["stats2"]! as! Int
-                                            
-                                            // Update table row
-                                            var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
-                                            self.tableView.beginUpdates()
-                                            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
-                                            self.tableView.endUpdates()
-                                            
-                                            self.activityIndicator.stopAnimating()
-                                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                        }
-                                    })
-                                    // ---------------------------------------------------------------------------------------------------------------
+                                    votedOn1Ids.append(self.questionIds[questionId])
+                                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
                                     
-                                } else { // There was a problem, check error.description
+                                } else {
                                     
-                                    println("Increment error:")
-                                    println(error)
+                                    userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOn2Id")
+                                    userQsObjects!.saveInBackground()
                                     
-                                    self.activityIndicator.stopAnimating()
-                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                    votedOn2Ids.append(self.questionIds[questionId])
+                                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
+                                    
                                 }
+                                
+                                
                             }
                         })
+                        
+                        
+                        
+                        //asdfasdf
+                        
+                        
+                        
+                        
+                        
                     }
                 }
                 
@@ -186,7 +234,11 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         // Determine which state (unvote or voted on) the cell is in before deleting from arrays
         var votedOn = false
-        if contains(votedOnIds, self.questionIds[indexPath.row]) == true {
+        
+        var votedOnTemp = votedOn1Ids + votedOn2Ids
+        println(votedOnTemp)
+        
+        if contains(votedOnTemp, self.questionIds[indexPath.row]) {
             votedOn = true
         } else {
             votedOn = false
@@ -202,8 +254,8 @@ class TheirQuestionsTableViewController: UITableViewController {
                 self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
             })
         }
-        
         view.backgroundColor = UIColor.orangeColor()
+        
         
         let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
             
@@ -216,7 +268,7 @@ class TheirQuestionsTableViewController: UITableViewController {
             
             // Append qId to "deleted" array in database
             var deletedQuery = PFQuery(className: "UserQs")
-            deletedQuery.whereKey("objectId", equalTo: uQId)
+            //deletedQuery.whereKey("objectId", equalTo: uQId)
             deletedQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
                 if error == nil {
@@ -254,6 +306,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         }
         trash.backgroundColor = UIColor.redColor()
         
+        
         if votedOn {
             
             return [trash, view] // Order = appearance order, right to left on screen
@@ -283,8 +336,6 @@ class TheirQuestionsTableViewController: UITableViewController {
         // PUSH - Set up the reload to trigger off the push for "reloadTable"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
         
-        
-        
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
         refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -303,7 +354,6 @@ class TheirQuestionsTableViewController: UITableViewController {
         self.tableView.contentInset = UIEdgeInsetsMake(12,0,48,0)
         // Disable auto inset adjust
         self.automaticallyAdjustsScrollViewInsets = false
-        
     }
     
     
@@ -333,7 +383,12 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         let maxBarWidth = cell.contentView.bounds.width// - 2*(8) // CHANGE 8 to NSLayout leading
         
-        if contains(votedOnIds, questionIds[indexPath.row]) == true { // Already voted setup
+        // *******************************************************************
+        // MOVE TO MAIN SCOPE AND CONCATENATE WHEN THESE TWO ARE UPDATED??
+        // *******************************************************************
+        var votedOnTemp = votedOn1Ids + votedOn2Ids
+        
+        if contains(votedOnTemp, self.questionIds[indexPath.row]) { // Already voted setup
             
             cell = tableView.dequeueReusableCellWithIdentifier("cell2", forIndexPath: indexPath) as! TheirQuestionsCell
             
@@ -360,6 +415,7 @@ class TheirQuestionsTableViewController: UITableViewController {
             cell.option2Text.text = option2s[indexPath.row] + "  \(Int(option2Percent))%"
             
             var resp = "responses"
+            
             if totalResponses == 1 {
                 
                 resp = "response"
@@ -403,8 +459,8 @@ class TheirQuestionsTableViewController: UITableViewController {
             //cell.option2ImageView.frame = CGRectMake(cell.option2ImageView.frame.origin.x, cell.option2ImageView.frame.origin.y, width2, cell.option2ImageView.frame.height)
             
             
-            // Color user's choice
-            if myVotes[questionIds[indexPath.row]] == 1 {
+            // Mark user's choice
+            if contains(votedOn1Ids, questionIds[indexPath.row]) {
                 
                 cell.myVote1.text = "✔"
                 cell.myVote2.text = ""
@@ -484,6 +540,14 @@ class TheirQuestionsTableViewController: UITableViewController {
         if NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey) != nil {
             myVotes = NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey)! as! Dictionary
         }
+        
+        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey) != nil {
+            votedOn1Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey)! as! [(String)]
+        }
+        
+        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey) != nil {
+            votedOn2Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey)! as! [(String)]
+        }
         // MAKE FUNCTION -----------------------------------------------------------
         
         
@@ -514,18 +578,20 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             } else {
                 
+                println(userQsObjects!.objectId)
+                
                 if let pullIds = userQsObjects!["theirQsId"] as? [String] {
-                    //println(pullIds)
+                    println(pullIds)
                     
                     // Pull Qs with Id in pullIds
                     var getSocialQsQuery = PFQuery(className: "SocialQs")
                     
+                    // implement the following whereKey to filter myQs OUT of this list
+                    //getSocialQsQuery.whereKey("askername", notEqualTo: myName)
+                    getSocialQsQuery.whereKey("objectId", containedIn: pullIds)
+                    
                     // Sort by newest created-date first
                     getSocialQsQuery.orderByDescending("createdAt")
-                    
-                    // implement the following whereKey to filter myQs OUT of this list
-                    getSocialQsQuery.whereKey("askername", notEqualTo: myName)
-                    getSocialQsQuery.whereKey("objectId", containedIn: pullIds)
                     
                     // Add whereKey for dismissed Qs here
                     // **** Remove this after changing vote/delete to modify UserQs table ****
@@ -564,27 +630,26 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 // Ensure all queries have completed THEN refresh the table!
                                 // CHANGED THIS TO MATCH NEW PULL METHOD - WAS "ASKERS"
                                 //
-                                if self.questions.count == pullIds.count {
-                                    //
-                                    //
-                                    
-                                    self.tableView.reloadData()
-                                    self.tableView.reloadInputViews()
-                                    
-                                    // Kill refresher when query finished
-                                    self.refresher.endRefreshing()
-                                    
-                                    // Stop animation - hides when stopped (above) hides spinner automatically
-                                    //self.activityIndicator.stopAnimating()
-                                    
-                                    // Release app input
-                                    //UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                }
+                                //if self.questions.count == pullIds.count { }
+                                
+                                self.tableView.reloadData()
+                                self.tableView.reloadInputViews()
+                                
+                                // Kill refresher when query finished
+                                self.refresher.endRefreshing()
+                                
+                                // Stop animation - hides when stopped (above) hides spinner automatically
+                                //self.activityIndicator.stopAnimating()
+                                
+                                // Release app input
+                                //UIApplication.sharedApplication().endIgnoringInteractionEvents()
                             }
                         }
                     }
                 } else {
+                    
                     // NO Qs
+                    
                 }
             }
         })

@@ -94,7 +94,11 @@ class WelcomeViewController: UIViewController {
             NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
             
             // Store votedOnIds locally
+            votedOn1Ids.removeAll(keepCapacity: true)
+            votedOn2Ids.removeAll(keepCapacity: true)
+            
             var userQsQuery = PFQuery(className: "UserQs")
+            
             userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
                 if error != nil {
@@ -104,28 +108,39 @@ class WelcomeViewController: UIViewController {
                     
                 } else {
                     
-                    if let votedOnId = userQsObjects!["votedOnId"] as? [String] {
+                    println("%%%%%%%%%%%")
+                    println(userQsObjects)
+                    println("%%%%%%%%%%%")
+                    
+                    if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
                         
-                        votedOnIds = votedOnId
+                        votedOn1Ids = votedOn1Id
                         
-                        NSUserDefaults.standardUserDefaults().setObject(votedOnIds, forKey: "votedOnIds")
-                        
+                        NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
                     }
+                    
+                    if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
+                        
+                        votedOn2Ids = votedOn2Id
+                        
+                        NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
+                    }
+                    
+                    
+                    // Set PFInstallation pointer to user table
+                    let installation = PFInstallation.currentInstallation()
+                    installation["user"] = PFUser.currentUser()
+                    installation.saveInBackground()
+                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+                    
+                    // Add user-specific channel to installation
+                    //installation.addUniqueObject(myName, forKey: "channels")
+                    //installation.saveInBackground()
+                    
+                    self.performSegueWithIdentifier("alreadySignedIn", sender: self)
                 }
             })
-            
-            // Set PFInstallation pointer to user table
-            let installation = PFInstallation.currentInstallation()
-            installation["user"] = PFUser.currentUser()
-            installation.saveInBackground()
-            // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-            // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-            
-            // Add user-specific channel to installation
-            //installation.addUniqueObject(myName, forKey: "channels")
-            //installation.saveInBackground()
-            
-            self.performSegueWithIdentifier("alreadySignedIn", sender: self)
         }
         
         // ANIMATION STUFFS -------------------------------------------------------------

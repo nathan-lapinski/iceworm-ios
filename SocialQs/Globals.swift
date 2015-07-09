@@ -39,7 +39,14 @@ let buttonEdge = UIEdgeInsetsMake(insets, insets, insets, insets)
 var deletedMyQuestions = [String]() // questions DELETED by current user
 //var dismissedTheirQuestions = [String]() // questions ANSWERED by current user
 var deletedTheirQuestions = [String]() // questions DELETED by current user
-var votedOnIds = [String]() // questions VOTED-UPON by current user
+var votedOn1Ids = [String]() // questions VOTED-UPON by current user
+var votedOn2Ids = [String]() // questions VOTED-UPON by current user
+let myVoted1StorageKey = myName + "votedOn1Ids"
+let myVoted2StorageKey = myName + "votedOn2Ids"
+
+// Variable to track how user voted - store to NSUserDefaults //
+var myVotes = Dictionary<String, Int>()
+var myVotesStorageKey = myName + "votes"
 
 // Value for passing qId to results display
 var myRequestedQId = ""

@@ -92,12 +92,18 @@ class QsLoginViewController: UIViewController {
                             
                         } else {
                             
-                            if let votedOnId = userQsObjects!["votedOnId"] as? [String] {
+                            if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
                                 
-                                votedOnIds = votedOnId
+                                votedOn1Ids = votedOn1Id
                                 
-                                NSUserDefaults.standardUserDefaults().setObject(votedOnIds, forKey: "votedOnIds")
+                                NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
+                            }
+                            
+                            if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
                                 
+                                votedOn2Ids = votedOn2Id
+                                
+                                NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
                             }
                         }
                     })
@@ -155,64 +161,49 @@ class QsLoginViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        // Recal myName if applicable
+        // Recall myName if applicable
         if NSUserDefaults.standardUserDefaults().objectForKey("myName") != nil {
             
             myName = NSUserDefaults.standardUserDefaults().objectForKey("myName")! as! String
             
         }
         
-        // Recal uId if applicable
+        // Recall uId if applicable
         if NSUserDefaults.standardUserDefaults().objectForKey("uId") != nil {
             
             uId = NSUserDefaults.standardUserDefaults().objectForKey("uId")! as! String
             
         }
         
-        // Recal uQId if applicable
+        // Recall uQId if applicable
         if NSUserDefaults.standardUserDefaults().objectForKey("uQId") != nil {
             
             uQId = NSUserDefaults.standardUserDefaults().objectForKey("uQId")! as! String
             
         }
         
-        // Recal uQId if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey("votedOnIds") != nil {
+        // Recall votedOnIds if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey) != nil {
             
-            votedOnIds = NSUserDefaults.standardUserDefaults().objectForKey("votedOnIds")! as! [String]
-            println(votedOnIds)
+            votedOn1Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey)! as! [String]
+        }
+        
+        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey) != nil {
+            
+            votedOn2Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey)! as! [String]
+        }
+        
+        // Recall myVotes if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey("myVotes") != nil {
+            
+            myVotes = NSUserDefaults.standardUserDefaults().objectForKey("myVotesStorageKey")! as! Dictionary
             
         }
     }
     
     
     override func viewDidAppear(animated: Bool) {
-        
-        /*
-        // Skip login procedure if user is already logged in
-        if PFUser.currentUser() != nil && myName != "" {
-            
-            // Not part of test env
-            myName = (PFUser.currentUser()!.username!)
-            //println("Welcome " + myName)
-            
-            self.performSegueWithIdentifier("signedIn", sender: self)
-            
-        }
-        */
-        
     }
-        
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    
     
     // Hide keyboard when touching outside keyboard
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
@@ -230,5 +221,14 @@ class QsLoginViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+    /*
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    // Get the new view controller using segue.destinationViewController.
+    // Pass the selected object to the new view controller.
+    }
+    */
 }

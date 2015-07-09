@@ -43,6 +43,9 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         option1TextField.text = nil
         option2TextField.text = nil
         
+        isGroupieName.removeAll(keepCapacity: true)
+        isGroupieQId.removeAll(keepCapacity: true)
+        
         questionTextField.resignFirstResponder()
         option1TextField.resignFirstResponder()
         option2TextField.resignFirstResponder()
@@ -53,7 +56,17 @@ class AskViewController: UIViewController, UITextFieldDelegate {
         
         if questionTextField.text == "" || option1TextField.text == "" || option2TextField.text == "" {
             
+            let title = "Well that was silly!"
+            let message = "You need to provide a Q and two options!"
+            displayAlert(title, message: message)
+            
         } else {
+        
+            
+            println("User is attempting to send a Q to:")
+            println(isGroupieName)
+            println("With qIds:")
+            println(isGroupieQId)
             
             // Setup spinner and block application input
             activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
@@ -64,7 +77,6 @@ class AskViewController: UIViewController, UITextFieldDelegate {
             activityIndicator.startAnimating()
             UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
-            
             // PARSE -------------------------------------------------------------
             // Add entry to "Votes Table" ----------------
             var votes = PFObject(className: "Votes")
@@ -72,10 +84,6 @@ class AskViewController: UIViewController, UITextFieldDelegate {
             votes.saveInBackgroundWithBlock({ (success, error) -> Void in
                 
                 if error == nil {
-                    
-                    // Add questionId to myQs within UserQs table
-                    var qData = PFQuery(className: "UserQs")
-                    qData.whereKey("objectId", equalTo: uQId)
                     
                     var socialQ = PFObject(className: "SocialQs")
                     
@@ -91,17 +99,22 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                     
                     socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
                         
-                        var qId = socialQ.objectId!
+                        var currentQId = socialQ.objectId!
                         
                         if error == nil {
+                            
+                            // Query all "groupies" and myself (to add to myQs)
+                            var usersToQuery = isGroupieQId + [uQId]
                             
                             // Add qId to "UserQs" table ------
                             var userQsQuery = PFQuery(className: "UserQs")
                             
-                            // Query all "groupies" and myself (to add to myQs)
-                            var usersToQuery = isGroupieQId + [uQId]
+                            println("userToQuery appended:")
                             println(usersToQuery)
-                            userQsQuery.whereKey("objectId", containedIn: usersToQuery)
+                            
+                            if isGroupieQId.count > 0 {
+                                userQsQuery.whereKey("objectId", containedIn: usersToQuery)
+                            }
                             
                             // Execute query
                             userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
@@ -110,24 +123,21 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                                     
                                     if let temp = userQsObjects {
                                         
+                                        println("App is sending Q to uQIds:")
                                         for userQsObject in temp {
-                                            
-                                            println("-----")
-                                            println(userQsObject.objectId!!)
-                                            println("-----")
                                             
                                             if userQsObject.objectId!! == uQId { // Append qId to myQs within UserQs table
                                                 
                                                 println("Saving to \(userQsObject.objectId!!) myQsId")
                                                 
-                                                userQsObject.addUniqueObject(qId, forKey: "myQsId")
+                                                userQsObject.addUniqueObject(currentQId, forKey: "myQsId")
                                                 userQsObject.saveInBackground()
                                                 
                                             } else { // Append qId to theirQs within UserQs table
                                                 
                                                 println("Saving to \(userQsObject.objectId!!) theirQsId")
                                                 
-                                                userQsObject.addUniqueObject(qId, forKey: "theirQsId")
+                                                userQsObject.addUniqueObject(currentQId, forKey: "theirQsId")
                                                 userQsObject.saveInBackground()
                                             }
                                         }
@@ -137,80 +147,85 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                                         println("Error updating UserQs Table")
                                         println(error)
                                     }
+                                    
+                                    // SEND CHANNEL PUSH -----------------------------------------------------
+                                    var pushGeneral = PFPush()
+                                    pushGeneral.setChannel("reloadTheirTable")
+                                    
+                                    // Create dictionary to send JSON to parse/to other devices
+                                    var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
+                                    pushGeneral.setData(dataGeneral)
+                                    
+                                    pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                                        if error == nil { println("General push sent!") }
+                                    })
+                                    
+                                    // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
+                                    // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
+                                    var toUsers: PFQuery = PFUser.query()!
+                                    
+                                    println("********************")
+                                    println(toUsers)
+                                    println("********************")
+                                    
+                                    var pushQuery: PFQuery = PFInstallation.query()!
+                                    
+                                    if isGroupieName.isEmpty == false {
+                                        
+                                        toUsers.whereKey("username", containedIn: isGroupieName)
+                                        pushQuery.whereKey("user", matchesQuery: toUsers)
+                                        
+                                    } else { // If sendToGroupies is empty, filter push to all users
+                                        pushQuery.whereKey("user", notContainedIn: isGroupieName)
+                                        pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
+                                    }
+                                    
+                                    var pushDirected: PFPush = PFPush()
+                                    pushDirected.setQuery(pushQuery)
+                                    
+                                    // Create dictionary to send JSON to parse/to other devices
+                                    //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
+                                    //pushDirected.setData(dataDirected)////
+                                    pushDirected.setMessage("New Q from \(myName)!")
+                                    
+                                    // Send Push Notifications
+                                    pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                                        
+                                        if error == nil {
+                                            
+                                            isGroupieName.removeAll(keepCapacity: true)
+                                            isGroupieQId.removeAll(keepCapacity: true)
+                                            
+                                            println("Directed push notification sent!")
+                                            println("-----")
+                                        }
+                                    })
+                                    // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
+                                    
+                                    // Unlock application interaction and halt spinner
+                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                    self.activityIndicator.stopAnimating()
+                                    
+                                    // Reset all fields after submitting
+                                    self.questionTextField.text = ""
+                                    self.option1TextField.text = ""
+                                    self.option2TextField.text = ""
+                                    
+                                    // Resign keyboard/reset cursor
+                                    self.questionTextField.resignFirstResponder()
+                                    self.option1TextField.resignFirstResponder()
+                                    self.option2TextField.resignFirstResponder()
+                                    
+                                    // Switch to results tab when question is submitted
+                                    // - Had to make storyboard ID for the tabBarController = "tabBarController"
+                                    self.tabBarController?.selectedIndex = 1
                                 }
                             })
-                            
-                            
-                            
-                            // SEND CHANNEL PUSH -----------------------------------------------------
-                            var pushGeneral = PFPush()
-                            pushGeneral.setChannel("reloadTheirTable")
-                            //pushGeneral.setChannel("brett")
-                            
-                            // Create dictionary to send JSON to parse/to other devices
-                            var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
-                            pushGeneral.setData(dataGeneral)
-                            
-                            pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
-                                if error == nil { println("General push sent!") }
-                            })
-                            
-                            
-                            
-                            
-                            // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
-                            // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
-                            var toUsers: PFQuery = PFUser.query()!
-                            toUsers.whereKey("username", containedIn: isGroupieName)
-                            
-                            var pushQuery: PFQuery = PFInstallation.query()!
-                            if !isGroupieName.isEmpty {
-                                pushQuery.whereKey("user", matchesQuery: toUsers)
-                            } else { // If sendToGroupies is not empty, filter push to users
-                                pushQuery.whereKey("user", notContainedIn: isGroupieName)
-                            }
-                            
-                            
-                            var pushDirected: PFPush = PFPush()
-                            pushDirected.setQuery(pushQuery)
-                            
-                            // Create dictionary to send JSON to parse/to other devices
-                            //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
-                            //pushDirected.setData(dataDirected)////
-                            pushDirected.setMessage("New Q from \(myName)!")
-                            
-                            // Send Push Notifications
-                            pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
-                                if error == nil { println("Directed push notification sent!") }
-                            })
-                            
-                            isGroupieName.removeAll(keepCapacity: true)
-                            // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
-                            
-                            
-                            // Unlock application interaction and halt spinner
-                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                            self.activityIndicator.stopAnimating()
-                            
-                            // Reset all fields after submitting
-                            self.questionTextField.text = ""
-                            self.option1TextField.text = ""
-                            self.option2TextField.text = ""
-                            
-                            // Resign keyboard/reset cursor
-                            self.questionTextField.resignFirstResponder()
-                            self.option1TextField.resignFirstResponder()
-                            self.option2TextField.resignFirstResponder()
-                            
-                            // Switch to results tab when question is submitted
-                            // - Had to make storyboard ID for the tabBarController = "tabBarController"
-                            self.tabBarController?.selectedIndex = 1
                             
                         } else {
                             
                             println("Write to SocialQs Table error:")
                             println(error)
-                            
                         }
                     }
                 }
@@ -257,6 +272,12 @@ class AskViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        println("#######################")
+        println(votedOn1Ids)
+        println(votedOn2Ids)
+        println("#######################")
+        
     }
     
     
