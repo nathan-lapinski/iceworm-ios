@@ -330,11 +330,11 @@ class TheirQuestionsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Reload data upon first entry to view
-        refresh()
-        
         // PUSH - Set up the reload to trigger off the push for "reloadTable"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
+        
+        // Reload data upon first entry to view
+        refresh()
         
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
@@ -387,6 +387,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         // MOVE TO MAIN SCOPE AND CONCATENATE WHEN THESE TWO ARE UPDATED??
         // *******************************************************************
         var votedOnTemp = votedOn1Ids + votedOn2Ids
+        // *******************************************************************
         
         if contains(votedOnTemp, self.questionIds[indexPath.row]) { // Already voted setup
             
@@ -555,11 +556,13 @@ class TheirQuestionsTableViewController: UITableViewController {
         // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
         // - this needs to be skipped when push is allowed and used when push has been declined
-        if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
+        //if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
             
             refresh()
+            
+        //    println("USER IS NOT SUBSCRIBED TO RELOADTHEIRTABLE")
         
-        }
+        //}
         // **********************************************************************************************
     }
     

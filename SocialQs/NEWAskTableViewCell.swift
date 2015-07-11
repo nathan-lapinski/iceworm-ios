@@ -19,6 +19,7 @@ class NEWAskTableViewCell: UITableViewCell {
     // qCell1 and qCell2
     @IBOutlet var whatQLabel1: UILabel!
     @IBOutlet var whatQLabel2: UILabel!
+    @IBOutlet var option: UILabel!
     
     // oCell1
     @IBOutlet var optionTextField: UITextField!
@@ -30,6 +31,8 @@ class NEWAskTableViewCell: UITableViewCell {
     @IBOutlet var cameraOutlet: UIButton!
     @IBOutlet var photoOutlet: UIButton!
     @IBOutlet var textOutlet: UIButton!
+    
+    // Buttons Cell
     
 
 }

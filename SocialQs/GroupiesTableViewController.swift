@@ -70,7 +70,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
         // Format Done button
         navigationItem.leftBarButtonItem = doneButton
-        navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!], forState: UIControlState.Normal)
+        navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue", size: tableFontSize)!], forState: UIControlState.Normal)
         
         // Set table background image
         self.tableView.backgroundView = UIImageView(image: UIImage(named: "splash_no_logo.png"))
@@ -182,7 +182,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             
         } else {
             
-            cell.usernameLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)
+            cell.usernameLabel.font = UIFont(name: "HelveticaNeue", size: tableFontSize)
             
             let followedObjectName = objectsArray[indexPath.section].sectionObjects[indexPath.row] as String
             

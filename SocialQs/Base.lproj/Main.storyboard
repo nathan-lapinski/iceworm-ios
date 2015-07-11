@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="keB-Ft-4UR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="nRA-rV-MOs">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="Hh6-wf-cUO">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="Hh6-wf-cUO">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What is your Q?" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xBK-am-Jej">
@@ -775,7 +775,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="WhH-Nx-iKb">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="WhH-Nx-iKb">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                             </imageView>
                             <navigationBar alpha="0.64999999999999969" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cIs-Cm-HHb">
@@ -1234,11 +1234,13 @@
         <!--SocialQs-->
         <scene sceneID="hiL-Xm-T85">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JZt-Sm-fxK" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="RpY-Lt-FsO" customClass="NEWAskTableViewController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="92" sectionHeaderHeight="22" sectionFooterHeight="22" id="HhZ-8J-NNi">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="none" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="92" sectionHeaderHeight="22" sectionFooterHeight="22" id="HhZ-8J-NNi">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="qCell1" rowHeight="92" id="7ko-lr-eZC" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -1282,10 +1284,6 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="questionTextField" destination="jDj-zy-Agg" id="Z8f-mo-gSY"/>
-                                    <outlet property="whatQLabel1" destination="hrZ-en-Vn1" id="L8w-Mk-8SZ"/>
-                                </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="qCell2" rowHeight="92" id="icI-Ri-dUL" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -1300,9 +1298,6 @@
                                             <state key="normal" image="pencil">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
-                                            <connections>
-                                                <action selector="qTextButtonPressed:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="bIq-hX-e5V"/>
-                                            </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Text Q" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aTP-eP-SbB">
                                             <rect key="frame" x="8" y="70" width="86" height="21"/>
@@ -1318,10 +1313,6 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="questionImageView" destination="m5T-UY-kGs" id="dHc-52-L4p"/>
-                                    <outlet property="whatQLabel2" destination="OI7-Ql-1nU" id="kpR-xn-eo5"/>
-                                </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="oCell1" rowHeight="92" id="Nhf-xd-Mwp" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -1366,11 +1357,6 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="cameraOutlet" destination="fQ3-JZ-hK0" id="quO-AB-fS7"/>
-                                    <outlet property="optionTextField" destination="SwS-lC-fM4" id="9mZ-zV-FZm"/>
-                                    <outlet property="photoOutlet" destination="Hgd-mL-Hnp" id="AXx-mH-F3t"/>
-                                </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="oCell2" rowHeight="92" id="ecB-H8-NBM" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -1403,10 +1389,6 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="optionImageView" destination="skQ-HN-KWb" id="N10-P6-Mp0"/>
-                                    <outlet property="textOutlet" destination="5Va-33-2hp" id="5e4-go-1UL"/>
-                                </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="buttonCell1" rowHeight="92" id="erg-8l-QXs" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -1422,7 +1404,7 @@
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                             <connections>
-                                                <action selector="submitButtonAction:" destination="9pv-A4-QxB" eventType="touchUpInside" id="rLa-oj-yvh"/>
+                                                <action selector="submitButtonAction:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="pI4-tg-2tp"/>
                                             </connections>
                                         </button>
                                         <button contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hZS-t1-BLC">
@@ -1434,7 +1416,7 @@
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                             <connections>
-                                                <action selector="cancelButtonAction:" destination="9pv-A4-QxB" eventType="touchUpInside" id="mTm-11-5dP"/>
+                                                <action selector="cancelButtonAction:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="B8W-KQ-qUd"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o7m-W7-UTy">
@@ -1446,7 +1428,7 @@
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                             <connections>
-                                                <action selector="privacyButtonAction:" destination="9pv-A4-QxB" eventType="touchUpInside" id="Wkv-YX-BUM"/>
+                                                <action selector="privacyButtonAction:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="ghD-kC-K9V"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BAb-2p-cpF">
@@ -1458,16 +1440,10 @@
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                             <connections>
-                                                <action selector="groupButtonAction:" destination="9pv-A4-QxB" eventType="touchUpInside" id="yGb-eH-gHs"/>
+                                                <action selector="groupiesButtonAction:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="jah-cP-5Sm"/>
                                             </connections>
                                         </button>
                                     </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="buttonCell2" rowHeight="55" id="fSG-A2-G5k" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fSG-A2-G5k" id="6ha-sv-8dP">
-                                    <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
@@ -1478,13 +1454,309 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="SocialQs" id="Uxk-fW-NQP"/>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="JZt-Sm-fxK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-782.5" y="-2337.5"/>
+            <point key="canvasLocation" x="-780.5" y="-2337.5"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="kQS-oO-Rj2">
+            <objects>
+                <navigationController id="nRA-rV-MOs" sceneMemberID="viewController">
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="pkT-iB-ifQ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="OLa-qI-DUW" kind="relationship" relationship="rootViewController" id="56v-yk-YfM"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lqB-6H-wqO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-80.5" y="-2483.5"/>
+        </scene>
+        <!--SocialQs-->
+        <scene sceneID="uDd-Vr-Fk6">
+            <objects>
+                <viewController id="OLa-qI-DUW" customClass="NEWAskViewController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="qKE-i1-gTa"/>
+                        <viewControllerLayoutGuide type="bottom" id="tef-Xj-dlf"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="FJd-UA-kdJ">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="cYl-WL-DR7">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6uA-Yx-NdP">
+                                <rect key="frame" x="192" y="364" width="167" height="40"/>
+                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                <state key="normal" title="SUBMIT">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="submitButtonAction:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="G6H-n1-unm"/>
+                                    <action selector="submitButtonAction:" destination="OLa-qI-DUW" eventType="touchUpInside" id="eWW-O5-fd7"/>
+                                </connections>
+                            </button>
+                            <button contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e0Q-Dn-F8g">
+                                <rect key="frame" x="16" y="364" width="167" height="40"/>
+                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="18"/>
+                                <state key="normal" title="CANCEL">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="cancelButtonAction:" destination="OLa-qI-DUW" eventType="touchUpInside" id="V1b-rU-OsK"/>
+                                    <action selector="cancelButtonAction:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="YSo-Vd-Zvm"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lro-oc-9jH">
+                                <rect key="frame" x="192" y="412" width="167" height="40"/>
+                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="167" id="gw3-SV-NDL"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="18"/>
+                                <state key="normal" title="PRIVACY">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="privacyButtonAction:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="4EV-RX-fAg"/>
+                                    <action selector="privacyButtonAction:" destination="OLa-qI-DUW" eventType="touchUpInside" id="6nd-Y9-PTU"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zsx-G2-pkl">
+                                <rect key="frame" x="16" y="412" width="167" height="40"/>
+                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="18"/>
+                                <state key="normal" title="GROUPIES">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="groupiesButtonAction:" destination="OLa-qI-DUW" eventType="touchUpInside" id="ant-df-0Fd"/>
+                                    <action selector="groupiesButtonAction:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="eUT-R2-pOK"/>
+                                    <segue destination="hhb-0X-461" kind="popoverPresentation" popoverAnchorView="zsx-G2-pkl" id="EVZ-3C-8jh">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="92" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="F8d-OR-s2E">
+                                <rect key="frame" x="16" y="80" width="343" height="276"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="sectionIndexBackgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="qCell1" id="jdM-9t-Swj" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jdM-9t-Swj" id="W8e-9y-GrG">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" alpha="0.80000001192092896" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder=" Enter Q" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="WC9-Jv-n5l">
+                                                    <rect key="frame" x="8" y="47" width="327" height="30"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="thin" pointSize="15"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" spellCheckingType="yes" returnKeyType="next"/>
+                                                </textField>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="What is your Q?" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gzU-uc-t7Q">
+                                                    <rect key="frame" x="8" y="5" width="283" height="30"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="25"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lQL-ad-Wnp">
+                                                    <rect key="frame" x="304" y="0.0" width="30" height="30"/>
+                                                    <state key="normal" image="camera">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="qCameraButtonPressed:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="JG3-OC-tuS"/>
+                                                        <action selector="qCameraButtonPressed:" destination="OLa-qI-DUW" eventType="touchUpInside" id="Vh8-ri-l9h"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnz-oQ-0wX">
+                                                    <rect key="frame" x="266" y="1" width="30" height="30"/>
+                                                    <state key="normal" image="photo">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="qPhotoButtonPressed:" destination="OLa-qI-DUW" eventType="touchUpInside" id="V4X-TV-Eug"/>
+                                                        <action selector="qPhotoButtonPressed:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="o7b-Tf-SVf"/>
+                                                    </connections>
+                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Media Q" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GzC-2t-x8d">
+                                                    <rect key="frame" x="257" y="22" width="86" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="questionTextField" destination="WC9-Jv-n5l" id="iss-bI-gWl"/>
+                                            <outlet property="whatQLabel1" destination="gzU-uc-t7Q" id="NNf-CW-tl4"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="qCell2" id="h4I-A4-6nU" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="h4I-A4-6nU" id="Xfl-uC-ai8">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yu0-Wh-zvt">
+                                                    <rect key="frame" x="9" y="46" width="30" height="30"/>
+                                                    <state key="normal" image="pencil">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="qTextButtonPressed:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="PmI-Ef-OvI"/>
+                                                        <action selector="qTextButtonPressed:" destination="OLa-qI-DUW" eventType="touchUpInside" id="dBS-Ea-s4S"/>
+                                                    </connections>
+                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Text Q" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MKV-Cq-Nqf">
+                                                    <rect key="frame" x="8" y="70" width="86" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="What is your Q?" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Flu-11-3Cm">
+                                                    <rect key="frame" x="8" y="8" width="176" height="30"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="25"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="city1" translatesAutoresizingMaskIntoConstraints="NO" id="YCU-ZH-LhV">
+                                                    <rect key="frame" x="195" y="8" width="140" height="75"/>
+                                                </imageView>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="questionImageView" destination="YCU-ZH-LhV" id="JXh-CW-2la"/>
+                                            <outlet property="whatQLabel2" destination="Flu-11-3Cm" id="0zx-Oy-gJj"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="oCell1" id="ujB-RO-8aM" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ujB-RO-8aM" id="SAT-Vx-nIa">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" alpha="0.80000001192092896" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder=" Enter Option" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="O8f-qg-Kok">
+                                                    <rect key="frame" x="8" y="45" width="327" height="30"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="thin" pointSize="15"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" spellCheckingType="yes" returnKeyType="next"/>
+                                                </textField>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IlU-Bg-S9D">
+                                                    <rect key="frame" x="8" y="2" width="30" height="30"/>
+                                                    <state key="normal" image="photo">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="oPhotoButtonPressed:" destination="OLa-qI-DUW" eventType="touchUpInside" id="IU5-pC-akL"/>
+                                                        <action selector="oPhotoButtonPressed:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="J9a-Fb-90G"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="czI-Wu-gOK">
+                                                    <rect key="frame" x="46" y="0.0" width="30" height="30"/>
+                                                    <state key="normal" image="camera">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="oCameraButtonPressed:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="Sem-WW-19T"/>
+                                                        <action selector="oCameraButtonPressed:" destination="OLa-qI-DUW" eventType="touchUpInside" id="eQu-yk-Jbt"/>
+                                                    </connections>
+                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Media option" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D4v-Op-gvJ">
+                                                    <rect key="frame" x="9" y="23" width="100" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Option" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kPZ-Gz-tNf">
+                                                    <rect key="frame" x="159" y="7" width="176" height="30"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="25"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="cameraOutlet" destination="czI-Wu-gOK" id="Usa-US-Cae"/>
+                                            <outlet property="option" destination="kPZ-Gz-tNf" id="DTR-Tv-2t6"/>
+                                            <outlet property="optionTextField" destination="O8f-qg-Kok" id="VHD-ns-4bq"/>
+                                            <outlet property="photoOutlet" destination="IlU-Bg-S9D" id="Efj-Eh-FfO"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="oCell2" id="mB0-KH-vx9" customClass="NEWAskTableViewCell" customModule="SocialQs" customModuleProvider="target">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mB0-KH-vx9" id="CMm-71-rbb">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Option" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Ih-1b-Utk">
+                                                    <rect key="frame" x="159" y="8" width="176" height="30"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="25"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="city2" translatesAutoresizingMaskIntoConstraints="NO" id="HyG-vy-X7D">
+                                                    <rect key="frame" x="8" y="8" width="140" height="75"/>
+                                                </imageView>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GDZ-Vy-BHd">
+                                                    <rect key="frame" x="294" y="46" width="30" height="30"/>
+                                                    <state key="normal" image="pencil">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="oTextButtonPressed:" destination="OLa-qI-DUW" eventType="touchUpInside" id="g72-eO-twP"/>
+                                                        <action selector="oTextButtonPressed:" destination="RpY-Lt-FsO" eventType="touchUpInside" id="vpN-eN-fn0"/>
+                                                    </connections>
+                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Text option" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cAM-gh-Ybp">
+                                                    <rect key="frame" x="249" y="70" width="86" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="option" destination="5Ih-1b-Utk" id="6UJ-WC-7Ng"/>
+                                            <outlet property="optionImageView" destination="HyG-vy-X7D" id="eaq-aZ-tJg"/>
+                                            <outlet property="textOutlet" destination="GDZ-Vy-BHd" id="Rh9-e8-1ap"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="tef-Xj-dlf" firstAttribute="top" secondItem="cYl-WL-DR7" secondAttribute="bottom" id="7Bk-0Q-Bhq"/>
+                            <constraint firstItem="cYl-WL-DR7" firstAttribute="top" secondItem="FJd-UA-kdJ" secondAttribute="topMargin" id="ILX-Wx-ub2"/>
+                            <constraint firstItem="cYl-WL-DR7" firstAttribute="leading" secondItem="FJd-UA-kdJ" secondAttribute="leadingMargin" constant="-16" id="UVe-GZ-oB3"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="cYl-WL-DR7" secondAttribute="trailing" constant="-16" id="xIb-Vh-i0F"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="SocialQs" id="xSC-SP-CIe"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <connections>
+                        <outlet property="askTable" destination="F8d-OR-s2E" id="kdL-K7-Vbc"/>
+                        <outlet property="cancelButton" destination="e0Q-Dn-F8g" id="AIz-WN-Kxv"/>
+                        <outlet property="groupiesButton" destination="zsx-G2-pkl" id="uAx-JU-aF1"/>
+                        <outlet property="privacyButton" destination="lro-oc-9jH" id="aYp-TR-43g"/>
+                        <outlet property="submitButton" destination="6uA-Yx-NdP" id="DHL-b2-OaY"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hcd-wS-AHa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="385.5" y="-2483.5"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="pmY-lu-MyN">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZJg-L9-8d9" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController id="8qi-6q-K6Y" sceneMemberID="viewController">
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="dE2-XJ-Rei">
@@ -1495,7 +1767,6 @@
                         <segue destination="RpY-Lt-FsO" kind="relationship" relationship="rootViewController" id="TMB-cp-Ywk"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ZJg-L9-8d9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1230.5" y="-2337.5"/>
         </scene>
@@ -1516,5 +1787,6 @@
     <inferredMetricsTieBreakers>
         <segue reference="1bi-rT-Rup"/>
         <segue reference="u0a-cW-CdR"/>
+        <segue reference="EVZ-3C-8jh"/>
     </inferredMetricsTieBreakers>
 </document>

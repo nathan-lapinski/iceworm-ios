@@ -149,11 +149,12 @@ class AskViewController: UIViewController, UITextFieldDelegate {
                                     }
                                     
                                     // SEND CHANNEL PUSH -----------------------------------------------------
-                                    var pushGeneral = PFPush()
+                                    var pushGeneral:PFPush = PFPush()
                                     pushGeneral.setChannel("reloadTheirTable")
                                     
                                     // Create dictionary to send JSON to parse/to other devices
                                     var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
+                                    
                                     pushGeneral.setData(dataGeneral)
                                     
                                     pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
