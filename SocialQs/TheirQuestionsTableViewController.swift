@@ -344,7 +344,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "splash_no_logo.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs.png"))
         
         // Set separator color
         tableView.separatorColor = UIColor.lightGrayColor()

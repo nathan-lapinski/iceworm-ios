@@ -11,6 +11,8 @@ import Parse
 
 class NEWAskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    let tableBackgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.3))
+    
     var question = String()
     var option1 = String()
     var option2 = String()
@@ -70,14 +72,204 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     println(self.option2)
                     
                     
-                    
-                    // SUBMIT Q AND TRANSISTION TO MYQS TAB
-                    
+                    //
+                    //
+                    self.submitQ()
+                    //
+                    //
                     
                     
                 }
             }
         }
+    }
+    
+    func submitQ() {
+        
+        if question == "" || option1 == "" || option2 == "" {
+            
+            let title = "Well that was silly!"
+            let message = "You need to provide a Q and two options!"
+            displayAlert(title, message: message)
+            
+        } else {
+            
+            
+            println("User is attempting to send a Q to:")
+            println(isGroupieName)
+            println("With qIds:")
+            println(isGroupieQId)
+            
+            // Setup spinner and block application input
+            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+            activityIndicator.center = self.view.center
+            activityIndicator.hidesWhenStopped = true
+            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+            view.addSubview(activityIndicator)
+            activityIndicator.startAnimating()
+            UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+            
+            // PARSE -------------------------------------------------------------
+            // Add entry to "Votes Table" ----------------
+            var votes = PFObject(className: "Votes")
+            
+            votes.saveInBackgroundWithBlock({ (success, error) -> Void in
+                
+                if error == nil {
+                    
+                    var socialQ = PFObject(className: "SocialQs")
+                    
+                    socialQ["question"] = self.question
+                    socialQ["option1"] = self.option1
+                    socialQ["option2"] = self.option2
+                    socialQ["stats1"] = 0
+                    socialQ["stats2"] = 0
+                    socialQ["privacyOptions"] = -1
+                    socialQ["askerId"] = PFUser.currentUser()!.objectId!
+                    socialQ["askername"] = PFUser.currentUser()!["username"]
+                    socialQ["votesId"] = votes.objectId!
+                    
+                    socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
+                        
+                        var currentQId = socialQ.objectId!
+                        
+                        if error == nil {
+                            
+                            // Query all "groupies" and myself (to add to myQs)
+                            var usersToQuery = isGroupieQId + [uQId]
+                            
+                            // Add qId to "UserQs" table ------
+                            var userQsQuery = PFQuery(className: "UserQs")
+                            
+                            println("userToQuery appended:")
+                            println(usersToQuery)
+                            
+                            if isGroupieQId.count > 0 {
+                                userQsQuery.whereKey("objectId", containedIn: usersToQuery)
+                            }
+                            
+                            // Execute query
+                            userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
+                                
+                                if error == nil {
+                                    
+                                    if let temp = userQsObjects {
+                                        
+                                        println("App is sending Q to uQIds:")
+                                        for userQsObject in temp {
+                                            
+                                            if userQsObject.objectId!! == uQId { // Append qId to myQs within UserQs table
+                                                
+                                                println("Saving to \(userQsObject.objectId!!) myQsId")
+                                                
+                                                userQsObject.addUniqueObject(currentQId, forKey: "myQsId")
+                                                userQsObject.saveInBackground()
+                                                
+                                            } else { // Append qId to theirQs within UserQs table
+                                                
+                                                println("Saving to \(userQsObject.objectId!!) theirQsId")
+                                                
+                                                userQsObject.addUniqueObject(currentQId, forKey: "theirQsId")
+                                                userQsObject.saveInBackground()
+                                            }
+                                        }
+                                        
+                                    } else {
+                                        
+                                        println("Error updating UserQs Table")
+                                        println(error)
+                                    }
+                                    
+                                    // SEND CHANNEL PUSH -----------------------------------------------------
+                                    var pushGeneral:PFPush = PFPush()
+                                    pushGeneral.setChannel("reloadTheirTable")
+                                    
+                                    // Create dictionary to send JSON to parse/to other devices
+                                    var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
+                                    
+                                    pushGeneral.setData(dataGeneral)
+                                    
+                                    pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                                        if error == nil { println("General push sent!") }
+                                    })
+                                    
+                                    // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
+                                    // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
+                                    var toUsers: PFQuery = PFUser.query()!
+                                    
+                                    println("********************")
+                                    println(toUsers)
+                                    println("********************")
+                                    
+                                    var pushQuery: PFQuery = PFInstallation.query()!
+                                    
+                                    if isGroupieName.isEmpty == false {
+                                        
+                                        toUsers.whereKey("username", containedIn: isGroupieName)
+                                        pushQuery.whereKey("user", matchesQuery: toUsers)
+                                        
+                                    } else { // If sendToGroupies is empty, filter push to all users
+                                        pushQuery.whereKey("user", notContainedIn: isGroupieName)
+                                        pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
+                                    }
+                                    
+                                    var pushDirected: PFPush = PFPush()
+                                    pushDirected.setQuery(pushQuery)
+                                    
+                                    // Create dictionary to send JSON to parse/to other devices
+                                    //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
+                                    //pushDirected.setData(dataDirected)////
+                                    pushDirected.setMessage("New Q from \(myName)!")
+                                    
+                                    // Send Push Notifications
+                                    pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                                        
+                                        if error == nil {
+                                            
+                                            isGroupieName.removeAll(keepCapacity: true)
+                                            isGroupieQId.removeAll(keepCapacity: true)
+                                            
+                                            println("Directed push notification sent!")
+                                            println("-----")
+                                        }
+                                    })
+                                    // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
+                                    
+                                    // Unlock application interaction and halt spinner
+                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                    self.activityIndicator.stopAnimating()
+                                    
+                                    // Reset all fields after submitting
+                                    self.question = ""
+                                    self.option1 = ""
+                                    self.option2 = ""
+                                    
+                                    // Resign keyboard/reset cursor
+                                    //self.questionTextField.resignFirstResponder()
+                                    //self.option1TextField.resignFirstResponder()
+                                    //self.option2TextField.resignFirstResponder()
+                                    
+                                    // Switch to results tab when question is submitted
+                                    // - Had to make storyboard ID for the tabBarController = "tabBarController"
+                                    self.tabBarController?.selectedIndex = 1
+                                }
+                            })
+                            
+                        } else {
+                            
+                            println("Write to SocialQs Table error:")
+                            println(error)
+                        }
+                    }
+                }
+            })
+            // PARSE -------------------------------------------------------------
+        }
+        
+        
+        
+        
+        
     }
     
     @IBAction func qPhotoButtonPressed(sender: AnyObject) {
@@ -135,7 +327,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         askTable.delegate = self
         askTable.dataSource = self
         
-        askTable.backgroundColor = buttonBackgroundColor
+        askTable.backgroundColor = tableBackgroundColor
         askTable.layer.cornerRadius = cornerRadius
         
         formatButton(groupiesButton)
@@ -164,6 +356,8 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     
     
     func tableView(askTable: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        var gestureRecognizer = UITapGestureRecognizer(target: self, action: "resignKeyboard")
         
         var cell = NEWAskTableViewCell()
         
@@ -258,10 +452,57 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         
         // Set cell background color
-        cell.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.6))
+        cell.backgroundColor = tableBackgroundColor
+        
+        // Add gesture recognizer to cell - dismiss keyboard
+        self.askTable.addGestureRecognizer(gestureRecognizer)
         
         return cell
     }
+    
+    func resignKeyboard () {
+        
+        self.askTable.endEditing(true)
+    
+    }
+    
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        
+        textField.resignFirstResponder() // Dismiss the keyboard
+        
+        // Call submit routine to cause switch to results page
+        submitButtonAction(textField)
+        
+        return true
+        
+    }
+    
+    
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        self.view.endEditing(true)
+    }
+    
+    
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // Function for displaying pop-up
+    func displayAlert(title: String, message: String) {
+        
+        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            
+            //self.dismissViewControllerAnimated(true, completion: nil)
+            
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+        
+    }
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
+
     
     
     override func didReceiveMemoryWarning() {
