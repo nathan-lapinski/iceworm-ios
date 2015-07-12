@@ -10,6 +10,7 @@ import UIKit
 
 class MyQuestionsCell: UITableViewCell {
 
+    // myCell
     @IBOutlet var asker: UILabel!
     @IBOutlet var question: UILabel!
     @IBOutlet var option1Text: UILabel!
@@ -17,7 +18,11 @@ class MyQuestionsCell: UITableViewCell {
     @IBOutlet var option1ImageView: UIImageView!
     @IBOutlet var option2ImageView: UIImageView!
     @IBOutlet var numberOfResponses: UILabel!
-    @IBOutlet var forward: UIButton!
-    @IBOutlet var delete: UIButton!
     
+    // myCell2
+    @IBOutlet var option1Photo: UIImageView!
+    @IBOutlet var option2Photo: UIImageView!
+    @IBOutlet var question2: UILabel!
+    @IBOutlet var asker2: UILabel!
+    @IBOutlet var numberOfResponses2: UILabel!
 }

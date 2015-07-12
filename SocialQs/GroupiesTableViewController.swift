@@ -182,6 +182,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             
         } else {
             
+            // Format cell backgrounds
+            if indexPath.row % 2 == 0 { cell.backgroundColor = UIColor.clearColor() }
+            else { cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4) }
+            
             cell.usernameLabel.font = UIFont(name: "HelveticaNeue", size: tableFontSize)
             
             let followedObjectName = objectsArray[indexPath.section].sectionObjects[indexPath.row] as String
@@ -195,13 +199,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 cell.accessoryType = UITableViewCellAccessoryType.None
                 
             }
-            
-            // Format cell backgrounds
-            //if indexPath.row % 2 == 0 {
-                cell.backgroundColor = UIColor.clearColor()
-            //} else {
-            //    cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-            //}
         }
         
         return cell

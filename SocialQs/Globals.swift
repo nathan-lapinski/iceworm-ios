@@ -58,3 +58,5 @@ var isGroupieQId = [String]()
 //var isNotGroupie = [String]()//var sendToGroupies = [""]
 
 var warningSeen = false
+
+var photoString = "|/~_</|"

@@ -15,6 +15,8 @@ class MyQuestionsTableViewController: UITableViewController {
     var questionIds = [String]()
     var option1s = [String]()
     var option2s = [String]()
+    var option1sPhoto = [PFFile]()
+    var option2sPhoto = [PFFile]()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
     //var deletedMyQuestions = [String]() // questions DELETED by current user
@@ -41,7 +43,8 @@ class MyQuestionsTableViewController: UITableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(12,0,48,0)
+        self.tableView.contentInset = UIEdgeInsetsMake(20,0,48,0)  // Top, Left, Bottom, Right
+        
         // Disable auto inset adjust
         self.automaticallyAdjustsScrollViewInsets = false
         
@@ -102,6 +105,8 @@ class MyQuestionsTableViewController: UITableViewController {
                     self.questions.removeAtIndex(indexPath.row)
                     self.option1s.removeAtIndex(indexPath.row)
                     self.option2s.removeAtIndex(indexPath.row)
+                    self.option1sPhoto.removeAtIndex(indexPath.row)
+                    self.option2sPhoto.removeAtIndex(indexPath.row)
                     self.option1Stats.removeAtIndex(indexPath.row)
                     self.option2Stats.removeAtIndex(indexPath.row)
                     
@@ -197,15 +202,45 @@ class MyQuestionsTableViewController: UITableViewController {
                             self.questionIds.removeAll(keepCapacity: true)
                             self.option1s.removeAll(keepCapacity: true)
                             self.option2s.removeAll(keepCapacity: true)
+                            self.option1sPhoto.removeAll(keepCapacity: true)
+                            self.option2sPhoto.removeAll(keepCapacity: true)
                             self.option1Stats.removeAll(keepCapacity: true)
                             self.option2Stats.removeAll(keepCapacity: true)
                             
                             for questionObject in questionTemp {
                                 
+                                println(questionObject)
+                                
                                 self.questions.append(questionObject["question"] as! String)
                                 self.questionIds.append(questionObject.objectId!!)
-                                self.option1s.append(questionObject["option1"] as! String)
-                                self.option2s.append(questionObject["option2"] as! String)
+                                
+                                
+                                if let test = questionObject["option1"] as? String {
+                                    
+                                    self.option1s.append(questionObject["option1"] as! String)
+                                    self.option1sPhoto.append(PFFile())
+
+                                } else {
+                                    
+                                    println("Found Image File 1")
+                                    self.option1s.append(photoString)
+                                    self.option1sPhoto.append(questionObject["option1Photo"] as! PFFile)
+                                    
+                                }
+                                
+                                if let test = questionObject["option2"] as? String {
+                                    
+                                    self.option2s.append(questionObject["option2"] as! String)
+                                    self.option2sPhoto.append(PFFile())
+                                    
+                                } else {
+                                    
+                                    println("Found Image File 2")
+                                    self.option2s.append(photoString)
+                                    self.option2sPhoto.append(questionObject["option2Photo"] as! PFFile)
+                                    
+                                }
+                                
                                 self.option1Stats.append(questionObject["stats1"] as! Int)
                                 self.option2Stats.append(questionObject["stats2"] as! Int)
                                 
@@ -255,26 +290,7 @@ class MyQuestionsTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let myCell = tableView.dequeueReusableCellWithIdentifier("myCell", forIndexPath: indexPath) as! MyQuestionsCell
-        
-        // Make cells non-selectable
-        myCell.selectionStyle = UITableViewCellSelectionStyle.None
-
-        // Format cell backgrounds
-        if indexPath.row % 2 == 0 {
-            
-            myCell.backgroundColor = UIColor.clearColor()
-            
-        } else {
-            
-            myCell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-            
-        }
-        
-
-        // Compute and set results image view widths
-        var width1 = myCell.option1ImageView.frame.width
-        var width2 = myCell.option2ImageView.frame.width
+        var myCell = MyQuestionsCell()
         
         var totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
         var option1Percent = Float(0.0)
@@ -287,42 +303,96 @@ class MyQuestionsTableViewController: UITableViewController {
             
         }
         
-        myCell.question.text = questions[indexPath.row]
-        myCell.option1Text.text = option1s[indexPath.row] + "  \(Int(option1Percent))%"
-        myCell.option2Text.text = option2s[indexPath.row] + "  \(Int(option2Percent))%"
-        
+        // Build "repsonse" string to account for singular/plural
         var resp = "responses"
         if totalResponses == 1 {
             resp = "response"
         }
         
-        myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
+        // Make cells non-selectable
+        myCell.selectionStyle = UITableViewCellSelectionStyle.None
         
-        if option1Percent > option2Percent {
+        // Currently check if either (1) option photo is filled in and use photo for both
+        if option1s[indexPath.row] == photoString { // PHOTO OPTIONS
             
-            width1 = CGFloat(myCell.option1ImageView.bounds.width)
-            width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-            myCell.option1ImageView.backgroundColor = winColor
-            myCell.option2ImageView.backgroundColor = loseColor
+            myCell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! MyQuestionsCell
             
-        } else if option2Percent > option1Percent {
+            myCell.question2.text = questions[indexPath.row]
+            myCell.numberOfResponses2.text = "\(totalResponses) \(resp)"
             
-            width2 = CGFloat(myCell.option2ImageView.bounds.width)
-            width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-            myCell.option1ImageView.backgroundColor = winColor
-            myCell.option2ImageView.backgroundColor = loseColor
+            option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+                
+                if let downloadedImage = UIImage(data: data1!) {
+                
+                    myCell.option1Photo.image = downloadedImage
+                    
+                }
+            })
             
-        } else {
+            option2sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                
+                if let downloadedImage = UIImage(data: data2!) {
+                    
+                    myCell.option2Photo.image = downloadedImage
+                    
+                }
+            })
             
-            width1 = CGFloat(myCell.option1ImageView.bounds.width)
-            width2 = width1
-            myCell.option1ImageView.backgroundColor = winColor
-            myCell.option2ImageView.backgroundColor = winColor
+            // Format cell backgrounds
+            if indexPath.row % 2 == 0 { myCell.backgroundColor = UIColor.clearColor() }
+            else { myCell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4) }
             
+        } else { // TEXT OPTIONS
+            
+            myCell = tableView.dequeueReusableCellWithIdentifier("myCell", forIndexPath: indexPath) as! MyQuestionsCell
+            
+            myCell.question.text = questions[indexPath.row]
+            myCell.option1Text.text = option1s[indexPath.row] + "  \(Int(option1Percent))%"
+            myCell.option2Text.text = option2s[indexPath.row] + "  \(Int(option2Percent))%"
+            myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
+
+            // Compute and set results image view widths
+            var width1 = myCell.option1ImageView.frame.width
+            var width2 = myCell.option2ImageView.frame.width
+            
+            
+            if option1Percent > option2Percent {
+                
+                width1 = CGFloat(myCell.option1ImageView.bounds.width)
+                width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
+                myCell.option1ImageView.backgroundColor = winColor
+                myCell.option2ImageView.backgroundColor = loseColor
+                
+            } else if option2Percent > option1Percent {
+                
+                width2 = CGFloat(myCell.option2ImageView.bounds.width)
+                width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
+                myCell.option1ImageView.backgroundColor = winColor
+                myCell.option2ImageView.backgroundColor = loseColor
+                
+            } else {
+                
+                width1 = CGFloat(myCell.option1ImageView.bounds.width)
+                width2 = width1
+                myCell.option1ImageView.backgroundColor = winColor
+                myCell.option2ImageView.backgroundColor = winColor
+                
+            }
+            
+            //myCell.option1ImageView.bounds = CGRectMake(myCell.option1ImageView.bounds.origin.x, myCell.option1ImageView.bounds.origin.y, CGFloat(width1), myCell.option1ImageView.bounds.height)
+            //myCell.option2ImageView.bounds = CGRectMake(myCell.option2ImageView.bounds.origin.x, myCell.option2ImageView.bounds.origin.y, CGFloat(width2), myCell.option2ImageView.bounds.height)
+            
+            // Format cell backgrounds
+            if indexPath.row % 2 == 0 {
+                
+                myCell.backgroundColor = UIColor.clearColor()
+                
+            } else {
+                
+                myCell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+                
+            }
         }
-        
-        //myCell.option1ImageView.bounds = CGRectMake(myCell.option1ImageView.bounds.origin.x, myCell.option1ImageView.bounds.origin.y, CGFloat(width1), myCell.option1ImageView.bounds.height)
-        //myCell.option2ImageView.bounds = CGRectMake(myCell.option2ImageView.bounds.origin.x, myCell.option2ImageView.bounds.origin.y, CGFloat(width2), myCell.option2ImageView.bounds.height)
         
         return myCell
     }

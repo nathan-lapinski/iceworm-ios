@@ -157,20 +157,21 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     // Check if Q is photo or not and upload
                     if self.isPhoto[0] == true {
                         
-                        var imageData = UIImagePNGRepresentation(self.chosenImage[0])
+                        let imageData = UIImagePNGRepresentation(self.chosenImage[0])
                         let imageFile = PFFile(name: "image.png", data: imageData)
                         
                         socialQ["questionPhoto"] = imageFile
                         
                     } else {
-                    
+                        
                         socialQ["question"] = self.question
+                        
                     }
                     
                     // Check if O1 is photo or not and upload
                     if self.isPhoto[1] == true {
                         
-                        var imageData = UIImagePNGRepresentation(self.chosenImage[1])
+                        let imageData = UIImagePNGRepresentation(self.chosenImage[1])
                         let imageFile = PFFile(name: "image.png", data: imageData)
                         
                         socialQ["option1Photo"] = imageFile
