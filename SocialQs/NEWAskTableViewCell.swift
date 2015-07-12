@@ -12,6 +12,7 @@ class NEWAskTableViewCell: UITableViewCell {
 
     // qCell1
     @IBOutlet var questionTextField: UITextField!
+    @IBOutlet var addQPhoto: UIButton!
     
     // qCell2
     @IBOutlet var questionImageView: UIImageView!
@@ -31,6 +32,7 @@ class NEWAskTableViewCell: UITableViewCell {
     @IBOutlet var cameraOutlet: UIButton!
     @IBOutlet var photoOutlet: UIButton!
     @IBOutlet var textOutlet: UIButton!
+    @IBOutlet var addPhotoOutlet: UIButton!
     
     // Buttons Cell
     

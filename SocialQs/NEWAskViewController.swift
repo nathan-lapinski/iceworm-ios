@@ -9,19 +9,27 @@
 import UIKit
 import Parse
 
-class NEWAskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class NEWAskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+    
+    let picker = UIImagePickerController()
+    var chosenImage = [UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
+    //var chosenO2Image = UIImage(named: "camera.png")
     
     let tableBackgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.3))
+    
+    var hide = [false, false, false]
     
     var question = String()
     var option1 = String()
     var option2 = String()
+    var whichCell: AnyObject = -1
     
     var qCell: Int = 0
     var o1Cell: Int = 0
     //var o2Cell: Int = 0
     
     var filled = ["Q": 0, "O1": 0, "O2": 0]//Dictionary<String, Int>()
+    var isPhoto = [0: false, 1: false, 2: false]
     var activityIndicator = UIActivityIndicatorView()
     
     @IBOutlet var askTable: UITableView!
@@ -30,6 +38,29 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet var groupiesButton: UIButton!
     @IBOutlet var privacyButton: UIButton!
     
+    @IBAction func addQPhotoAction(sender: AnyObject) {
+        
+        whichCell = sender.tag
+        println(whichCell)
+        
+        picker.allowsEditing = false //2
+        picker.sourceType = .PhotoLibrary //3
+        presentViewController(picker, animated: true, completion: nil)//4
+        
+    }
+    
+    @IBAction func addOPhotoAction(sender: AnyObject) {
+        
+        whichCell = sender.tag
+        println(whichCell)
+        
+        picker.allowsEditing = false //2
+        picker.sourceType = .PhotoLibrary //3
+        presentViewController(picker, animated: true, completion: nil)//4
+        
+    }
+    
+    
     @IBAction func cancelButtonAction(sender: AnyObject) {
         
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
@@ -37,6 +68,9 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
             self.filled["Q"]  = -1
             self.filled["O1"] = -1
             self.filled["O2"] = -1
+            self.isPhoto[0]  = false
+            self.isPhoto[1] = false
+            self.isPhoto[2] = false
             
             //dispatch_async(dispatch_get_main_queue()) { () -> Void in
             
@@ -54,7 +88,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     
     @IBAction func submitButtonAction(sender: AnyObject) {
         
-        println("Submitting...")
+        println("Submit button pressed")
         
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             
@@ -65,7 +99,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                 
                 println(self.filled)
                 
-                if self.filled["Q"] == 1 && self.filled["O1"] == 1 && self.filled["O2"] == 1 {
+                //if self.filled["Q"] == 1 && self.filled["O1"] == 1 && self.filled["O2"] == 1 {
                     
                     println(self.question)
                     println(self.option1)
@@ -79,21 +113,22 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     //
                     
                     
-                }
+                //}
             }
         }
     }
     
-    func submitQ() {
+    func submitQ() -> Void {
         
-        if question == "" || option1 == "" || option2 == "" {
+        println("Submitting Q")
+        
+        if question == "" {// || option1 == "" || option2 == "" {
             
             let title = "Well that was silly!"
             let message = "You need to provide a Q and two options!"
             displayAlert(title, message: message)
             
         } else {
-            
             
             println("User is attempting to send a Q to:")
             println(isGroupieName)
@@ -119,9 +154,45 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     var socialQ = PFObject(className: "SocialQs")
                     
-                    socialQ["question"] = self.question
-                    socialQ["option1"] = self.option1
-                    socialQ["option2"] = self.option2
+                    // Check if Q is photo or not and upload
+                    if self.isPhoto[0] == true {
+                        
+                        var imageData = UIImagePNGRepresentation(self.chosenImage[0])
+                        let imageFile = PFFile(name: "image.png", data: imageData)
+                        
+                        socialQ["questionPhoto"] = imageFile
+                        
+                    } else {
+                    
+                        socialQ["question"] = self.question
+                    }
+                    
+                    // Check if O1 is photo or not and upload
+                    if self.isPhoto[1] == true {
+                        
+                        var imageData = UIImagePNGRepresentation(self.chosenImage[1])
+                        let imageFile = PFFile(name: "image.png", data: imageData)
+                        
+                        socialQ["option1Photo"] = imageFile
+                        
+                    } else {
+                        
+                        socialQ["option1"] = self.option1
+                    }
+                    
+                    // Check if O2 is photo or not and upload
+                    if self.isPhoto[2] == true {
+                        
+                        var imageData = UIImagePNGRepresentation(self.chosenImage[2])
+                        let imageFile = PFFile(name: "image.png", data: imageData)
+                        
+                        socialQ["option2Photo"] = imageFile
+                        
+                    } else {
+                        
+                        socialQ["option2"] = self.option2
+                    }
+                    
                     socialQ["stats1"] = 0
                     socialQ["stats2"] = 0
                     socialQ["privacyOptions"] = -1
@@ -324,6 +395,8 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        picker.delegate = self
+        
         askTable.delegate = self
         askTable.dataSource = self
         
@@ -381,9 +454,20 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                 }
                 
-            } else {
+            } else { // PHOTO VERSION
                 
                 cell = askTable.dequeueReusableCellWithIdentifier("qCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
+                
+                cell.addQPhoto.tag = indexPath.row
+                
+                cell.questionImageView.contentMode = .ScaleAspectFit //3
+                cell.questionImageView.image = chosenImage[indexPath.row] //4
+                
+                if hide[indexPath.row] == true {
+                    
+                    cell.addQPhoto.setTitle("", forState: UIControlState.Normal)
+                    cell.questionImageView.backgroundColor = UIColor.clearColor()
+                }
                 
             }
             
@@ -405,10 +489,21 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                 }
                 
-            } else {
+            } else { // PHOTO VERSION
                 
                 cell = askTable.dequeueReusableCellWithIdentifier("oCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
+                
                 cell.textOutlet.tag = indexPath.row
+                cell.addPhotoOutlet.tag = indexPath.row
+                
+                cell.optionImageView.contentMode = .ScaleAspectFit //3
+                cell.optionImageView.image = chosenImage[indexPath.row] //4
+                
+                if hide[indexPath.row] == true {
+                    
+                    cell.addPhotoOutlet.setTitle("", forState: UIControlState.Normal)
+                    cell.optionImageView.backgroundColor = UIColor.clearColor()
+                }
                 
             }
             
@@ -432,10 +527,21 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                 }
                 
-            } else {
+            } else { // PHOTO VERSION
                 
                 cell = askTable.dequeueReusableCellWithIdentifier("oCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
+                
                 cell.textOutlet.tag = indexPath.row
+                cell.addPhotoOutlet.tag = indexPath.row
+                
+                cell.optionImageView.contentMode = .ScaleAspectFit //3
+                cell.optionImageView.image = chosenImage[indexPath.row] //4
+                
+                if hide[indexPath.row] == true {
+                    
+                    cell.addPhotoOutlet.setTitle("", forState: UIControlState.Normal)
+                    cell.optionImageView.backgroundColor = UIColor.clearColor()
+                }
                 
             }
             
@@ -460,7 +566,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
     
-    func resignKeyboard () {
+    func resignKeyboard() {
         
         self.askTable.endEditing(true)
     
@@ -482,6 +588,27 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         self.view.endEditing(true)
     }
+
+    
+    //MARK: Image Picker Shits
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
+        
+        chosenImage[Int(whichCell as! NSNumber)] = info[UIImagePickerControllerOriginalImage] as? UIImage //2
+        
+        hide[Int(whichCell as! NSNumber)] = true
+        isPhoto[Int(whichCell as! NSNumber)] = true
+        
+        var indexForReload = NSIndexPath(forRow: Int(whichCell as! NSNumber), inSection: 0)
+        askTable.reloadData()
+        
+        dismissViewControllerAnimated(true, completion: nil) //5
+        
+    }
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
     
     
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
@@ -502,13 +629,13 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     }
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-
     
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
     
         /*
