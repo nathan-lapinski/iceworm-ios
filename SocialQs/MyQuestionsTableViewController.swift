@@ -185,14 +185,13 @@ class MyQuestionsTableViewController: UITableViewController {
                     
                     // Sort by newest created-date first
                     getSocialQsQuery.orderByDescending("createdAt")
-                    // Filter to only get MY Qs
-                    //getSocialQsQuery.whereKey("askername", equalTo: myName)
                     
                     // Filter off Qs I've deleted from my view
                     getSocialQsQuery.whereKey("objectId", containedIn: myQs)
                     
                     // Set query limit to max
                     getSocialQsQuery.limit = 1000
+                    
                     // Pull objects
                     getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
                         
@@ -208,8 +207,6 @@ class MyQuestionsTableViewController: UITableViewController {
                             self.option2Stats.removeAll(keepCapacity: true)
                             
                             for questionObject in questionTemp {
-                                
-                                println(questionObject)
                                 
                                 self.questions.append(questionObject["question"] as! String)
                                 self.questionIds.append(questionObject.objectId!!)
@@ -318,6 +315,12 @@ class MyQuestionsTableViewController: UITableViewController {
             myCell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! MyQuestionsCell
             
             myCell.question2.text = questions[indexPath.row]
+            myCell.option1Text.text = "\(Int(option1Percent))%"
+            myCell.option2Text.text = "\(Int(option2Percent))%"
+            myCell.option1Text.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+            myCell.option2Text.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+            myCell.option1Text.layer.cornerRadius = cornerRadius
+            myCell.option2Text.layer.cornerRadius = cornerRadius
             myCell.numberOfResponses2.text = "\(totalResponses) \(resp)"
             
             option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in

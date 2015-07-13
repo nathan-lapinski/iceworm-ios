@@ -15,6 +15,8 @@ class TheirQuestionsTableViewController: UITableViewController {
     var questions = [String]()
     var option1s = [String]()
     var option2s = [String]()
+    var option1sPhoto = [PFFile]()
+    var option2sPhoto = [PFFile]()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
     //var users = [String: String]()
@@ -112,7 +114,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                                             
                                             //
                                             //
+                                            println("<><><><><><><><><><><><>")
                                             println(object!["stats1"]) // if this works no need for query below
+                                            println("<><><><><><><><><><><><>")
                                             //
                                             //
                                             
@@ -236,7 +240,6 @@ class TheirQuestionsTableViewController: UITableViewController {
         var votedOn = false
         
         var votedOnTemp = votedOn1Ids + votedOn2Ids
-        println(votedOnTemp)
         
         if contains(votedOnTemp, self.questionIds[indexPath.row]) {
             votedOn = true
@@ -381,6 +384,9 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         var cell = TheirQuestionsCell()
         
+        var totalResponses = Int()
+        var resp = "responses"
+        
         let maxBarWidth = cell.contentView.bounds.width// - 2*(8) // CHANGE 8 to NSLayout leading
         
         // *******************************************************************
@@ -389,7 +395,7 @@ class TheirQuestionsTableViewController: UITableViewController {
         var votedOnTemp = votedOn1Ids + votedOn2Ids
         // *******************************************************************
         
-        if contains(votedOnTemp, self.questionIds[indexPath.row]) { // Already voted setup
+        if contains(votedOnTemp, self.questionIds[indexPath.row]) && option1s[indexPath.row] != photoString { // Already voted TEXT setup
             
             cell = tableView.dequeueReusableCellWithIdentifier("cell2", forIndexPath: indexPath) as! TheirQuestionsCell
             
@@ -400,7 +406,7 @@ class TheirQuestionsTableViewController: UITableViewController {
             var width1 = maxBarWidth //cell.option1ImageView.bounds.width
             var width2 = maxBarWidth //cell.option2ImageView.bounds.width
             
-            var totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
+            totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
             var option1Percent = Float(0.0)
             var option2Percent = Float(0.0)
             
@@ -411,17 +417,11 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             }
             
+            if totalResponses == 1 { resp = "response" }
+            
             cell.question.text = questions[indexPath.row]
             cell.option1Text.text = option1s[indexPath.row] + "  \(Int(option1Percent))%"
             cell.option2Text.text = option2s[indexPath.row] + "  \(Int(option2Percent))%"
-            
-            var resp = "responses"
-            
-            if totalResponses == 1 {
-                
-                resp = "response"
-                
-            }
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
@@ -441,23 +441,12 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             } else {
                 
-                //cell.bar1Width.constant = 10//width1/10000
-                //cell.layoutIfNeeded()
-                //cell.bar2Width.constant = width2/10000
-                //cell.layoutIfNeeded()
-                
                 width1 = maxBarWidth
                 width2 = maxBarWidth
                 cell.option1ImageView.backgroundColor = winColor
                 cell.option2ImageView.backgroundColor = winColor
                 
             }
-            
-            //println(width1)
-            //println(width2)
-            
-            //cell.option1ImageView.frame = CGRectMake(cell.option1ImageView.frame.origin.x, cell.option1ImageView.frame.origin.y, width1, cell.option1ImageView.frame.height)
-            //cell.option2ImageView.frame = CGRectMake(cell.option2ImageView.frame.origin.x, cell.option2ImageView.frame.origin.y, width2, cell.option2ImageView.frame.height)
             
             
             // Mark user's choice
@@ -472,6 +461,99 @@ class TheirQuestionsTableViewController: UITableViewController {
                 cell.myVote1.text = ""
                 
             }
+            
+        } else if option1s[indexPath.row] == photoString {//contains(votedOnTemp, self.questionIds[indexPath.row]) &&  // Already voted PHOTO setup
+            
+            cell = tableView.dequeueReusableCellWithIdentifier("cell3", forIndexPath: indexPath) as! TheirQuestionsCell
+            
+            // Make cells non-selectable
+            cell.selectionStyle = UITableViewCellSelectionStyle.None
+            
+            option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+                
+                if error1 != nil {
+                    
+                    println(error1)
+                    
+                } else {
+                    
+                    if let downloadedImage = UIImage(data: data1!) {
+                        
+                        cell.option1Image.image = downloadedImage
+                    }
+                }
+            })
+            
+            option2sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                
+                if error2 != nil {
+                    
+                    println(error2)
+                    
+                } else {
+                    
+                    if let downloadedImage = UIImage(data: data2!) {
+                        
+                        cell.option2Image.image = downloadedImage
+                    }
+                }
+            })
+            
+            totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
+            var option1Percent = Float(0.0)
+            var option2Percent = Float(0.0)
+            
+            if totalResponses != 0 {
+                
+                option1Percent = Float(option1Stats[indexPath.row])/Float(totalResponses)*100
+                option2Percent = Float(option2Stats[indexPath.row])/Float(totalResponses)*100
+            }
+            
+            cell.question.text = questions[indexPath.row]
+            cell.option1Text.text = "\(Int(option1Percent))%"
+            cell.option2Text.text = "\(Int(option2Percent))%"
+            cell.option1Text.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+            cell.option2Text.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+            cell.option1Text.layer.cornerRadius = cornerRadius
+            cell.option2Text.layer.cornerRadius = cornerRadius
+            cell.option1Image.layer.cornerRadius = cornerRadius
+            cell.option2Image.layer.cornerRadius = cornerRadius
+            
+            // Mark user's choice
+            if contains(votedOn1Ids, questionIds[indexPath.row]) {
+                
+                //println("Voted 1 on \(questions[indexPath.row])")
+                
+                cell.myVote1.text = "✔"
+                //cell.myVote1.textColor = UIColor.whiteColor()
+                cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+                cell.myVote2.text = ""
+                cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.0))
+                cell.numberOfResponses.text = "\(totalResponses) \(resp)"
+                
+            } else if contains(votedOn2Ids, questionIds[indexPath.row]) {
+                
+                //println("Voted 2 on \(questions[indexPath.row])")
+                
+                cell.myVote2.text = "✔"
+                //cell.myVote2.textColor = UIColor.whiteColor()
+                cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+                cell.myVote1.text = ""
+                cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.0))
+                cell.numberOfResponses.text = "\(totalResponses) \(resp)"
+                
+            } else {
+                
+                //println("No votes on \(questions[indexPath.row])")
+                
+                cell.myVote2.text = ""
+                cell.myVote1.text = ""
+                cell.numberOfResponses.text = ""
+            }
+            
+            // Tag buttons
+            cell.option1.tag = indexPath.row
+            cell.option2.tag = indexPath.row
             
         } else { // Yet to vote setup
             
@@ -581,28 +663,16 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             } else {
                 
-                println(userQsObjects!.objectId)
-                
-                if let pullIds = userQsObjects!["theirQsId"] as? [String] {
-                    println(pullIds)
+                if let theirQs = userQsObjects!["theirQsId"] as? [String] {
                     
                     // Pull Qs with Id in pullIds
                     var getSocialQsQuery = PFQuery(className: "SocialQs")
                     
-                    // implement the following whereKey to filter myQs OUT of this list
-                    //getSocialQsQuery.whereKey("askername", notEqualTo: myName)
-                    getSocialQsQuery.whereKey("objectId", containedIn: pullIds)
-                    
                     // Sort by newest created-date first
                     getSocialQsQuery.orderByDescending("createdAt")
                     
-                    // Add whereKey for dismissed Qs here
-                    // **** Remove this after changing vote/delete to modify UserQs table ****
-                    // -- can't upload to server at signout as the user may simply kill app,
-                    //    then be able to revote
-                    //getSocialQsQuery.whereKey("objectId", notContainedIn: deletedTheirQuestions)
-                    //
-                    //
+                    // Get only theirQs that I haven't deleted
+                    getSocialQsQuery.whereKey("objectId", containedIn: theirQs)
                     
                     // Set query limit to max
                     getSocialQsQuery.limit = 1000
@@ -612,20 +682,50 @@ class TheirQuestionsTableViewController: UITableViewController {
                         
                         if let questionTemp = questionObjects {
                             
-                            self.questionIds.removeAll(keepCapacity: true)
                             self.questions.removeAll(keepCapacity: true)
+                            self.questionIds.removeAll(keepCapacity: true)
                             self.option1s.removeAll(keepCapacity: true)
                             self.option2s.removeAll(keepCapacity: true)
+                            self.option1sPhoto.removeAll(keepCapacity: true)
+                            self.option2sPhoto.removeAll(keepCapacity: true)
                             self.option1Stats.removeAll(keepCapacity: true)
                             self.option2Stats.removeAll(keepCapacity: true)
                             self.askers.removeAll(keepCapacity: true)
                             
                             for questionObject in questionTemp {
                                 
-                                self.questionIds.append(questionObject.objectId!!)
                                 self.questions.append(questionObject["question"] as! String)
-                                self.option1s.append(questionObject["option1"] as! String)
-                                self.option2s.append(questionObject["option2"] as! String)
+                                self.questionIds.append(questionObject.objectId!!)
+                                
+                                
+                                
+                                if let test = questionObject["option1"] as? String {
+                                    
+                                    self.option1s.append(questionObject["option1"] as! String)
+                                    self.option1sPhoto.append(PFFile())
+                                    
+                                } else {
+                                    
+                                    println("Found Image File 1")
+                                    self.option1s.append(photoString)
+                                    self.option1sPhoto.append(questionObject["option1Photo"] as! PFFile)
+                                    
+                                }
+                                
+                                if let test = questionObject["option2"] as? String {
+                                    
+                                    self.option2s.append(questionObject["option2"] as! String)
+                                    self.option2sPhoto.append(PFFile())
+                                    
+                                } else {
+                                    
+                                    println("Found Image File 2")
+                                    self.option2s.append(photoString)
+                                    self.option2sPhoto.append(questionObject["option2Photo"] as! PFFile)
+                                    
+                                }
+                                
+                                
                                 self.option1Stats.append(questionObject["stats1"] as! Int)
                                 self.option2Stats.append(questionObject["stats2"] as! Int)
                                 self.askers.append(questionObject["askername"] as! String)
@@ -633,13 +733,15 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 // Ensure all queries have completed THEN refresh the table!
                                 // CHANGED THIS TO MATCH NEW PULL METHOD - WAS "ASKERS"
                                 //
-                                //if self.questions.count == pullIds.count { }
+                                if self.questions.count == self.option2Stats.count {
                                 
-                                self.tableView.reloadData()
-                                self.tableView.reloadInputViews()
-                                
-                                // Kill refresher when query finished
-                                self.refresher.endRefreshing()
+                                    self.tableView.reloadData()
+                                    self.tableView.reloadInputViews()
+                                    
+                                    // Kill refresher when query finished
+                                    self.refresher.endRefreshing()
+                                    
+                                }
                                 
                                 // Stop animation - hides when stopped (above) hides spinner automatically
                                 //self.activityIndicator.stopAnimating()

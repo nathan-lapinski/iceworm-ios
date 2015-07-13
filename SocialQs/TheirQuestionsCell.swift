@@ -10,9 +10,14 @@ import UIKit
 
 class TheirQuestionsCell: UITableViewCell {
     
-    // Both Cell1 and Cell2
+    // Cell1/Cell2/Cell3
     @IBOutlet var asker: UILabel!
     @IBOutlet var question: UILabel!
+    
+    // Cell2/Cell3
+    @IBOutlet var numberOfResponses: UILabel!
+    @IBOutlet var myVote1: UILabel!
+    @IBOutlet var myVote2: UILabel!
     
     // Cell1
     @IBOutlet var option1: UIButton!
@@ -23,10 +28,13 @@ class TheirQuestionsCell: UITableViewCell {
     @IBOutlet var option2ImageView: UIImageView!
     @IBOutlet var option1Text: UILabel!
     @IBOutlet var option2Text: UILabel!
-    @IBOutlet var numberOfResponses: UILabel!
-    @IBOutlet var myVote1: UILabel!
-    @IBOutlet var myVote2: UILabel!
     @IBOutlet var bar1Width: NSLayoutConstraint!
     @IBOutlet var bar2Width: NSLayoutConstraint!
+    
+    // Cell3
+    //@IBOutlet var myVotePhoto1: UILabel!
+    //@IBOutlet var myVotePhoto2: UILabel!
+    @IBOutlet var option1Image: UIImageView!
+    @IBOutlet var option2Image: UIImageView!
     
 }

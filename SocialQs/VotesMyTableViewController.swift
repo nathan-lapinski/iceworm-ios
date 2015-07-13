@@ -72,8 +72,26 @@ class VotesMyTableViewController: UITableViewController {
             if error == nil {
                 
                 votesId = objects!["votesId"] as! String
-                option1Text = objects!["option1"] as! String
-                option2Text = objects!["option2"] as! String
+                
+                if let test = objects!["option1"] as? String {
+                    
+                    option1Text = objects!["option1"] as! String
+                    
+                } else {
+                    
+                    option1Text = "PHOTO 1"
+                    
+                }
+                
+                if let test = objects!["option2"] as? String {
+                    
+                    option2Text = objects!["option2"] as! String
+                    
+                } else {
+                    
+                    option2Text = "PHOTO 2"
+                    
+                }
                 
                 query = PFQuery(className: "Votes")
                 query.getObjectInBackgroundWithId(votesId, block: { (objects, error) -> Void in

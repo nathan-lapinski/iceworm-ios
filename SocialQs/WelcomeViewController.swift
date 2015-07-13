@@ -33,9 +33,10 @@ class WelcomeViewController: UIViewController {
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         
         if warningSeen == false {
-            let title = "Welcome to SocialQs v\(version!)!"
-            let message = "This version of SocialQs has been rewritten to allow for new/future functionality. Because of this all testers will need to signup for a new account. However, all previous usernames are open and free for reuse! We apologize for any inconvenience and, as usual, appreciate your time, effort and input! Enjoy! \n \n - SocialQs Dev Team"
-            displayAlert(title, message: message)
+            
+            let title = "DATA USAGE"
+            let message = "SocialQs has not yet been optimized for data usage and it is unclear how much data the app will transfer with the implementation of images. If your data plan is limited you may wish to limit your SocialQs usage to Wi-Fi only until this issue is investigated."
+            self.displayAlert(title, message: message)
         }
         
         

@@ -11,12 +11,12 @@ import Parse
 
 class NEWAskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     
+    let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? Int
+    
     let picker = UIImagePickerController()
     var chosenImage = [UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
-    //var chosenO2Image = UIImage(named: "camera.png")
     
     let tableBackgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.3))
-    
     var hide = [false, false, false]
     
     var question = String()
@@ -26,9 +26,8 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     
     var qCell: Int = 0
     var o1Cell: Int = 0
-    //var o2Cell: Int = 0
     
-    var filled = ["Q": 0, "O1": 0, "O2": 0]//Dictionary<String, Int>()
+    var filled = ["Q": 0, "O1": 0, "O2": 0]
     var isPhoto = [0: false, 1: false, 2: false]
     var activityIndicator = UIActivityIndicatorView()
     
@@ -38,10 +37,12 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet var groupiesButton: UIButton!
     @IBOutlet var privacyButton: UIButton!
     
+    @IBAction func groupiesButtonAction(sender: AnyObject) { }
+    @IBAction func privacyButtonAction(sender: AnyObject) { }
+    
     @IBAction func addQPhotoAction(sender: AnyObject) {
         
         whichCell = sender.tag
-        println(whichCell)
         
         picker.allowsEditing = false //2
         picker.sourceType = .PhotoLibrary //3
@@ -49,46 +50,53 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         
     }
     
+    
     @IBAction func addOPhotoAction(sender: AnyObject) {
         
         whichCell = sender.tag
-        println(whichCell)
         
         picker.allowsEditing = false //2
         picker.sourceType = .PhotoLibrary //3
         presentViewController(picker, animated: true, completion: nil)//4
+        
+    }
+    
+    
+    @IBAction func appOPhotoFromLibrary(sender: AnyObject) {
+        
+        whichCell = sender.tag
+        
+        picker.allowsEditing = false
+        picker.sourceType = UIImagePickerControllerSourceType.Camera
+        picker.cameraCaptureMode = .Photo
+        presentViewController(picker, animated: true, completion: nil)
         
     }
     
     
     @IBAction func cancelButtonAction(sender: AnyObject) {
         
+        let title = "Sorry!"
+        let message = "CLEAR currently no worky"
+        self.displayAlert(title, message: message)
+        
+        /*
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             
             self.filled["Q"]  = -1
             self.filled["O1"] = -1
             self.filled["O2"] = -1
-            self.isPhoto[0]  = false
-            self.isPhoto[1] = false
-            self.isPhoto[2] = false
-            
-            //dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.isPhoto[0]   = false
+            self.isPhoto[1]   = false
+            self.isPhoto[2]   = false
             
             self.askTable.reloadData()
-            
-            //}
         }
+        */
     }
     
-    @IBAction func groupiesButtonAction(sender: AnyObject) {        
-    }
-    
-    @IBAction func privacyButtonAction(sender: AnyObject) {
-    }
     
     @IBAction func submitButtonAction(sender: AnyObject) {
-        
-        println("Submit button pressed")
         
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             
@@ -97,251 +105,271 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
             
             dispatch_async(dispatch_get_main_queue()) { () -> Void in
                 
-                println(self.filled)
-                
-                //if self.filled["Q"] == 1 && self.filled["O1"] == 1 && self.filled["O2"] == 1 {
+                if (self.filled["Q"] == 1 && self.chosenImage[1] != UIImage(named: "camera.png") && self.chosenImage[2] != UIImage(named: "camera.png")) ||
+                    (self.filled["Q"] == 1 && self.chosenImage[1] == UIImage(named: "camera.png") && self.chosenImage[2] == UIImage(named: "camera.png")) {
+                        
+                        // Submit Q
+                        self.submitQ()
+                        
+                } else {
                     
-                    println(self.question)
-                    println(self.option1)
-                    println(self.option2)
-                    
-                    
-                    //
-                    //
-                    self.submitQ()
-                    //
-                    //
-                    
-                    
-                //}
+                    let title = "Well that was dumb."
+                    let message = "You need to provide a Q and two options!"
+                    self.displayAlert(title, message: message)
+                }
             }
         }
     }
     
+    
     func submitQ() -> Void {
         
-        println("Submitting Q")
+        println("User is attempting to send a Q to:")
+        println(isGroupieName)
+        println("With qIds:")
+        println(isGroupieQId)
         
-        if question == "" {// || option1 == "" || option2 == "" {
+        // Setup spinner and block application input
+        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        
+        // PARSE -------------------------------------------------------------
+        // Add entry to "Votes Table" ----------------
+        var votes = PFObject(className: "Votes")
+        
+        votes.saveInBackgroundWithBlock({ (success, error) -> Void in
             
-            let title = "Well that was silly!"
-            let message = "You need to provide a Q and two options!"
-            displayAlert(title, message: message)
-            
-        } else {
-            
-            println("User is attempting to send a Q to:")
-            println(isGroupieName)
-            println("With qIds:")
-            println(isGroupieQId)
-            
-            // Setup spinner and block application input
-            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-            activityIndicator.center = self.view.center
-            activityIndicator.hidesWhenStopped = true
-            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-            view.addSubview(activityIndicator)
-            activityIndicator.startAnimating()
-            UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-            
-            // PARSE -------------------------------------------------------------
-            // Add entry to "Votes Table" ----------------
-            var votes = PFObject(className: "Votes")
-            
-            votes.saveInBackgroundWithBlock({ (success, error) -> Void in
+            if error == nil {
                 
-                if error == nil {
+                var socialQ = PFObject(className: "SocialQs")
+                
+                // Check if Q is photo or text and upload
+                if self.isPhoto[0] == true {
                     
-                    var socialQ = PFObject(className: "SocialQs")
+                    self.isPhoto[0] = false
                     
-                    // Check if Q is photo or not and upload
-                    if self.isPhoto[0] == true {
-                        
-                        let imageData = UIImagePNGRepresentation(self.chosenImage[0])
-                        let imageFile = PFFile(name: "image.png", data: imageData)
-                        
-                        socialQ["questionPhoto"] = imageFile
-                        
-                    } else {
-                        
-                        socialQ["question"] = self.question
-                        
-                    }
+                    println("Creating Q png")
+                    let imageQ = self.RBResizeImage(self.chosenImage[0]!, targetSize: CGSize(width: 1000, height: 1000))
+                    let imageQData = UIImagePNGRepresentation(imageQ)
                     
-                    // Check if O1 is photo or not and upload
-                    if self.isPhoto[1] == true {
+                    println("Creating Q PFFile")
+                    var imageQFile: PFFile = PFFile(name: "questionImage.png", data: imageQData)
+                    imageQFile.saveInBackgroundWithBlock({ (success, error) -> Void in
                         
-                        let imageData = UIImagePNGRepresentation(self.chosenImage[1])
-                        let imageFile = PFFile(name: "image.png", data: imageData)
-                        
-                        socialQ["option1Photo"] = imageFile
-                        
-                    } else {
-                        
-                        socialQ["option1"] = self.option1
-                    }
+                        if (error == nil) {
+                            println(error)
+                        }
+                    })
                     
-                    // Check if O2 is photo or not and upload
-                    if self.isPhoto[2] == true {
-                        
-                        var imageData = UIImagePNGRepresentation(self.chosenImage[2])
-                        let imageFile = PFFile(name: "image.png", data: imageData)
-                        
-                        socialQ["option2Photo"] = imageFile
-                        
-                    } else {
-                        
-                        socialQ["option2"] = self.option2
-                    }
+                    println("Saving Q Image to SocialQ Object")
+                    socialQ["questionPhoto"] = imageQFile
                     
-                    socialQ["stats1"] = 0
-                    socialQ["stats2"] = 0
-                    socialQ["privacyOptions"] = -1
-                    socialQ["askerId"] = PFUser.currentUser()!.objectId!
-                    socialQ["askername"] = PFUser.currentUser()!["username"]
-                    socialQ["votesId"] = votes.objectId!
+                } else {
                     
-                    socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
+                    println("Storing Q text ")
+                    
+                    socialQ["question"] = self.question
+                    
+                }
+                
+                // Check if O1 is photo or text and upload
+                if self.isPhoto[1] == true {
+                    
+                    self.isPhoto[1] = false
+                    
+                    println("Creating Option1 png")
+                    let imageO1 = self.RBResizeImage(self.chosenImage[1]!, targetSize: CGSize(width: 1000, height: 1000))
+                    let imageO1Data = UIImagePNGRepresentation(imageO1)
+                    
+                    println("Creating Option1 PFFile")
+                    var imageO1File: PFFile = PFFile(name: "option1Image.png", data: imageO1Data)
+                    imageO1File.saveInBackgroundWithBlock({ (success, error) -> Void in
+                        
+                        if (error == nil) {
+                            println(error)
+                        }
+                    })
+            
+                    println("Saving Option1 Image to SocialQ Object")
+                    socialQ["option1Photo"] = imageO1File
+                    
+                } else {
+                    
+                    println("Storing Option1 text")
+                    
+                    socialQ["option1"] = self.option1
+                }
+                
+                // Check if O2 is photo or text and upload
+                if self.isPhoto[2] == true {
+                    
+                    self.isPhoto[2] = false
+                    
+                    println("Creating Option2 png")
+                    let imageO2 = self.RBResizeImage(self.chosenImage[2]!, targetSize: CGSize(width: 1000, height: 1000))
+                    let imageO2Data = UIImagePNGRepresentation(imageO2)
+                    
+                    println("Creating Option2 PFFile")
+                    let imageO2File = PFFile(name: "option2Image.png", data: imageO2Data)
+                    //imageO2File.save()
+                    
+                    println("Saving Option2 Image to SocialQ Object")
+                    socialQ["option2Photo"] = imageO2File
+                    
+                } else {
+                    
+                    println("Storing Option2 text")
+                    
+                    socialQ["option2"] = self.option2
+                }
+                
+                socialQ["stats1"] = 0
+                socialQ["stats2"] = 0
+                socialQ["privacyOptions"] = -1
+                socialQ["askerId"] = PFUser.currentUser()!.objectId!
+                socialQ["askername"] = PFUser.currentUser()!["username"]
+                socialQ["votesId"] = votes.objectId!
+                
+                socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
+                    
+                    if error == nil {
                         
                         var currentQId = socialQ.objectId!
                         
-                        if error == nil {
-                            
-                            // Query all "groupies" and myself (to add to myQs)
-                            var usersToQuery = isGroupieQId + [uQId]
-                            
-                            // Add qId to "UserQs" table ------
-                            var userQsQuery = PFQuery(className: "UserQs")
-                            
-                            println("userToQuery appended:")
-                            println(usersToQuery)
-                            
-                            if isGroupieQId.count > 0 {
-                                userQsQuery.whereKey("objectId", containedIn: usersToQuery)
-                            }
-                            
-                            // Execute query
-                            userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
-                                
-                                if error == nil {
-                                    
-                                    if let temp = userQsObjects {
-                                        
-                                        println("App is sending Q to uQIds:")
-                                        for userQsObject in temp {
-                                            
-                                            if userQsObject.objectId!! == uQId { // Append qId to myQs within UserQs table
-                                                
-                                                println("Saving to \(userQsObject.objectId!!) myQsId")
-                                                
-                                                userQsObject.addUniqueObject(currentQId, forKey: "myQsId")
-                                                userQsObject.saveInBackground()
-                                                
-                                            } else { // Append qId to theirQs within UserQs table
-                                                
-                                                println("Saving to \(userQsObject.objectId!!) theirQsId")
-                                                
-                                                userQsObject.addUniqueObject(currentQId, forKey: "theirQsId")
-                                                userQsObject.saveInBackground()
-                                            }
-                                        }
-                                        
-                                    } else {
-                                        
-                                        println("Error updating UserQs Table")
-                                        println(error)
-                                    }
-                                    
-                                    // SEND CHANNEL PUSH -----------------------------------------------------
-                                    var pushGeneral:PFPush = PFPush()
-                                    pushGeneral.setChannel("reloadTheirTable")
-                                    
-                                    // Create dictionary to send JSON to parse/to other devices
-                                    var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
-                                    
-                                    pushGeneral.setData(dataGeneral)
-                                    
-                                    pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
-                                        if error == nil { println("General push sent!") }
-                                    })
-                                    
-                                    // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
-                                    // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
-                                    var toUsers: PFQuery = PFUser.query()!
-                                    
-                                    println("********************")
-                                    println(toUsers)
-                                    println("********************")
-                                    
-                                    var pushQuery: PFQuery = PFInstallation.query()!
-                                    
-                                    if isGroupieName.isEmpty == false {
-                                        
-                                        toUsers.whereKey("username", containedIn: isGroupieName)
-                                        pushQuery.whereKey("user", matchesQuery: toUsers)
-                                        
-                                    } else { // If sendToGroupies is empty, filter push to all users
-                                        pushQuery.whereKey("user", notContainedIn: isGroupieName)
-                                        pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
-                                    }
-                                    
-                                    var pushDirected: PFPush = PFPush()
-                                    pushDirected.setQuery(pushQuery)
-                                    
-                                    // Create dictionary to send JSON to parse/to other devices
-                                    //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
-                                    //pushDirected.setData(dataDirected)////
-                                    pushDirected.setMessage("New Q from \(myName)!")
-                                    
-                                    // Send Push Notifications
-                                    pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
-                                        
-                                        if error == nil {
-                                            
-                                            isGroupieName.removeAll(keepCapacity: true)
-                                            isGroupieQId.removeAll(keepCapacity: true)
-                                            
-                                            println("Directed push notification sent!")
-                                            println("-----")
-                                        }
-                                    })
-                                    // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
-                                    
-                                    // Unlock application interaction and halt spinner
-                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                    self.activityIndicator.stopAnimating()
-                                    
-                                    // Reset all fields after submitting
-                                    self.question = ""
-                                    self.option1 = ""
-                                    self.option2 = ""
-                                    
-                                    // Resign keyboard/reset cursor
-                                    //self.questionTextField.resignFirstResponder()
-                                    //self.option1TextField.resignFirstResponder()
-                                    //self.option2TextField.resignFirstResponder()
-                                    
-                                    // Switch to results tab when question is submitted
-                                    // - Had to make storyboard ID for the tabBarController = "tabBarController"
-                                    self.tabBarController?.selectedIndex = 1
-                                }
-                            })
-                            
-                        } else {
-                            
-                            println("Write to SocialQs Table error:")
-                            println(error)
+                        // Query all "groupies" and myself (to add to myQs)
+                        var usersToQuery = isGroupieQId + [uQId]
+                        
+                        // Add qId to "UserQs" table ------
+                        var userQsQuery = PFQuery(className: "UserQs")
+                        
+                        println("userToQuery appended:")
+                        println(usersToQuery)
+                        
+                        if isGroupieQId.count > 0 {
+                            userQsQuery.whereKey("objectId", containedIn: usersToQuery)
                         }
+                        
+                        // Execute query
+                        userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
+                            
+                            if error == nil {
+                                
+                                if let temp = userQsObjects {
+                                    
+                                    println("App is sending Q to uQIds:")
+                                    for userQsObject in temp {
+                                        
+                                        if userQsObject.objectId!! == uQId { // Append qId to myQs within UserQs table
+                                            
+                                            println("Saving to \(userQsObject.objectId!!) myQsId")
+                                            
+                                            userQsObject.addUniqueObject(currentQId, forKey: "myQsId")
+                                            userQsObject.saveInBackground()
+                                            
+                                        } else { // Append qId to theirQs within UserQs table
+                                            
+                                            println("Saving to \(userQsObject.objectId!!) theirQsId")
+                                            
+                                            userQsObject.addUniqueObject(currentQId, forKey: "theirQsId")
+                                            userQsObject.saveInBackground()
+                                        }
+                                    }
+                                    
+                                } else {
+                                    
+                                    println("Error updating UserQs Table")
+                                    println(error)
+                                }
+                                
+                                // SEND CHANNEL PUSH -----------------------------------------------------
+                                var pushGeneral:PFPush = PFPush()
+                                pushGeneral.setChannel("reloadTheirTable")
+                                
+                                // Create dictionary to send JSON to parse/to other devices
+                                var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
+                                
+                                pushGeneral.setData(dataGeneral)
+                                
+                                pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                                    if error == nil { println("General push sent!") }
+                                })
+                                
+                                // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
+                                // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
+                                var toUsers: PFQuery = PFUser.query()!
+                                
+                                println("********************")
+                                println(toUsers)
+                                println("********************")
+                                
+                                var pushQuery: PFQuery = PFInstallation.query()!
+                                
+                                if isGroupieName.isEmpty == false {
+                                    
+                                    toUsers.whereKey("username", containedIn: isGroupieName)
+                                    pushQuery.whereKey("user", matchesQuery: toUsers)
+                                    
+                                } else { // If sendToGroupies is empty, filter push to all users
+                                    pushQuery.whereKey("user", notContainedIn: isGroupieName)
+                                    pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
+                                }
+                                
+                                var pushDirected: PFPush = PFPush()
+                                pushDirected.setQuery(pushQuery)
+                                
+                                // Create dictionary to send JSON to parse/to other devices
+                                //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
+                                //pushDirected.setData(dataDirected)////
+                                pushDirected.setMessage("New Q from \(myName)!")
+                                
+                                // Send Push Notifications
+                                pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                                    
+                                    if error == nil {
+                                        
+                                        isGroupieName.removeAll(keepCapacity: true)
+                                        isGroupieQId.removeAll(keepCapacity: true)
+                                        
+                                        println("Directed push notification sent!")
+                                        println("-----")
+                                    }
+                                })
+                                // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
+                                
+                                // Unlock application interaction and halt spinner
+                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                self.activityIndicator.stopAnimating()
+                                
+                                // Reset all fields after submitting
+                                self.question = ""
+                                self.option1  = ""
+                                self.option2  = ""
+                                
+                                // Resign keyboard/reset cursor
+                                //self.questionTextField.resignFirstResponder()
+                                //self.option1TextField.resignFirstResponder()
+                                //self.option2TextField.resignFirstResponder()
+                                
+                                // Switch to results tab when question is submitted
+                                // - Had to make storyboard ID for the tabBarController = "tabBarController"
+                                self.tabBarController?.selectedIndex = 1
+                            }
+                        })
+                        
+                    } else {
+                        
+                        println("Write to SocialQs Table error:")
+                        println(error)
                     }
                 }
-            })
-            // PARSE -------------------------------------------------------------
-        }
-        
-        
-        
-        
-        
+            }
+        })
+        // PARSE -------------------------------------------------------------
     }
     
     @IBAction func qPhotoButtonPressed(sender: AnyObject) {
@@ -404,10 +432,21 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         askTable.backgroundColor = tableBackgroundColor
         askTable.layer.cornerRadius = cornerRadius
         
+        var tapGesture = UITapGestureRecognizer(target: self, action: "resignKeyboard")
+        tapGesture.cancelsTouchesInView = true
+        askTable.addGestureRecognizer(tapGesture)
+        
         formatButton(groupiesButton)
         formatButton(privacyButton)
         formatButton(cancelButton)
         formatButton(submitButton)
+        
+        if build < 32 {
+            
+            let title = "WARNING!"
+            let message = "Your SocialQs app needs to be updated! If you do not update the app it will likely crash when viewing Qs."
+            self.displayAlert(title, message: message)
+        }
     }
     
     
@@ -431,13 +470,12 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(askTable: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var gestureRecognizer = UITapGestureRecognizer(target: self, action: "resignKeyboard")
-        
         var cell = NEWAskTableViewCell()
         
         switch indexPath.row {
         case 0:
             if qCell == 0 {
+                
                 cell = askTable.dequeueReusableCellWithIdentifier("qCell1", forIndexPath: indexPath) as! NEWAskTableViewCell
                 
                 println(cell.questionTextField.text)
@@ -451,7 +489,11 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                 } else {
                     
-                    cell.questionTextField.text = ""
+                    //
+                    //
+                    //cell.questionTextField.text = ""
+                    //
+                    //
                     
                 }
                 
@@ -468,15 +510,15 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     cell.addQPhoto.setTitle("", forState: UIControlState.Normal)
                     cell.questionImageView.backgroundColor = UIColor.clearColor()
+                    
                 }
-                
             }
             
         case 1:
             if o1Cell == 0 {
                 
                 cell = askTable.dequeueReusableCellWithIdentifier("oCell1", forIndexPath: indexPath) as! NEWAskTableViewCell
-                cell.photoOutlet.tag = indexPath.row
+                //cell.photoOutlet.tag = indexPath.row
                 cell.cameraOutlet.tag = indexPath.row
                 
                 if cell.optionTextField.text != "" && self.filled["O1"]! == 0  {
@@ -505,16 +547,15 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     cell.addPhotoOutlet.setTitle("", forState: UIControlState.Normal)
                     cell.optionImageView.backgroundColor = UIColor.clearColor()
                 }
-                
             }
             
             cell.option.text = "Option 1"
             
         case 2:
-            if o1Cell == 0 {
+            if o1Cell == 0 { // TEXT VERSION
                 
                 cell = askTable.dequeueReusableCellWithIdentifier("oCell1", forIndexPath: indexPath) as! NEWAskTableViewCell
-                cell.photoOutlet.tag = indexPath.row
+                //cell.photoOutlet.tag = indexPath.row
                 cell.cameraOutlet.tag = indexPath.row
                 
                 if cell.optionTextField.text != ""  && self.filled["O2"]! == 0 {
@@ -543,7 +584,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     cell.addPhotoOutlet.setTitle("", forState: UIControlState.Normal)
                     cell.optionImageView.backgroundColor = UIColor.clearColor()
                 }
-                
             }
             
             cell.option.text = "Option 2"
@@ -562,18 +602,15 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         cell.backgroundColor = tableBackgroundColor
         
         // Add gesture recognizer to cell - dismiss keyboard
-        self.askTable.addGestureRecognizer(gestureRecognizer)
+        //self.askTable.addGestureRecognizer(tapGesture)
         
         return cell
     }
     
-    func resignKeyboard() {
-        
-        self.askTable.endEditing(true)
     
-    }
+    func resignKeyboard() { self.askTable.endEditing(true) }
     
-    
+    /*
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         
         textField.resignFirstResponder() // Dismiss the keyboard
@@ -582,9 +619,8 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         submitButtonAction(textField)
         
         return true
-        
     }
-    
+    */
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         self.view.endEditing(true)
@@ -599,7 +635,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         hide[Int(whichCell as! NSNumber)] = true
         isPhoto[Int(whichCell as! NSNumber)] = true
         
-        var indexForReload = NSIndexPath(forRow: Int(whichCell as! NSNumber), inSection: 0)
+        //var indexForReload = NSIndexPath(forRow: Int(whichCell as! NSNumber), inSection: 0)
         askTable.reloadData()
         
         dismissViewControllerAnimated(true, completion: nil) //5
@@ -638,7 +674,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     
-    
         /*
         // MARK: - Navigation
         
@@ -648,5 +683,31 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         // Pass the selected object to the new view controller.
         }
         */
+    
+    
+    func RBResizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
         
+        let widthRatio  = targetSize.width  / image.size.width
+        let heightRatio = targetSize.height / image.size.height
+        
+        // Figure out what our orientation is, and use that to form the rectangle
+        var newSize: CGSize
+        if(widthRatio > heightRatio) {
+            newSize = CGSizeMake(size.width * heightRatio, size.height * heightRatio)
+        } else {
+            newSize = CGSizeMake(size.width * widthRatio,  size.height * widthRatio)
+        }
+        
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRectMake(0, 0, newSize.width, newSize.height)
+        
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.drawInRect(rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
 }
