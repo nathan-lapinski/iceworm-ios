@@ -14,7 +14,26 @@ class SettingsViewController: UIViewController {
     @IBOutlet var logout: UIButton!
     @IBOutlet var appInfo: UILabel!
     
-    @IBAction func logoutButton(sender: AnyObject) {
+    @IBAction func logoutButton(sender: AnyObject) { launchImagePickerPopover() }
+    
+    func launchImagePickerPopover() -> Void {
+        
+        let alert = UIAlertController(title: "Are you sure you want to log out?", message: nil, preferredStyle:
+            .ActionSheet) // Can also set to .Alert if you prefer
+        
+        let logOutAction = UIAlertAction(title: "Log Out", style: .Destructive) { (action) -> Void in
+            self.logOut()
+        }
+        alert.addAction(logOutAction)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Default) { (action) -> Void in }
+        alert.addAction(cancelAction)
+        
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    
+    func logOut() -> Void {
         
         myName = ""
         uId = ""
@@ -30,8 +49,8 @@ class SettingsViewController: UIViewController {
         
         // Switch back to welcome screen
         performSegueWithIdentifier("logout", sender: self)
-        
     }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,34 +58,17 @@ class SettingsViewController: UIViewController {
         logout.layer.cornerRadius = cornerRadius
         logout.backgroundColor = buttonBackgroundColor
         logout.titleLabel?.textColor = buttonTextColor
-
-    }
-    
-    override func viewWillAppear(animated: Bool) {
         
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
-        
         let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String
         
         logout.setTitle("Logout " + myName, forState: UIControlState.Normal)
         appInfo.text = "Version: " + version! + "\nBuild: (" + build! + ")"
-        
     }
 
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

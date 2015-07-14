@@ -26,19 +26,9 @@ class TheirQuestionsTableViewController: UITableViewController {
     var refresher: UIRefreshControl!
     var activityIndicator = UIActivityIndicatorView()
     
+    @IBAction func voteOption1(sender: AnyObject) { castVote(sender.tag, optionId: 1) }
     
-    @IBAction func voteOption1(sender: AnyObject) {
-        
-        castVote(sender.tag, optionId: 1)
-        
-    }
-    
-    
-    @IBAction func voteOption2(sender: AnyObject) {
-        
-        castVote(sender.tag, optionId: 2)
-        
-    }
+    @IBAction func voteOption2(sender: AnyObject) { castVote(sender.tag, optionId: 2) }
     
     
     // Function to process the casting of votes
@@ -92,15 +82,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                                     voteObjects!.saveInBackground()
                                 }
                                 
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-                                //asdfasdf
                                 // Increment vote counter ---------------------------------
                                 // Should this be nested in the above so all query/writes to DBare completed before switching views?
                                 var statsQuery = PFQuery(className: "SocialQs")
@@ -111,15 +92,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                                     object!.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
                                         
                                         if (success) { // The score key has been incremented
-                                            
-                                            //
-                                            //
-                                            println("<><><><><><><><><><><><>")
-                                            println(object!["stats1"]) // if this works no need for query below
-                                            println("<><><><><><><><><><><><>")
-                                            //
-                                            //
-                                            
                                             
                                             // ---------------------------------------------------------------------------------------------------------------
                                             // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
@@ -156,17 +128,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                                         }
                                     }
                                 })
-                                //asdfasdf
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-                                
                                 
                                 // Store updated array locally
                                 //dismissedTheirQuestions.append(questionObject.objectId!!)
@@ -176,10 +137,8 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 
                                 println("Votes Table query error")
                                 println(error)
-                                
                             }
                         })
-                        
                         
                         // Update data in UserQs table (store on what Qs user already voted )
                         var userQsQuery = PFQuery(className: "UserQs")
@@ -204,21 +163,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                                     
                                     votedOn2Ids.append(self.questionIds[questionId])
                                     NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-                                    
                                 }
-                                
-                                
                             }
                         })
-                        
-                        
-                        
-                        //asdfasdf
-                        
-                        
-                        
-                        
-                        
                     }
                 }
                 
@@ -360,11 +307,6 @@ class TheirQuestionsTableViewController: UITableViewController {
     }
     
     
-    
-    
-    
-
-    
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Potentially incomplete method implementation.
@@ -414,7 +356,6 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 option1Percent = Float(option1Stats[indexPath.row])/Float(totalResponses)*100
                 option2Percent = Float(option2Stats[indexPath.row])/Float(totalResponses)*100
-                
             }
             
             if totalResponses == 1 { resp = "response" }
@@ -445,9 +386,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                 width2 = maxBarWidth
                 cell.option1ImageView.backgroundColor = winColor
                 cell.option2ImageView.backgroundColor = winColor
-                
             }
-            
             
             // Mark user's choice
             if contains(votedOn1Ids, questionIds[indexPath.row]) {
@@ -459,10 +398,9 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 cell.myVote2.text = "✔"
                 cell.myVote1.text = ""
-                
             }
             
-        } else if option1s[indexPath.row] == photoString {//contains(votedOnTemp, self.questionIds[indexPath.row]) &&  // Already voted PHOTO setup
+        } else if option1s[indexPath.row] == photoString { // Already voted PHOTO setup
             
             cell = tableView.dequeueReusableCellWithIdentifier("cell3", forIndexPath: indexPath) as! TheirQuestionsCell
             
@@ -519,32 +457,47 @@ class TheirQuestionsTableViewController: UITableViewController {
             cell.option1Image.layer.cornerRadius = cornerRadius
             cell.option2Image.layer.cornerRadius = cornerRadius
             
+            // Blur screen while Q upload is processing
+            //let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
+            //var blurView1 = UIVisualEffectView(effect: blurEffect)
+            //var blurView2 = UIVisualEffectView(effect: blurEffect)
+            //blurView1.frame = cell.option1Image.frame
+            //cell.option1Image.addSubview(blurView1)
+            //blurView2.frame = cell.option2Image.frame
+            //cell.option2Image.addSubview(blurView2)
+            
+            cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+            cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+            
             // Mark user's choice
             if contains(votedOn1Ids, questionIds[indexPath.row]) {
                 
-                //println("Voted 1 on \(questions[indexPath.row])")
+                cell.option1.enabled = false
+                cell.option2.enabled = false
+                cell.myVote1.hidden = false
+                cell.myVote2.hidden = true
                 
                 cell.myVote1.text = "✔"
-                //cell.myVote1.textColor = UIColor.whiteColor()
-                cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
                 cell.myVote2.text = ""
-                cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.0))
                 cell.numberOfResponses.text = "\(totalResponses) \(resp)"
                 
             } else if contains(votedOn2Ids, questionIds[indexPath.row]) {
                 
-                //println("Voted 2 on \(questions[indexPath.row])")
+                cell.option1.enabled = false
+                cell.option2.enabled = false
+                cell.myVote1.hidden = true
+                cell.myVote2.hidden = false
                 
                 cell.myVote2.text = "✔"
-                //cell.myVote2.textColor = UIColor.whiteColor()
-                cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
                 cell.myVote1.text = ""
-                cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.0))
                 cell.numberOfResponses.text = "\(totalResponses) \(resp)"
                 
             } else {
                 
-                //println("No votes on \(questions[indexPath.row])")
+                cell.option1.enabled = true
+                cell.option2.enabled = true
+                cell.myVote1.hidden = true
+                cell.myVote2.hidden = true
                 
                 cell.myVote2.text = ""
                 cell.myVote1.text = ""
@@ -597,13 +550,9 @@ class TheirQuestionsTableViewController: UITableViewController {
         
         // Format cell backgrounds
         if indexPath.row % 2 == 0 {
-            
             cell.backgroundColor = UIColor.clearColor()
-            
         } else {
-            
-            cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-            
+            cell.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.4)
         }
         
         return cell

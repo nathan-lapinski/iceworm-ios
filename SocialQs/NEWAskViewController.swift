@@ -46,32 +46,20 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         
         picker.allowsEditing = false //2
         picker.sourceType = .PhotoLibrary //3
-        presentViewController(picker, animated: true, completion: nil)//4
-        
+        presentViewController(picker, animated: true, completion: nil)
     }
-    
     
     @IBAction func addOPhotoAction(sender: AnyObject) {
         
         whichCell = sender.tag
-        
-        picker.allowsEditing = false //2
-        picker.sourceType = .PhotoLibrary //3
-        presentViewController(picker, animated: true, completion: nil)//4
-        
+        launchImagePickerPopover()
     }
     
+    //@IBAction func photoButtonPressed() { }
     
-    @IBAction func appOPhotoFromLibrary(sender: AnyObject) {
-        
-        whichCell = sender.tag
-        
-        picker.allowsEditing = false
-        picker.sourceType = UIImagePickerControllerSourceType.Camera
-        picker.cameraCaptureMode = .Photo
-        presentViewController(picker, animated: true, completion: nil)
-        
-    }
+    //@IBAction func appOPhotoFromLibrary(sender: AnyObject) {
+    //    whichCell = sender.tag
+    //}
     
     
     @IBAction func cancelButtonAction(sender: AnyObject) {
@@ -93,6 +81,40 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
             self.askTable.reloadData()
         }
         */
+    }
+    
+    
+    @IBAction func qPhotoButtonPressed(sender: AnyObject) {
+        switchCell(&qCell, rowNumber: 0)
+    }
+    @IBAction func qCameraButtonPressed(sender: AnyObject) {
+        qPhotoButtonPressed(sender)
+    }
+    
+    @IBAction func qTextButtonPressed(sender: AnyObject) {
+        switchCell(&qCell, rowNumber: 0)
+    }
+    
+    @IBAction func oPhotoButtonPressed(sender: AnyObject) {
+        //if sender.tag == 1 {
+        //} else {
+        //    switchCell(&o2Cell, rowNumber: sender.tag)
+        //}
+    }
+    
+    @IBAction func oCameraButtonPressed(sender: AnyObject) {
+        
+        whichCell = sender.tag
+        switchCell(&o1Cell, rowNumber: sender.tag)
+        launchImagePickerPopover()
+    }
+    
+    @IBAction func oTextButtonPressed(sender: AnyObject) {
+        //if sender.tag == 1 {
+        switchCell(&o1Cell, rowNumber: sender.tag)
+        //} else {
+        //    switchCell(&o2Cell, rowNumber: sender.tag)
+        //}
     }
     
     
@@ -122,7 +144,40 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     
+    func launchImagePickerPopover() -> Void {
+        
+        let alert = UIAlertController(title: "Please choose source", message: nil, preferredStyle:
+            .ActionSheet) // Can also set to .Alert if you prefer
+        
+        let cameraAction = UIAlertAction(title: "Camera", style: .Default) { (action) -> Void in
+            self.picker.allowsEditing = false
+            self.picker.sourceType = UIImagePickerControllerSourceType.Camera
+            self.picker.cameraCaptureMode = .Photo
+            self.presentViewController(self.picker, animated: true, completion: nil)
+        }
+        alert.addAction(cameraAction)
+        
+        let libraryAction = UIAlertAction(title: "Library", style: .Default) { (action) -> Void in
+            self.picker.allowsEditing = false //2
+            self.picker.sourceType = .PhotoLibrary //3
+            self.presentViewController(self.picker, animated: true, completion: nil)//4
+        }
+        alert.addAction(libraryAction)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Destructive) { (action) -> Void in }
+        alert.addAction(cancelAction)
+        
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    
     func submitQ() -> Void {
+        
+        // Blur screen while Q upload is processing
+        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = self.view.frame
+        self.view.addSubview(blurView)
         
         println("User is attempting to send a Q to:")
         println(isGroupieName)
@@ -174,7 +229,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     println("Storing Q text ")
                     
                     socialQ["question"] = self.question
-                    
                 }
                 
                 // Check if O1 is photo or text and upload
@@ -358,6 +412,9 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                                 // Switch to results tab when question is submitted
                                 // - Had to make storyboard ID for the tabBarController = "tabBarController"
                                 self.tabBarController?.selectedIndex = 1
+                                
+                                // Un-blur ASK tab
+                                blurView.removeFromSuperview()
                             }
                         })
                         
@@ -371,37 +428,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         })
         // PARSE -------------------------------------------------------------
     }
-    
-    @IBAction func qPhotoButtonPressed(sender: AnyObject) {
-        switchCell(&qCell, rowNumber: 0)
-    }
-    @IBAction func qCameraButtonPressed(sender: AnyObject) {
-        qPhotoButtonPressed(sender)
-    }
-    
-    @IBAction func qTextButtonPressed(sender: AnyObject) {
-        switchCell(&qCell, rowNumber: 0)
-    }
-    
-    @IBAction func oPhotoButtonPressed(sender: AnyObject) {
-        //if sender.tag == 1 {
-        switchCell(&o1Cell, rowNumber: sender.tag)
-        //} else {
-        //    switchCell(&o2Cell, rowNumber: sender.tag)
-        //}
-    }
-    @IBAction func oCameraButtonPressed(sender: AnyObject) {
-        oPhotoButtonPressed(sender)
-    }
-    
-    @IBAction func oTextButtonPressed(sender: AnyObject) {
-        //if sender.tag == 1 {
-        switchCell(&o1Cell, rowNumber: sender.tag)
-        //} else {
-        //    switchCell(&o2Cell, rowNumber: sender.tag)
-        //}
-    }
-    
     
     func switchCell(inout cellValue: Int, rowNumber: Int) {
         
@@ -441,12 +467,11 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         formatButton(cancelButton)
         formatButton(submitButton)
         
-        if build < 32 {
-            
-            let title = "WARNING!"
-            let message = "Your SocialQs app needs to be updated! If you do not update the app it will likely crash when viewing Qs."
-            self.displayAlert(title, message: message)
-        }
+        //if build < 32 {
+        //    let title = "WARNING!"
+        //    let message = "Your SocialQs app needs to be updated! If you do not update the app it will likely crash when viewing Qs."
+        //    self.displayAlert(title, message: message)
+        //}
     }
     
     
@@ -459,14 +484,9 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     
     // MARK: - Table view data source
     
-    func numberOfSectionsInTableView(askTable: UITableView) -> Int {
-        return 1
-    }
+    func numberOfSectionsInTableView(askTable: UITableView) -> Int { return 1 }
     
-    func tableView(askTable: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
-    }
-    
+    func tableView(askTable: UITableView, numberOfRowsInSection section: Int) -> Int { return 3 }
     
     func tableView(askTable: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
@@ -510,7 +530,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     cell.addQPhoto.setTitle("", forState: UIControlState.Normal)
                     cell.questionImageView.backgroundColor = UIColor.clearColor()
-                    
                 }
             }
             
@@ -529,7 +548,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                 } else {
                     
                     cell.optionTextField.text = ""
-                    
                 }
                 
             } else { // PHOTO VERSION
@@ -566,7 +584,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                 } else {
                     
                     cell.optionTextField.text = ""
-                    
                 }
                 
             } else { // PHOTO VERSION
@@ -645,6 +662,15 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         
         dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    func showPhotoPicker(source: UIImagePickerControllerSourceType) {
+        
+        let imagePicker = UIImagePickerController()
+        imagePicker.sourceType = source
+        presentViewController(imagePicker, animated: true, completion: nil)
+        
     }
     
     
