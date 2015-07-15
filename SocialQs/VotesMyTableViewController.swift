@@ -158,6 +158,9 @@ class VotesMyTableViewController: UITableViewController {
         
         cell.textLabel?.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
         
+        // Make cells non-selectable
+        cell.selectionStyle = UITableViewCellSelectionStyle.None
+        
         return cell
     }
     

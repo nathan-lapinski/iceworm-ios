@@ -14,6 +14,8 @@
 		90135AC21B3AD4F400C9716F /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABD1B3AD4F400C9716F /* FBSDKLoginKit.framework */; };
 		90135AC31B3AD4F400C9716F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABE1B3AD4F400C9716F /* Parse.framework */; };
 		90135AC41B3AD4F400C9716F /* ParseFacebookUtilsV4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */; };
+		901DAA181B55C81300A20689 /* NEWTheirQsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901DAA171B55C81300A20689 /* NEWTheirQsTableViewController.swift */; };
+		901DAA1A1B55C84D00A20689 /* NEWTheirQsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901DAA191B55C84D00A20689 /* NEWTheirQsCell.swift */; };
 		902B34CD1B3E4FB800B67ACE /* QsSignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */; };
 		902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */; };
 		902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */; };
@@ -70,6 +72,8 @@
 		90135ABD1B3AD4F400C9716F /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = SocialQs/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		90135ABE1B3AD4F400C9716F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = SocialQs/Parse.framework; sourceTree = "<group>"; };
 		90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtilsV4.framework; path = SocialQs/ParseFacebookUtilsV4.framework; sourceTree = "<group>"; };
+		901DAA171B55C81300A20689 /* NEWTheirQsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWTheirQsTableViewController.swift; sourceTree = "<group>"; };
+		901DAA191B55C84D00A20689 /* NEWTheirQsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWTheirQsCell.swift; sourceTree = "<group>"; };
 		902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsSignupViewController.swift; sourceTree = "<group>"; };
 		902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesTableViewController.swift; sourceTree = "<group>"; };
@@ -177,6 +181,8 @@
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
+				901DAA171B55C81300A20689 /* NEWTheirQsTableViewController.swift */,
+				901DAA191B55C84D00A20689 /* NEWTheirQsCell.swift */,
 				9045A1A71B51963E00BB7EE5 /* NEWAskViewController.swift */,
 				9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */,
 				9096430C1B3365680029E008 /* MyQuestionsCell.swift */,
@@ -360,10 +366,12 @@
 				901263171B3BA33B00AA2058 /* TheirQuestionsTableViewController.swift in Sources */,
 				9096430D1B3365680029E008 /* MyQuestionsCell.swift in Sources */,
 				902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */,
+				901DAA181B55C81300A20689 /* NEWTheirQsTableViewController.swift in Sources */,
 				90FE1F171B42E831005F2D68 /* VotesTheirTableViewController.swift in Sources */,
 				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,
 				90FE1F271B463755005F2D68 /* VotesTheirNavigationController.swift in Sources */,
 				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
+				901DAA1A1B55C84D00A20689 /* NEWTheirQsCell.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
 				901263191B3BA73600AA2058 /* MyQuestionsTableViewController.swift in Sources */,
 				90DE6C211B30E9CC004F3BA0 /* QsLoginViewController.swift in Sources */,

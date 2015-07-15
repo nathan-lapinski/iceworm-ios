@@ -122,7 +122,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             
-            println("Reloding table")
             self.askTable.reloadData()
             
             dispatch_async(dispatch_get_main_queue()) { () -> Void in
@@ -146,7 +145,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     
     func launchImagePickerPopover() -> Void {
         
-        let alert = UIAlertController(title: "Please choose source", message: nil, preferredStyle:
+        let alert = UIAlertController(title: "Please choose image source", message: nil, preferredStyle:
             .ActionSheet) // Can also set to .Alert if you prefer
         
         let cameraAction = UIAlertAction(title: "Camera", style: .Default) { (action) -> Void in
@@ -179,11 +178,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         blurView.frame = self.view.frame
         self.view.addSubview(blurView)
         
-        println("User is attempting to send a Q to:")
-        println(isGroupieName)
-        println("With qIds:")
-        println(isGroupieQId)
-        
         // Setup spinner and block application input
         activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
         activityIndicator.center = self.view.center
@@ -208,11 +202,9 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     self.isPhoto[0] = false
                     
-                    println("Creating Q png")
                     let imageQ = self.RBResizeImage(self.chosenImage[0]!, targetSize: CGSize(width: 1000, height: 1000))
                     let imageQData = UIImagePNGRepresentation(imageQ)
                     
-                    println("Creating Q PFFile")
                     var imageQFile: PFFile = PFFile(name: "questionImage.png", data: imageQData)
                     imageQFile.saveInBackgroundWithBlock({ (success, error) -> Void in
                         
@@ -221,12 +213,9 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                         }
                     })
                     
-                    println("Saving Q Image to SocialQ Object")
                     socialQ["questionPhoto"] = imageQFile
                     
                 } else {
-                    
-                    println("Storing Q text ")
                     
                     socialQ["question"] = self.question
                 }
@@ -236,11 +225,9 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     self.isPhoto[1] = false
                     
-                    println("Creating Option1 png")
                     let imageO1 = self.RBResizeImage(self.chosenImage[1]!, targetSize: CGSize(width: 1000, height: 1000))
                     let imageO1Data = UIImagePNGRepresentation(imageO1)
                     
-                    println("Creating Option1 PFFile")
                     var imageO1File: PFFile = PFFile(name: "option1Image.png", data: imageO1Data)
                     imageO1File.saveInBackgroundWithBlock({ (success, error) -> Void in
                         
@@ -249,12 +236,9 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                         }
                     })
             
-                    println("Saving Option1 Image to SocialQ Object")
                     socialQ["option1Photo"] = imageO1File
                     
                 } else {
-                    
-                    println("Storing Option1 text")
                     
                     socialQ["option1"] = self.option1
                 }
@@ -264,20 +248,14 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     self.isPhoto[2] = false
                     
-                    println("Creating Option2 png")
                     let imageO2 = self.RBResizeImage(self.chosenImage[2]!, targetSize: CGSize(width: 1000, height: 1000))
                     let imageO2Data = UIImagePNGRepresentation(imageO2)
                     
-                    println("Creating Option2 PFFile")
                     let imageO2File = PFFile(name: "option2Image.png", data: imageO2Data)
-                    //imageO2File.save()
                     
-                    println("Saving Option2 Image to SocialQ Object")
                     socialQ["option2Photo"] = imageO2File
                     
                 } else {
-                    
-                    println("Storing Option2 text")
                     
                     socialQ["option2"] = self.option2
                 }
@@ -301,9 +279,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                         // Add qId to "UserQs" table ------
                         var userQsQuery = PFQuery(className: "UserQs")
                         
-                        println("userToQuery appended:")
-                        println(usersToQuery)
-                        
                         if isGroupieQId.count > 0 {
                             userQsQuery.whereKey("objectId", containedIn: usersToQuery)
                         }
@@ -315,19 +290,14 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                                 
                                 if let temp = userQsObjects {
                                     
-                                    println("App is sending Q to uQIds:")
                                     for userQsObject in temp {
                                         
                                         if userQsObject.objectId!! == uQId { // Append qId to myQs within UserQs table
-                                            
-                                            println("Saving to \(userQsObject.objectId!!) myQsId")
                                             
                                             userQsObject.addUniqueObject(currentQId, forKey: "myQsId")
                                             userQsObject.saveInBackground()
                                             
                                         } else { // Append qId to theirQs within UserQs table
-                                            
-                                            println("Saving to \(userQsObject.objectId!!) theirQsId")
                                             
                                             userQsObject.addUniqueObject(currentQId, forKey: "theirQsId")
                                             userQsObject.saveInBackground()
@@ -350,16 +320,13 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                                 pushGeneral.setData(dataGeneral)
                                 
                                 pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
-                                    if error == nil { println("General push sent!") }
+                                    if error == nil { //println("General push sent!") 
+                                    }
                                 })
                                 
                                 // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
                                 // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
                                 var toUsers: PFQuery = PFUser.query()!
-                                
-                                println("********************")
-                                println(toUsers)
-                                println("********************")
                                 
                                 var pushQuery: PFQuery = PFInstallation.query()!
                                 
@@ -389,8 +356,8 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                                         isGroupieName.removeAll(keepCapacity: true)
                                         isGroupieQId.removeAll(keepCapacity: true)
                                         
-                                        println("Directed push notification sent!")
-                                        println("-----")
+                                        //println("Directed push notification sent!")
+                                        //println("-----")
                                     }
                                 })
                                 // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
@@ -498,12 +465,8 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                 
                 cell = askTable.dequeueReusableCellWithIdentifier("qCell1", forIndexPath: indexPath) as! NEWAskTableViewCell
                 
-                println(cell.questionTextField.text)
-                println(self.filled["Q"]!)
-                
                 if cell.questionTextField.text != "" && self.filled["Q"]! == 0 {
                     
-                    println("Storing Q text")
                     filled["Q"] = 1
                     question = cell.questionTextField.text
                     

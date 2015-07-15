@@ -1,15 +1,14 @@
 //
-//  TheirQuestionsTableViewController.swift
+//  NEWTheirQsTableViewController.swift
 //  SocialQs
 //
-//  Created by Brett Wiesman on 6/16/15.
+//  Created by Brett Wiesman on 7/14/15.
 //  Copyright (c) 2015 BookSix. All rights reserved.
 //
 
 import UIKit
-import Parse
 
-class TheirQuestionsTableViewController: UITableViewController {
+class NEWTheirQsTableViewController: UITableViewController {
     
     var questionIds = [String]()
     var questions = [String]()
@@ -26,10 +25,15 @@ class TheirQuestionsTableViewController: UITableViewController {
     var refresher: UIRefreshControl!
     var activityIndicator = UIActivityIndicatorView()
     
-    @IBAction func voteOption1(sender: AnyObject) { castVote(sender.tag, optionId: 1) }
+    @IBAction func vote1ButtonAction(sender: AnyObject) { castVote(sender.tag, optionId: 1) }
     
-    @IBAction func voteOption2(sender: AnyObject) { castVote(sender.tag, optionId: 2) }
+    @IBAction func vote2ButtonAction(sender: AnyObject) { castVote(sender.tag, optionId: 2) }
     
+    @IBAction func zoom1ButtonAction(sender: AnyObject) {
+    }
+    
+    @IBAction func zoom2ButtonAction(sender: AnyObject) {
+    }
     
     // Function to process the casting of votes
     func castVote(questionId: Int, optionId: Int) {
@@ -320,18 +324,20 @@ class TheirQuestionsTableViewController: UITableViewController {
         // Return the number of sections.
         return 1
     }
-
+    
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
         return questions.count
     }
-
+    
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = TheirQuestionsCell()
+        println("Loading Cells")
+        
+        var cell = NEWTheirQsCell()
         
         var totalResponses = Int()
         var resp = "responses"
@@ -344,12 +350,30 @@ class TheirQuestionsTableViewController: UITableViewController {
         var votedOnTemp = votedOn1Ids + votedOn2Ids
         // *******************************************************************
         
-        if contains(votedOnTemp, self.questionIds[indexPath.row]) && option1s[indexPath.row] != photoString { // Already voted TEXT setup
+        //if contains(votedOnTemp, self.questionIds[indexPath.row]) && option1s[indexPath.row] != photoString { // TEXT options
+        if option1s[indexPath.row] != photoString { // TEXT options
             
-            cell = tableView.dequeueReusableCellWithIdentifier("cell2", forIndexPath: indexPath) as! TheirQuestionsCell
+            cell = tableView.dequeueReusableCellWithIdentifier("theirCell1", forIndexPath: indexPath) as! NEWTheirQsCell
             
             // Make cells non-selectable
             cell.selectionStyle = UITableViewCellSelectionStyle.None
+            
+            // Hide buttons from view
+            cell.vote1Button.backgroundColor = UIColor.clearColor()
+            cell.vote2Button.backgroundColor = UIColor.clearColor()
+            //cell.vote1Button.setTitle("", forState: UIControlState.Normal)
+            //cell.vote2Button.setTitle("", forState: UIControlState.Normal)
+            
+            // Profile Pic
+            cell.profilePicture.layer.borderWidth = 1.0
+            cell.profilePicture.layer.borderColor = UIColor.whiteColor().CGColor
+            cell.profilePicture.layer.masksToBounds = false
+            cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
+            cell.profilePicture.clipsToBounds = true
+            
+            
+            
+            
             
             // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
             var width1 = maxBarWidth //cell.option1ImageView.bounds.width
@@ -368,8 +392,8 @@ class TheirQuestionsTableViewController: UITableViewController {
             if totalResponses == 1 { resp = "response" }
             
             cell.question.text = questions[indexPath.row]
-            cell.option1Text.text = option1s[indexPath.row] + "  \(Int(option1Percent))%"
-            cell.option2Text.text = option2s[indexPath.row] + "  \(Int(option2Percent))%"
+            cell.option1Label.text = option1s[indexPath.row] + "  \(Int(option1Percent))%"
+            cell.option2Label.text = option2s[indexPath.row] + "  \(Int(option2Percent))%"
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
@@ -377,22 +401,22 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
                 width1 = maxBarWidth
                 width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-                cell.option1ImageView.backgroundColor = winColor
-                cell.option2ImageView.backgroundColor = loseColor
+                cell.option1BackgroundImage.backgroundColor = winColor
+                cell.option2BackgroundImage.backgroundColor = loseColor
                 
             } else if option2Percent > option1Percent {
                 
                 width2 = maxBarWidth
                 width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-                cell.option1ImageView.backgroundColor = loseColor
-                cell.option2ImageView.backgroundColor = winColor
+                cell.option1BackgroundImage.backgroundColor = loseColor
+                cell.option2BackgroundImage.backgroundColor = winColor
                 
             } else {
                 
                 width1 = maxBarWidth
                 width2 = maxBarWidth
-                cell.option1ImageView.backgroundColor = winColor
-                cell.option2ImageView.backgroundColor = winColor
+                cell.option1BackgroundImage.backgroundColor = winColor
+                cell.option2BackgroundImage.backgroundColor = winColor
             }
             
             // Mark user's choice
@@ -407,12 +431,32 @@ class TheirQuestionsTableViewController: UITableViewController {
                 cell.myVote1.text = ""
             }
             
-        } else if option1s[indexPath.row] == photoString { // Already voted PHOTO setup
+        } else if option1s[indexPath.row] == photoString { // PHOTO option
             
-            cell = tableView.dequeueReusableCellWithIdentifier("cell3", forIndexPath: indexPath) as! TheirQuestionsCell
+            cell = tableView.dequeueReusableCellWithIdentifier("theirCell2", forIndexPath: indexPath) as! NEWTheirQsCell
             
             // Make cells non-selectable
             cell.selectionStyle = UITableViewCellSelectionStyle.None
+            
+            // Hide buttons from view
+            cell.vote1Button.backgroundColor = UIColor.clearColor()
+            cell.vote2Button.backgroundColor = UIColor.clearColor()
+            cell.option1Zoom.backgroundColor = UIColor.clearColor()
+            cell.option2Zoom.backgroundColor = UIColor.clearColor()
+            //cell.vote1Button.setTitle("", forState: UIControlState.Normal)
+            //cell.vote2Button.setTitle("", forState: UIControlState.Normal)
+            
+            // Profile Pic
+            cell.profilePicture.layer.borderWidth = 1.0
+            cell.profilePicture.layer.borderColor = UIColor.whiteColor().CGColor
+            cell.profilePicture.layer.masksToBounds = false
+            cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
+            cell.profilePicture.clipsToBounds = true
+            
+            
+            
+            
+            
             
             option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
                 
@@ -455,14 +499,14 @@ class TheirQuestionsTableViewController: UITableViewController {
             }
             
             cell.question.text = questions[indexPath.row]
-            cell.option1Text.text = "\(Int(option1Percent))%"
-            cell.option2Text.text = "\(Int(option2Percent))%"
-            cell.option1Text.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-            cell.option2Text.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-            cell.option1Text.layer.cornerRadius = cornerRadius
-            cell.option2Text.layer.cornerRadius = cornerRadius
-            cell.option1Image.layer.cornerRadius = cornerRadius
-            cell.option2Image.layer.cornerRadius = cornerRadius
+            cell.option1Label.text = "\(Int(option1Percent))%"
+            cell.option2Label.text = "\(Int(option2Percent))%"
+            cell.option1Label.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+            cell.option2Label.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+            //cell.option1Text.layer.cornerRadius = cornerRadius
+            //cell.option2Text.layer.cornerRadius = cornerRadius
+            cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
+            cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
             
             // Blur screen while Q upload is processing
             //let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
@@ -479,14 +523,14 @@ class TheirQuestionsTableViewController: UITableViewController {
             // Mark user's choice
             if contains(votedOn1Ids, questionIds[indexPath.row]) {
                 
-                cell.option1.enabled = false
-                cell.option2.enabled = false
+                cell.vote1Button.enabled = false
+                cell.vote2Button.enabled = false
                 cell.myVote1.hidden = false
                 cell.myVote2.hidden = true
                 
                 // Unhide results
-                cell.option1Text.hidden = false
-                cell.option2Text.hidden = false
+                cell.stats1.hidden = false
+                cell.stats2.hidden = false
                 
                 cell.myVote1.text = "✔"
                 cell.myVote2.text = ""
@@ -494,14 +538,14 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             } else if contains(votedOn2Ids, questionIds[indexPath.row]) {
                 
-                cell.option1.enabled = false
-                cell.option2.enabled = false
+                cell.vote1Button.enabled = false
+                cell.vote2Button.enabled = false
                 cell.myVote1.hidden = true
                 cell.myVote2.hidden = false
                 
                 // Unhide results
-                cell.option1Text.hidden = false
-                cell.option2Text.hidden = false
+                cell.stats1.hidden = false
+                cell.stats2.hidden = false
                 
                 cell.myVote2.text = "✔"
                 cell.myVote1.text = ""
@@ -509,14 +553,14 @@ class TheirQuestionsTableViewController: UITableViewController {
                 
             } else {
                 
-                cell.option1.enabled = true
-                cell.option2.enabled = true
+                cell.vote1Button.enabled = true
+                cell.vote2Button.enabled = true
                 cell.myVote1.hidden = true
                 cell.myVote2.hidden = true
                 
                 // Hide results
-                cell.option1Text.hidden = true
-                cell.option2Text.hidden = true
+                cell.stats1.hidden = true
+                cell.stats2.hidden = true
                 
                 cell.myVote2.text = ""
                 cell.myVote1.text = ""
@@ -524,10 +568,12 @@ class TheirQuestionsTableViewController: UITableViewController {
             }
             
             // Tag buttons
-            cell.option1.tag = indexPath.row
-            cell.option2.tag = indexPath.row
+            cell.vote1Button.tag = indexPath.row
+            cell.vote2Button.tag = indexPath.row
+            cell.option1Zoom.tag = indexPath.row
+            cell.option2Zoom.tag = indexPath.row
             
-        } else { // Yet to vote setup
+        } /*else { // Yet to vote setup
             
             cell = tableView.dequeueReusableCellWithIdentifier("cell1", forIndexPath: indexPath) as! TheirQuestionsCell
             
@@ -560,12 +606,12 @@ class TheirQuestionsTableViewController: UITableViewController {
             cell.option1.tag = indexPath.row
             cell.option2.tag = indexPath.row
             
-        }
+        }*/
         
         cell.question.numberOfLines = 0 // Dynamic number of lines
         cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
         cell.question.text = questions[indexPath.row]
-        cell.asker.text = "Asked by " + askers[indexPath.row]
+        cell.username.text = askers[indexPath.row] //"Asked by " + askers[indexPath.row]
         
         // Format cell backgrounds
         if indexPath.row % 2 == 0 {
@@ -607,9 +653,9 @@ class TheirQuestionsTableViewController: UITableViewController {
         // Manually call refresh upon loading to get most up to datest datas
         // - this needs to be skipped when push is allowed and used when push has been declined
         //if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
-            
-            refresh()
-            
+        
+        refresh()
+        
         //    println("USER IS NOT SUBSCRIBED TO RELOADTHEIRTABLE")
         
         //}
@@ -702,7 +748,7 @@ class TheirQuestionsTableViewController: UITableViewController {
                                 // CHANGED THIS TO MATCH NEW PULL METHOD - WAS "ASKERS"
                                 //
                                 if self.questions.count == self.option2Stats.count {
-                                
+                                    
                                     self.tableView.reloadData()
                                     self.tableView.reloadInputViews()
                                     
@@ -735,37 +781,37 @@ class TheirQuestionsTableViewController: UITableViewController {
     }
     
     
-
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the specified item to be editable.
-        return true
+    // Return NO if you do not want the specified item to be editable.
+    return true
     }
     */
-
+    
     /*
     // Override to support rearranging the table view.
     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
+    
     }
     */
-
+    
     /*
     // Override to support conditional rearranging of the table view.
     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the item to be re-orderable.
-        return true
+    // Return NO if you do not want the item to be re-orderable.
+    return true
     }
     */
-
+    
     /*
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
     }
     */
 
