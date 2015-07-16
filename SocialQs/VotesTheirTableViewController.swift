@@ -62,6 +62,8 @@ class VotesTheirTableViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
+        returningFromPopover = true
+        
         var votesId = ""
         var option1Text = ""
         var option2Text = ""

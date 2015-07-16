@@ -19,8 +19,8 @@ let bgAlpha: CGFloat = 0.7
 
 let bgColor = UIColor(red: 58/255, green: 154/255, blue: 188/255, alpha: bgAlpha)
 
-let winColor = bgColor
-let loseColor = UIColor(red: 85/255, green: 85/255, blue: 85/255, alpha: bgAlpha)
+let winColor = UIColor(red: 58/255, green: 154/255, blue: 188/255, alpha: 1.0)
+let loseColor = UIColor(red: 85/255, green: 85/255, blue: 85/255, alpha: 1.0)
 
 let buttonAlpha: CGFloat = 0.8
 let buttonBackgroundColor = UIColor(red: 239/256, green: 239/256, blue: 240/256, alpha: buttonAlpha)
@@ -52,11 +52,17 @@ var myVotesStorageKey = myName + "votes"
 var myRequestedQId = ""
 var theirRequestedQId = ""
 
+// Variable for passing image to zoom
+var imageZoom = [UIImage(named: "camera.png"), UIImage(named: "camera.png")]
+var zoomPage = Int()
+
+// Variable to tell if returning from a popover (ie: don't refresh table)
+var returningFromPopover = false
+
 // Groupies variable
 var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
 var isGroupieQId = [String]()
-//var isNotGroupie = [String]()//var sendToGroupies = [""]
-
 var warningSeen = false
 
+// String to determine if option is text or photo
 var photoString = "|/~_</|"

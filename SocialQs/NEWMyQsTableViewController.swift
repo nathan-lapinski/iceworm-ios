@@ -1,16 +1,15 @@
 //
-//  MyQuestionsTableViewController.swift
+//  NEWMyQsTableViewController.swift
 //  SocialQs
 //
-//  Created by Brett Wiesman on 6/18/15.
+//  Created by Brett Wiesman on 7/15/15.
 //  Copyright (c) 2015 BookSix. All rights reserved.
 //
 
 import UIKit
-import Parse
 
-class MyQuestionsTableViewController: UITableViewController {
-
+class NEWMyQsTableViewController: UITableViewController {
+    
     var questions = [String]()
     var questionIds = [String]()
     var option1s = [String]()
@@ -23,10 +22,65 @@ class MyQuestionsTableViewController: UITableViewController {
     var deletedMyStorageKey = myName + "deletedMyPermanent"
     var refresher: UIRefreshControl!
     //var activityIndicator = UIActivityIndicatorView()
-
+    
+    @IBOutlet var segueButton: UIButton!
+    
+    @IBAction func segueButtonAction(sender: AnyObject) {
+        
+        performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
+    }
+    
+    @IBAction func zoom1ButtonAction(sender: AnyObject) {
+        zoomPage = 0
+        setPhotosToZoom(sender)
+    }
+    
+    @IBAction func zoom2ButtonAction(sender: AnyObject) {
+        zoomPage = 1
+        setPhotosToZoom(sender)
+    }
+    
+    
+    func setPhotosToZoom(sender: AnyObject) {
+        
+        option1sPhoto[sender.tag].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+            
+            if error1 != nil {
+                
+                println(error1)
+                
+            } else {
+                
+                if let downloadedImage = UIImage(data: data1!) {
+                    
+                    imageZoom[0] = downloadedImage
+                    
+                    self.option2sPhoto[sender.tag].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                        
+                        if error2 != nil {
+                            
+                            println(error2)
+                            
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data2!) {
+                                
+                                imageZoom[1] = downloadedImage
+                                
+                                self.segueButtonAction(sender)
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Refresh upon first load of controller
+        refresh()
         
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
@@ -43,7 +97,7 @@ class MyQuestionsTableViewController: UITableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(20,0,48,0)  // Top, Left, Bottom, Right
+        self.tableView.contentInset = UIEdgeInsetsMake(22,0,48,0)  // Top, Left, Bottom, Right
         
         // Disable auto inset adjust
         self.automaticallyAdjustsScrollViewInsets = false
@@ -91,16 +145,6 @@ class MyQuestionsTableViewController: UITableViewController {
                     userQsObjects!.removeObject(self.questionIds[indexPath.row], forKey: "myQsId")
                     userQsObjects!.saveInBackground()
                     
-                    
-                    
-                    
-                    //deletedMyQuestions.append(self.questionIds[indexPath.row])
-                    // Store updated array locally
-                    //NSUserDefaults.standardUserDefaults().setObject(deletedMyQuestions, forKey: self.deletedMyStorageKey)
-                    
-                    
-                    
-                    
                     self.questionIds.removeAtIndex(indexPath.row)
                     self.questions.removeAtIndex(indexPath.row)
                     self.option1s.removeAtIndex(indexPath.row)
@@ -122,7 +166,11 @@ class MyQuestionsTableViewController: UITableViewController {
         }
         trash.backgroundColor = UIColor.redColor()
         
-        return [trash, view] // Order = appearance order, right to left on screen
+        if (option1Stats[indexPath.row] + option1Stats[indexPath.row]) > 0 {
+            return [trash, view] // Order = appearance order, right to left on screen
+        } else {
+            return [trash]
+        }
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -138,28 +186,27 @@ class MyQuestionsTableViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        /*
+        
         // Recall deleted/dismissed data
         if NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey) != nil {
-            
-            
-            
-            
-            deletedMyQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey)! as! [(String)]
-            
-            
-            
-            
+        
+        deletedMyQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey)! as! [(String)]
         }
-        */
+        
         
         // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
         // - this needs to be skipped when push is allowed and used when push has been declined
-        if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false { refresh() }
+        //if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false { refresh() }
         
         // REMOVE LATER!!! ::
-        refresh()
+        
+        if returningFromPopover == false {
+            println("Returning from popover")
+            returningFromPopover = true
+            refresh()
+        }
+        
         // **********************************************************************************************
     }
     
@@ -179,7 +226,7 @@ class MyQuestionsTableViewController: UITableViewController {
             } else {
                 
                 if let myQs = myQsObjects!["myQsId"] as? [String] {
-                
+                    
                     // Get Qs from SocialsQs based on myQsId
                     var getSocialQsQuery = PFQuery(className: "SocialQs")
                     
@@ -216,10 +263,9 @@ class MyQuestionsTableViewController: UITableViewController {
                                     
                                     self.option1s.append(questionObject["option1"] as! String)
                                     self.option1sPhoto.append(PFFile())
-
+                                    
                                 } else {
                                     
-                                    println("Found Image File 1")
                                     self.option1s.append(photoString)
                                     self.option1sPhoto.append(questionObject["option1Photo"] as! PFFile)
                                     
@@ -232,7 +278,6 @@ class MyQuestionsTableViewController: UITableViewController {
                                     
                                 } else {
                                     
-                                    println("Found Image File 2")
                                     self.option2s.append(photoString)
                                     self.option2sPhoto.append(questionObject["option2Photo"] as! PFFile)
                                     
@@ -264,185 +309,201 @@ class MyQuestionsTableViewController: UITableViewController {
         })
     }
     
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Potentially incomplete method implementation.
         // Return the number of sections.
         return 1
     }
-
+    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
         return questions.count
     }
-
+    
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var myCell = MyQuestionsCell()
+        var myCell = NEWMyQsCell()
         
+        // Compute number of reponses and option stats
         var totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
         var option1Percent = Float(0.0)
         var option2Percent = Float(0.0)
         
         if totalResponses != 0 {
-            
             option1Percent = Float(option1Stats[indexPath.row])/Float(totalResponses)*100
             option2Percent = Float(option2Stats[indexPath.row])/Float(totalResponses)*100
-            
         }
         
         // Build "repsonse" string to account for singular/plural
         var resp = "responses"
-        if totalResponses == 1 {
-            resp = "response"
-        }
-        
-        // Make cells non-selectable
-        myCell.selectionStyle = UITableViewCellSelectionStyle.None
+        if totalResponses == 1 { resp = "response" }
         
         // Currently check if either (1) option photo is filled in and use photo for both
         if option1s[indexPath.row] == photoString { // PHOTO OPTIONS
             
-            myCell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! MyQuestionsCell
+            myCell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! NEWMyQsCell
             
-            myCell.question2.text = questions[indexPath.row]
-            myCell.option1Text.text = "\(Int(option1Percent))%"
-            myCell.option2Text.text = "\(Int(option2Percent))%"
-            myCell.option1Text.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-            myCell.option2Text.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-            myCell.option1Text.layer.cornerRadius = cornerRadius
-            myCell.option2Text.layer.cornerRadius = cornerRadius
-            myCell.numberOfResponses2.text = "\(totalResponses) \(resp)"
+            myCell.background.layer.cornerRadius = cornerRadius
             
+            // Hide buttons from view
+            myCell.option1Zoom.backgroundColor = UIColor.clearColor()
+            myCell.option2Zoom.backgroundColor = UIColor.clearColor()
+            
+            // Format options images
+            myCell.option1Image.layer.cornerRadius = cornerRadius
+            myCell.option2Image.layer.cornerRadius = cornerRadius
+            myCell.option1Image.clipsToBounds = true
+            myCell.option2Image.clipsToBounds = true
+            
+            // Set thumbnail images
             option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
                 
-                if let downloadedImage = UIImage(data: data1!) {
-                
-                    myCell.option1Photo.image = downloadedImage
+                if error1 != nil {
                     
+                    println(error1)
+                    
+                } else {
+                    
+                    if let downloadedImage = UIImage(data: data1!) {
+                        
+                        myCell.option1Image.image = downloadedImage
+                    }
                 }
             })
             
             option2sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
                 
-                if let downloadedImage = UIImage(data: data2!) {
+                if error2 != nil {
                     
-                    myCell.option2Photo.image = downloadedImage
+                    println(error2)
                     
+                } else {
+                    
+                    if let downloadedImage = UIImage(data: data2!) {
+                        
+                        myCell.option2Image.image = downloadedImage
+                    }
                 }
             })
             
-            // Format cell backgrounds
-            if indexPath.row % 2 == 0 { myCell.backgroundColor = UIColor.clearColor() }
-            else { myCell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4) }
+            myCell.option1Zoom.tag = indexPath.row
+            myCell.option2Zoom.tag = indexPath.row
             
         } else { // TEXT OPTIONS
             
-            myCell = tableView.dequeueReusableCellWithIdentifier("myCell", forIndexPath: indexPath) as! MyQuestionsCell
+            myCell = tableView.dequeueReusableCellWithIdentifier("myCell1", forIndexPath: indexPath) as! NEWMyQsCell
             
-            myCell.question.text = questions[indexPath.row]
-            myCell.option1Text.text = option1s[indexPath.row] + "  \(Int(option1Percent))%"
-            myCell.option2Text.text = option2s[indexPath.row] + "  \(Int(option2Percent))%"
+            myCell.stats1.layer.cornerRadius = cornerRadius
+            myCell.stats2.layer.cornerRadius = cornerRadius
             myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
-
-            // Compute and set results image view widths
-            var width1 = myCell.option1ImageView.frame.width
-            var width2 = myCell.option2ImageView.frame.width
-            
             
             if option1Percent > option2Percent {
                 
-                width1 = CGFloat(myCell.option1ImageView.bounds.width)
-                width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-                myCell.option1ImageView.backgroundColor = winColor
-                myCell.option2ImageView.backgroundColor = loseColor
+                myCell.option1BackgroundImage.backgroundColor = winColor
+                myCell.option2BackgroundImage.backgroundColor = loseColor
                 
             } else if option2Percent > option1Percent {
                 
-                width2 = CGFloat(myCell.option2ImageView.bounds.width)
-                width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-                myCell.option1ImageView.backgroundColor = winColor
-                myCell.option2ImageView.backgroundColor = loseColor
+                myCell.option1BackgroundImage.backgroundColor = winColor
+                myCell.option2BackgroundImage.backgroundColor = loseColor
                 
             } else {
                 
-                width1 = CGFloat(myCell.option1ImageView.bounds.width)
-                width2 = width1
-                myCell.option1ImageView.backgroundColor = winColor
-                myCell.option2ImageView.backgroundColor = winColor
-                
-            }
-            
-            //myCell.option1ImageView.bounds = CGRectMake(myCell.option1ImageView.bounds.origin.x, myCell.option1ImageView.bounds.origin.y, CGFloat(width1), myCell.option1ImageView.bounds.height)
-            //myCell.option2ImageView.bounds = CGRectMake(myCell.option2ImageView.bounds.origin.x, myCell.option2ImageView.bounds.origin.y, CGFloat(width2), myCell.option2ImageView.bounds.height)
-            
-            // Format cell backgrounds
-            if indexPath.row % 2 == 0 {
-                
-                myCell.backgroundColor = UIColor.clearColor()
-                
-            } else {
-                
-                myCell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+                myCell.option1BackgroundImage.backgroundColor = winColor
+                myCell.option2BackgroundImage.backgroundColor = winColor
                 
             }
         }
         
+        // Make cells non-selectable
+        myCell.selectionStyle = UITableViewCellSelectionStyle.None
+        
+        myCell.background.layer.cornerRadius = cornerRadius
+        
+        // Format option text backgrounds
+        myCell.option1BackgroundImage.layer.cornerRadius = cornerRadius
+        myCell.option2BackgroundImage.layer.cornerRadius = cornerRadius
+        
+        // Set all text
+        myCell.question.numberOfLines = 0 // Dynamic number of lines
+        myCell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        myCell.question.text = questions[indexPath.row]
+        myCell.option1Label.text = option1s[indexPath.row]
+        myCell.option2Label.text = option2s[indexPath.row]
+        myCell.stats1.text = "\(Int(option1Percent))%"
+        myCell.stats2.text = "\(Int(option2Percent))%"
+        myCell.stats1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+        myCell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+        myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
+        
+        
+        
+        
+        
+        // Format cell backgrounds
+        //if indexPath.row % 2 == 0 {
+        myCell.backgroundColor = UIColor.clearColor()
+        //} else {
+        //    myCell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        //}
+        
         return myCell
     }
-
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the specified item to be editable.
-        return true
+    // Return NO if you do not want the specified item to be editable.
+    return true
     }
     */
-
+    
     /*
     // Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    if editingStyle == .Delete {
+    // Delete the row from the data source
+    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+    } else if editingStyle == .Insert {
+    // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }
     }
     */
-
+    
     /*
     // Override to support rearranging the table view.
     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
+    
     }
     */
-
+    
     /*
     // Override to support conditional rearranging of the table view.
     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the item to be re-orderable.
-        return true
+    // Return NO if you do not want the item to be re-orderable.
+    return true
     }
     */
-
+    
     /*
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
     }
     */
 
+    
 }

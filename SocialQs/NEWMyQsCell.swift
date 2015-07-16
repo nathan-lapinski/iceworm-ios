@@ -1,24 +1,20 @@
 //
-//  NEWTheirQsCell.swift
+//  NEWMyQsCell.swift
 //  SocialQs
 //
-//  Created by Brett Wiesman on 7/14/15.
+//  Created by Brett Wiesman on 7/15/15.
 //  Copyright (c) 2015 BookSix. All rights reserved.
 //
 
 import UIKit
 
-class NEWTheirQsCell: UITableViewCell {
+class NEWMyQsCell: UITableViewCell {
     
     // Both Cells
-    @IBOutlet var profilePicture: UIImageView!
-    @IBOutlet var username: UILabel!
     @IBOutlet var question: UILabel!
     @IBOutlet var numberOfResponses: UILabel!
     @IBOutlet var option1BackgroundImage: UIImageView!
     @IBOutlet var option2BackgroundImage: UIImageView!
-    @IBOutlet var vote1Button: UIButton!
-    @IBOutlet var vote2Button: UIButton!
     @IBOutlet var option1Label: UILabel!
     @IBOutlet var option2Label: UILabel!
     @IBOutlet var myVote1: UILabel!

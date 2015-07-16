@@ -31,14 +31,14 @@ class WelcomeViewController: UIViewController {
         super.viewDidLoad()
         
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
-        
+        /*
         if warningSeen == false {
             
             let title = "DATA USAGE"
             let message = "SocialQs has not yet been optimized for data usage and it is unclear how much data the app will transfer with the implementation of images. If your data plan is limited you may wish to limit your SocialQs usage to Wi-Fi only until this issue is investigated."
             self.displayAlert(title, message: message)
         }
-        
+        */
         
         signInButton.layer.cornerRadius = cornerRadius
         createAccountButton.layer.cornerRadius = cornerRadius
@@ -66,7 +66,6 @@ class WelcomeViewController: UIViewController {
             self.presentViewController(alert, animated: true, completion: nil)
             warningSeen = true
         })
-        
     }
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
@@ -108,10 +107,6 @@ class WelcomeViewController: UIViewController {
                     println(error)
                     
                 } else {
-                    
-                    println("%%%%%%%%%%%")
-                    println(userQsObjects)
-                    println("%%%%%%%%%%%")
                     
                     if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
                         
