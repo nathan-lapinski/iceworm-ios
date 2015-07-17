@@ -527,9 +527,7 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.vote1Button.setTitle("Vote", forState: UIControlState.Normal)
             cell.vote2Button.setTitle("Vote", forState: UIControlState.Normal)
             
-            // Tag buttons
-            cell.vote1Button.tag = indexPath.row
-            cell.vote2Button.tag = indexPath.row
+            // Tag zoom buttons
             cell.option1Zoom.tag = indexPath.row
             cell.option2Zoom.tag = indexPath.row
         }
@@ -575,36 +573,36 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             cell.vote1Button.enabled = false
             cell.vote2Button.enabled = false
+            cell.vote1Button.setTitle("", forState: UIControlState.Normal)
+            cell.vote2Button.setTitle("", forState: UIControlState.Normal)
+            
             cell.myVote1.hidden = false
             cell.myVote2.hidden = true
+            cell.myVote1.text = "✔"
+            cell.myVote2.text = ""
             
             // Unhide results
             cell.stats1.hidden = false
             cell.stats2.hidden = false
             
-            cell.vote1Button.setTitle("", forState: UIControlState.Normal)
-            cell.vote2Button.setTitle("", forState: UIControlState.Normal)
-            
-            cell.myVote1.text = "✔"
-            cell.myVote2.text = ""
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
         } else if contains(votedOn2Ids, questionIds[indexPath.row]) {
             
             cell.vote1Button.enabled = false
             cell.vote2Button.enabled = false
-            cell.myVote1.hidden = true
-            cell.myVote2.hidden = false
+            cell.vote1Button.setTitle("", forState: UIControlState.Normal)
+            cell.vote2Button.setTitle("", forState: UIControlState.Normal)
             
             // Unhide results
             cell.stats1.hidden = false
             cell.stats2.hidden = false
             
-            cell.vote1Button.setTitle("", forState: UIControlState.Normal)
-            cell.vote2Button.setTitle("", forState: UIControlState.Normal)
-            
+            cell.myVote1.hidden = true
+            cell.myVote2.hidden = false
             cell.myVote2.text = "✔"
             cell.myVote1.text = ""
+            
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
         } else {
@@ -643,6 +641,10 @@ class NEWTheirQsTableViewController: UITableViewController {
         //    cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
         //}
         
+        // Tag vote buttons
+        cell.vote1Button.tag = indexPath.row
+        cell.vote2Button.tag = indexPath.row
+        
         return cell
     }
     
@@ -678,7 +680,6 @@ class NEWTheirQsTableViewController: UITableViewController {
         //if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
         
         if returningFromPopover == false {
-            println("Returning from popover")
             returningFromPopover = true
             refresh()
         }

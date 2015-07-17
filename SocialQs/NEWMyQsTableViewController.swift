@@ -202,7 +202,6 @@ class NEWMyQsTableViewController: UITableViewController {
         // REMOVE LATER!!! ::
         
         if returningFromPopover == false {
-            println("Returning from popover")
             returningFromPopover = true
             refresh()
         }

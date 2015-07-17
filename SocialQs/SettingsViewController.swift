@@ -11,12 +11,23 @@ import Parse
 
 class SettingsViewController: UIViewController {
     
+    @IBOutlet var linkWithFacebook: UIButton!
     @IBOutlet var logout: UIButton!
     @IBOutlet var appInfo: UILabel!
     
-    @IBAction func logoutButton(sender: AnyObject) { launchImagePickerPopover() }
+    @IBAction func logoutButton(sender: AnyObject) { launchLogoutPopover() }
     
-    func launchImagePickerPopover() -> Void {
+    @IBAction func linkWithFacebookAction(sender: AnyObject) {
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    func launchLogoutPopover() -> Void {
         
         let alert = UIAlertController(title: "Are you sure you want to log out?", message: nil, preferredStyle:
             .ActionSheet) // Can also set to .Alert if you prefer
@@ -58,6 +69,9 @@ class SettingsViewController: UIViewController {
         logout.layer.cornerRadius = cornerRadius
         logout.backgroundColor = buttonBackgroundColor
         logout.titleLabel?.textColor = buttonTextColor
+        linkWithFacebook.layer.cornerRadius = cornerRadius
+        linkWithFacebook.backgroundColor = buttonBackgroundColor
+        linkWithFacebook.titleLabel?.textColor = buttonTextColor
         
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String
