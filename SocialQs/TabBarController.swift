@@ -13,7 +13,27 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
+        
+        // Bar color
+        //self.tabBar.barTintColor = winColor
+        
+        // Active text color
+        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: activeTabColor], forState: UIControlState.Selected)
+        
+        // Inactive text color
+        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: inactiveTabColor], forState: UIControlState.Normal)
+        
+        // Active icon color
+        UITabBar.appearance().tintColor = activeTabColor
+        
+        // Inactive icon color
+        for item in self.tabBar.items as! [UITabBarItem] {
+            if let image = item.image {
+                item.image = image.imageWithColor(inactiveTabColor).imageWithRenderingMode(.AlwaysOriginal)
+            }
+        }
     }
+    
     
     func tabBarController(tabBarController: UITabBarController, animationControllerForTransitionFromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         let transitioningObject: TransitioningObject = TransitioningObject()
@@ -65,3 +85,28 @@ class TransitioningObject: NSObject, UIViewControllerAnimatedTransitioning {
         return 0.33
     }
 }
+
+
+extension UIImage {
+    func imageWithColor(tintColor: UIColor) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(self.size, false, self.scale)
+        
+        let context = UIGraphicsGetCurrentContext() as CGContextRef
+        CGContextTranslateCTM(context, 0, self.size.height)
+        CGContextScaleCTM(context, 1.0, -1.0);
+        CGContextSetBlendMode(context, kCGBlendModeNormal)
+        
+        let rect = CGRectMake(0, 0, self.size.width, self.size.height) as CGRect
+        CGContextClipToMask(context, rect, self.CGImage)
+        tintColor.setFill()
+        CGContextFillRect(context, rect)
+        
+        let newImage = UIGraphicsGetImageFromCurrentImageContext() as UIImage
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
+}
+
+
+

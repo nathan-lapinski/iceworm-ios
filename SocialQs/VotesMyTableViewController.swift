@@ -12,6 +12,8 @@ class VotesMyTableViewController: UITableViewController {
     
     let tableFontSize = CGFloat(16)
     var objectsArray = [Objects]()
+    let headerHeight = CGFloat(60)
+    var questionText = ""
     
     struct Objects {
         var sectionName: String!
@@ -69,7 +71,7 @@ class VotesMyTableViewController: UITableViewController {
         // PARSE ----------------------------------------------------
         var query = PFQuery(className: "SocialQs")
         
-        query.getObjectInBackgroundWithId(myRequestedQId, block: { (objects, error) -> Void in
+        query.getObjectInBackgroundWithId(requestedQId, block: { (objects, error) -> Void in
             
             if error == nil {
                 
@@ -79,21 +81,23 @@ class VotesMyTableViewController: UITableViewController {
                     
                     option1Text = objects!["option1"] as! String
                     
-                } else {
-                    
-                    option1Text = "PHOTO 1"
-                    
-                }
+                } else { option1Text = photoString }
                 
                 if let test = objects!["option2"] as? String {
                     
                     option2Text = objects!["option2"] as! String
                     
-                } else {
+                } else { option2Text = photoString }
+                
+                if let test = objects!["question"] as? String {
                     
-                    option2Text = "PHOTO 2"
+                    self.questionText = objects!["question"] as! String
                     
-                }
+                } else { option2Text = photoString }
+                
+                // ****
+                // PULL IMAGES HERE INSTEAD OF FROM QsViewControllers
+                //****
                 
                 query = PFQuery(className: "Votes")
                 query.getObjectInBackgroundWithId(votesId, block: { (objects, error) -> Void in
@@ -196,23 +200,43 @@ class VotesMyTableViewController: UITableViewController {
         
         let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView //recast your view as a UITableViewHeaderFooterView
         header.contentView.backgroundColor = mainColorBlue
-        header.textLabel.textColor = UIColor.whiteColor()
-        //header.alpha = bgAlpha //make the header transparent
         
-        header.textLabel.textAlignment = NSTextAlignment.Left
-        header.textLabel.numberOfLines = 10 // Dynamic number of lines
-        header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
-        //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-        header.textLabel.font = UIFont(name: "HelveticaNeue", size: tableFontSize)!
-        header.textLabel.text = objectsArray[section].sectionName
+        // Set Q in table header
+        var headerTextView = UITextField(frame: CGRectMake(0, 0, self.view.frame.size.width, 40))
+        headerTextView.text = questionText
+        headerTextView.textColor = UIColor.darkTextColor()
+        headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+        headerTextView.textAlignment = NSTextAlignment.Center
+        tableView.tableHeaderView = headerTextView
         
+        // Set text or photo in section header
+        if objectsArray[section].sectionName != photoString { // Text
+            header.textLabel.textColor = UIColor.whiteColor()
+            //header.alpha = bgAlpha //make the header transparent
+            
+            header.textLabel.textAlignment = NSTextAlignment.Left
+            header.textLabel.numberOfLines = 10 // Dynamic number of lines
+            header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
+            //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            header.textLabel.text = objectsArray[section].sectionName
+            
+        } else { // Image
+            var frame = CGRectMake(0, 0, 60, 60)
+            var headerImageView = UIImageView(frame: frame)
+            var image: UIImage = imageZoom[section]!
+            headerImageView.image = image
+            headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
+            headerImageView.clipsToBounds = true
+            header.addSubview(headerImageView)
+        }
     }
     
     
     // Set section header heights
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return CGFloat(40)
+        return headerHeight
     }
     
     

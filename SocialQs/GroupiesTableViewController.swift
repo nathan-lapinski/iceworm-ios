@@ -98,7 +98,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         var findUsers = PFUser.query()
         
         if !name.isEmpty {
-            findUsers?.whereKey("username", containsString: name)
+            findUsers?.whereKey("username", containsString: name.lowercaseString) // search against lower case
         }
         
         findUsers?.whereKey("username", notEqualTo: myName)
@@ -183,8 +183,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         } else {
             
             // Format cell backgrounds
-            if indexPath.row % 2 == 0 { cell.backgroundColor = UIColor.clearColor() }
-            else { cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4) }
+            cell.backgroundColor = UIColor.clearColor()
+            //if indexPath.row % 2 == 0 { cell.backgroundColor = UIColor.clearColor() }
+            //else { cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4) }
             
             cell.usernameLabel.font = UIFont(name: "HelveticaNeue", size: tableFontSize)
             

@@ -10,6 +10,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
 
     @IBOutlet var scrollView: UIScrollView!
     @IBOutlet var pageControl: UIPageControl!
+    @IBOutlet var questionLabel: UILabel!
     
     var pageImages: [UIImage] = []
     var pageViews: [UIImageView?] = []
@@ -27,6 +28,8 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        questionLabel.text = questionZoom
         
         // Set up the image you want to scroll & zoom and add it to the scroll view
         pageImages = [imageZoom[0]!, imageZoom[1]!]

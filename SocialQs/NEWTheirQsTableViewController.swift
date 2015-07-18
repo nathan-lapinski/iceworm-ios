@@ -49,6 +49,8 @@ class NEWTheirQsTableViewController: UITableViewController {
     
     func setPhotosToZoom(sender: AnyObject) {
         
+        questionZoom = questions[sender.tag]
+        
         option1sPhoto[sender.tag].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
             
             if error1 != nil {
@@ -256,7 +258,47 @@ class NEWTheirQsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
-            theirRequestedQId = self.questionIds[indexPath.row]
+            println(self.questions[indexPath.row])
+            
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
+            requestedQId = self.questionIds[indexPath.row]
+            
+            if self.option1s[indexPath.row] == photoString {
+                
+                // Get images
+                self.option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+                    
+                    if error1 != nil {
+                        
+                        println(error1)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: data1!) {
+                            
+                            imageZoom[0] = downloadedImage
+                        }
+                    }
+                })
+                
+                self.option2sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                    
+                    if error2 != nil {
+                        
+                        println(error2)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: data2!) {
+                            
+                            imageZoom[1] = downloadedImage
+                        }
+                    }
+                })
+            }
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
@@ -387,6 +429,9 @@ class NEWTheirQsTableViewController: UITableViewController {
         
         var cell = NEWTheirQsCell()
         
+        var option1String = ""
+        var option2String = ""
+        
         // Compute number of reponses and option stats
         var totalResponses = Int()
         var resp = "responses"
@@ -407,35 +452,37 @@ class NEWTheirQsTableViewController: UITableViewController {
         var votedOnTemp = votedOn1Ids + votedOn2Ids
         // *******************************************************************
         
-        //if contains(votedOnTemp, self.questionIds[indexPath.row]) && option1s[indexPath.row] != photoString { // TEXT options
         if option1s[indexPath.row] != photoString { // TEXT options
+            
+            option1String = option1s[indexPath.row] + " "
+            option2String = option2s[indexPath.row] + " "
             
             cell = tableView.dequeueReusableCellWithIdentifier("theirCell1", forIndexPath: indexPath) as! NEWTheirQsCell
             
             // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
-            var width1 = maxBarWidth //cell.option1ImageView.bounds.width
-            var width2 = maxBarWidth //cell.option2ImageView.bounds.width
+            //var width1 = maxBarWidth //cell.option1ImageView.bounds.width
+            //var width2 = maxBarWidth //cell.option2ImageView.bounds.width
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
             if option1Percent > option2Percent {
                 
-                width1 = maxBarWidth
-                width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
+                //width1 = maxBarWidth
+                //width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
                 cell.option1BackgroundImage.backgroundColor = winColor
                 cell.option2BackgroundImage.backgroundColor = loseColor
                 
             } else if option2Percent > option1Percent {
                 
-                width2 = maxBarWidth
-                width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
+                //width2 = maxBarWidth
+                //width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
                 cell.option1BackgroundImage.backgroundColor = loseColor
                 cell.option2BackgroundImage.backgroundColor = winColor
                 
             } else {
                 
-                width1 = maxBarWidth
-                width2 = maxBarWidth
+                //width1 = maxBarWidth
+                //width2 = maxBarWidth
                 cell.option1BackgroundImage.backgroundColor = winColor
                 cell.option2BackgroundImage.backgroundColor = winColor
             }
@@ -455,7 +502,13 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.option1Zoom.backgroundColor = UIColor.clearColor()
             cell.option2Zoom.backgroundColor = UIColor.clearColor()
             
-            // Format options images
+            // Format thumbnail views - aspect fill without breaching imageView bounds
+            cell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.option1Image.clipsToBounds = true
+            cell.option2Image.clipsToBounds = true
+            
+            // Format options imageViews
             cell.option1Image.layer.cornerRadius = cornerRadius
             cell.option2Image.layer.cornerRadius = cornerRadius
             cell.option1Image.clipsToBounds = true
@@ -558,16 +611,13 @@ class NEWTheirQsTableViewController: UITableViewController {
         cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
         cell.question.text = questions[indexPath.row]
         cell.username.text = askers[indexPath.row] //"Asked by " + askers[indexPath.row]
-        cell.option1Label.text = option1s[indexPath.row]
-        cell.option2Label.text = option2s[indexPath.row]
-        cell.stats1.text = "\(Int(option1Percent))%"
-        cell.stats2.text = "\(Int(option2Percent))%"
-        cell.stats1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        cell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+        //cell.stats1.text = "\(Int(option1Percent))%"
+        //cell.stats2.text = "\(Int(option2Percent))%"
+        //cell.stats1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+        //cell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))// MAKE FUNCTION SINCE THIS IS IN BOTH CELLS ---------------------------
+        cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         
-        // MAKE FUNCTION SINCE THIS IS IN BOTH CELLS ---------------------------
         // Mark user's choice
         if contains(votedOn1Ids, questionIds[indexPath.row]) {
             
@@ -582,8 +632,11 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.myVote2.text = ""
             
             // Unhide results
-            cell.stats1.hidden = false
-            cell.stats2.hidden = false
+            //cell.stats1.hidden = false
+            //cell.stats2.hidden = false
+            
+            cell.option1Label.text = option1String + "\(Int(option1Percent))%"
+            cell.option2Label.text = option1String + "\(Int(option2Percent))%"
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
@@ -595,13 +648,16 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.vote2Button.setTitle("", forState: UIControlState.Normal)
             
             // Unhide results
-            cell.stats1.hidden = false
-            cell.stats2.hidden = false
+            //cell.stats1.hidden = false
+            //cell.stats2.hidden = false
             
             cell.myVote1.hidden = true
             cell.myVote2.hidden = false
             cell.myVote2.text = "✔"
             cell.myVote1.text = ""
+            
+            cell.option1Label.text = option1String + "\(Int(option1Percent))%"
+            cell.option2Label.text = option1String + "\(Int(option2Percent))%"
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
@@ -613,8 +669,8 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.myVote2.hidden = true
             
             // Hide results
-            cell.stats1.hidden = true
-            cell.stats2.hidden = true
+            //cell.stats1.hidden = true
+            //cell.stats2.hidden = true
             
             cell.myVote2.text = ""
             cell.myVote1.text = ""
@@ -622,14 +678,17 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             cell.option1BackgroundImage.backgroundColor = loseColor
             cell.option2BackgroundImage.backgroundColor = loseColor
+            //cell.option1Label.text = ""
+            //cell.option2Label.text = ""
+            
+            cell.option1Label.text = option1s[indexPath.row]
+            cell.option2Label.text = option2s[indexPath.row]
         }
-        // MAKE FUNCTION SINCE THIS IS IN BOTH CELLS ---------------------------
-        // MAKE FUNCTION SINCE THIS IS IN BOTH CELLS ---------------------------
         
         // Why can't I set a corner radius on text field? -------
         // Format myVote and stats background
-        cell.stats1.layer.cornerRadius = cornerRadius
-        cell.stats2.layer.cornerRadius = cornerRadius
+        //cell.stats1.layer.cornerRadius = cornerRadius
+        //cell.stats2.layer.cornerRadius = cornerRadius
         cell.myVote1.layer.cornerRadius = cornerRadius
         cell.myVote2.layer.cornerRadius = cornerRadius
         // Why can't I set a corner radius on text field? -------
@@ -647,8 +706,6 @@ class NEWTheirQsTableViewController: UITableViewController {
         
         return cell
     }
-    
-    
     
     
     override func viewWillAppear(animated: Bool) {

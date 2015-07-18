@@ -31,6 +31,7 @@
 		904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */; };
 		9045A1A81B51963E00BB7EE5 /* NEWAskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9045A1A71B51963E00BB7EE5 /* NEWAskViewController.swift */; };
 		904E29C91B58CC4E007E17D2 /* SettingsPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */; };
+		904E29CB1B59DC10007E17D2 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904E29CA1B59DC10007E17D2 /* Util.swift */; };
 		905B2D961B322625001A74EE /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905B2D951B322625001A74EE /* Globals.swift */; };
 		9099E5E81B4CCCFA00A1887E /* NEWAskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */; };
 		90A1473D1B2E4CBA00947B33 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */; };
@@ -94,6 +95,7 @@
 		904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		9045A1A71B51963E00BB7EE5 /* NEWAskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWAskViewController.swift; sourceTree = "<group>"; };
 		904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPopoverViewController.swift; sourceTree = "<group>"; };
+		904E29CA1B59DC10007E17D2 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		905B2D951B322625001A74EE /* Globals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
 		9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWAskTableViewCell.swift; sourceTree = "<group>"; };
 		90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -195,6 +197,7 @@
 				902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */,
 				902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */,
 				904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */,
+				904E29CA1B59DC10007E17D2 /* Util.swift */,
 				90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */,
 				904122FF1B26A67C00397132 /* Supporting Files */,
 				902B34D41B3EA21300B67ACE /* TabBarController.swift */,
@@ -386,6 +389,7 @@
 				902D87211B577862001F9954 /* NEWMyQsCell.swift in Sources */,
 				90FE1F211B43A91F005F2D68 /* VotesMyNavigationController.swift in Sources */,
 				90FE1F191B42E8AE005F2D68 /* VotesTheirCell.swift in Sources */,
+				904E29CB1B59DC10007E17D2 /* Util.swift in Sources */,
 				9045A1A81B51963E00BB7EE5 /* NEWAskViewController.swift in Sources */,
 				902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,

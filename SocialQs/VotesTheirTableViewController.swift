@@ -71,7 +71,7 @@ class VotesTheirTableViewController: UITableViewController {
         // PARSE ----------------------------------------------------
         var query = PFQuery(className: "SocialQs")
         
-        query.getObjectInBackgroundWithId(theirRequestedQId, block: { (objects, error) -> Void in
+        query.getObjectInBackgroundWithId(requestedQId, block: { (objects, error) -> Void in
             
             if error == nil {
                 
@@ -84,7 +84,7 @@ class VotesTheirTableViewController: UITableViewController {
                     
                 } else {
                     
-                    option1Text = "PHOTO 1"
+                    option1Text = photoString
                     
                 }
                 
@@ -94,7 +94,7 @@ class VotesTheirTableViewController: UITableViewController {
                     
                 } else {
                     
-                    option2Text = "PHOTO 2"
+                    option2Text = photoString
                     
                 }
                 
@@ -199,16 +199,36 @@ class VotesTheirTableViewController: UITableViewController {
         
         let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView //recast your view as a UITableViewHeaderFooterView
         header.contentView.backgroundColor = mainColorBlue
-        header.textLabel.textColor = UIColor.whiteColor()
-        //header.alpha = bgAlpha //make the header transparent
         
-        header.textLabel.textAlignment = NSTextAlignment.Left
-        header.textLabel.numberOfLines = 10 // Dynamic number of lines
-        header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
-        //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-        header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-        header.textLabel.text = objectsArray[section].sectionName
-
+        // Set Q in table header
+        var headerTextView = UITextField(frame: CGRectMake(0, 0, self.view.frame.size.width, 40))
+        headerTextView.text = questionZoom
+        headerTextView.textColor = UIColor.darkTextColor()
+        headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+        headerTextView.textAlignment = NSTextAlignment.Center
+        tableView.tableHeaderView = headerTextView
+        
+        // Set text or photo in section header
+        if objectsArray[section].sectionName != photoString { // Text
+            header.textLabel.textColor = UIColor.whiteColor()
+            //header.alpha = bgAlpha //make the header transparent
+            
+            header.textLabel.textAlignment = NSTextAlignment.Left
+            header.textLabel.numberOfLines = 10 // Dynamic number of lines
+            header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
+            //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            header.textLabel.text = objectsArray[section].sectionName
+            
+        } else { // Image
+            var frame = CGRectMake(0, 0, 60, 60)
+            var headerImageView = UIImageView(frame: frame)
+            var image: UIImage = imageZoom[section]!
+            headerImageView.image = image
+            headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
+            headerImageView.clipsToBounds = true
+            header.addSubview(headerImageView)
+        }
     }
     
     

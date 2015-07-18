@@ -43,6 +43,8 @@ class NEWMyQsTableViewController: UITableViewController {
     
     func setPhotosToZoom(sender: AnyObject) {
         
+        questionZoom = questions[sender.tag]
+        
         option1sPhoto[sender.tag].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
             
             if error1 != nil {
@@ -90,18 +92,35 @@ class NEWMyQsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs_reverse.png"))
+        //self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs_reverse.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
+        self.tableView.backgroundColor = UIColor.lightGrayColor()
         
         // Set separator color
-        tableView.separatorColor = UIColor.lightGrayColor()
+        tableView.separatorColor = UIColor.clearColor()
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(22,0,48,0)  // Top, Left, Bottom, Right
+        self.tableView.contentInset = UIEdgeInsetsMake(64,0,48,0)  // Top, Left, Bottom, Right
         
         // Disable auto inset adjust
         self.automaticallyAdjustsScrollViewInsets = false
         
+        // Navigation bar settings
+        self.navigationItem.title = "SocialQs"
+        self.navigationController?.navigationBar.barTintColor = winColor
+        self.navigationController?.navigationBar.tintColor = UIColor.whiteColor()
+        //self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        //let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 38, height: 38))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        imageView.contentMode = UIViewContentMode.ScaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.contentMode = .ScaleAspectFit
+        let image = UIImage(named: "logo_square.png")
+        imageView.image = image
+        navigationItem.titleView = imageView
+                
     }
     
     
@@ -111,7 +130,45 @@ class NEWMyQsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
-            myRequestedQId = self.questionIds[indexPath.row]
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
+            requestedQId = self.questionIds[indexPath.row]
+            
+            if self.option1s[indexPath.row] == photoString {
+                
+                // Get images
+                self.option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+                    
+                    if error1 != nil {
+                        
+                        println(error1)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: data1!) {
+                            
+                            imageZoom[0] = downloadedImage
+                        }
+                    }
+                })
+                
+                self.option2sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                    
+                    if error2 != nil {
+                        
+                        println(error2)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: data2!) {
+                            
+                            imageZoom[1] = downloadedImage
+                        }
+                    }
+                })
+            }
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
@@ -165,6 +222,8 @@ class NEWMyQsTableViewController: UITableViewController {
             })
         }
         trash.backgroundColor = UIColor.redColor()
+        
+        println(option1Stats[indexPath.row] + option1Stats[indexPath.row])
         
         if (option1Stats[indexPath.row] + option1Stats[indexPath.row]) > 0 {
             return [trash, view] // Order = appearance order, right to left on screen
@@ -333,6 +392,9 @@ class NEWMyQsTableViewController: UITableViewController {
         
         var myCell = NEWMyQsCell()
         
+        var option1String = ""
+        var option2String = ""
+        
         // Compute number of reponses and option stats
         var totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
         var option1Percent = Float(0.0)
@@ -357,6 +419,12 @@ class NEWMyQsTableViewController: UITableViewController {
             // Hide buttons from view
             myCell.option1Zoom.backgroundColor = UIColor.clearColor()
             myCell.option2Zoom.backgroundColor = UIColor.clearColor()
+            
+            // Format thumbnail views - aspect fill without breaching imageView bounds
+            myCell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
+            myCell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
+            myCell.option1Image.clipsToBounds = true
+            myCell.option2Image.clipsToBounds = true
             
             // Format options images
             myCell.option1Image.layer.cornerRadius = cornerRadius
@@ -402,8 +470,11 @@ class NEWMyQsTableViewController: UITableViewController {
             
             myCell = tableView.dequeueReusableCellWithIdentifier("myCell1", forIndexPath: indexPath) as! NEWMyQsCell
             
-            myCell.stats1.layer.cornerRadius = cornerRadius
-            myCell.stats2.layer.cornerRadius = cornerRadius
+            option1String = option1s[indexPath.row] + " "
+            option2String = option2s[indexPath.row] + " "
+            
+            //myCell.stats1.layer.cornerRadius = cornerRadius
+            //myCell.stats2.layer.cornerRadius = cornerRadius
             myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
             if option1Percent > option2Percent {
@@ -437,13 +508,24 @@ class NEWMyQsTableViewController: UITableViewController {
         myCell.question.numberOfLines = 0 // Dynamic number of lines
         myCell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
         myCell.question.text = questions[indexPath.row]
-        myCell.option1Label.text = option1s[indexPath.row]
-        myCell.option2Label.text = option2s[indexPath.row]
-        myCell.stats1.text = "\(Int(option1Percent))%"
-        myCell.stats2.text = "\(Int(option2Percent))%"
-        myCell.stats1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        myCell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
+        if option1Stats[indexPath.row] + option1Stats[indexPath.row] > 0 {
+            
+            myCell.option1Label.text = option1String + "\(Int(option1Percent))%"
+            myCell.option2Label.text = option2String + "\(Int(option2Percent))%"
+            myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
+            
+        } else {
+            
+            myCell.option1Label.text = option1s[indexPath.row]
+            myCell.option2Label.text = option2s[indexPath.row]
+            myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
+            myCell.option1BackgroundImage.backgroundColor = loseColor
+            myCell.option2BackgroundImage.backgroundColor = loseColor
+        }
+        //myCell.stats1.text = "\(Int(option1Percent))%"
+        //myCell.stats2.text = "\(Int(option2Percent))%"
+        //myCell.stats1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+        //myCell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         
         
         

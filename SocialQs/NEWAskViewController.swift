@@ -66,7 +66,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         
         let title = "Sorry!"
         let message = "CLEAR currently no worky"
-        self.displayAlert(title, message: message)
+        displayAlert(title, message, self)
         
         /*
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
@@ -136,7 +136,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     let title = "Well that was dumb."
                     let message = "You need to provide a Q and two options!"
-                    self.displayAlert(title, message: message)
+                    displayAlert(title, message, self)
                 }
             }
         }
@@ -433,12 +433,6 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         formatButton(privacyButton)
         formatButton(cancelButton)
         formatButton(submitButton)
-        
-        //if build < 32 {
-        //    let title = "WARNING!"
-        //    let message = "Your SocialQs app needs to be updated! If you do not update the app it will likely crash when viewing Qs."
-        //    self.displayAlert(title, message: message)
-        //}
     }
     
     
@@ -636,7 +630,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         
     }
     
-    
+    /*
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     // Function for displaying pop-up
@@ -655,7 +649,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
     }
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    
+    */
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

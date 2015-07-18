@@ -16,14 +16,12 @@ class WelcomeViewController: UIViewController {
     @IBAction func signInButton(sender: AnyObject) {
         
         performSegueWithIdentifier("signIn", sender: self)
-        
     }
     
     
     @IBAction func createAccountButton(sender: AnyObject) {
         
         performSegueWithIdentifier("signUp", sender: self)
-        
     }
     
 
@@ -31,44 +29,22 @@ class WelcomeViewController: UIViewController {
         super.viewDidLoad()
         
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
+        
         /*
         if warningSeen == false {
             
             let title = "DATA USAGE"
             let message = "SocialQs has not yet been optimized for data usage and it is unclear how much data the app will transfer with the implementation of images. If your data plan is limited you may wish to limit your SocialQs usage to Wi-Fi only until this issue is investigated."
-            self.displayAlert(title, message: message)
+            displayAlert(title, message, self)
         }
         */
         
         signInButton.layer.cornerRadius = cornerRadius
         createAccountButton.layer.cornerRadius = cornerRadius
         
+        signInButton.hidden = true
+        createAccountButton.hidden = true
     }
-    
-    
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // Function for displaying pop-up
-    func displayAlert(title: String, message: String) {
-        
-        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            
-            //self.dismissViewControllerAnimated(true, completion: nil)
-            
-        }))
-        
-        // Delay view of ViewController until next loop to prevent:
-        // "Warning: Attempt to present UIALertController on xViewController 
-        //           whose view is not in the window hierarchy!"
-        dispatch_async(dispatch_get_main_queue(), {
-            self.presentViewController(alert, animated: true, completion: nil)
-            warningSeen = true
-        })
-    }
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     
     
     override func viewDidLayoutSubviews() {
@@ -81,6 +57,11 @@ class WelcomeViewController: UIViewController {
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
             
+            //
+            //
+            // **** Only this this if these are not already stored for the CURRENT USER ****
+            //
+            //
             // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
             // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
             // login successful
@@ -88,17 +69,40 @@ class WelcomeViewController: UIViewController {
             uId = PFUser.currentUser()!.objectId!
             uQId = PFUser.currentUser()?["uQId"]! as! String
             
+            // Get profile picture
+            if let userPicture = PFUser.currentUser()?["profilePicture"] as? PFFile {
+                
+                println("Retrieving image from Parse")
+                
+                userPicture.getDataInBackgroundWithBlock { (imageData: NSData?, error: NSError?) -> Void in
+                    
+                    if ((error) == nil) {
+                        
+                        println("Retrieving profile picture")
+                        profilePicture = UIImage(data:imageData!)!
+                    }
+                }
+            }
+            
             // Store username locally
             NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
             NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
             NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
+            //NSUserDefaults.standardUserDefaults().setObject(profilePicture, forKey: profilePictureKey)
             
+            // Set PFInstallation pointer to user table
+            let installation = PFInstallation.currentInstallation()
+            installation["user"] = PFUser.currentUser()
+            installation.saveInBackground()
+            // Add user-specific channel to installation
+            //installation.addUniqueObject(myName, forKey: "channels")
+            //installation.saveInBackground()
+            
+            // **** ALWAYS do this in case these have been updated by another device
             // Store votedOnIds locally
             votedOn1Ids.removeAll(keepCapacity: true)
             votedOn2Ids.removeAll(keepCapacity: true)
-            
             var userQsQuery = PFQuery(className: "UserQs")
-            
             userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
                 if error != nil {
@@ -121,22 +125,18 @@ class WelcomeViewController: UIViewController {
                         
                         NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
                     }
-                    
-                    
-                    // Set PFInstallation pointer to user table
-                    let installation = PFInstallation.currentInstallation()
-                    installation["user"] = PFUser.currentUser()
-                    installation.saveInBackground()
                     // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
                     
-                    // Add user-specific channel to installation
-                    //installation.addUniqueObject(myName, forKey: "channels")
-                    //installation.saveInBackground()
                     
                     self.performSegueWithIdentifier("alreadySignedIn", sender: self)
                 }
             })
+            
+        } else {
+            
+            signInButton.hidden = false
+            createAccountButton.hidden = false
         }
         
         // ANIMATION STUFFS -------------------------------------------------------------
