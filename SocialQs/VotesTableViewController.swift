@@ -1,5 +1,6 @@
 //
-//  VotesTheirTableViewController.swift
+//  Votes
+//  TableViewController.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 6/30/15.
@@ -7,13 +8,13 @@
 //
 
 import UIKit
-import Parse
 
-class VotesTheirTableViewController: UITableViewController {
+class VotesTableViewController: UITableViewController {
     
     let tableFontSize = CGFloat(16)
-    
     var objectsArray = [Objects]()
+    let headerHeight = CGFloat(60)
+    var questionText = ""
     
     struct Objects {
         var sectionName: String!
@@ -27,7 +28,7 @@ class VotesTheirTableViewController: UITableViewController {
         presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
         
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -54,11 +55,10 @@ class VotesTheirTableViewController: UITableViewController {
         }))
         
         self.presentViewController(alert, animated: true, completion: nil)
-        
     }
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    
+
     
     override func viewWillAppear(animated: Bool) {
         
@@ -77,26 +77,27 @@ class VotesTheirTableViewController: UITableViewController {
                 
                 votesId = objects!["votesId"] as! String
                 
-                
                 if let test = objects!["option1"] as? String {
                     
                     option1Text = objects!["option1"] as! String
                     
-                } else {
-                    
-                    option1Text = photoString
-                    
-                }
+                } else { option1Text = photoString }
                 
                 if let test = objects!["option2"] as? String {
                     
                     option2Text = objects!["option2"] as! String
                     
-                } else {
+                } else { option2Text = photoString }
+                
+                if let test = objects!["question"] as? String {
                     
-                    option2Text = photoString
+                    self.questionText = objects!["question"] as! String
                     
-                }
+                } else { option2Text = photoString }
+                
+                // ****
+                // PULL IMAGES HERE INSTEAD OF FROM QsViewControllers
+                //****
                 
                 query = PFQuery(className: "Votes")
                 query.getObjectInBackgroundWithId(votesId, block: { (objects, error) -> Void in
@@ -142,54 +143,54 @@ class VotesTheirTableViewController: UITableViewController {
             }
         })
     }
-
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-
+        
         return objectsArray.count
     }
-
+    
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return objectsArray[section].sectionObjects.count
     }
-
+    
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("votesTheirCell", forIndexPath: indexPath) as! VotesTheirCell
-
+        let cell = tableView.dequeueReusableCellWithIdentifier("votesCell", forIndexPath: indexPath) as! VotesCell
+        
         cell.textLabel?.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
         
         // Make cells non-selectable
         cell.selectionStyle = UITableViewCellSelectionStyle.None
-
+        
         return cell
     }
     
     /*
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        let headerView = UIView(frame: CGRectMake(0, 0, tableView.bounds.size.width, 80))
-        
-        headerView.backgroundColor = mainColorBlue
-        
-        let headerLabel = UILabel(frame: CGRectMake(0, 0, tableView.bounds.size.width, 20))
-        headerLabel.text = "Test"
-        headerLabel.textColor = UIColor.whiteColor()
-        headerView.addSubview(headerLabel)
-        
-        return headerView
+    
+    let headerView = UIView(frame: CGRectMake(0, 0, tableView.bounds.size.width, 80))
+    
+    headerView.backgroundColor = mainColorBlue
+    
+    let headerLabel = UILabel(frame: CGRectMake(0, 0, tableView.bounds.size.width, 20))
+    headerLabel.text = "Test"
+    headerLabel.textColor = UIColor.whiteColor()
+    headerView.addSubview(headerLabel)
+    
+    return headerView
     }
     */
-
+    
     
     /*
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
-        
-        return objectsArray[section].sectionName
+    
+    return objectsArray[section].sectionName
     }
     */
     
@@ -202,7 +203,7 @@ class VotesTheirTableViewController: UITableViewController {
         
         // Set Q in table header
         var headerTextView = UITextField(frame: CGRectMake(0, 0, self.view.frame.size.width, 40))
-        headerTextView.text = questionZoom
+        headerTextView.text = questionText
         headerTextView.textColor = UIColor.darkTextColor()
         headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
         headerTextView.textAlignment = NSTextAlignment.Center
@@ -213,12 +214,21 @@ class VotesTheirTableViewController: UITableViewController {
             header.textLabel.textColor = UIColor.whiteColor()
             //header.alpha = bgAlpha //make the header transparent
             
+            /*
+            var frame = CGRectMake(0, 0, 60, self.tableView.frame.size.width)
+            var headerTextView = UITextField(frame: frame)
+            headerTextView.textAlignment = NSTextAlignment.Center
+            //headerTextView.te
+            headerTextView.text = objectsArray[section].sectionName
+            header.addSubview(headerTextView)
+            */
+            
             header.textLabel.textAlignment = NSTextAlignment.Left
             header.textLabel.numberOfLines = 10 // Dynamic number of lines
             header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
-            //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
             header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
             header.textLabel.text = objectsArray[section].sectionName
+            
             
         } else { // Image
             var frame = CGRectMake(0, 0, 60, 60)
@@ -235,59 +245,59 @@ class VotesTheirTableViewController: UITableViewController {
     // Set section header heights
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return CGFloat(60)
+        return headerHeight
     }
-
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the specified item to be editable.
-        return true
+    // Return NO if you do not want the specified item to be editable.
+    return true
     }
     */
-
+    
     /*
     // Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    if editingStyle == .Delete {
+    // Delete the row from the data source
+    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+    } else if editingStyle == .Insert {
+    // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }
     }
     */
-
+    
     /*
     // Override to support rearranging the table view.
     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
+    
     }
     */
-
+    
     /*
     // Override to support conditional rearranging of the table view.
     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the item to be re-orderable.
-        return true
+    // Return NO if you do not want the item to be re-orderable.
+    return true
     }
     */
-
+    
     /*
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
     }
     */
-
+    
 }

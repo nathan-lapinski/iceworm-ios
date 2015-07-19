@@ -311,7 +311,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             
             let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
             
-            header.contentView.backgroundColor = mainColorBlue
+            header.contentView.backgroundColor = UIColor.whiteColor() // mainColorBlue
+            header.contentView.alpha = 0.7
         }
     }
     
@@ -320,7 +321,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section != 0 {
             
-            return CGFloat(5)
+            return CGFloat(2)
             
         } else {
             

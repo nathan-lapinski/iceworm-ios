@@ -14,9 +14,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         super.viewDidLoad()
         self.delegate = self
         
-        // Bar color
-        //self.tabBar.barTintColor = winColor
-        
         // Active text color
         UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: activeTabColor], forState: UIControlState.Selected)
         
@@ -32,6 +29,17 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
                 item.image = image.imageWithColor(inactiveTabColor).imageWithRenderingMode(.AlwaysOriginal)
             }
         }
+        
+        
+        // Set Logo
+        let imageView = UIImageView(frame: CGRect(x: 100, y: 100, width: 50, height: 50))
+        imageView.contentMode = UIViewContentMode.ScaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.contentMode = .ScaleAspectFit
+        let image = UIImage(named: "logo_square.png")
+        imageView.image = image
+        self.navigationItem.titleView = imageView
+
     }
     
     

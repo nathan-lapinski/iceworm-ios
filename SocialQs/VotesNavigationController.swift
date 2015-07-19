@@ -1,5 +1,5 @@
-//
-//  VotesTheirNavigationController.swift
+/*//
+//  VotesMyNavigationController.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 6/30/15.
@@ -8,14 +8,12 @@
 
 import UIKit
 
-class VotesTheirNavigationController: UINavigationController {
+class VotesMyNavigationController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        
+
+        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
@@ -35,3 +33,4 @@ class VotesTheirNavigationController: UINavigationController {
     */
 
 }
+*/

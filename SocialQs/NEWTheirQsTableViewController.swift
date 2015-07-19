@@ -25,16 +25,9 @@ class NEWTheirQsTableViewController: UITableViewController {
     var refresher: UIRefreshControl!
     var activityIndicator = UIActivityIndicatorView()
     
-    @IBOutlet var segueButton: UIButton!
-    
     @IBAction func vote1ButtonAction(sender: AnyObject) { castVote(sender.tag, optionId: 1) }
     
     @IBAction func vote2ButtonAction(sender: AnyObject) { castVote(sender.tag, optionId: 2) }
-    
-    @IBAction func segueButtonAction(sender: AnyObject) {
-        
-        performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
-    }
     
     @IBAction func zoom1ButtonAction(sender: AnyObject) {
         zoomPage = 0
@@ -76,7 +69,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             imageZoom[1] = downloadedImage
                             
-                            self.segueButtonAction(sender)
+                            self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                         }
                     }
                 })
@@ -258,8 +251,6 @@ class NEWTheirQsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
-            println(self.questions[indexPath.row])
-            
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             requestedQId = self.questionIds[indexPath.row]
@@ -320,6 +311,7 @@ class NEWTheirQsTableViewController: UITableViewController {
             // Append qId to "deleted" array in database
             var deletedQuery = PFQuery(className: "UserQs")
             //deletedQuery.whereKey("objectId", equalTo: uQId)
+            
             deletedQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
                 if error == nil {
@@ -341,6 +333,8 @@ class NEWTheirQsTableViewController: UITableViewController {
                     self.questions.removeAtIndex(indexPath.row)
                     self.option1s.removeAtIndex(indexPath.row)
                     self.option2s.removeAtIndex(indexPath.row)
+                    self.option1sPhoto.removeAtIndex(indexPath.row)
+                    self.option2sPhoto.removeAtIndex(indexPath.row)
                     self.option1Stats.removeAtIndex(indexPath.row)
                     self.option2Stats.removeAtIndex(indexPath.row)
                     self.askers.removeAtIndex(indexPath.row)
@@ -395,17 +389,18 @@ class NEWTheirQsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
         
         // Set separator color
-        tableView.separatorColor = UIColor.lightGrayColor()
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(22,0,48,0)
+        self.tableView.contentInset = UIEdgeInsetsMake(68,0,50,0)  // T, L, B, R
+        
         // Disable auto inset adjust
-        self.automaticallyAdjustsScrollViewInsets = false
-    }
+        //self.automaticallyAdjustsScrollViewInsets = false
+        
+        }
     
     
     // MARK: - Table view data source
@@ -434,14 +429,17 @@ class NEWTheirQsTableViewController: UITableViewController {
         
         // Compute number of reponses and option stats
         var totalResponses = Int()
-        var resp = "responses"
         totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
         var option1Percent = Float(0.0)
         var option2Percent = Float(0.0)
+        
         if totalResponses != 0 {
             option1Percent = Float(option1Stats[indexPath.row])/Float(totalResponses)*100
             option2Percent = Float(option2Stats[indexPath.row])/Float(totalResponses)*100
         }
+        
+        // Build "repsonse" string to account for singular/plural
+        var resp = "responses"
         if totalResponses == 1 { resp = "response" }
         
         let maxBarWidth = cell.contentView.bounds.width
@@ -495,6 +493,9 @@ class NEWTheirQsTableViewController: UITableViewController {
         } else if option1s[indexPath.row] == photoString { // PHOTO option
             
             cell = tableView.dequeueReusableCellWithIdentifier("theirCell2", forIndexPath: indexPath) as! NEWTheirQsCell
+            
+            var option1String = ""
+            var option2String = ""
             
             // Hide buttons from view
             cell.vote1Button.backgroundColor = UIColor.clearColor()
@@ -681,8 +682,8 @@ class NEWTheirQsTableViewController: UITableViewController {
             //cell.option1Label.text = ""
             //cell.option2Label.text = ""
             
-            cell.option1Label.text = option1s[indexPath.row]
-            cell.option2Label.text = option2s[indexPath.row]
+            cell.option1Label.text = option1String
+            cell.option2Label.text = option2String
         }
         
         // Why can't I set a corner radius on text field? -------
@@ -862,39 +863,5 @@ class NEWTheirQsTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    
-    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-    // Return NO if you do not want the specified item to be editable.
-    return true
-    }
-    */
-    
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-    
-    }
-    */
-    
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-    // Return NO if you do not want the item to be re-orderable.
-    return true
-    }
-    */
-    
-    /*
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-    }
-    */
     
 }

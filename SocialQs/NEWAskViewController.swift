@@ -433,7 +433,28 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         formatButton(privacyButton)
         formatButton(cancelButton)
         formatButton(submitButton)
+        
+        /*
+        // FUNCTION ***************************************************************
+        // Navigation bar settings
+        self.navigationItem.title = "SocialQs"
+        self.navigationController?.navigationBar.barTintColor = winColor
+        self.navigationController?.navigationBar.tintColor = UIColor.whiteColor()
+        //self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        //let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 38, height: 38))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        imageView.contentMode = UIViewContentMode.ScaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.contentMode = .ScaleAspectFit
+        let image = UIImage(named: "logo_square.png")
+        imageView.image = image
+        navigationItem.titleView = imageView
+        // FUNCTION ***************************************************************
+        */
     }
+    
+    
     
     
     func formatButton(_button: UIButton) {
@@ -630,42 +651,13 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         
     }
     
-    /*
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // Function for displaying pop-up
-    func displayAlert(title: String, message: String) {
-        
-        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            
-            //self.dismissViewControllerAnimated(true, completion: nil)
-            
-        }))
-        
-        self.presentViewController(alert, animated: true, completion: nil)
-        
-    }
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    */
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     
-        /*
-        // MARK: - Navigation
-        
-        // In a storyboard-based application, you will often want to do a little preparation before navigation
-        override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        }
-        */
+    
     
     
     func RBResizeImage(image: UIImage, targetSize: CGSize) -> UIImage {

@@ -23,13 +23,6 @@ class NEWMyQsTableViewController: UITableViewController {
     var refresher: UIRefreshControl!
     //var activityIndicator = UIActivityIndicatorView()
     
-    @IBOutlet var segueButton: UIButton!
-    
-    @IBAction func segueButtonAction(sender: AnyObject) {
-        
-        performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
-    }
-    
     @IBAction func zoom1ButtonAction(sender: AnyObject) {
         zoomPage = 0
         setPhotosToZoom(sender)
@@ -69,7 +62,7 @@ class NEWMyQsTableViewController: UITableViewController {
                                 
                                 imageZoom[1] = downloadedImage
                                 
-                                self.segueButtonAction(sender)
+                                self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
                             }
                         }
                     })
@@ -92,35 +85,20 @@ class NEWMyQsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        //self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg_theirQs_reverse.png"))
         self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
-        self.tableView.backgroundColor = UIColor.lightGrayColor()
+        //self.tableView.backgroundColor = UIColor.lightGrayColor()
         
         // Set separator color
-        tableView.separatorColor = UIColor.clearColor()
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
+        //tableView.separatorColor = UIColor.clearColor()
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(64,0,48,0)  // Top, Left, Bottom, Right
+        self.tableView.contentInset = UIEdgeInsetsMake(68,0,50,0)  // T, L, B, R
         
         // Disable auto inset adjust
-        self.automaticallyAdjustsScrollViewInsets = false
+        //self.automaticallyAdjustsScrollViewInsets = false
         
-        // Navigation bar settings
-        self.navigationItem.title = "SocialQs"
-        self.navigationController?.navigationBar.barTintColor = winColor
-        self.navigationController?.navigationBar.tintColor = UIColor.whiteColor()
-        //self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
-        
-        //let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 38, height: 38))
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
-        imageView.contentMode = UIViewContentMode.ScaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.contentMode = .ScaleAspectFit
-        let image = UIImage(named: "logo_square.png")
-        imageView.image = image
-        navigationItem.titleView = imageView
-                
+        //navigationController?.hidesBarsOnSwipe = true
     }
     
     
@@ -173,12 +151,21 @@ class NEWMyQsTableViewController: UITableViewController {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
                 self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
+                
             })
+            
+            // Change setEditing to cause swipe to reset
+            // Their Qs does this on its own, but nicer (when the page
+            // isn't visible - idk why this page doesn't... =/
+            // (it used to...)
+            self.tableView.setEditing(false, animated: true)
+            
         }
         view.backgroundColor = UIColor.orangeColor()
         
         
         let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
+            
             println("share button tapped")
         }
         share.backgroundColor = UIColor.grayColor()
@@ -188,7 +175,7 @@ class NEWMyQsTableViewController: UITableViewController {
             
             // Append qId to "deleted" array in database
             var deletedQuery = PFQuery(className: "UserQs")
-            deletedQuery.whereKey("objectId", equalTo: uQId)
+            //deletedQuery.whereKey("objectId", equalTo: uQId)
             
             deletedQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
@@ -223,9 +210,11 @@ class NEWMyQsTableViewController: UITableViewController {
         }
         trash.backgroundColor = UIColor.redColor()
         
-        println(option1Stats[indexPath.row] + option1Stats[indexPath.row])
+        println(indexPath.row)
+        println(option1Stats.count)
+        println(option2Stats.count)
         
-        if (option1Stats[indexPath.row] + option1Stats[indexPath.row]) > 0 {
+        if (option1Stats[indexPath.row] + option2Stats[indexPath.row]) > 0 {
             return [trash, view] // Order = appearance order, right to left on screen
         } else {
             return [trash]
@@ -528,9 +517,6 @@ class NEWMyQsTableViewController: UITableViewController {
         //myCell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         
         
-        
-        
-        
         // Format cell backgrounds
         //if indexPath.row % 2 == 0 {
         myCell.backgroundColor = UIColor.clearColor()
@@ -541,50 +527,5 @@ class NEWMyQsTableViewController: UITableViewController {
         return myCell
     }
     
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-    // Return NO if you do not want the specified item to be editable.
-    return true
-    }
-    */
-    
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-    if editingStyle == .Delete {
-    // Delete the row from the data source
-    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-    } else if editingStyle == .Insert {
-    // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }
-    }
-    */
-    
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-    
-    }
-    */
-    
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-    // Return NO if you do not want the item to be re-orderable.
-    return true
-    }
-    */
-    
-    /*
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-    }
-    */
-
     
 }
