@@ -121,6 +121,12 @@ class SettingsViewController: UIViewController {
     }
     
     
+    override func viewWillAppear(animated: Bool) {
+        
+        returningFromSettings = true
+    }
+    
+    
     func logOut() -> Void {
         
         myName = ""

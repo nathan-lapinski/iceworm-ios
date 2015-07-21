@@ -33,6 +33,8 @@
 		904E29C91B58CC4E007E17D2 /* SettingsPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */; };
 		904E29CB1B59DC10007E17D2 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904E29CA1B59DC10007E17D2 /* Util.swift */; };
 		905B2D961B322625001A74EE /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905B2D951B322625001A74EE /* Globals.swift */; };
+		908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */; };
+		908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908A03F51B5E01070050C0D9 /* AskViewController.swift */; };
 		9099E5E81B4CCCFA00A1887E /* NEWAskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */; };
 		90A1473D1B2E4CBA00947B33 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */; };
 		90A1473F1B2E4CBF00947B33 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473E1B2E4CBF00947B33 /* CFNetwork.framework */; };
@@ -95,6 +97,8 @@
 		904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPopoverViewController.swift; sourceTree = "<group>"; };
 		904E29CA1B59DC10007E17D2 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		905B2D951B322625001A74EE /* Globals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
+		908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AskTableViewCell.swift; sourceTree = "<group>"; };
+		908A03F51B5E01070050C0D9 /* AskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AskViewController.swift; sourceTree = "<group>"; };
 		9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWAskTableViewCell.swift; sourceTree = "<group>"; };
 		90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		90A1473E1B2E4CBF00947B33 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -175,6 +179,8 @@
 			isa = PBXGroup;
 			children = (
 				904123011B26A67C00397132 /* AppDelegate.swift */,
+				908A03F51B5E01070050C0D9 /* AskViewController.swift */,
+				908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */,
 				905B2D951B322625001A74EE /* Globals.swift */,
 				902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */,
 				902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */,
@@ -365,6 +371,7 @@
 				902D87231B57793C001F9954 /* NEWMyQsTableViewController.swift in Sources */,
 				904E29C91B58CC4E007E17D2 /* SettingsPopoverViewController.swift in Sources */,
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
+				908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */,
 				902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */,
 				901DAA181B55C81300A20689 /* NEWTheirQsTableViewController.swift in Sources */,
 				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,
@@ -382,6 +389,7 @@
 				90FE1F211B43A91F005F2D68 /* VotesNavigationController.swift in Sources */,
 				90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */,
 				904E29CB1B59DC10007E17D2 /* Util.swift in Sources */,
+				908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */,
 				9045A1A81B51963E00BB7EE5 /* NEWAskViewController.swift in Sources */,
 				902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,

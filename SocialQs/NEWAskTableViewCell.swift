@@ -1,4 +1,4 @@
-//
+/*//
 //  NEWAskTableViewCell.swift
 //  SocialQs
 //
@@ -38,3 +38,4 @@ class NEWAskTableViewCell: UITableViewCell {
     
 
 }
+*/

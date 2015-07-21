@@ -68,6 +68,7 @@ var questionZoom = ""
 var zoomPage = Int()
 
 // Variable to tell if returning from a popover (ie: don't refresh table)
+var returningFromSettings = false
 var returningFromPopover = false
 
 // Groupies variable

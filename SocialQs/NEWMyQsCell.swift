@@ -12,6 +12,8 @@ class NEWMyQsCell: UITableViewCell {
     
     // Both Cells
     @IBOutlet var question: UILabel!
+    @IBOutlet var questionNarrow: UILabel!
+    @IBOutlet var questionImage: UIImageView!
     @IBOutlet var numberOfResponses: UILabel!
     @IBOutlet var option1BackgroundImage: UIImageView!
     @IBOutlet var option2BackgroundImage: UIImageView!

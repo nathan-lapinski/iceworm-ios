@@ -1,4 +1,4 @@
-//
+/*//
 //  NEWAskViewController.swift
 //  SocialQs
 //
@@ -545,7 +545,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                 }
             }
             
-            cell.option.text = "Option 1"
+            //cell.option.text = "Option 1"
             
         case 2:
             if o1Cell == 0 { // TEXT VERSION
@@ -581,7 +581,7 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
                 }
             }
             
-            cell.option.text = "Option 2"
+            //cell.option.text = "Option 2"
             
         default: cell = askTable.dequeueReusableCellWithIdentifier("qCell2", forIndexPath: indexPath) as! NEWAskTableViewCell
             
@@ -686,3 +686,4 @@ class NEWAskViewController: UIViewController, UITableViewDataSource, UITableView
         return newImage
     }
 }
+*/

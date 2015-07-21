@@ -14,12 +14,14 @@ class NEWTheirQsTableViewController: UITableViewController {
     var questions = [String]()
     var option1s = [String]()
     var option2s = [String]()
+    var questionsPhoto = [PFFile]()
     var option1sPhoto = [PFFile]()
     var option2sPhoto = [PFFile]()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
     //var users = [String: String]()
     var askers = [String]()
+    var configuration = [String]()
     //var dismissedTheirStorageKey = myName + "dismissedTheirPermanent"
     var deletedTheirStorageKey = myName + "deletedTheirPermanent"
     var refresher: UIRefreshControl!
@@ -338,6 +340,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                     self.option1Stats.removeAtIndex(indexPath.row)
                     self.option2Stats.removeAtIndex(indexPath.row)
                     self.askers.removeAtIndex(indexPath.row)
+                    self.configuration.removeAtIndex(indexPath.row)
                     
                     tableView.beginUpdates()
                     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
@@ -389,13 +392,13 @@ class NEWTheirQsTableViewController: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg4.png"))
         
         // Set separator color
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(68,0,50,0)  // T, L, B, R
+        self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
         
         // Disable auto inset adjust
         //self.automaticallyAdjustsScrollViewInsets = false
@@ -405,22 +408,26 @@ class NEWTheirQsTableViewController: UITableViewController {
     
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
-        // Return the number of sections.
         return 1
     }
     
-    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete method implementation.
-        // Return the number of rows in the section.
         return questions.count
     }
     
     
-    
-    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+//        println("Number of quesitonIds = \(questionIds.count)")
+//        println("Number of questions = \(questions.count)")
+//        println("Number of option1s = \(option1s.count)")
+//        println("Number of option2s = \(option2s.count)")
+//        println("Number of question photos = \(questionsPhoto.count)")
+//        println("Number of option1 photos = \(option1sPhoto.count)")
+//        println("Number of option2 photos = \(option2sPhoto.count)")
+//        println("Number of option1 stats = \(option1Stats.count)")
+//        println("Number of option2 stats = \(option2Stats.count)")
+//        println("Number of askers = \(askers.count)")
         
         var cell = NEWTheirQsCell()
         
@@ -444,13 +451,11 @@ class NEWTheirQsTableViewController: UITableViewController {
         
         let maxBarWidth = cell.contentView.bounds.width
         
-        // *******************************************************************
-        // MOVE TO MAIN SCOPE AND CONCATENATE WHEN THESE TWO ARE UPDATED??
-        // *******************************************************************
         var votedOnTemp = votedOn1Ids + votedOn2Ids
-        // *******************************************************************
         
-        if option1s[indexPath.row] != photoString { // TEXT options
+        
+        // ---- TEXT ONLY OPTIONS -------------------------------------------------
+        if contains(["1c", "2c", "3c"], configuration[indexPath.row]) {
             
             option1String = option1s[indexPath.row] + " "
             option2String = option2s[indexPath.row] + " "
@@ -489,19 +494,30 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.vote1Button.setTitle("", forState: UIControlState.Normal)
             cell.vote2Button.setTitle("", forState: UIControlState.Normal)
             
+            cell.question.text = questions[indexPath.row]
             
-        } else if option1s[indexPath.row] == photoString { // PHOTO option
+        
+        //if option1sPhoto[indexPath.row] == PFFile() {
+            
+        // ---- OTHER OPTIONS ----------------------------------------------------
+        } else { //if option1s[indexPath.row] == photoString {
             
             cell = tableView.dequeueReusableCellWithIdentifier("theirCell2", forIndexPath: indexPath) as! NEWTheirQsCell
             
-            var option1String = ""
-            var option2String = ""
+            if option1s[indexPath.row] != "" {
+                option1String = option1s[indexPath.row] + " "
+            }
+            if option2s[indexPath.row] != "" {
+                option2String = option2s[indexPath.row] + " "
+            }
             
             // Hide buttons from view
             cell.vote1Button.backgroundColor = UIColor.clearColor()
             cell.vote2Button.backgroundColor = UIColor.clearColor()
+            
             cell.option1Zoom.backgroundColor = UIColor.clearColor()
             cell.option2Zoom.backgroundColor = UIColor.clearColor()
+            
             
             // Format thumbnail views - aspect fill without breaching imageView bounds
             cell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
@@ -586,6 +602,49 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.option2Zoom.tag = indexPath.row
         }
         
+        
+        // Q image stuff in here
+        if contains(["1a", "2a", "1b", "2b"], configuration[indexPath.row]) {
+            
+            // set Q image and set narrow Q text
+            cell.questionImage.hidden = false// Set thumbnail images
+            questionsPhoto[indexPath.row].getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
+                
+                if errorq != nil {
+                    
+                    println(errorq)
+                    
+                } else {
+                    
+                    if let downloadedImage = UIImage(data: dataq!) {
+                        
+                        cell.questionImage.image = downloadedImage
+                    }
+                }
+            })
+            
+            cell.questionImage.hidden = false
+            
+            cell.questionImage.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.questionImage.clipsToBounds = true
+            
+            cell.questionNarrow.text = questions[indexPath.row]
+            cell.questionNarrow.hidden = false
+            cell.question.hidden = true
+            
+        } else {
+            
+            // Q image is blank, set wide Q text
+            cell.questionImage.hidden = true
+            
+            cell.question.text = questions[indexPath.row]
+            cell.question.hidden = false
+            cell.questionNarrow.hidden = true
+            
+        }
+
+        
+        
         // Make cells non-selectable
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         
@@ -610,7 +669,7 @@ class NEWTheirQsTableViewController: UITableViewController {
         // Set all text
         cell.question.numberOfLines = 0 // Dynamic number of lines
         cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        cell.question.text = questions[indexPath.row]
+        //cell.question.text = questions[indexPath.row]
         cell.username.text = askers[indexPath.row] //"Asked by " + askers[indexPath.row]
         //cell.stats1.text = "\(Int(option1Percent))%"
         //cell.stats2.text = "\(Int(option2Percent))%"
@@ -637,7 +696,7 @@ class NEWTheirQsTableViewController: UITableViewController {
             //cell.stats2.hidden = false
             
             cell.option1Label.text = option1String + "\(Int(option1Percent))%"
-            cell.option2Label.text = option1String + "\(Int(option2Percent))%"
+            cell.option2Label.text = option2String + "\(Int(option2Percent))%"
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
@@ -658,7 +717,7 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.myVote1.text = ""
             
             cell.option1Label.text = option1String + "\(Int(option1Percent))%"
-            cell.option2Label.text = option1String + "\(Int(option2Percent))%"
+            cell.option2Label.text = option2String + "\(Int(option2Percent))%"
             
             cell.numberOfResponses.text = "\(totalResponses) \(resp)"
             
@@ -737,12 +796,37 @@ class NEWTheirQsTableViewController: UITableViewController {
         // - this needs to be skipped when push is allowed and used when push has been declined
         //if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
         
-        if returningFromPopover == false {
-            returningFromPopover = true
+        
+        if returningFromSettings == false && returningFromPopover == false {
+            
+            println("Page loaded from tab bar")
+            
             refresh()
+            
         }
         
-        //refresh()
+        if returningFromPopover {
+            
+            println("Returned from popover")
+            
+            returningFromPopover = false
+            
+            // Adjust top and bottom bounds of table for nav and tab bars
+            self.tableView.contentInset = UIEdgeInsetsMake(0,0,52,0)  // T, L, B, R
+            
+        }
+        
+        if returningFromSettings {
+            
+            println("Returned from settings")
+            
+            returningFromSettings = false
+            
+            // Adjust top and bottom bounds of table for nav and tab bars
+            self.tableView.contentInset = UIEdgeInsetsMake(0,0,52,0)  // T, L, B, R
+        }
+        
+        
         //    println("USER IS NOT SUBSCRIBED TO RELOADTHEIRTABLE")
         //}
         // **********************************************************************************************
@@ -788,12 +872,104 @@ class NEWTheirQsTableViewController: UITableViewController {
                             self.option2s.removeAll(keepCapacity: true)
                             self.option1sPhoto.removeAll(keepCapacity: true)
                             self.option2sPhoto.removeAll(keepCapacity: true)
+                            self.questionsPhoto.removeAll(keepCapacity: true)
                             self.option1Stats.removeAll(keepCapacity: true)
                             self.option2Stats.removeAll(keepCapacity: true)
                             self.askers.removeAll(keepCapacity: true)
+                            self.configuration.removeAll(keepCapacity: true)
                             
                             for questionObject in questionTemp {
                                 
+                                var tempConfig = ""
+                                
+                                self.questionIds.append(questionObject.objectId!!)
+                                
+                                // ---- DOWNLOAD AND STORE QUESTION DATA -------------------------------
+                                // Check for photo AND text Q
+                                if (questionObject["question"] as? String != nil) && (questionObject["questionPhoto"] as? PFFile != nil) {
+                                    
+                                    self.questions.append(questionObject["question"] as! String)
+                                    self.questionsPhoto.append(questionObject["questionPhoto"] as! PFFile)
+                                    tempConfig = "1"
+                                    
+                                // Check for photo and NO text
+                                } else if (questionObject["questionPhoto"] as? PFFile != nil)  && (questionObject["question"] as? String == nil){
+                                    
+                                    self.questions.append(photoString)
+                                    self.questionsPhoto.append(questionObject["questionPhoto"] as! PFFile)
+                                    tempConfig = "2"
+                                    
+                                // Text and NO photo
+                                } else {
+                                    
+                                    self.questions.append(questionObject["question"] as! String)
+                                    self.questionsPhoto.append(PFFile())
+                                    tempConfig = "3"
+                                }
+                                // ---------------------------------------------------------------------
+                                
+                                
+                                // ---- DOWNLOAD AND STORE OPTION 1 DATA -------------------------------
+                                // Check for photo AND text Q
+                                if (questionObject["option1"] as? String != nil) && (questionObject["option1Photo"] as? PFFile != nil) {
+                                    
+                                    self.option1s.append(questionObject["option1"] as! String)
+                                    self.option1sPhoto.append(questionObject["option1Photo"] as! PFFile)
+                                    tempConfig = tempConfig + "a"
+                                    
+                                    // Check for photo and NO text
+                                } else if (questionObject["option1Photo"] as? PFFile != nil)  && (questionObject["option1"] as? String == nil){
+                                    
+                                    self.option1s.append(photoString)
+                                    self.option1sPhoto.append(questionObject["option1Photo"] as! PFFile)
+                                    tempConfig = tempConfig + "b"
+                                    
+                                } else { // Text and NO photo
+                                    
+                                    self.option1s.append(questionObject["option1"] as! String)
+                                    self.option1sPhoto.append(PFFile())
+                                    tempConfig = tempConfig + "c"
+                                    
+                                }
+                                // ---------------------------------------------------------------------
+                                
+                                
+                                // ---- DOWNLOAD AND STORE OPTION 2 DATA -------------------------------
+                                // Check for photo AND text Q
+                                if (questionObject["option2"] as? String != nil) && (questionObject["option2Photo"] as? PFFile != nil) {
+                                    
+                                    self.option2s.append(questionObject["option2"] as! String)
+                                    self.option2sPhoto.append(questionObject["option2Photo"] as! PFFile)
+//                                    tempConfig = tempConfig + "x"
+                                    
+                                    // Check for photo and NO text
+                                } else if (questionObject["option2Photo"] as? PFFile != nil)  && (questionObject["option2"] as? String == nil){
+                                    
+                                    self.option2s.append(photoString)
+                                    self.option2sPhoto.append(questionObject["option2Photo"] as! PFFile)
+//                                    tempConfig = tempConfig + "y"
+                                    
+                                } else { // Text and NO photo
+                                    
+                                    self.option2s.append(questionObject["option2"] as! String)
+                                    self.option2sPhoto.append(PFFile())
+//                                    tempConfig = tempConfig + "z"
+                                    
+                                }
+                                // ---------------------------------------------------------------------
+                                
+                                self.configuration.append(tempConfig)
+                                
+                                // ---- DOWNLOAD AND STORE STATS DATA ----------------------------------
+                                self.option1Stats.append(questionObject["stats1"] as! Int)
+                                self.option2Stats.append(questionObject["stats2"] as! Int)
+                                
+                                
+                                
+                                
+                                
+                                
+                                /*
                                 self.questions.append(questionObject["question"] as! String)
                                 self.questionIds.append(questionObject.objectId!!)
                                 
@@ -824,16 +1000,24 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 }
                                 
                                 self.option1Stats.append(questionObject["stats1"] as! Int)
-                                self.option2Stats.append(questionObject["stats2"] as! Int)
+                                self.option2Stats.append(questionObject["stats2"] as! Int)*/
+                                
+                                
+                                
                                 self.askers.append(questionObject["askername"] as! String)
+                                
+                                
                                 
                                 // Ensure all queries have completed THEN refresh the table!
                                 // CHANGED THIS TO MATCH NEW PULL METHOD - WAS "ASKERS"
                                 //
-                                if self.questions.count == self.option2Stats.count {
+                                if self.questionsPhoto.count == self.option2sPhoto.count {
                                     
+                                    println("refresh")
+                                    
+                                    println("loading table")
                                     self.tableView.reloadData()
-                                    self.tableView.reloadInputViews()
+                                    //self.tableView.reloadInputViews()
                                     
                                     // Kill refresher when query finished
                                     self.refresher.endRefreshing()
