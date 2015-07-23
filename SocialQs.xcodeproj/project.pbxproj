@@ -29,13 +29,11 @@
 		9041230E1B26A67C00397132 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9041230C1B26A67C00397132 /* LaunchScreen.xib */; };
 		9041231A1B26A67C00397132 /* SocialQsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123191B26A67C00397132 /* SocialQsTests.swift */; };
 		904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */; };
-		9045A1A81B51963E00BB7EE5 /* NEWAskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9045A1A71B51963E00BB7EE5 /* NEWAskViewController.swift */; };
 		904E29C91B58CC4E007E17D2 /* SettingsPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */; };
 		904E29CB1B59DC10007E17D2 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904E29CA1B59DC10007E17D2 /* Util.swift */; };
 		905B2D961B322625001A74EE /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905B2D951B322625001A74EE /* Globals.swift */; };
 		908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */; };
 		908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908A03F51B5E01070050C0D9 /* AskViewController.swift */; };
-		9099E5E81B4CCCFA00A1887E /* NEWAskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */; };
 		90A1473D1B2E4CBA00947B33 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */; };
 		90A1473F1B2E4CBF00947B33 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473E1B2E4CBF00947B33 /* CFNetwork.framework */; };
 		90A147411B2E4CC500947B33 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A147401B2E4CC500947B33 /* CoreGraphics.framework */; };
@@ -52,7 +50,6 @@
 		90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */; };
 		90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */; };
 		90FE1F1F1B43A89F005F2D68 /* VotesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */; };
-		90FE1F211B43A91F005F2D68 /* VotesNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F201B43A91F005F2D68 /* VotesNavigationController.swift */; };
 		90FE1F231B43A941005F2D68 /* VotesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F221B43A941005F2D68 /* VotesTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -93,13 +90,11 @@
 		904123181B26A67C00397132 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		904123191B26A67C00397132 /* SocialQsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialQsTests.swift; sourceTree = "<group>"; };
 		904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		9045A1A71B51963E00BB7EE5 /* NEWAskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWAskViewController.swift; sourceTree = "<group>"; };
 		904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPopoverViewController.swift; sourceTree = "<group>"; };
 		904E29CA1B59DC10007E17D2 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		905B2D951B322625001A74EE /* Globals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
 		908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AskTableViewCell.swift; sourceTree = "<group>"; };
 		908A03F51B5E01070050C0D9 /* AskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AskViewController.swift; sourceTree = "<group>"; };
-		9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWAskTableViewCell.swift; sourceTree = "<group>"; };
 		90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		90A1473E1B2E4CBF00947B33 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		90A147401B2E4CC500947B33 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -117,7 +112,6 @@
 		90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = socialQuestionModel.swift; sourceTree = "<group>"; };
 		90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesCell.swift; sourceTree = "<group>"; };
-		90FE1F201B43A91F005F2D68 /* VotesNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesNavigationController.swift; sourceTree = "<group>"; };
 		90FE1F221B43A941005F2D68 /* VotesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -188,8 +182,6 @@
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
 				904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */,
-				9099E5E71B4CCCFA00A1887E /* NEWAskTableViewCell.swift */,
-				9045A1A71B51963E00BB7EE5 /* NEWAskViewController.swift */,
 				902D87201B577862001F9954 /* NEWMyQsCell.swift */,
 				902D87221B57793C001F9954 /* NEWMyQsTableViewController.swift */,
 				901DAA191B55C84D00A20689 /* NEWTheirQsCell.swift */,
@@ -204,7 +196,6 @@
 				904122FF1B26A67C00397132 /* Supporting Files */,
 				902B34D41B3EA21300B67ACE /* TabBarController.swift */,
 				90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */,
-				90FE1F201B43A91F005F2D68 /* VotesNavigationController.swift */,
 				90FE1F221B43A941005F2D68 /* VotesTableViewController.swift */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
 				902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */,
@@ -379,18 +370,15 @@
 				901DAA1A1B55C84D00A20689 /* NEWTheirQsCell.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
 				90DE6C211B30E9CC004F3BA0 /* QsLoginViewController.swift in Sources */,
-				9099E5E81B4CCCFA00A1887E /* NEWAskTableViewCell.swift in Sources */,
 				90FE1F1F1B43A89F005F2D68 /* VotesCell.swift in Sources */,
 				90FE1F231B43A941005F2D68 /* VotesTableViewController.swift in Sources */,
 				902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */,
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
 				902B34CD1B3E4FB800B67ACE /* QsSignupViewController.swift in Sources */,
 				902D87211B577862001F9954 /* NEWMyQsCell.swift in Sources */,
-				90FE1F211B43A91F005F2D68 /* VotesNavigationController.swift in Sources */,
 				90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */,
 				904E29CB1B59DC10007E17D2 /* Util.swift in Sources */,
 				908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */,
-				9045A1A81B51963E00BB7EE5 /* NEWAskViewController.swift in Sources */,
 				902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,
 				902D871F1B5747A9001F9954 /* ScrollViewContainer.swift in Sources */,

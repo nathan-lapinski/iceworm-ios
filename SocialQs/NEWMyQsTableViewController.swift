@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Parse
 
 class NEWMyQsTableViewController: UITableViewController {
     
@@ -20,58 +21,181 @@ class NEWMyQsTableViewController: UITableViewController {
     var option1Stats = [Int]()
     var option2Stats = [Int]()
     var configuration = [String]()
+    var votesId = [String]()
+    var photosId = [String]()
     //var deletedMyQuestions = [String]() // questions DELETED by current user
     var deletedMyStorageKey = myName + "deletedMyPermanent"
     var refresher: UIRefreshControl!
-    //var activityIndicator = UIActivityIndicatorView()
+    var activityIndicator = UIActivityIndicatorView()
+    
+    @IBAction func zoomQButton(sender: AnyObject) {
+        
+        imageZoom = [nil, nil, nil]
+        
+        println(imageZoom)
+        println(sender.tag)
+        
+        zoomPage = 0
+        
+        questionZoom = self.questions[sender.tag]
+        
+        setPhotosToZoom(sender)
+    }
     
     @IBAction func zoom1ButtonAction(sender: AnyObject) {
-        zoomPage = 0
+        
+        imageZoom = [nil, nil, nil]
+        
+        if self.questionsPhoto[sender.tag] != nil {
+            zoomPage = 1
+        } else {
+            zoomPage = 0
+        }
+        
+        questionZoom = self.questions[sender.tag]
+        
         setPhotosToZoom(sender)
     }
     
     @IBAction func zoom2ButtonAction(sender: AnyObject) {
-        zoomPage = 1
+        
+        imageZoom = [nil, nil, nil]
+        
+        if self.questionsPhoto[sender.tag] != nil {
+            zoomPage = 2
+        } else {
+            zoomPage = 1
+        }
+        
+        questionZoom = self.questions[sender.tag]
+        
         setPhotosToZoom(sender)
     }
     
     
+
     func setPhotosToZoom(sender: AnyObject) {
         
-        questionZoom = questions[sender.tag]
+        // Setup spinner and block application input
+        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
-        option1sPhoto[sender.tag]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+        
+        var expectedCount = 0
+        var downloadedCount = 0
+        
+        if questionsPhoto[sender.tag] != nil { expectedCount++ }
+        if option1sPhoto[sender.tag] != nil { expectedCount++ }
+        if option2sPhoto[sender.tag] != nil { expectedCount++ }
+        
+        // GLOBAL FUNCTION -------------------------------------------------------
+        // GLOBAL FUNCTION -------------------------------------------------------
+        var photos = PFQuery(className: "PhotoFullMetalBlacket")
+        photos.getObjectInBackgroundWithId(photosId[sender.tag], block: { (photoObjects, error) -> Void in
             
-            if error1 != nil {
+            if error == nil {
                 
-                println(error1)
-                
-            } else {
-                
-                if let downloadedImage = UIImage(data: data1!) {
+                if let questionPhotoFull = photoObjects!["questionPhoto"] as? PFFile {
                     
-                    imageZoom[0] = downloadedImage
+                    println("Zoom Q")
                     
-                    self.option2sPhoto[sender.tag]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                    questionPhotoFull.getDataInBackgroundWithBlock({ (data, error) -> Void in
                         
-                        if error2 != nil {
+                        if error != nil {
                             
-                            println(error2)
+                            println(error)
                             
                         } else {
                             
-                            if let downloadedImage = UIImage(data: data2!) {
+                            if let downloadedImage = UIImage(data: data!) {
                                 
-                                imageZoom[1] = downloadedImage
+                                imageZoom[0] = downloadedImage
                                 
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                self.activityIndicator.stopAnimating()
                                 self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
                             }
                         }
                     })
                 }
+                
+                if let option1PhotoFull = photoObjects!["option1Photo"] as? PFFile {
+                    
+                    println("Zoom O1")
+                    
+                    option1PhotoFull.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                        
+                        if error != nil {
+                            
+                            println(error)
+                            
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data!) {
+                                
+                                imageZoom[1] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                self.activityIndicator.stopAnimating()
+                                self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
+                            }
+                        }
+                    })
+                }
+                
+                if let option2PhotoFull = photoObjects!["option2Photo"] as? PFFile {
+                    
+                    println("Zoom O2")
+                    
+                    option2PhotoFull.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                        
+                        if error != nil {
+                            
+                            println(error)
+                            
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data!) {
+                                
+                                imageZoom[2] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                self.activityIndicator.stopAnimating()
+                                self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
+                            }
+                        }
+                    })
+                }
+                
+            } else {
+                println("Full res photo query from MyQs tab failed")
+                println(error)
             }
         })
+        // GLOBAL FUNCTION -------------------------------------------------------
+        // GLOBAL FUNCTION -------------------------------------------------------
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,8 +221,27 @@ class NEWMyQsTableViewController: UITableViewController {
         //self.automaticallyAdjustsScrollViewInsets = false
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
+        //self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
     }
+    
+    // MAKE GLOBAL -------------------------------------
+    // MAKE GLOBAL -------------------------------------
+    func setViewQ(index: Int) {
+        
+        viewQ = Dictionary<String, Any>()
+        
+        viewQ["qId"] = self.questionIds[index]
+        viewQ["question"] = self.questions[index]
+        if self.questionsPhoto[index] != nil { viewQ["questionPhoto"] = self.questionsPhoto[index] }
+        viewQ["option1"] = self.option1s[index]
+        if self.option1sPhoto[index] != nil { viewQ["option1Photo"]  = self.option1sPhoto[index] }
+        viewQ["option2"] = self.option2s[index]
+        if self.option2sPhoto[index] != nil { viewQ["option2Photo"]  = self.option2sPhoto[index] }
+        viewQ["votesId"] = self.votesId[index]
+        viewQ["photosId"] = self.photosId[index]
+    }
+    // MAKE GLOBAL -------------------------------------
+    // MAKE GLOBAL -------------------------------------
     
     
     // Swipe to display options functions ----------------------------------------------------------------------------------
@@ -107,14 +250,34 @@ class NEWMyQsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
+            self.setViewQ(indexPath.row)
+            
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             requestedQId = self.questionIds[indexPath.row]
             
-            if self.option1s[indexPath.row] == photoString {
+            if self.questionsPhoto[indexPath.row] != nil {
                 
+                self.questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                    
+                    if error != nil {
+                        
+                        println(error)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: data!) {
+                            
+                            imageZoom[2] = downloadedImage
+                            
+                        }
+                    }
+                })
+            }
+
+            
+            if self.option1sPhoto[indexPath.row] != nil {
                 
-                // Get images
                 self.option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
                     
                     if error1 != nil {
@@ -126,33 +289,38 @@ class NEWMyQsTableViewController: UITableViewController {
                         if let downloadedImage = UIImage(data: data1!) {
                             
                             imageZoom[0] = downloadedImage
-                        }
-                    }
-                })
-                
-                self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
-                    
-                    if error2 != nil {
-                        
-                        println(error2)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data2!) {
                             
-                            imageZoom[1] = downloadedImage
+                            //if self.option2sPhoto[indexPath.row] != nil {
+                            
+                            self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                                
+                                if error2 != nil {
+                                    
+                                    println(error2)
+                                    
+                                } else {
+                                    
+                                    if let downloadedImage = UIImage(data: data2!) {
+                                        
+                                        imageZoom[1] = downloadedImage
+                                    }
+                                }
+                            })
                         }
                     }
                 })
             }
-            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
-            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
                 self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
                 
             })
+            
+            
+            //}
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
+            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             
             // Change setEditing to cause swipe to reset
             // Their Qs does this on its own, but nicer (when the page
@@ -175,7 +343,6 @@ class NEWMyQsTableViewController: UITableViewController {
             
             // Append qId to "deleted" array in database
             var deletedQuery = PFQuery(className: "UserQs")
-            //deletedQuery.whereKey("objectId", equalTo: uQId)
             
             deletedQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
@@ -198,6 +365,9 @@ class NEWMyQsTableViewController: UITableViewController {
                     self.questionsPhoto.removeAtIndex(indexPath.row)
                     self.option1Stats.removeAtIndex(indexPath.row)
                     self.option2Stats.removeAtIndex(indexPath.row)
+                    self.configuration.removeAtIndex(indexPath.row)
+                    self.votesId.removeAtIndex(indexPath.row)
+                    self.photosId.removeAtIndex(indexPath.row)
                     
                     tableView.beginUpdates()
                     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
@@ -211,6 +381,8 @@ class NEWMyQsTableViewController: UITableViewController {
         }
         trash.backgroundColor = UIColor.redColor()
         
+        println(indexPath.row)
+        
         if (option1Stats[indexPath.row] + option2Stats[indexPath.row]) > 0 {
             return [trash, view] // Order = appearance order, right to left on screen
         } else {
@@ -218,28 +390,20 @@ class NEWMyQsTableViewController: UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // the cells you would like the actions to appear needs to be editable
-        return true
-    }
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        // you need to implement this method too or you can't swipe to display the actions
-    }
-    // Swipe to display options functions ----------------------------------------------------------------------------------
     
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool { return true }
+    
+    
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) { }
     
     
     override func viewWillAppear(animated: Bool) {
         
-        //self.tableView.setContentOffset(CGPointMake(0, 0), animated: true)
-        
-        
         // Recall deleted/dismissed data
         if NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey) != nil {
         
-        deletedMyQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey)! as! [(String)]
+            deletedMyQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey)! as! [(String)]
         }
-        
         
         // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
@@ -252,8 +416,9 @@ class NEWMyQsTableViewController: UITableViewController {
             
             println("Page loaded from tab bar")
             
-            refresh()
+            self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
             
+            refresh()
         }
         
         if returningFromPopover {
@@ -263,8 +428,7 @@ class NEWMyQsTableViewController: UITableViewController {
             returningFromPopover = false
             
             // Adjust top and bottom bounds of table for nav and tab bars
-            self.tableView.contentInset = UIEdgeInsetsMake(0,0,52,0)  // T, L, B, R
-            
+            self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
         }
         
         if returningFromSettings {
@@ -324,6 +488,9 @@ class NEWMyQsTableViewController: UITableViewController {
                             self.questionsPhoto.removeAll(keepCapacity: true)
                             self.option1Stats.removeAll(keepCapacity: true)
                             self.option2Stats.removeAll(keepCapacity: true)
+                            self.configuration.removeAll(keepCapacity: true)
+                            self.votesId.removeAll(keepCapacity: true)
+                            self.photosId.removeAll(keepCapacity: true)
                             
                             for questionObject in questionTemp {
                                 
@@ -412,6 +579,15 @@ class NEWMyQsTableViewController: UITableViewController {
                                 self.option1Stats.append(questionObject["stats1"] as! Int)
                                 self.option2Stats.append(questionObject["stats2"] as! Int)
                                 
+                                // ---- DOWNLOAD AND STORE VOTESID DATA ----------------------------------
+                                self.votesId.append(questionObject["votesId"] as! String)
+                                
+                                // ---- DOWNLOAD AND STORE PHOTOSID DATA ----------------------------------
+                                if let test = questionObject["photosId"] as? String {
+                                    self.photosId.append(questionObject["photosId"] as! String)
+                                } else {
+                                    self.photosId.append("")
+                                }
                                 
                                 // Ensure all queries have completed THEN refresh the table!
                                 if self.questionsPhoto.count == self.option2sPhoto.count {
@@ -448,18 +624,11 @@ class NEWMyQsTableViewController: UITableViewController {
     
     // MARK: - Table view data source
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
-        // Return the number of sections.
-        return 1
-    }
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int { return 1 }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete method implementation.
-        // Return the number of rows in the section.
-        return questions.count
-    }
     
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return questions.count }
+
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
@@ -524,11 +693,25 @@ class NEWMyQsTableViewController: UITableViewController {
             
             cell.question.text = questions[indexPath.row]
             
-            
-            //if option1sPhoto[indexPath.row] == PFFile() {
+            if questionsPhoto[indexPath.row] != nil {
+                questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
+                    
+                    if errorq != nil {
+                        
+                        println(errorq)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: dataq!) {
+                            
+                            cell.questionImage.image = downloadedImage
+                        }
+                    }
+                })
+            }
             
             // ---- OTHER OPTIONS ----------------------------------------------------
-        } else { //if option1s[indexPath.row] == photoString {
+        } else {
             
             cell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! NEWMyQsCell
             
@@ -538,10 +721,6 @@ class NEWMyQsTableViewController: UITableViewController {
             if option2s[indexPath.row] != "" {
                 option2String = option2s[indexPath.row] + " "
             }
-            
-            // Hide buttons from view
-//            cell.vote1Button.backgroundColor = UIColor.clearColor()
-//            cell.vote2Button.backgroundColor = UIColor.clearColor()
             
             cell.option1Zoom.backgroundColor = UIColor.clearColor()
             cell.option2Zoom.backgroundColor = UIColor.clearColor()
@@ -575,9 +754,7 @@ class NEWMyQsTableViewController: UITableViewController {
                         }
                     }
                 })
-            //}
             
-            //if option2sPhoto[indexPath.row] != nil {
                 option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
                     
                     if error2 != nil {
@@ -592,7 +769,6 @@ class NEWMyQsTableViewController: UITableViewController {
                         }
                     }
                 })
-            //}
             
             // Blur screen while Q upload is processing
             //let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
@@ -625,10 +801,6 @@ class NEWMyQsTableViewController: UITableViewController {
                 cell.option2BackgroundImage.backgroundColor = winColor
             }
             
-            // Set Vote button text
-//            cell.vote1Button.setTitle("Vote", forState: UIControlState.Normal)
-//            cell.vote2Button.setTitle("Vote", forState: UIControlState.Normal)
-            
             // Tag zoom buttons
             cell.option1Zoom.tag = indexPath.row
             cell.option2Zoom.tag = indexPath.row
@@ -640,6 +812,7 @@ class NEWMyQsTableViewController: UITableViewController {
             
             // set Q image and set narrow Q text
             cell.questionImage.hidden = false// Set thumbnail images
+            cell.questionZoom.enabled = true
             
             //if questionsPhoto[indexPath.row] != nil {
                 questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
@@ -656,9 +829,6 @@ class NEWMyQsTableViewController: UITableViewController {
                         }
                     }
                 })
-            //}
-            
-            cell.questionImage.hidden = false
             
             cell.questionImage.contentMode = UIViewContentMode.ScaleAspectFill
             cell.questionImage.clipsToBounds = true
@@ -671,14 +841,21 @@ class NEWMyQsTableViewController: UITableViewController {
             
             // Q image is blank, set wide Q text
             cell.questionImage.hidden = true
+            cell.questionZoom.enabled = false
             
             cell.question.text = questions[indexPath.row]
             cell.question.hidden = false
             cell.questionNarrow.hidden = true
-            
         }
         
         
+        ////
+        if questionsPhoto[indexPath.row] != nil {
+            cell.questionImage.hidden = false
+            cell.questionZoom.enabled = true
+        }
+        
+        cell.questionZoom.tag = indexPath.row
         
         // Make cells non-selectable
         cell.selectionStyle = UITableViewCellSelectionStyle.None
@@ -686,100 +863,14 @@ class NEWMyQsTableViewController: UITableViewController {
         // Set background image corners
         cell.background.layer.cornerRadius = cornerRadius
         
-        // Profile Pic
-//        cell.profilePicture.layer.borderWidth = 1.0
-//        cell.profilePicture.layer.borderColor = UIColor.whiteColor().CGColor
-//        cell.profilePicture.layer.masksToBounds = false
-//        cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
-//        cell.profilePicture.clipsToBounds = true
-        
         // Format option backgrounds
         cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
         cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
         
-        // Set vote background to clear
-//        cell.vote1Button.backgroundColor = UIColor.clearColor()
-//        cell.vote2Button.backgroundColor = UIColor.clearColor()
-        
         // Set all text
         cell.question.numberOfLines = 0 // Dynamic number of lines
         cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        //cell.question.text = questions[indexPath.row]
-//        cell.username.text = askers[indexPath.row] //"Asked by " + askers[indexPath.row]
-        //cell.stats1.text = "\(Int(option1Percent))%"
-        //cell.stats2.text = "\(Int(option2Percent))%"
-        //cell.stats1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        //cell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-//        cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-//        cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         
-        /*
-        // Mark user's choice
-        if contains(votedOn1Ids, questionIds[indexPath.row]) {
-            
-//            cell.vote1Button.enabled = false
-//            cell.vote2Button.enabled = false
-//            cell.vote1Button.setTitle("", forState: UIControlState.Normal)
-//            cell.vote2Button.setTitle("", forState: UIControlState.Normal)
-            
-//            cell.myVote1.hidden = false
-//            cell.myVote2.hidden = true
-//            cell.myVote1.text = "✔"
-//            cell.myVote2.text = ""
-            
-            // Unhide results
-            //cell.stats1.hidden = false
-            //cell.stats2.hidden = false
-            
-            cell.option1Label.text = option1String + "\(Int(option1Percent))%"
-            cell.option2Label.text = option2String + "\(Int(option2Percent))%"
-            
-            cell.numberOfResponses.text = "\(totalResponses) \(resp)"
-            
-        } else if contains(votedOn2Ids, questionIds[indexPath.row]) {
-            
-//            cell.vote1Button.enabled = false
-//            cell.vote2Button.enabled = false
-//            cell.vote1Button.setTitle("", forState: UIControlState.Normal)
-//            cell.vote2Button.setTitle("", forState: UIControlState.Normal)
-            
-            // Unhide results
-            //cell.stats1.hidden = false
-            //cell.stats2.hidden = false
-            
-//            cell.myVote1.hidden = true
-//            cell.myVote2.hidden = false
-//            cell.myVote2.text = "✔"
-//            cell.myVote1.text = ""
-            
-            cell.option1Label.text = option1String + "\(Int(option1Percent))%"
-            cell.option2Label.text = option2String + "\(Int(option2Percent))%"
-            
-            cell.numberOfResponses.text = "\(totalResponses) \(resp)"
-            
-        } else {
-            
-//            cell.vote1Button.enabled = true
-//            cell.vote2Button.enabled = true
-//            cell.myVote1.hidden = true
-//            cell.myVote2.hidden = true
-            
-            // Hide results
-            //cell.stats1.hidden = true
-            //cell.stats2.hidden = true
-            
-//            cell.myVote2.text = ""
-//            cell.myVote1.text = ""
-            cell.numberOfResponses.text = ""
-            
-            cell.option1BackgroundImage.backgroundColor = loseColor
-            cell.option2BackgroundImage.backgroundColor = loseColor
-            //cell.option1Label.text = ""
-            //cell.option2Label.text = ""
-            
-            cell.option1Label.text = option1String
-            cell.option2Label.text = option2String
-        }*/
         cell.numberOfResponses.text = "\(totalResponses) \(resp)"
         cell.option1Label.text = option1String + "\(Int(option1Percent))%"
         cell.option2Label.text = option2String + "\(Int(option2Percent))%"
@@ -788,8 +879,8 @@ class NEWMyQsTableViewController: UITableViewController {
         // Format myVote and stats background
         //cell.stats1.layer.cornerRadius = cornerRadius
         //cell.stats2.layer.cornerRadius = cornerRadius
-        cell.myVote1.layer.cornerRadius = cornerRadius
-        cell.myVote2.layer.cornerRadius = cornerRadius
+        //cell.myVote1.layer.cornerRadius = cornerRadius
+        //cell.myVote2.layer.cornerRadius = cornerRadius
         // Why can't I set a corner radius on text field? -------
         
         // Format cell backgrounds
@@ -798,228 +889,6 @@ class NEWMyQsTableViewController: UITableViewController {
         //} else {
         //    cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
         //}
-        
-        // Tag vote buttons
-//        cell.vote1Button.tag = indexPath.row
-//        cell.vote2Button.tag = indexPath.row
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        /*
-        // Currently check if either (1) option photo is filled in and use photo for both
-        if option1s[indexPath.row] == photoString { // PHOTO OPTIONS
-            
-            myCell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! NEWMyQsCell
-            
-            option1String = ""
-            option2String = ""
-            
-            myCell.background.layer.cornerRadius = cornerRadius
-            
-            // Hide buttons from view
-            myCell.option1Zoom.backgroundColor = UIColor.clearColor()
-            myCell.option2Zoom.backgroundColor = UIColor.clearColor()
-            
-            // Format thumbnail views - aspect fill without breaching imageView bounds
-            myCell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
-            myCell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
-            myCell.option1Image.clipsToBounds = true
-            myCell.option2Image.clipsToBounds = true
-            
-            // Format options images
-            myCell.option1Image.layer.cornerRadius = cornerRadius
-            myCell.option2Image.layer.cornerRadius = cornerRadius
-            myCell.option1Image.clipsToBounds = true
-            myCell.option2Image.clipsToBounds = true
-            
-            // Set thumbnail images
-            option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
-                
-                if error1 != nil {
-                    
-                    println(error1)
-                    
-                } else {
-                    
-                    if let downloadedImage = UIImage(data: data1!) {
-                        
-                        myCell.option1Image.image = downloadedImage
-                    }
-                }
-            })
-            
-            option2sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
-                
-                if error2 != nil {
-                    
-                    println(error2)
-                    
-                } else {
-                    
-                    if let downloadedImage = UIImage(data: data2!) {
-                        
-                        myCell.option2Image.image = downloadedImage
-                    }
-                }
-            })
-            
-            myCell.option1Zoom.tag = indexPath.row
-            myCell.option2Zoom.tag = indexPath.row
-            
-            
-        // ---- TEXT ONLY OPTIONS -------------------------------------------------
-        } else if contains(["1c", "2c", "3c"], configuration[indexPath.row]) {
-            
-            option1String = option1s[indexPath.row] + " "
-            option2String = option2s[indexPath.row] + " "
-            
-            cell = tableView.dequeueReusableCellWithIdentifier("theirCell1", forIndexPath: indexPath) as! NEWTheirQsCell
-            
-            // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
-            //var width1 = maxBarWidth //cell.option1ImageView.bounds.width
-            //var width2 = maxBarWidth //cell.option2ImageView.bounds.width
-            
-            cell.numberOfResponses.text = "\(totalResponses) \(resp)"
-            
-            if option1Percent > option2Percent {
-                
-                //width1 = maxBarWidth
-                //width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-                cell.option1BackgroundImage.backgroundColor = winColor
-                cell.option2BackgroundImage.backgroundColor = loseColor
-                
-            } else if option2Percent > option1Percent {
-                
-                //width2 = maxBarWidth
-                //width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-                cell.option1BackgroundImage.backgroundColor = loseColor
-                cell.option2BackgroundImage.backgroundColor = winColor
-                
-            } else {
-                
-                //width1 = maxBarWidth
-                //width2 = maxBarWidth
-                cell.option1BackgroundImage.backgroundColor = winColor
-                cell.option2BackgroundImage.backgroundColor = winColor
-            }
-            
-            // Set Vote button text
-            cell.vote1Button.setTitle("", forState: UIControlState.Normal)
-            cell.vote2Button.setTitle("", forState: UIControlState.Normal)
-            
-            cell.question.text = questions[indexPath.row]
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        /*} else { // TEXT OPTIONS
-            
-            myCell = tableView.dequeueReusableCellWithIdentifier("myCell1", forIndexPath: indexPath) as! NEWMyQsCell
-            
-            option1String = option1s[indexPath.row] + " "
-            option2String = option2s[indexPath.row] + " "
-            
-            //myCell.stats1.layer.cornerRadius = cornerRadius
-            //myCell.stats2.layer.cornerRadius = cornerRadius
-            myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
-            
-            if option1Percent > option2Percent {
-                
-                myCell.option1BackgroundImage.backgroundColor = winColor
-                myCell.option2BackgroundImage.backgroundColor = loseColor
-                
-            } else if option2Percent > option1Percent {
-                
-                myCell.option1BackgroundImage.backgroundColor = winColor
-                myCell.option2BackgroundImage.backgroundColor = loseColor
-                
-            } else {
-                
-                myCell.option1BackgroundImage.backgroundColor = winColor
-                myCell.option2BackgroundImage.backgroundColor = winColor
-                
-            }
-        }*/
-        
-        // Make cells non-selectable
-        myCell.selectionStyle = UITableViewCellSelectionStyle.None
-        
-        myCell.background.layer.cornerRadius = cornerRadius
-        
-        // Format option text backgrounds
-        myCell.option1BackgroundImage.layer.cornerRadius = cornerRadius
-        myCell.option2BackgroundImage.layer.cornerRadius = cornerRadius
-        
-        // Set all text
-        myCell.question.numberOfLines = 0 // Dynamic number of lines
-        myCell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        myCell.question.text = questions[indexPath.row]
-        if option1Stats[indexPath.row] + option1Stats[indexPath.row] > 0 {
-            
-            myCell.option1Label.text = option1String + "\(Int(option1Percent))%"
-            myCell.option2Label.text = option2String + "\(Int(option2Percent))%"
-            myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
-            
-        } else {
-            
-            myCell.option1Label.text = option1String
-            myCell.option2Label.text = option2String
-            myCell.numberOfResponses.text = "\(totalResponses) \(resp)"
-            myCell.option1BackgroundImage.backgroundColor = loseColor
-            myCell.option2BackgroundImage.backgroundColor = loseColor
-        }
-        //myCell.stats1.text = "\(Int(option1Percent))%"
-        //myCell.stats2.text = "\(Int(option2Percent))%"
-        //myCell.stats1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        //myCell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        
-        
-        // Format cell backgrounds
-        //if indexPath.row % 2 == 0 {
-        myCell.backgroundColor = UIColor.clearColor()
-        //} else {
-        //    myCell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-        //}*/
         
         return cell
     }

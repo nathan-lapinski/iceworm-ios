@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Parse
 
 // Database values for local storage
 var myName = ""
@@ -53,6 +54,9 @@ var deletedTheirQuestions = [String]() // questions DELETED by current user
 var votedOn1Ids = [String]() // questions VOTED-UPON by current user
 var votedOn2Ids = [String]() // questions VOTED-UPON by current user
 
+// Dictionary to pass question value to "view votes" controller
+var viewQ = Dictionary<String, Any>()//String, String, String, String, PFFile, PFFile, PFFile,
+
 // Variable to track how user voted - store to NSUserDefaults //
 var myVotes = Dictionary<String, Int>()
 
@@ -63,7 +67,7 @@ var profilePicture = UIImage()
 var requestedQId = ""
 
 // Variable for passing image to zoom and on which image to start (1 or 2)
-var imageZoom = [UIImage(named: "camera.png"), UIImage(named: "camera.png")]
+var imageZoom: [UIImage?] = [nil, nil, nil]//[UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
 var questionZoom = ""
 var zoomPage = Int()
 

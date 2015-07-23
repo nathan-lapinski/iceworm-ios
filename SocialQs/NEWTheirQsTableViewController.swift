@@ -14,14 +14,16 @@ class NEWTheirQsTableViewController: UITableViewController {
     var questions = [String]()
     var option1s = [String]()
     var option2s = [String]()
-    var questionsPhoto = [PFFile]()
-    var option1sPhoto = [PFFile]()
-    var option2sPhoto = [PFFile]()
+    var option1sPhoto: [PFFile?] = [PFFile]()
+    var option2sPhoto: [PFFile?] = [PFFile]()
+    var questionsPhoto: [PFFile?]  = [PFFile]()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
     //var users = [String: String]()
     var askers = [String]()
     var configuration = [String]()
+    var votesId = [String]()
+    var photosId = [String]()
     //var dismissedTheirStorageKey = myName + "dismissedTheirPermanent"
     var deletedTheirStorageKey = myName + "deletedTheirPermanent"
     var refresher: UIRefreshControl!
@@ -31,52 +33,170 @@ class NEWTheirQsTableViewController: UITableViewController {
     
     @IBAction func vote2ButtonAction(sender: AnyObject) { castVote(sender.tag, optionId: 2) }
     
-    @IBAction func zoom1ButtonAction(sender: AnyObject) {
+    @IBAction func zoomQButton(sender: AnyObject) {
+        
+        imageZoom = [nil, nil, nil]
+        
+        println(imageZoom)
+        println(sender.tag)
+        
         zoomPage = 0
+        
+        questionZoom = self.questions[sender.tag]
+        
+        setPhotosToZoom(sender)
+    }
+    
+    @IBAction func zoom1ButtonAction(sender: AnyObject) {
+        
+        imageZoom = [nil, nil, nil]
+        
+        if self.questionsPhoto[sender.tag] != nil {
+            zoomPage = 1
+        } else {
+            zoomPage = 0
+        }
+        
+        questionZoom = self.questions[sender.tag]
+        
         setPhotosToZoom(sender)
     }
     
     @IBAction func zoom2ButtonAction(sender: AnyObject) {
-        zoomPage = 1
+        
+        imageZoom = [nil, nil, nil]
+        
+        if self.questionsPhoto[sender.tag] != nil {
+            zoomPage = 2
+        } else {
+            zoomPage = 1
+        }
+        
+        questionZoom = self.questions[sender.tag]
+        
         setPhotosToZoom(sender)
     }
-    
+
     
     func setPhotosToZoom(sender: AnyObject) {
         
-        questionZoom = questions[sender.tag]
+        // Setup spinner and block application input
+        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
-        option1sPhoto[sender.tag].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+        var expectedCount = 0
+        var downloadedCount = 0
+        
+        if questionsPhoto[sender.tag] != nil { expectedCount++ }
+        if option1sPhoto[sender.tag] != nil { expectedCount++ }
+        if option2sPhoto[sender.tag] != nil { expectedCount++ }
+        
+        // GLOBAL FUNCTION -------------------------------------------------------
+        // GLOBAL FUNCTION -------------------------------------------------------
+        var photos = PFQuery(className: "PhotoFullMetalBlacket")
+        photos.getObjectInBackgroundWithId(photosId[sender.tag], block: { (theirPhotoObjects, error) -> Void in
             
-            if error1 != nil {
+            if error == nil {
                 
-                println(error1)
-                
-            } else {
-                
-                if let downloadedImage = UIImage(data: data1!) {
+                if let questionPhotoFull = theirPhotoObjects!["questionPhoto"] as? PFFile {
                     
-                    imageZoom[0] = downloadedImage
+                    println("Zoom Q")
+                    
+                    questionPhotoFull.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                        
+                        if error != nil {
+                            
+                            println(error)
+                            
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data!) {
+                                
+                                imageZoom[0] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                self.activityIndicator.stopAnimating()
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
+                            }
+                        }
+                    })
                 }
                 
-                self.option2sPhoto[sender.tag].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                if let option1PhotoFull = theirPhotoObjects!["option1Photo"] as? PFFile {
                     
-                    if error2 != nil {
+                    println("Zoom O1")
+                    
+                    option1PhotoFull.getDataInBackgroundWithBlock({ (data, error) -> Void in
                         
-                        println(error2)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data2!) {
+                        if error != nil {
                             
-                            imageZoom[1] = downloadedImage
+                            println(error)
                             
-                            self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data!) {
+                                
+                                imageZoom[1] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                self.activityIndicator.stopAnimating()
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
+                            }
                         }
-                    }
-                })
+                    })
+                }
+                
+                if let option2PhotoFull = theirPhotoObjects!["option2Photo"] as? PFFile {
+                    
+                    println("Zoom O2")
+                    
+                    option2PhotoFull.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                        
+                        if error != nil {
+                            
+                            println(error)
+                            
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data!) {
+                                
+                                imageZoom[2] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                self.activityIndicator.stopAnimating()
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
+                            }
+                        }
+                    })
+                }
+                
+            } else {
+                println("Full res photo query from MyQs tab failed")
+                println(error)
             }
         })
+        // GLOBAL FUNCTION -------------------------------------------------------
+        // GLOBAL FUNCTION -------------------------------------------------------
     }
     
     
@@ -99,7 +219,7 @@ class NEWTheirQsTableViewController: UITableViewController {
         NSUserDefaults.standardUserDefaults().setObject(myVotes, forKey: myVotesStorageKey)
         
         // Query Q table to get vote table Id
-        // The access Vote table and do stuffs
+        // Then access Vote table and do stuffs
         var query = PFQuery(className: "SocialQs")
         query.whereKey("objectId", equalTo: questionIds[questionId])
         query.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
@@ -117,7 +237,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                         // Update vote data in Votes table (store what user voted)
                         var vId = questionObject["votesId"]!! as! String
                         var votesQuery = PFQuery(className: "Votes")
-                        votesQuery.whereKey("objectId", equalTo: vId)
+                        //votesQuery.whereKey("objectId", equalTo: vId)
                         votesQuery.getObjectInBackgroundWithId(vId, block: { (voteObjects, error) -> Void in
                             
                             if error == nil {
@@ -253,14 +373,17 @@ class NEWTheirQsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
+            println(indexPath.row)
+            
+            self.setViewQ(indexPath.row)
+            
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             requestedQId = self.questionIds[indexPath.row]
             
-            if self.option1s[indexPath.row] == photoString {
+            if self.option1sPhoto[indexPath.row] != nil {
                 
-                // Get images
-                self.option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+                self.option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
                     
                     if error1 != nil {
                         
@@ -270,22 +393,26 @@ class NEWTheirQsTableViewController: UITableViewController {
                         
                         if let downloadedImage = UIImage(data: data1!) {
                             
-                            imageZoom[0] = downloadedImage
-                        }
-                    }
-                })
-                
-                self.option2sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
-                    
-                    if error2 != nil {
-                        
-                        println(error2)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data2!) {
                             
-                            imageZoom[1] = downloadedImage
+                            imageZoom[0] = downloadedImage
+                            
+                            //if self.option2sPhoto[indexPath.row] != nil {
+                            
+                            self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                                
+                                if error2 != nil {
+                                    
+                                    println(error2)
+                                    
+                                } else {
+                                    
+                                    if let downloadedImage = UIImage(data: data2!) {
+                                        
+                                        imageZoom[1] = downloadedImage
+                                        
+                                    }
+                                }
+                            })
                         }
                     }
                 })
@@ -294,7 +421,6 @@ class NEWTheirQsTableViewController: UITableViewController {
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
                 self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
             })
         }
@@ -312,7 +438,6 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             // Append qId to "deleted" array in database
             var deletedQuery = PFQuery(className: "UserQs")
-            //deletedQuery.whereKey("objectId", equalTo: uQId)
             
             deletedQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
                 
@@ -326,11 +451,6 @@ class NEWTheirQsTableViewController: UITableViewController {
                     userQsObjects!.removeObject(self.questionIds[indexPath.row], forKey: "theirQsId")
                     userQsObjects!.saveInBackground()
                     
-                    //deletedTheirQuestions.append(self.questionIds[indexPath.row])
-                    
-                    // Store updated array locally
-                    //NSUserDefaults.standardUserDefaults().setObject(deletedTheirQuestions, forKey: self.deletedTheirStorageKey)
-                    
                     self.questionIds.removeAtIndex(indexPath.row)
                     self.questions.removeAtIndex(indexPath.row)
                     self.option1s.removeAtIndex(indexPath.row)
@@ -341,6 +461,8 @@ class NEWTheirQsTableViewController: UITableViewController {
                     self.option2Stats.removeAtIndex(indexPath.row)
                     self.askers.removeAtIndex(indexPath.row)
                     self.configuration.removeAtIndex(indexPath.row)
+                    self.votesId.removeAtIndex(indexPath.row)
+                    self.photosId.removeAtIndex(indexPath.row)
                     
                     tableView.beginUpdates()
                     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
@@ -398,12 +520,31 @@ class NEWTheirQsTableViewController: UITableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         // Adjust top and bottom bounds of table for nav and tab bars
-        self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
+        //self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
         
         // Disable auto inset adjust
         //self.automaticallyAdjustsScrollViewInsets = false
         
-        }
+    }
+    
+    
+    // MAKE GLOBAL -------------------------------------
+    // MAKE GLOBAL -------------------------------------
+    func setViewQ(index: Int) {
+        
+        viewQ = Dictionary<String, Any>()
+        
+        viewQ["qId"] = self.questionIds[index]
+        viewQ["question"] = self.questions[index]
+        if self.questionsPhoto[index] != nil { viewQ["questionPhoto"] = self.questionsPhoto[index] }
+        viewQ["option1"] = self.option1s[index]
+        if self.option1sPhoto[index] != nil { viewQ["option1Photo"]  = self.option1sPhoto[index] }
+        viewQ["option2"] = self.option2s[index]
+        if self.option2sPhoto[index] != nil { viewQ["option2Photo"]  = self.option2sPhoto[index] }
+        viewQ["votesId"] = self.votesId[index]
+    }
+    // MAKE GLOBAL -------------------------------------
+    // MAKE GLOBAL -------------------------------------
     
     
     // MARK: - Table view data source
@@ -418,22 +559,11 @@ class NEWTheirQsTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-//        println("Number of quesitonIds = \(questionIds.count)")
-//        println("Number of questions = \(questions.count)")
-//        println("Number of option1s = \(option1s.count)")
-//        println("Number of option2s = \(option2s.count)")
-//        println("Number of question photos = \(questionsPhoto.count)")
-//        println("Number of option1 photos = \(option1sPhoto.count)")
-//        println("Number of option2 photos = \(option2sPhoto.count)")
-//        println("Number of option1 stats = \(option1Stats.count)")
-//        println("Number of option2 stats = \(option2Stats.count)")
-//        println("Number of askers = \(askers.count)")
-        
         var cell = NEWTheirQsCell()
         
         var option1String = ""
         var option2String = ""
-        
+  
         // Compute number of reponses and option stats
         var totalResponses = Int()
         totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
@@ -496,11 +626,10 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             cell.question.text = questions[indexPath.row]
             
-        
-        //if option1sPhoto[indexPath.row] == PFFile() {
+            cell.questionZoom.tag = indexPath.row
             
         // ---- OTHER OPTIONS ----------------------------------------------------
-        } else { //if option1s[indexPath.row] == photoString {
+        } else {
             
             cell = tableView.dequeueReusableCellWithIdentifier("theirCell2", forIndexPath: indexPath) as! NEWTheirQsCell
             
@@ -514,10 +643,8 @@ class NEWTheirQsTableViewController: UITableViewController {
             // Hide buttons from view
             cell.vote1Button.backgroundColor = UIColor.clearColor()
             cell.vote2Button.backgroundColor = UIColor.clearColor()
-            
             cell.option1Zoom.backgroundColor = UIColor.clearColor()
             cell.option2Zoom.backgroundColor = UIColor.clearColor()
-            
             
             // Format thumbnail views - aspect fill without breaching imageView bounds
             cell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
@@ -532,7 +659,7 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.option2Image.clipsToBounds = true
             
             // Set thumbnail images
-            option1sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+            option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
                 
                 if error1 != nil {
                     
@@ -547,7 +674,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                 }
             })
             
-            option2sPhoto[indexPath.row].getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+            option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
                 
                 if error2 != nil {
                     
@@ -594,8 +721,16 @@ class NEWTheirQsTableViewController: UITableViewController {
             }
             
             // Set Vote button text
-            cell.vote1Button.setTitle("Vote", forState: UIControlState.Normal)
-            cell.vote2Button.setTitle("Vote", forState: UIControlState.Normal)
+            if option1s[indexPath.row] == "" {
+                cell.vote1Button.setTitle("Vote", forState: UIControlState.Normal)
+            } else {
+                cell.vote1Button.setTitle("", forState: UIControlState.Normal)
+            }
+            if option2s[indexPath.row] == "" {
+                cell.vote2Button.setTitle("Vote", forState: UIControlState.Normal)
+            } else {
+                cell.vote2Button.setTitle("", forState: UIControlState.Normal)
+            }
             
             // Tag zoom buttons
             cell.option1Zoom.tag = indexPath.row
@@ -608,7 +743,7 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             // set Q image and set narrow Q text
             cell.questionImage.hidden = false// Set thumbnail images
-            questionsPhoto[indexPath.row].getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
+            questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
                 
                 if errorq != nil {
                     
@@ -640,7 +775,6 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.question.text = questions[indexPath.row]
             cell.question.hidden = false
             cell.questionNarrow.hidden = true
-            
         }
 
         
@@ -669,12 +803,7 @@ class NEWTheirQsTableViewController: UITableViewController {
         // Set all text
         cell.question.numberOfLines = 0 // Dynamic number of lines
         cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        //cell.question.text = questions[indexPath.row]
-        cell.username.text = askers[indexPath.row] //"Asked by " + askers[indexPath.row]
-        //cell.stats1.text = "\(Int(option1Percent))%"
-        //cell.stats2.text = "\(Int(option2Percent))%"
-        //cell.stats1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        //cell.stats2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+        cell.username.text = askers[indexPath.row]
         cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         
@@ -691,10 +820,6 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.myVote1.text = "✔"
             cell.myVote2.text = ""
             
-            // Unhide results
-            //cell.stats1.hidden = false
-            //cell.stats2.hidden = false
-            
             cell.option1Label.text = option1String + "\(Int(option1Percent))%"
             cell.option2Label.text = option2String + "\(Int(option2Percent))%"
             
@@ -706,10 +831,6 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.vote2Button.enabled = false
             cell.vote1Button.setTitle("", forState: UIControlState.Normal)
             cell.vote2Button.setTitle("", forState: UIControlState.Normal)
-            
-            // Unhide results
-            //cell.stats1.hidden = false
-            //cell.stats2.hidden = false
             
             cell.myVote1.hidden = true
             cell.myVote2.hidden = false
@@ -728,30 +849,19 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.myVote1.hidden = true
             cell.myVote2.hidden = true
             
-            // Hide results
-            //cell.stats1.hidden = true
-            //cell.stats2.hidden = true
-            
             cell.myVote2.text = ""
             cell.myVote1.text = ""
             cell.numberOfResponses.text = ""
             
             cell.option1BackgroundImage.backgroundColor = loseColor
             cell.option2BackgroundImage.backgroundColor = loseColor
-            //cell.option1Label.text = ""
-            //cell.option2Label.text = ""
             
             cell.option1Label.text = option1String
             cell.option2Label.text = option2String
         }
         
-        // Why can't I set a corner radius on text field? -------
-        // Format myVote and stats background
-        //cell.stats1.layer.cornerRadius = cornerRadius
-        //cell.stats2.layer.cornerRadius = cornerRadius
         cell.myVote1.layer.cornerRadius = cornerRadius
         cell.myVote2.layer.cornerRadius = cornerRadius
-        // Why can't I set a corner radius on text field? -------
         
         // Format cell backgrounds
         //if indexPath.row % 2 == 0 {
@@ -763,6 +873,8 @@ class NEWTheirQsTableViewController: UITableViewController {
         // Tag vote buttons
         cell.vote1Button.tag = indexPath.row
         cell.vote2Button.tag = indexPath.row
+        
+        cell.questionZoom.tag = indexPath.row
         
         return cell
     }
@@ -801,6 +913,8 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             println("Page loaded from tab bar")
             
+            self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
+            
             refresh()
             
         }
@@ -812,7 +926,7 @@ class NEWTheirQsTableViewController: UITableViewController {
             returningFromPopover = false
             
             // Adjust top and bottom bounds of table for nav and tab bars
-            self.tableView.contentInset = UIEdgeInsetsMake(0,0,52,0)  // T, L, B, R
+            self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
             
         }
         
@@ -838,6 +952,7 @@ class NEWTheirQsTableViewController: UITableViewController {
         
         // Get list of Qs to pull from UserQs
         var userQsQuery = PFQuery(className: "UserQs")
+        
         userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
             
             if error != nil {
@@ -877,6 +992,8 @@ class NEWTheirQsTableViewController: UITableViewController {
                             self.option2Stats.removeAll(keepCapacity: true)
                             self.askers.removeAll(keepCapacity: true)
                             self.configuration.removeAll(keepCapacity: true)
+                            self.votesId.removeAll(keepCapacity: true)
+                            self.photosId.removeAll(keepCapacity: true)
                             
                             for questionObject in questionTemp {
                                 
@@ -889,14 +1006,14 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 if (questionObject["question"] as? String != nil) && (questionObject["questionPhoto"] as? PFFile != nil) {
                                     
                                     self.questions.append(questionObject["question"] as! String)
-                                    self.questionsPhoto.append(questionObject["questionPhoto"] as! PFFile)
+                                    self.questionsPhoto.append(questionObject["questionPhoto"] as? PFFile)
                                     tempConfig = "1"
                                     
                                 // Check for photo and NO text
                                 } else if (questionObject["questionPhoto"] as? PFFile != nil)  && (questionObject["question"] as? String == nil){
                                     
-                                    self.questions.append(photoString)
-                                    self.questionsPhoto.append(questionObject["questionPhoto"] as! PFFile)
+                                    self.questions.append("")
+                                    self.questionsPhoto.append(questionObject["questionPhoto"] as? PFFile)
                                     tempConfig = "2"
                                     
                                 // Text and NO photo
@@ -914,20 +1031,20 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 if (questionObject["option1"] as? String != nil) && (questionObject["option1Photo"] as? PFFile != nil) {
                                     
                                     self.option1s.append(questionObject["option1"] as! String)
-                                    self.option1sPhoto.append(questionObject["option1Photo"] as! PFFile)
+                                    self.option1sPhoto.append(questionObject["option1Photo"] as? PFFile)
                                     tempConfig = tempConfig + "a"
                                     
                                     // Check for photo and NO text
                                 } else if (questionObject["option1Photo"] as? PFFile != nil)  && (questionObject["option1"] as? String == nil){
                                     
-                                    self.option1s.append(photoString)
-                                    self.option1sPhoto.append(questionObject["option1Photo"] as! PFFile)
+                                    self.option1s.append("")
+                                    self.option1sPhoto.append(questionObject["option1Photo"] as? PFFile)
                                     tempConfig = tempConfig + "b"
                                     
                                 } else { // Text and NO photo
                                     
                                     self.option1s.append(questionObject["option1"] as! String)
-                                    self.option1sPhoto.append(PFFile())
+                                    self.option1sPhoto.append(nil)
                                     tempConfig = tempConfig + "c"
                                     
                                 }
@@ -939,21 +1056,22 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 if (questionObject["option2"] as? String != nil) && (questionObject["option2Photo"] as? PFFile != nil) {
                                     
                                     self.option2s.append(questionObject["option2"] as! String)
-                                    self.option2sPhoto.append(questionObject["option2Photo"] as! PFFile)
-//                                    tempConfig = tempConfig + "x"
+                                    self.option2sPhoto.append(questionObject["option2Photo"] as? PFFile)
+                                    //                                    tempConfig = tempConfig + "x"
                                     
                                     // Check for photo and NO text
                                 } else if (questionObject["option2Photo"] as? PFFile != nil)  && (questionObject["option2"] as? String == nil){
                                     
-                                    self.option2s.append(photoString)
-                                    self.option2sPhoto.append(questionObject["option2Photo"] as! PFFile)
-//                                    tempConfig = tempConfig + "y"
+                                    self.option2s.append("")
+                                    self.option2sPhoto.append(questionObject["option2Photo"] as? PFFile)
+                                    //                                    tempConfig = tempConfig + "y"
                                     
                                 } else { // Text and NO photo
                                     
                                     self.option2s.append(questionObject["option2"] as! String)
-                                    self.option2sPhoto.append(PFFile())
-//                                    tempConfig = tempConfig + "z"
+                                    self.option2sPhoto.append(nil
+                                    )
+                                    //                                    tempConfig = tempConfig + "z"
                                     
                                 }
                                 // ---------------------------------------------------------------------
@@ -964,58 +1082,24 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 self.option1Stats.append(questionObject["stats1"] as! Int)
                                 self.option2Stats.append(questionObject["stats2"] as! Int)
                                 
+                                // ---- DOWNLOAD AND STORE VOTESID DATA ----------------------------------
+                                self.votesId.append(questionObject["votesId"] as! String)
                                 
-                                
-                                
-                                
-                                
-                                /*
-                                self.questions.append(questionObject["question"] as! String)
-                                self.questionIds.append(questionObject.objectId!!)
-                                
-                                
-                                
-                                if let test = questionObject["option1"] as? String {
-                                    
-                                    self.option1s.append(questionObject["option1"] as! String)
-                                    self.option1sPhoto.append(PFFile())
-                                    
+                                // ---- DOWNLOAD AND STORE PHOTOSID DATA ----------------------------------
+                                if let test = questionObject["photosId"] as? String {
+                                    self.photosId.append(questionObject["photosId"] as! String)
                                 } else {
-                                    
-                                    self.option1s.append(photoString)
-                                    self.option1sPhoto.append(questionObject["option1Photo"] as! PFFile)
-                                    
+                                    self.photosId.append("")
                                 }
-                                
-                                if let test = questionObject["option2"] as? String {
-                                    
-                                    self.option2s.append(questionObject["option2"] as! String)
-                                    self.option2sPhoto.append(PFFile())
-                                    
-                                } else {
-                                    
-                                    self.option2s.append(photoString)
-                                    self.option2sPhoto.append(questionObject["option2Photo"] as! PFFile)
-                                    
-                                }
-                                
-                                self.option1Stats.append(questionObject["stats1"] as! Int)
-                                self.option2Stats.append(questionObject["stats2"] as! Int)*/
-                                
-                                
                                 
                                 self.askers.append(questionObject["askername"] as! String)
-                                
                                 
                                 
                                 // Ensure all queries have completed THEN refresh the table!
                                 // CHANGED THIS TO MATCH NEW PULL METHOD - WAS "ASKERS"
                                 //
                                 if self.questionsPhoto.count == self.option2sPhoto.count {
-                                    
-                                    println("refresh")
-                                    
-                                    println("loading table")
+
                                     self.tableView.reloadData()
                                     //self.tableView.reloadInputViews()
                                     
@@ -1032,6 +1116,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                             }
                         }
                     }
+                    
                 } else {
                     
                     // NO Qs

@@ -14,7 +14,15 @@ class VotesTableViewController: UITableViewController {
     let tableFontSize = CGFloat(16)
     var objectsArray = [Objects]()
     let headerHeight = CGFloat(60)
-    var questionText = ""
+    
+    var votesId       = ""
+    var questionText  = ""
+    var option1Text   = ""
+    var option2Text   = ""
+    var questionPhoto: PFFile? = PFFile()
+    var option1Photo: PFFile?  = PFFile()
+    var option2Photo: PFFile?  = PFFile()
+    //var imageZoom = [UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
     
     struct Objects {
         var sectionName: String!
@@ -26,8 +34,8 @@ class VotesTableViewController: UITableViewController {
     @IBAction func dismissPressed(sender: AnyObject) {
         
         presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
-        
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,106 +47,111 @@ class VotesTableViewController: UITableViewController {
         navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: 16)!], forState: UIControlState.Normal)
         
     }
-    
-    
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // Function for displaying pop-up
-    func displayAlert(title: String, message: String) {
-        
-        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            
-            //self.dismissViewControllerAnimated(true, completion: nil)
-            
-        }))
-        
-        self.presentViewController(alert, animated: true, completion: nil)
-    }
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
 
     
     override func viewWillAppear(animated: Bool) {
         
         returningFromPopover = true
         
-        var votesId = ""
-        var option1Text = ""
-        var option2Text = ""
+//        // FUNCTION -----------------------------------------------------------
+//        // FUNCTION -----------------------------------------------------------
+//        if let image = viewQ["questionPhoto"] as? PFFile {
+//            
+//            image.getDataInBackgroundWithBlock({ (data, error) -> Void in
+//                
+//                if error != nil {
+//                    
+//                    println(error)
+//                    
+//                } else {
+//                    
+//                    if let downloadedImage = UIImage(data: data!) {
+//                        
+//                        imageZoom[2] = downloadedImage
+//                        
+//                        self.tableView.reloadData()
+//                    }
+//                }
+//            })
+//        }
+//        
+//        if let image = viewQ["option1Photo"] as? PFFile {
+//            
+//            image.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+//                
+//                if error1 != nil {
+//                    
+//                    println(error1)
+//                    
+//                } else {
+//                    
+//                    if let downloadedImage = UIImage(data: data1!) {
+//                        
+//                        imageZoom[0] = downloadedImage
+//                        
+//                        self.tableView.reloadData()
+//                    }
+//                }
+//            })
+//        }
+//        
+//        if let image = viewQ["option2Photo"] as? PFFile {
+//            
+//            image.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+//                
+//                if error2 != nil {
+//                    
+//                    println(error2)
+//                    
+//                } else {
+//                    
+//                    if let downloadedImage = UIImage(data: data2!) {
+//                        
+//                        imageZoom[1] = downloadedImage
+//                        
+//                        self.tableView.reloadData()
+//                    }
+//                }
+//            })
+//        }
+//        // FUNCTION -----------------------------------------------------------
+//        // FUNCTION -----------------------------------------------------------
         
-        // PARSE ----------------------------------------------------
-        var query = PFQuery(className: "SocialQs")
-        
-        query.getObjectInBackgroundWithId(requestedQId, block: { (objects, error) -> Void in
+        var query = PFQuery(className: "Votes")
+        query.getObjectInBackgroundWithId(viewQ["votesId"] as! String, block: { (objects, error) -> Void in
             
             if error == nil {
                 
-                votesId = objects!["votesId"] as! String
+                var voter1s = [""]
+                var voter2s = [""]
+                voter1s.removeAll(keepCapacity: true)
+                voter2s.removeAll(keepCapacity: true)
                 
-                if let test = objects!["option1"] as? String {
-                    
-                    option1Text = objects!["option1"] as! String
-                    
-                } else { option1Text = photoString }
+                // Fill voter1 array - use "?" as it may not exist
+                if objects!["option1VoterName"]?.count > 0 {
+                    voter1s = objects!["option1VoterName"] as! [String]
+                }
                 
-                if let test = objects!["option2"] as? String {
-                    
-                    option2Text = objects!["option2"] as! String
-                    
-                } else { option2Text = photoString }
+                // Fill voter2 array - use "?" as it may not exist
+                if objects!["option2VoterName"]?.count > 0 {
+                    voter2s = objects!["option2VoterName"] as! [String]
+                }
                 
-                if let test = objects!["question"] as? String {
-                    
-                    self.questionText = objects!["question"] as! String
-                    
-                } else { option2Text = photoString }
+                // Build table view objects
+                if voter1s.count > 0 && voter2s.count > 0 {
+                    self.objectsArray = [Objects(sectionName: viewQ["option1"] as! String, sectionObjects: voter1s), Objects(sectionName: viewQ["option2"] as! String, sectionObjects: voter2s)]
+                } else if voter1s.count > 0 && voter2s.count < 1 {
+                    self.objectsArray = [Objects(sectionName: viewQ["option1"] as! String, sectionObjects: voter1s)]
+                } else if voter1s.count < 1 && voter2s.count > 0 {
+                    self.objectsArray = [Objects(sectionName: viewQ["option2"] as! String, sectionObjects: voter2s)]
+                }
                 
-                // ****
-                // PULL IMAGES HERE INSTEAD OF FROM QsViewControllers
-                //****
+                // Reload table data
+                self.tableView.reloadData()
+                self.tableView.reloadInputViews()
                 
-                query = PFQuery(className: "Votes")
-                query.getObjectInBackgroundWithId(votesId, block: { (objects, error) -> Void in
-                    
-                    if error == nil {
-                        
-                        var voter1s = [""]
-                        var voter2s = [""]
-                        voter1s.removeAll(keepCapacity: true)
-                        voter2s.removeAll(keepCapacity: true)
-                        
-                        // Fill voter1 array - use "?" as it may not exist
-                        if objects!["option1VoterName"]?.count > 0 {
-                            voter1s = objects!["option1VoterName"] as! [String]
-                        }
-                        
-                        // Fill voter2 array - use "?" as it may not exist
-                        if objects!["option2VoterName"]?.count > 0 {
-                            voter2s = objects!["option2VoterName"] as! [String]
-                        }
-                        
-                        // Build table view objects
-                        if voter1s.count > 0 && voter2s.count > 0 {
-                            self.objectsArray = [Objects(sectionName: option1Text, sectionObjects: voter1s), Objects(sectionName: option2Text, sectionObjects: voter2s)]
-                        } else if voter1s.count > 0 && voter2s.count < 1 {
-                            self.objectsArray = [Objects(sectionName: option1Text, sectionObjects: voter1s)]
-                        } else if voter1s.count < 1 && voter2s.count > 0 {
-                            self.objectsArray = [Objects(sectionName: option2Text, sectionObjects: voter2s)]
-                        }
-                        
-                        // Reload table data
-                        self.tableView.reloadData()
-                        self.tableView.reloadInputViews()
-                        
-                    } else {
-                        println("Voter retreival error")
-                        println(error)
-                    }
-                })
             } else {
-                println("Error while attempting to votesId data from SocialQs table.")
+                println("Voter retreival error")
                 println(error)
             }
         })
@@ -170,30 +183,6 @@ class VotesTableViewController: UITableViewController {
         return cell
     }
     
-    /*
-    override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    
-    let headerView = UIView(frame: CGRectMake(0, 0, tableView.bounds.size.width, 80))
-    
-    headerView.backgroundColor = mainColorBlue
-    
-    let headerLabel = UILabel(frame: CGRectMake(0, 0, tableView.bounds.size.width, 20))
-    headerLabel.text = "Test"
-    headerLabel.textColor = UIColor.whiteColor()
-    headerView.addSubview(headerLabel)
-    
-    return headerView
-    }
-    */
-    
-    
-    /*
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
-    
-    return objectsArray[section].sectionName
-    }
-    */
-    
     
     // Format section header
     override func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -202,42 +191,66 @@ class VotesTableViewController: UITableViewController {
         header.contentView.backgroundColor = mainColorBlue
         
         // Set Q in table header
-        var headerTextView = UITextField(frame: CGRectMake(0, 0, self.view.frame.size.width, 40))
-        headerTextView.text = questionText
-        headerTextView.textColor = UIColor.darkTextColor()
-        headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-        headerTextView.textAlignment = NSTextAlignment.Center
-        tableView.tableHeaderView = headerTextView
+        if let qPhoto = viewQ["questionPhoto"] as? PFFile {
+            var headerTextView = UITextField(frame: CGRectMake(8, 0, self.view.frame.size.width - 60, 60))
+            headerTextView.text = viewQ["question"] as! String //questionText
+            headerTextView.textColor = UIColor.darkTextColor()
+            headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            headerTextView.textAlignment = NSTextAlignment.Center
+            
+            var frame = CGRectMake(0, 0, 60, 60)
+            var headerImageView = UIImageView(frame: frame)
+            var image: UIImage = imageZoom[2]!
+            headerImageView.image = image
+            headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
+            headerImageView.clipsToBounds = true
+            tableView.tableHeaderView = headerTextView
+            tableView.tableHeaderView?.addSubview(headerImageView)
+        } else {
+            var headerTextView = UITextField(frame: CGRectMake(8, 0, self.view.frame.size.width - 8, 60))
+            headerTextView.text = viewQ["question"] as! String //questionText
+            headerTextView.textColor = UIColor.darkTextColor()
+            headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            headerTextView.textAlignment = NSTextAlignment.Center
+            tableView.tableHeaderView = headerTextView
+        }
         
         // Set text or photo in section header
-        if objectsArray[section].sectionName != photoString { // Text
-            header.textLabel.textColor = UIColor.whiteColor()
-            //header.alpha = bgAlpha //make the header transparent
-            
-            /*
-            var frame = CGRectMake(0, 0, 60, self.tableView.frame.size.width)
-            var headerTextView = UITextField(frame: frame)
-            headerTextView.textAlignment = NSTextAlignment.Center
-            //headerTextView.te
-            headerTextView.text = objectsArray[section].sectionName
-            header.addSubview(headerTextView)
-            */
-            
-            header.textLabel.textAlignment = NSTextAlignment.Left
-            header.textLabel.numberOfLines = 10 // Dynamic number of lines
-            header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
-            header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-            header.textLabel.text = objectsArray[section].sectionName
-            
-            
-        } else { // Image
-            var frame = CGRectMake(0, 0, 60, 60)
+        println("option\(section+1)Photo")
+        if let ophoto = viewQ["option\(section+1)Photo"] as? PFFile { // Image
+            //var frame = CGRectMake(0, 0, self.view.frame.size.width, 60) // full bar image
+            var frame = CGRectMake(self.view.frame.size.width - 60, 0, 60, 60)
             var headerImageView = UIImageView(frame: frame)
             var image: UIImage = imageZoom[section]!
             headerImageView.image = image
             headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
             headerImageView.clipsToBounds = true
             header.addSubview(headerImageView)
+            
+            var headerTextView = UITextField(frame: CGRectMake(0, 0, self.view.frame.size.width, 60))
+            headerTextView.text = viewQ["option1"] as! String
+            headerTextView.textColor = UIColor.whiteColor()
+            headerTextView.backgroundColor = UIColor.clearColor()
+            headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            headerTextView.textAlignment = NSTextAlignment.Center
+            //header.textLabel.text = objectsArray[section].sectionName
+            //var linesShown: CGFloat = 3
+            //var maxHeight: CGFloat = headerTextView.font.lineHeight * linesShown
+            //headerTextView.sizeThatFits(CGSizeMake(self.view.frame.size.width, maxHeight))
+            
+            header.addSubview(headerTextView)
+            
+        } else {
+            header.textLabel.textColor = UIColor.whiteColor()
+            header.textLabel.backgroundColor = UIColor.clearColor()
+            //header.alpha = bgAlpha //make the header transparent
+            
+            header.textLabel.textAlignment = NSTextAlignment.Left
+            header.textLabel.numberOfLines = 10 // Dynamic number of lines
+            header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
+            //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+            header.textLabel.text = objectsArray[section].sectionName
         }
     }
     
@@ -254,50 +267,5 @@ class VotesTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-    // Return NO if you do not want the specified item to be editable.
-    return true
-    }
-    */
-    
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-    if editingStyle == .Delete {
-    // Delete the row from the data source
-    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-    } else if editingStyle == .Insert {
-    // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }
-    }
-    */
-    
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-    
-    }
-    */
-    
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-    // Return NO if you do not want the item to be re-orderable.
-    return true
-    }
-    */
-    
-    /*
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-    }
-    */
     
 }

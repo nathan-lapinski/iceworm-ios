@@ -24,6 +24,7 @@ class NEWMyQsCell: UITableViewCell {
     @IBOutlet var stats1: UILabel!
     @IBOutlet var stats2: UILabel!
     @IBOutlet var background: UIImageView!
+    @IBOutlet var questionZoom: UIButton!
     
     // Cell2
     @IBOutlet var option1Image: UIImageView!

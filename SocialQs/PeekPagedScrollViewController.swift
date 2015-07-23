@@ -7,7 +7,7 @@
 import UIKit
 
 class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
-
+    
     @IBOutlet var scrollView: UIScrollView!
     @IBOutlet var pageControl: UIPageControl!
     @IBOutlet var questionLabel: UILabel!
@@ -25,14 +25,26 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         
         returningFromPopover = true
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        questionLabel.text = questionZoom
+        if questionZoom != "" {
+            questionLabel.text = questionZoom
+            questionLabel.alpha = CGFloat(0.75)
+            questionLabel.hidden = false
+        } else {
+            questionLabel.hidden = true
+        }
         
         // Set up the image you want to scroll & zoom and add it to the scroll view
-        pageImages = [imageZoom[0]!, imageZoom[1]!]
+        for var i = 0; i < imageZoom.count; i++ {
+            if imageZoom[i] != nil {
+                pageImages.append(imageZoom[i]!)
+            }
+        }
+        
+        //pageImages = [imageZoom[0]!, imageZoom[1]!, imageZoom[2]!]
         let pageCount = pageImages.count
         
         // Set up the page control
@@ -48,9 +60,13 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         let pagesScrollViewSize = scrollView.frame.size
         scrollView.contentSize = CGSizeMake(pagesScrollViewSize.width * CGFloat(pageImages.count), 1.0)//pagesScrollViewSize.height)
         
+        //
+        //
         // Set offset to show clicked image (1st or 2nd option)
         var offset = CGPointMake(scrollView.frame.size.width*CGFloat(zoomPage), 0)
         scrollView.setContentOffset(offset, animated: true)
+        //
+        //
         
         // Load the initial set of pages that are on screen
         loadVisiblePages()
@@ -131,12 +147,12 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         // Load the pages that are now on screen
         loadVisiblePages()
     }
-
-
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
+    
 }

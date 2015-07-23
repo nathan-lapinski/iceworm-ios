@@ -2,18 +2,16 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "logo_square.png"
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "logo_square-2.png"
+      "filename" : "logo_square.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "3x",
-      "filename" : "logo_square-1.png"
+      "scale" : "3x"
     }
   ],
   "info" : {
