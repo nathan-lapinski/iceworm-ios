@@ -24,12 +24,17 @@ class SettingsViewController: UIViewController {
         
         if !PFFacebookUtils.isLinkedWithUser(user) {
             
-            PFFacebookUtils.linkUserInBackground(user, withReadPermissions: nil, block: { (succeeded, error) -> Void in
+            let permissions = ["public_profile", "email", "user_friends"]
+            
+            PFFacebookUtils.linkUserInBackground(user, withReadPermissions: permissions, block: { (succeeded, error) -> Void in
                 
                 if succeeded {
                     
                     println("User is linked with Facebook")
                     
+                    // MAKE FUNCTION -----------------------------------------------------
+                    // repeats in signup
+                    // MAKE FUNCTION -----------------------------------------------------
                     // Get profile pic from FB and store it locally (var) and on Parse
                     var accessToken = FBSDKAccessToken.currentAccessToken().tokenString
                     var url = NSURL(string: "https://graph.facebook.com/me/picture?type=large&return_ssl_resources=1&access_token=" + accessToken)
@@ -41,6 +46,9 @@ class SettingsViewController: UIViewController {
                         profilePicture = image!
                         
                         // Store image in Parse DB
+                        //
+                        // CHECK IF ALREADY EXISTS
+                        //
                         var user = PFUser.currentUser()
                         let imageData = UIImagePNGRepresentation(image)
                         let picture = PFFile(name:"profilePicture.png", data: imageData)
@@ -59,6 +67,9 @@ class SettingsViewController: UIViewController {
                         
                         self.updateImageAndButton(true)
                     }
+                    // MAKE FUNCTION -----------------------------------------------------
+                    // repeats in signup
+                    // MAKE FUNCTION -----------------------------------------------------
                     
                 } else {
                     
@@ -67,7 +78,13 @@ class SettingsViewController: UIViewController {
                 }
             })
             
-        } else {
+        } else { // UNLINK FACEBOOK
+            
+            //
+            //
+            // TEST IF REGULAR PARSE ACCOUNT IS SETUP - REQUIRE SETUP IF NO
+            //
+            //
             
             PFFacebookUtils.unlinkUserInBackground(user, block: { (succeeded, error) -> Void in
                 
@@ -116,7 +133,7 @@ class SettingsViewController: UIViewController {
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String
         
-        logout.setTitle("Logout " + myName, forState: UIControlState.Normal)
+        logout.setTitle("Log Out " + myName, forState: UIControlState.Normal)
         appInfo.text = "Version: " + version! + "\nBuild: (" + build! + ")"
     }
     

@@ -12,15 +12,115 @@ import Parse
 class QsSignupViewController: UIViewController {
     
     var activityIndicator = UIActivityIndicatorView()
-    //var signUpActive = false
+    var newUsername = ""
     
-    //@IBOutlet var logoImageView: UIImageView!
     @IBOutlet var username: UITextField!
     @IBOutlet var password: UITextField!
     @IBOutlet var passwordConfirm: UITextField!
     @IBOutlet var emailAddress: UITextField!
     @IBOutlet var signUpButton: UIButton!
-    @IBOutlet var cancelButton: UIButton!
+    @IBOutlet var signUpFacebookButton: UIButton!
+    
+    @IBAction func signUpFacebookButtonPressed(sender: AnyObject) {
+        
+        let permissions = ["public_profile", "email", "user_friends"]
+        
+        PFFacebookUtils.logInInBackgroundWithReadPermissions(permissions) {(user: PFUser?, error: NSError?) -> Void in
+            
+            if let user = user {
+                
+                // Setup spinner and block application input
+                self.activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+                self.activityIndicator.center = self.view.center
+                self.activityIndicator.hidesWhenStopped = true
+                self.activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+                self.view.addSubview(self.activityIndicator)
+                self.activityIndicator.startAnimating()
+                UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+                
+                // Blur screen while account processing
+                let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
+                let blurView = UIVisualEffectView(effect: blurEffect)
+                blurView.frame = self.view.frame
+                self.view.addSubview(blurView)
+                
+                if user.isNew {
+                    
+                    println("User signed up and logged in through Facebook!")
+                    
+                    // MAKE FUNCTION -----------------------------------------------------
+                    // repeats in setting
+                    // MAKE FUNCTION -----------------------------------------------------
+                    // Get profile pic from FB and store it locally (var) and on Parse
+                    var accessToken = FBSDKAccessToken.currentAccessToken().tokenString
+                    var url = NSURL(string: "https://graph.facebook.com/me/picture?type=large&return_ssl_resources=1&access_token=" + accessToken)
+                    let urlRequest = NSURLRequest(URL: url!)
+                    NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+                        
+                        // Set app iamge
+                        let image = UIImage(data: data)
+                        profilePicture = image!
+                        
+                        // Store image in Parse DB
+                        //
+                        // CHECK IF ALREADY EXISTS ON PARSE
+                        //
+                        var user = PFUser.currentUser()
+                        let imageData = UIImagePNGRepresentation(image)
+                        let picture = PFFile(name:"profilePicture.png", data: imageData)
+                        user!.setObject(picture, forKey: "profilePicture")
+                        
+                        user!.saveInBackgroundWithBlock({ (success, error) -> Void in
+                            if error == nil {
+                                
+                                println("image saved successfully")
+                                
+                            } else {
+                                
+                                println("image not saved")
+                            }
+                        })
+                    }
+                    // MAKE FUNCTION -----------------------------------------------------
+                    // repeats in settings
+                    // MAKE FUNCTION -----------------------------------------------------
+                    
+                    // Create entry in UserQs table
+                    self.createUserQs(self.username.text)
+                    
+                    // Do this in a completion handler once the above is global
+                    self.performSegueWithIdentifier("signedUp", sender: self)
+                
+                    // End spinner/UI block/unblur
+                    self.activityIndicator.stopAnimating()
+                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                    blurView.removeFromSuperview()
+                    
+                } else {
+                    
+                    println("User logged in through Facebook!")
+                    
+                    self.performSegueWithIdentifier("signedUp", sender: self)
+                    
+                    // End spinner/UI block/unblur
+                    self.activityIndicator.stopAnimating()
+                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                    blurView.removeFromSuperview()
+                }
+                
+            } else {
+                
+                println("Uh oh. The user cancelled the Facebook login.")
+                self.navigationController?.navigationBarHidden = false
+            }
+        }
+        
+        // Stop animation - hides when stopped (above) hides spinner automatically
+        self.activityIndicator.stopAnimating()
+        // Release lock on app input
+        UIApplication.sharedApplication().endIgnoringInteractionEvents()
+    }
+    
     
     // This function processes the login procedure
     @IBAction func loginButtonPressed(sender: AnyObject) {
@@ -28,15 +128,15 @@ class QsSignupViewController: UIViewController {
         // Error out with pop-up if username and/or password are missing
         if username.text == "" || password.text == "" || passwordConfirm.text == "" || emailAddress.text == "" {
             
-            displayAlert("WTF, mate", message: "It's not that hard. Just enter a username, password and email address!")
+            displayAlert("WTF, mate", "It's not that hard. Just enter a username, password and email address!", self)
             
         } else if isValidEmail(emailAddress.text!) == false {
             
-            displayAlert("Don't be a tool.", message: "Please enter a valid email address (hint: this will allow you to find your friends)")
+            displayAlert("Don't be a tool.", "Please enter a valid email address (hint: this will allow you to find your friends)", self)
             
         } else if password.text != passwordConfirm.text {
             
-            displayAlert("Way to go, fat fingers.", message: "Maybe try typing the same password twice")
+            displayAlert("Way to go, fat fingers.", "Maybe try typing the same password twice", self)
             
             // ALREADY IN PLACE THROUGH PARSE ------
             //} else if EMAIL ALREADY USED {
@@ -68,62 +168,8 @@ class QsSignupViewController: UIViewController {
                 
                 if error == nil { // Signup successful!
                     
-                    // Create UsersQs entry
-                    var userQ = PFObject(className: "UserQs")
-                    userQ.saveInBackgroundWithBlock({ (success, error) -> Void in
-                        
-                        if error == nil {
-                            
-                            var userQId = userQ.objectId!
-                            
-                            // Store userQ enrty identifier back in Users table
-                            var user = PFUser.currentUser()
-                            user!.setObject(userQId, forKey: "uQId")
-                            user!.saveInBackgroundWithBlock({ (success, error) -> Void in
-                                
-                                if error == nil {
-                                    
-                                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                                    myName = self.username.text.lowercaseString
-                                    uId = user!.objectId!
-                                    uQId = userQ.objectId!
-                                    
-                                    // Store username locally
-                                    NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-                                    NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
-                                    NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
-                                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                                    // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                                    
-                                    // Stop animation - hides when stopped (above) hides spinner automatically
-                                    self.activityIndicator.stopAnimating()
-                                    
-                                    // Release app input block
-                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                    
-                                    let installation = PFInstallation.currentInstallation()
-                                    installation["user"] = PFUser.currentUser()
-                                    installation.saveInBackground()
-                                    
-                                    // Segue "ask" tab
-                                    self.performSegueWithIdentifier("signedUp", sender: self)
-                                    
-                                } else {
-                                    
-                                    println("Error storing uQId to UserQs table")
-                                    println(error)
-                                    
-                                }
-                            })
-                            
-                        } else {
-                            
-                            println("Error creating UserQs entry for new user")
-                            println(error)
-                            
-                        }
-                    })
+                    // Create entry in UserQs table
+                    self.createUserQs(self.username.text)
                     
                 } else { // Signup failed
                     
@@ -139,10 +185,71 @@ class QsSignupViewController: UIViewController {
                     // Release app input block
                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
                     
-                    self.displayAlert("Failed Signup", message: errorMessage)
+                    displayAlert("Failed Signup", errorMessage, self)
                 }
             })
         }
+    }
+    
+    
+    func createUserQs(username: String) {
+        
+        // Create UsersQs entry
+        var userQ = PFObject(className: "UserQs")
+        userQ.saveInBackgroundWithBlock({ (success, error) -> Void in
+            
+            if error == nil {
+                
+                var userQId = userQ.objectId!
+                
+                // Store userQ enrty identifier back in Users table
+                var user = PFUser.currentUser()
+                user!.setObject(userQId, forKey: "uQId")
+                user!.saveInBackgroundWithBlock({ (success, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                        myName = username.lowercaseString
+                        uId = user!.objectId!
+                        uQId = userQ.objectId!
+                        
+                        // Store username locally
+                        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+                        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+                        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
+                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                        
+                        // Stop animation - hides when stopped (above) hides spinner automatically
+                        self.activityIndicator.stopAnimating()
+                        
+                        // Release app input block
+                        UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                        
+                        let installation = PFInstallation.currentInstallation()
+                        installation["user"] = PFUser.currentUser()
+                        installation.saveInBackground()
+                        
+                        // Segue "ask" tab
+                        self.performSegueWithIdentifier("signedUp", sender: self)
+                        
+                    } else {
+                        
+                        println("Error storing uQId to UserQs table")
+                        println(error)
+                        
+                    }
+                })
+                
+            } else {
+                
+                println("Error creating UserQs entry for new user")
+                println(error)
+                
+            }
+        })
     }
     
     
@@ -176,35 +283,19 @@ class QsSignupViewController: UIViewController {
         super.viewDidLoad()
         
         signUpButton.layer.cornerRadius = cornerRadius
-        cancelButton.layer.cornerRadius = cornerRadius
         
+        // Hide nav bar when keyboard present
+        navigationController?.hidesBarsOnSwipe = false
+        navigationController?.hidesBarsOnTap = true
+        navigationController?.hidesBarsWhenKeyboardAppears = true
+        
+        navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: 16)!], forState: UIControlState.Normal)
     }
     
     
     override func viewDidAppear(animated: Bool) {
         
     }
-    
-    
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // Function for displaying pop-up
-    func displayAlert(title: String, message: String) {
-        
-        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            
-            // idk why this was in teh tutorial... causes a revert to previous view controller
-            //self.dismissViewControllerAnimated(true, completion: nil)
-            
-        }))
-        
-        self.presentViewController(alert, animated: true, completion: nil)
-        
-    }
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
     
     
     override func didReceiveMemoryWarning() {
@@ -222,15 +313,5 @@ class QsSignupViewController: UIViewController {
         return true
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

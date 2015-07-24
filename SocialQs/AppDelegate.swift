@@ -23,13 +23,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // SocialQs Dev --------------------------------------------------------------------------------------------------------------
         Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
         
+        // SocialQs Test 4 -----------------------------------------------------------------------------------------------------------
+        //Parse.setApplicationId("GePc935BnwSJ27iNNE3lKEv1VEgWLjdApRto0AQ7", clientKey: "nH1Kr6kpym4lYVxg22sO0B0fvBMwc744hwaHq1yE")
+        
+        
         // SocialQs Test 3 -----------------------------------------------------------------------------------------------------------
         //Parse.setApplicationId("K4FZAb1Wd3dIE81YUTDJykvShnr0ViJRdKNDx496", clientKey: "aeqbE3vPZ1m4EBbeLiBhF1dhVhlLWxtBOaPElCLB")
-        
-        
         // SocialQs Blackula ---------------------------------------------------------------------------------------------------------
         //Parse.setApplicationId("7aEu2aiPHAun7HWnN42hWJ4eQuZueBiHZoGq7GZb", clientKey: "FU38Qh4hHo0LDGLAQP8PKB8wtjzwhPFGArpwqj7t")
-        
         // SocialQs Test 2 -----------------------------------------------------------------------------------------------------------
         //Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
         

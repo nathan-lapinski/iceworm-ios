@@ -23,8 +23,7 @@ class NEWMyQsTableViewController: UITableViewController {
     var configuration = [String]()
     var votesId = [String]()
     var photosId = [String]()
-    //var deletedMyQuestions = [String]() // questions DELETED by current user
-    var deletedMyStorageKey = myName + "deletedMyPermanent"
+    //var deletedMyStorageKey = myName + "deletedMyPermanent"
     var refresher: UIRefreshControl!
     var activityIndicator = UIActivityIndicatorView()
     
@@ -84,7 +83,6 @@ class NEWMyQsTableViewController: UITableViewController {
         view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
         UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-        
         
         var expectedCount = 0
         var downloadedCount = 0
@@ -250,6 +248,15 @@ class NEWMyQsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
+            imageZoom = [nil, nil, nil]
+            
+            var expectedCount = 0
+            var downloadedCount = 0
+            
+            if self.questionsPhoto[indexPath.row] != nil { expectedCount++ }
+            if self.option1sPhoto[indexPath.row] != nil { expectedCount++ }
+            if self.option2sPhoto[indexPath.row] != nil { expectedCount++ }
+            
             self.setViewQ(indexPath.row)
             
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
@@ -268,14 +275,21 @@ class NEWMyQsTableViewController: UITableViewController {
                         
                         if let downloadedImage = UIImage(data: data!) {
                             
-                            imageZoom[2] = downloadedImage
+                            println("Setting Q image")
                             
+                            imageZoom[0] = downloadedImage
+                            
+                            downloadedCount++
+                        }
+                        
+                        if downloadedCount == expectedCount {
+                            
+                            self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
                         }
                     }
                 })
             }
 
-            
             if self.option1sPhoto[indexPath.row] != nil {
                 
                 self.option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
@@ -288,36 +302,47 @@ class NEWMyQsTableViewController: UITableViewController {
                         
                         if let downloadedImage = UIImage(data: data1!) {
                             
-                            imageZoom[0] = downloadedImage
+                            println("Setting O1 image")
                             
-                            //if self.option2sPhoto[indexPath.row] != nil {
+                            imageZoom[1] = downloadedImage
                             
-                            self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
-                                
-                                if error2 != nil {
-                                    
-                                    println(error2)
-                                    
-                                } else {
-                                    
-                                    if let downloadedImage = UIImage(data: data2!) {
-                                        
-                                        imageZoom[1] = downloadedImage
-                                    }
-                                }
-                            })
+                            downloadedCount++
+                        }
+                        
+                        if downloadedCount == expectedCount {
+                            
+                            self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
                         }
                     }
                 })
             }
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            if self.option2sPhoto[indexPath.row] != nil {
                 
-                self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
-                
-            })
-            
-            
+                self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                    
+                    if error2 != nil {
+                        
+                        println(error2)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: data2!) {
+                            
+                            println("Setting O2 image")
+                            
+                            imageZoom[2] = downloadedImage
+                            
+                            downloadedCount++
+                        }
+                        
+                        if downloadedCount == expectedCount {
+                            
+                            self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
+                        }
+                    }
+                })
+            }
             //}
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
@@ -381,7 +406,7 @@ class NEWMyQsTableViewController: UITableViewController {
         }
         trash.backgroundColor = UIColor.redColor()
         
-        println(indexPath.row)
+        println("Swiped MY row: \(indexPath.row)")
         
         if (option1Stats[indexPath.row] + option2Stats[indexPath.row]) > 0 {
             return [trash, view] // Order = appearance order, right to left on screen
@@ -400,10 +425,10 @@ class NEWMyQsTableViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         
         // Recall deleted/dismissed data
-        if NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey) != nil {
-        
-            deletedMyQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey)! as! [(String)]
-        }
+//        if NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey) != nil {
+//        
+//            deletedMyQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedMyStorageKey)! as! [(String)]
+//        }
         
         // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
@@ -428,7 +453,7 @@ class NEWMyQsTableViewController: UITableViewController {
             returningFromPopover = false
             
             // Adjust top and bottom bounds of table for nav and tab bars
-            self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
+            self.tableView.contentInset = UIEdgeInsetsMake(0,0,52,0)  // T, L, B, R
         }
         
         if returningFromSettings {

@@ -46,6 +46,7 @@
 		90A147511B2E4CFA00947B33 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A147501B2E4CFA00947B33 /* libsqlite3.dylib */; };
 		90A147531B2E4D0600947B33 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A147521B2E4D0600947B33 /* Accounts.framework */; };
 		90A147551B2E4D0D00947B33 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A147541B2E4D0D00947B33 /* Social.framework */; };
+		90D7F3F81B62216B001284FA /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D7F3F71B62216B001284FA /* UsernameViewController.swift */; };
 		90DE6C211B30E9CC004F3BA0 /* QsLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DE6C201B30E9CC004F3BA0 /* QsLoginViewController.swift */; };
 		90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */; };
 		90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */; };
@@ -108,6 +109,7 @@
 		90A147521B2E4D0600947B33 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		90A147541B2E4D0D00947B33 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		90A575711B3852DF0009CE37 /* SocialQs-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SocialQs-Bridging-Header.h"; sourceTree = "<group>"; };
+		90D7F3F71B62216B001284FA /* UsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsernameViewController.swift; sourceTree = "<group>"; };
 		90DE6C201B30E9CC004F3BA0 /* QsLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsLoginViewController.swift; sourceTree = "<group>"; };
 		90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = socialQuestionModel.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
+				90D7F3F71B62216B001284FA /* UsernameViewController.swift */,
 				904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */,
 				902D87201B577862001F9954 /* NEWMyQsCell.swift */,
 				902D87221B57793C001F9954 /* NEWMyQsTableViewController.swift */,
@@ -381,6 +384,7 @@
 				908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */,
 				902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,
+				90D7F3F81B62216B001284FA /* UsernameViewController.swift in Sources */,
 				902D871F1B5747A9001F9954 /* ScrollViewContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

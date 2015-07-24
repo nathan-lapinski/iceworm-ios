@@ -17,6 +17,7 @@ class NEWTheirQsTableViewController: UITableViewController {
     var option1sPhoto: [PFFile?] = [PFFile]()
     var option2sPhoto: [PFFile?] = [PFFile]()
     var questionsPhoto: [PFFile?]  = [PFFile]()
+    var askerPhotos: [PFFile?]  = [PFFile]()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
     //var users = [String: String]()
@@ -124,9 +125,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                                 UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                 self.activityIndicator.stopAnimating()
-                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
                     })
@@ -153,9 +154,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                                 UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                 self.activityIndicator.stopAnimating()
-                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
                     })
@@ -182,13 +183,21 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                                 UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                 self.activityIndicator.stopAnimating()
-                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
                     })
                 }
+                
+                if downloadedCount == expectedCount {
+                    
+                    self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
+                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                    self.activityIndicator.stopAnimating()
+                }
+                
                 
             } else {
                 println("Full res photo query from MyQs tab failed")
@@ -373,13 +382,45 @@ class NEWTheirQsTableViewController: UITableViewController {
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
-            println(indexPath.row)
+            imageZoom = [nil, nil, nil]
+            
+            var expectedCount = 0
+            var downloadedCount = 0
+            
+            if self.questionsPhoto[indexPath.row] != nil { expectedCount++ }
+            if self.option1sPhoto[indexPath.row] != nil { expectedCount++ }
+            if self.option2sPhoto[indexPath.row] != nil { expectedCount++ }
             
             self.setViewQ(indexPath.row)
             
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             requestedQId = self.questionIds[indexPath.row]
+            
+            if self.questionsPhoto[indexPath.row] != nil {
+                
+                self.questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                    
+                    if error != nil {
+                        
+                        println(error)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: data!) {
+                            
+                            imageZoom[0] = downloadedImage
+                            
+                            downloadedCount++
+                        }
+                        
+                        if downloadedCount == expectedCount {
+                            
+                            self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+                        }
+                    }
+                })
+            }
             
             if self.option1sPhoto[indexPath.row] != nil {
                 
@@ -393,36 +434,47 @@ class NEWTheirQsTableViewController: UITableViewController {
                         
                         if let downloadedImage = UIImage(data: data1!) {
                             
+                            imageZoom[1] = downloadedImage
                             
-                            imageZoom[0] = downloadedImage
+                            downloadedCount++
+                        }
+                        
+                        if downloadedCount == expectedCount {
                             
-                            //if self.option2sPhoto[indexPath.row] != nil {
-                            
-                            self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
-                                
-                                if error2 != nil {
-                                    
-                                    println(error2)
-                                    
-                                } else {
-                                    
-                                    if let downloadedImage = UIImage(data: data2!) {
-                                        
-                                        imageZoom[1] = downloadedImage
-                                        
-                                    }
-                                }
-                            })
+                            self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
                         }
                     }
                 })
             }
+            
+            if self.option2sPhoto[indexPath.row] != nil {
+                
+                self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                    
+                    if error2 != nil {
+                        
+                        println(error2)
+                        
+                    } else {
+                        
+                        if let downloadedImage = UIImage(data: data2!) {
+                            
+                            imageZoom[2] = downloadedImage
+                            
+                            downloadedCount++
+                        }
+                        
+                        if downloadedCount == expectedCount {
+                            
+                            self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+                        }
+                    }
+                })
+            }
+            //}
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
-            })
         }
         view.backgroundColor = UIColor.orangeColor()
         
@@ -453,6 +505,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                     
                     self.questionIds.removeAtIndex(indexPath.row)
                     self.questions.removeAtIndex(indexPath.row)
+                    self.questionsPhoto.removeAtIndex(indexPath.row)
                     self.option1s.removeAtIndex(indexPath.row)
                     self.option2s.removeAtIndex(indexPath.row)
                     self.option1sPhoto.removeAtIndex(indexPath.row)
@@ -460,6 +513,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                     self.option1Stats.removeAtIndex(indexPath.row)
                     self.option2Stats.removeAtIndex(indexPath.row)
                     self.askers.removeAtIndex(indexPath.row)
+                    self.askerPhotos.removeAtIndex(indexPath.row)
                     self.configuration.removeAtIndex(indexPath.row)
                     self.votesId.removeAtIndex(indexPath.row)
                     self.photosId.removeAtIndex(indexPath.row)
@@ -475,6 +529,9 @@ class NEWTheirQsTableViewController: UITableViewController {
             })
         }
         trash.backgroundColor = UIColor.redColor()
+        
+        
+        println("Swiped THEIR row: \(indexPath.row)")
         
         
         if votedOn {
@@ -788,6 +845,7 @@ class NEWTheirQsTableViewController: UITableViewController {
         // Profile Pic
         cell.profilePicture.layer.borderWidth = 1.0
         cell.profilePicture.layer.borderColor = UIColor.whiteColor().CGColor
+        cell.profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
         cell.profilePicture.layer.masksToBounds = false
         cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
         cell.profilePicture.clipsToBounds = true
@@ -870,11 +928,30 @@ class NEWTheirQsTableViewController: UITableViewController {
         //    cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
         //}
         
-        // Tag vote buttons
+        // Tag vote and qZoom buttons
         cell.vote1Button.tag = indexPath.row
         cell.vote2Button.tag = indexPath.row
-        
         cell.questionZoom.tag = indexPath.row
+        
+        // Set askerPhoto
+        if askerPhotos[indexPath.row] != nil {
+            
+            askerPhotos[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                
+                if error != nil {
+                    
+                    println("Error retrieving and setting askerPhoto")
+                    println(error)
+                    
+                } else {
+                    
+                    if let downloadedImage = UIImage(data: data!) {
+                        
+                        cell.profilePicture.image = downloadedImage
+                    }
+                }
+            })
+        }
         
         return cell
     }
@@ -983,14 +1060,15 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             self.questions.removeAll(keepCapacity: true)
                             self.questionIds.removeAll(keepCapacity: true)
+                            self.questionsPhoto.removeAll(keepCapacity: true)
                             self.option1s.removeAll(keepCapacity: true)
                             self.option2s.removeAll(keepCapacity: true)
                             self.option1sPhoto.removeAll(keepCapacity: true)
                             self.option2sPhoto.removeAll(keepCapacity: true)
-                            self.questionsPhoto.removeAll(keepCapacity: true)
                             self.option1Stats.removeAll(keepCapacity: true)
                             self.option2Stats.removeAll(keepCapacity: true)
                             self.askers.removeAll(keepCapacity: true)
+                            self.askerPhotos.removeAll(keepCapacity: true)
                             self.configuration.removeAll(keepCapacity: true)
                             self.votesId.removeAll(keepCapacity: true)
                             self.photosId.removeAll(keepCapacity: true)
@@ -1094,25 +1172,56 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 
                                 self.askers.append(questionObject["askername"] as! String)
                                 
-                                
-                                // Ensure all queries have completed THEN refresh the table!
-                                // CHANGED THIS TO MATCH NEW PULL METHOD - WAS "ASKERS"
-                                //
-                                if self.questionsPhoto.count == self.option2sPhoto.count {
-
-                                    self.tableView.reloadData()
-                                    //self.tableView.reloadInputViews()
+                                // Download asker profile picture
+                                var pictureQuery = PFQuery(className: "_User")
+                                pictureQuery.whereKey("username", equalTo: questionObject["askername"]! as! String)
+                                pictureQuery.findObjectsInBackgroundWithBlock({ (pictureObjects, error) -> Void in
                                     
-                                    // Kill refresher when query finished
-                                    self.refresher.endRefreshing()
+                                    if error == nil {
+                                        
+                                        println("1")
+                                        
+                                        if let temp = pictureObjects {
+                                            
+                                            println("2")
+                                            
+                                            for pictureObject in temp {
+                                                
+                                                println("3")
+                                                
+                                                if let pic = pictureObject["profilePicture"] as? PFFile {
+                                                    
+                                                    println("4a")
+                                                    
+                                                    self.askerPhotos.append(pic)
+                                                } else {
+                                                    
+                                                    println("4b")
+                                                    
+                                                    self.askerPhotos.append(nil)
+                                                }
+                                            }
+                                        }
+                                        
+                                    } else {
+                                        
+                                        println("Profile Picture download failed")
+                                        println(error)
+                                        
+                                        self.askerPhotos.append(nil)
+                                    }
                                     
-                                }
-                                
-                                // Stop animation - hides when stopped (above) hides spinner automatically
-                                //self.activityIndicator.stopAnimating()
-                                
-                                // Release app input
-                                //UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                    // Ensure all queries have completed THEN refresh the table!
+                                    if self.questionsPhoto.count == self.askerPhotos.count {
+                                        
+                                        println("Reloading Table")
+                                        
+                                        self.tableView.reloadData()
+                                        
+                                        // Kill refresher when query finished
+                                        self.refresher.endRefreshing()
+                                    }
+                                })
                             }
                         }
                     }

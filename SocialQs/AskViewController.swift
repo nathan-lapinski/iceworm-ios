@@ -11,7 +11,7 @@ import UIKit
 class AskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     
     let thumbnailMax = CGFloat(120)
-    let photoMax = CGFloat(1200)
+    let photoMax = CGFloat(800)
     
     var currentPId = ""
     
@@ -39,6 +39,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     var filled = ["Q": 0, "O1": 0, "O2": 0]
     var isPhoto = [0: false, 1: false, 2: false]
+    
     var activityIndicator = UIActivityIndicatorView()
     
     @IBOutlet var askTable: UITableView!
@@ -296,43 +297,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                             }
                                         })
                                         
-                                        // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
-                                        // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
-                                        var toUsers: PFQuery = PFUser.query()!
                                         
-                                        var pushQuery: PFQuery = PFInstallation.query()!
                                         
-                                        if isGroupieName.isEmpty == false {
-                                            
-                                            toUsers.whereKey("username", containedIn: isGroupieName)
-                                            pushQuery.whereKey("user", matchesQuery: toUsers)
-                                            
-                                        } else { // If sendToGroupies is empty, filter push to all users
-                                            pushQuery.whereKey("user", notContainedIn: isGroupieName)
-                                            pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
-                                        }
                                         
-                                        var pushDirected: PFPush = PFPush()
-                                        pushDirected.setQuery(pushQuery)
                                         
-                                        // Create dictionary to send JSON to parse/to other devices
-                                        //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
-                                        //pushDirected.setData(dataDirected)////
-                                        pushDirected.setMessage("New Q from \(myName)!")
                                         
-                                        // Send Push Notifications
-                                        pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
-                                            
-                                            if error == nil {
-                                                
-                                                isGroupieName.removeAll(keepCapacity: true)
-                                                isGroupieQId.removeAll(keepCapacity: true)
-                                                
-                                                //println("Directed push notification sent!")
-                                                //println("-----")
-                                            }
-                                        })
-                                        // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
+                                        
                                         
                                         // Unlock application interaction and halt spinner
                                         UIApplication.sharedApplication().endIgnoringInteractionEvents()
@@ -360,6 +330,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                         
                                         // Un-blur ASK tab
                                         blurView.removeFromSuperview()
+                                        
+                                        
+                                        //sendPushes() // moved to AFTER full res images are up
+                                        
                                         
                                         // Upload full res images ---------------------------------------------
                                         var photoQuery = PFQuery(className: "PhotoFullMetalBlacket")
@@ -440,6 +414,15 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                                     }
                                                 }
                                             }
+                                            
+                                            // ********************************************************************
+                                            //
+                                            // Send push notifications of new Q
+                                            // Put this inside logic to ensure ALL full res photos are up
+                                            self.sendPushes()
+                                            //
+                                            //
+                                            // ********************************************************************
                                         }
                                         
                                     } else {
@@ -493,6 +476,47 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         _button.layer.cornerRadius = cornerRadius
         _button.backgroundColor = buttonBackgroundColor
         _button.titleLabel?.textColor = buttonTextColor
+    }
+    
+    
+    func sendPushes() {
+        // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
+        // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
+        var toUsers: PFQuery = PFUser.query()!
+        
+        var pushQuery: PFQuery = PFInstallation.query()!
+        
+        if isGroupieName.isEmpty == false {
+            
+            toUsers.whereKey("username", containedIn: isGroupieName)
+            pushQuery.whereKey("user", matchesQuery: toUsers)
+            
+        } else { // If sendToGroupies is empty, filter push to all users
+            pushQuery.whereKey("user", notContainedIn: isGroupieName)
+            pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
+        }
+        
+        var pushDirected: PFPush = PFPush()
+        pushDirected.setQuery(pushQuery)
+        
+        // Create dictionary to send JSON to parse/to other devices
+        //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
+        //pushDirected.setData(dataDirected)////
+        pushDirected.setMessage("New Q from \(myName)!")
+        
+        // Send Push Notifications
+        pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+            
+            if error == nil {
+                
+                isGroupieName.removeAll(keepCapacity: true)
+                isGroupieQId.removeAll(keepCapacity: true)
+                
+                //println("Directed push notification sent!")
+                //println("-----")
+            }
+        })
+        // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
     }
     
     
@@ -642,7 +666,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         let alert = UIAlertController(title: titleMessage, message: nil, preferredStyle:
             .ActionSheet) // Can also set to .Alert if you prefer
         
-        let cameraAction = UIAlertAction(title: "Camera", style: .Default) { (action) -> Void in
+        let cameraAction = UIAlertAction(title: "Take Picture", style: .Default) { (action) -> Void in
             self.picker.allowsEditing = false
             self.picker.sourceType = UIImagePickerControllerSourceType.Camera
             self.picker.cameraCaptureMode = .Photo
@@ -650,14 +674,15 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         }
         alert.addAction(cameraAction)
         
-        let libraryAction = UIAlertAction(title: "Library", style: .Default) { (action) -> Void in
+        let libraryAction = UIAlertAction(title: "Choose From Camera Roll", style: .Default) { (action) -> Void in
             self.picker.allowsEditing = false //2
             self.picker.sourceType = .PhotoLibrary //3
             self.presentViewController(self.picker, animated: true, completion: nil)//4
         }
         alert.addAction(libraryAction)
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Destructive) { (action) -> Void in
+        //let cancelAction = UIAlertAction(title: "Cancel", style: .Destructive) { (action) -> Void in
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) -> Void in
             
             if self.whichCell == 0 && self.chosenImage[0] == UIImage(named: "camera.png") {
                 self.qPhoto = !self.qPhoto

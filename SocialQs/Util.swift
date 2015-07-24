@@ -28,6 +28,7 @@ func displayAlert(title: String, message: String, sender: UIViewController) {
     })
 }
 
+
 func getProfilePicture() -> UIImage {
     
     //var profilePicture = UIImage()// moved to globals

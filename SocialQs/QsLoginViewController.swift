@@ -12,16 +12,12 @@ import Parse
 class QsLoginViewController: UIViewController {
     
     var activityIndicator = UIActivityIndicatorView()
-    //var signUpActive = false
     
-    @IBOutlet var logoImageView: UIImageView!
     @IBOutlet var username: UITextField!
     @IBOutlet var password: UITextField!
     @IBOutlet var loginButton: UIButton!
-    @IBOutlet var cancelButton: UIButton!
-    //@IBOutlet var registeredTextField: UILabel!
+    @IBOutlet var loginFacebookButton: UIButton!
     @IBOutlet var logoVerticalSpace: NSLayoutConstraint!
-    
     
     @IBAction func cancelButtonPressed(sender: AnyObject) {
         
@@ -32,9 +28,55 @@ class QsLoginViewController: UIViewController {
         password.resignFirstResponder()
         
         performSegueWithIdentifier("cancelLogIn", sender: self)
-        
     }
     
+    @IBAction func loginFacebookButtonPressed(sender: AnyObject) {
+        
+        // Setup spinner and block application input
+        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        
+        let permissions = ["public_profile", "email", "user_friends"]
+        
+        PFFacebookUtils.logInInBackgroundWithReadPermissions(permissions) {(user: PFUser?, error: NSError?) -> Void in
+            
+            if let user = user {
+                
+                if user.isNew {
+                    
+                    println("User signed up and logged in through Facebook!")
+                    
+                    self.performSegueWithIdentifier("signedIn", sender: self)
+                    
+                    // Stop animation - hides when stopped (above) hides spinner automatically
+                    self.activityIndicator.stopAnimating()
+                    // Release lock on app input
+                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                    
+                } else {
+                    
+                    println("User logged in through Facebook!")
+                    
+                    self.performSegueWithIdentifier("signedIn", sender: self)
+                    
+                    // Stop animation - hides when stopped (above) hides spinner automatically
+                    self.activityIndicator.stopAnimating()
+                    // Release lock on app input
+                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                }
+                
+            } else {
+                
+                println("Uh oh. The user cancelled the Facebook login.")
+                self.navigationController?.navigationBarHidden = false
+            }
+        }
+    }
     
     // This function processes the login procedure
     @IBAction func loginButtonPressed(sender: AnyObject) {
@@ -42,7 +84,7 @@ class QsLoginViewController: UIViewController {
         // Error out with pop-up if username and/or password are missing
         if username.text == "" || password.text == "" {
             
-            displayAlert("Way to go Rain Man", message: "I think you forgot something. Please enter a username and password.")
+            displayAlert("Way to go Rain Man", "I think you forgot something. Please enter a username and password.", self)
             
         } else {
             
@@ -125,37 +167,24 @@ class QsLoginViewController: UIViewController {
                         
                     }
                     
-                    self.displayAlert("Failed Login", message: errorMessage)
+                    displayAlert("Failed Login", errorMessage, self)
                 }
             })
         }
     }
-    
-    
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // Function for displaying pop-up
-    func displayAlert(title: String, message: String) {
-        
-        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            
-        }))
-        
-        self.presentViewController(alert, animated: true, completion: nil)
-        
-    }
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
-    // MAKE GLOBAL FUNCTION -----------------------------------------------------------
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         loginButton.layer.cornerRadius = cornerRadius
-        cancelButton.layer.cornerRadius = cornerRadius
         
+        // Hide nav bar when keyboard present
+        navigationController?.hidesBarsOnSwipe = false
+        navigationController?.hidesBarsOnTap = true
+        navigationController?.hidesBarsWhenKeyboardAppears = true
+        
+        navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: 16)!], forState: UIControlState.Normal)
     }
     
     
@@ -219,16 +248,7 @@ class QsLoginViewController: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-    /*
-    // MARK: - Navigation
     
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using segue.destinationViewController.
-    // Pass the selected object to the new view controller.
-    }
-    */
 }

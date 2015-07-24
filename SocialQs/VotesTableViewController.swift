@@ -22,7 +22,6 @@ class VotesTableViewController: UITableViewController {
     var questionPhoto: PFFile? = PFFile()
     var option1Photo: PFFile?  = PFFile()
     var option2Photo: PFFile?  = PFFile()
-    //var imageZoom = [UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
     
     struct Objects {
         var sectionName: String!
@@ -45,77 +44,13 @@ class VotesTableViewController: UITableViewController {
         // Format Done button
         navigationItem.leftBarButtonItem = doneButton
         navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue-Thin", size: 16)!], forState: UIControlState.Normal)
-        
     }
 
     
     override func viewWillAppear(animated: Bool) {
         
         returningFromPopover = true
-        
-//        // FUNCTION -----------------------------------------------------------
-//        // FUNCTION -----------------------------------------------------------
-//        if let image = viewQ["questionPhoto"] as? PFFile {
-//            
-//            image.getDataInBackgroundWithBlock({ (data, error) -> Void in
-//                
-//                if error != nil {
-//                    
-//                    println(error)
-//                    
-//                } else {
-//                    
-//                    if let downloadedImage = UIImage(data: data!) {
-//                        
-//                        imageZoom[2] = downloadedImage
-//                        
-//                        self.tableView.reloadData()
-//                    }
-//                }
-//            })
-//        }
-//        
-//        if let image = viewQ["option1Photo"] as? PFFile {
-//            
-//            image.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
-//                
-//                if error1 != nil {
-//                    
-//                    println(error1)
-//                    
-//                } else {
-//                    
-//                    if let downloadedImage = UIImage(data: data1!) {
-//                        
-//                        imageZoom[0] = downloadedImage
-//                        
-//                        self.tableView.reloadData()
-//                    }
-//                }
-//            })
-//        }
-//        
-//        if let image = viewQ["option2Photo"] as? PFFile {
-//            
-//            image.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
-//                
-//                if error2 != nil {
-//                    
-//                    println(error2)
-//                    
-//                } else {
-//                    
-//                    if let downloadedImage = UIImage(data: data2!) {
-//                        
-//                        imageZoom[1] = downloadedImage
-//                        
-//                        self.tableView.reloadData()
-//                    }
-//                }
-//            })
-//        }
-//        // FUNCTION -----------------------------------------------------------
-//        // FUNCTION -----------------------------------------------------------
+        returningFromSettings = false
         
         var query = PFQuery(className: "Votes")
         query.getObjectInBackgroundWithId(viewQ["votesId"] as! String, block: { (objects, error) -> Void in
@@ -148,7 +83,7 @@ class VotesTableViewController: UITableViewController {
                 
                 // Reload table data
                 self.tableView.reloadData()
-                self.tableView.reloadInputViews()
+                //self.tableView.reloadInputViews()
                 
             } else {
                 println("Voter retreival error")
@@ -160,13 +95,9 @@ class VotesTableViewController: UITableViewController {
     // MARK: - Table view data source
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        
         return objectsArray.count
     }
-    
-    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
         return objectsArray[section].sectionObjects.count
     }
     
@@ -191,7 +122,8 @@ class VotesTableViewController: UITableViewController {
         header.contentView.backgroundColor = mainColorBlue
         
         // Set Q in table header
-        if let qPhoto = viewQ["questionPhoto"] as? PFFile {
+        if imageZoom[0] != nil {
+        //if let qPhoto = viewQ["questionPhoto"] as? PFFile {
             var headerTextView = UITextField(frame: CGRectMake(8, 0, self.view.frame.size.width - 60, 60))
             headerTextView.text = viewQ["question"] as! String //questionText
             headerTextView.textColor = UIColor.darkTextColor()
@@ -200,7 +132,7 @@ class VotesTableViewController: UITableViewController {
             
             var frame = CGRectMake(0, 0, 60, 60)
             var headerImageView = UIImageView(frame: frame)
-            var image: UIImage = imageZoom[2]!
+            var image: UIImage = imageZoom[0]!
             headerImageView.image = image
             headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
             headerImageView.clipsToBounds = true
@@ -216,12 +148,12 @@ class VotesTableViewController: UITableViewController {
         }
         
         // Set text or photo in section header
-        println("option\(section+1)Photo")
-        if let ophoto = viewQ["option\(section+1)Photo"] as? PFFile { // Image
+        if imageZoom[section] != nil {
+        //if let ophoto = viewQ["option\(section+1)Photo"] as? PFFile { // Image
             //var frame = CGRectMake(0, 0, self.view.frame.size.width, 60) // full bar image
             var frame = CGRectMake(self.view.frame.size.width - 60, 0, 60, 60)
             var headerImageView = UIImageView(frame: frame)
-            var image: UIImage = imageZoom[section]!
+            var image: UIImage = imageZoom[section+1]!
             headerImageView.image = image
             headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
             headerImageView.clipsToBounds = true
@@ -257,14 +189,12 @@ class VotesTableViewController: UITableViewController {
     
     // Set section header heights
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
         return headerHeight
     }
     
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     
