@@ -13,6 +13,9 @@ class WelcomeViewController: UIViewController {
     @IBOutlet var signInButton: UIButton!
     @IBOutlet var createAccountButton: UIButton!
     
+    @IBOutlet var logoImageView: UIImageView!
+    @IBOutlet var logoTopConstraint: NSLayoutConstraint!
+    
     @IBAction func signInButton(sender: AnyObject) {
         
         performSegueWithIdentifier("signIn", sender: self)
@@ -41,12 +44,38 @@ class WelcomeViewController: UIViewController {
         signInButton.layer.cornerRadius = cornerRadius
         createAccountButton.layer.cornerRadius = cornerRadius
         
-        signInButton.hidden = true
-        createAccountButton.hidden = true
+        //signInButton.hidden = true
+        //createAccountButton.hidden = true
+        
+        // ANIMATION STUFFS -------------------------------------------------------------
+        logoTopConstraint.constant = 0
+        logoImageView.layoutIfNeeded()
+        signInButton.alpha = 0.0
+        createAccountButton.alpha = 0.0
+        
+        UIView.animateWithDuration(1.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+            
+            println("animating")
+            
+            self.logoTopConstraint.constant = -70
+            self.logoImageView.layoutIfNeeded()
+            
+            }, completion: { finished in
+        })
+        
+        UIView.animateWithDuration(1.5, delay: 0.5, options: nil, animations: { () -> Void in
+            
+            self.signInButton.alpha = 1.0
+            self.createAccountButton.alpha = 1.0
+            
+            }, completion: { finished in
+        })
+        // ANIMATION STUFFS -------------------------------------------------------------
     }
     
     
     override func viewDidLayoutSubviews() {
+        
     }
     
     
@@ -137,35 +166,7 @@ class WelcomeViewController: UIViewController {
             createAccountButton.hidden = false
         }
         
-        // ANIMATION STUFFS -------------------------------------------------------------
-        /*
-        UIView.animateWithDuration(1.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-            
-            //self.logoVerticalSpace.constant = -100
-            //self.logoImageView.layoutIfNeeded()
-            
-            //self.logoImageView.center = CGPointMake(self.logoImageView.center.x, self.logoImageView.center.y - 75)
-            
-            //self.username.center = CGPointMake(self.username.center.x+self.view.bounds.width, self.username.center.y)
-            //self.password.center = CGPointMake(self.password.center.x-self.view.bounds.width, self.password.center.y)
-            
-            }, completion: { finished in
-                
-                UIView.animateWithDuration(1.5, delay: 1.0, options: nil, animations: { () -> Void in
-                    
-                    //self.loginButton.alpha = 1.0
-                    //self.registeredTextField.alpha = 1.0
-                    //self.signupButton.alpha = 1.0
-                    
-                    }, completion: { finished in
-                        
-                        println("Animation finished")
-                        //self.loginButton.alpha = 1.0
-                        
-                })
-        })
-        */
-        // ANIMATION STUFFS -------------------------------------------------------------
+        
         
     }
     

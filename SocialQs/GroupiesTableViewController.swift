@@ -143,13 +143,13 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
         // Configure the cell...
         cell.usernameLabel.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
-        cell.usernameLabel.textColor = UIColor.whiteColor()
+        cell.usernameLabel.textColor = UIColor.darkTextColor() //UIColor.whiteColor()
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         
         if indexPath.section == 0 {
             
             cell.backgroundColor = UIColor.clearColor()
-            cell.usernameLabel.font = UIFont(name: "HelveticaNeue-Bold", size: tableFontSize)!
+            cell.usernameLabel.font = UIFont(name: "HelveticaNeue", size: tableFontSize)!
             
             if allSelected == false {
                 
@@ -168,7 +168,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             //if indexPath.row % 2 == 0 { cell.backgroundColor = UIColor.clearColor() }
             //else { cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4) }
             
-            cell.usernameLabel.font = UIFont(name: "HelveticaNeue", size: tableFontSize)
+            cell.usernameLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)
             
             let followedObjectName = objectsArray[indexPath.section].sectionObjects[indexPath.row] as String
             

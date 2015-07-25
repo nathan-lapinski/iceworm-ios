@@ -263,85 +263,88 @@ class NEWMyQsTableViewController: UITableViewController {
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             requestedQId = self.questionIds[indexPath.row]
             
-            if self.questionsPhoto[indexPath.row] != nil {
+            if expectedCount == 0 {
                 
-                self.questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
-                    
-                    if error != nil {
-                        
-                        println(error)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data!) {
-                            
-                            println("Setting Q image")
-                            
-                            imageZoom[0] = downloadedImage
-                            
-                            downloadedCount++
-                        }
-                        
-                        if downloadedCount == expectedCount {
-                            
-                            self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
-                        }
-                    }
-                })
-            }
-
-            if self.option1sPhoto[indexPath.row] != nil {
+                self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
                 
-                self.option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
-                    
-                    if error1 != nil {
-                        
-                        println(error1)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data1!) {
-                            
-                            println("Setting O1 image")
-                            
-                            imageZoom[1] = downloadedImage
-                            
-                            downloadedCount++
-                        }
-                        
-                        if downloadedCount == expectedCount {
-                            
-                            self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
-                        }
-                    }
-                })
-            }
-            
-            if self.option2sPhoto[indexPath.row] != nil {
+            } else {
                 
-                self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                if self.questionsPhoto[indexPath.row] != nil {
                     
-                    if error2 != nil {
+                    self.questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
                         
-                        println(error2)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data2!) {
+                        if error != nil {
                             
-                            println("Setting O2 image")
+                            println(error)
                             
-                            imageZoom[2] = downloadedImage
+                        } else {
                             
-                            downloadedCount++
+                            
+                            if let downloadedImage = UIImage(data: data!) {
+                                
+                                imageZoom[0] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
+                            }
                         }
+                    })
+                    
+                }
+                
+                if self.option1sPhoto[indexPath.row] != nil {
+                    
+                    self.option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
                         
-                        if downloadedCount == expectedCount {
+                        if error1 != nil {
                             
-                            self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
+                            println(error1)
+                            
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data1!) {
+                                
+                                imageZoom[1] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
+                            }
                         }
-                    }
-                })
+                    })
+                }
+                
+                if self.option2sPhoto[indexPath.row] != nil {
+                    
+                    self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                        
+                        if error2 != nil {
+                            
+                            println(error2)
+                            
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data2!) {
+                                
+                                imageZoom[2] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
+                            }
+                        }
+                    })
+                }
             }
             //}
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION

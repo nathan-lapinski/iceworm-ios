@@ -148,7 +148,8 @@ class VotesTableViewController: UITableViewController {
         }
         
         // Set text or photo in section header
-        if imageZoom[section] != nil {
+        if imageZoom[section+1] != nil {
+            
         //if let ophoto = viewQ["option\(section+1)Photo"] as? PFFile { // Image
             //var frame = CGRectMake(0, 0, self.view.frame.size.width, 60) // full bar image
             var frame = CGRectMake(self.view.frame.size.width - 60, 0, 60, 60)

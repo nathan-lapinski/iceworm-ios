@@ -44,6 +44,8 @@ class UsernameViewController: UIViewController {
                     
                     if success {
                         
+                        myName = self.username.text
+                        
                         displayAlert("Welcome to SocialQs", "", self)
                         self.performSegueWithIdentifier("signedUp2", sender: self)
                         

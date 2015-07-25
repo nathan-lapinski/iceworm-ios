@@ -125,9 +125,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                                 UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                 self.activityIndicator.stopAnimating()
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
                     })
@@ -154,9 +154,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                                 UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                 self.activityIndicator.stopAnimating()
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
                     })
@@ -183,20 +183,20 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                                 UIApplication.sharedApplication().endIgnoringInteractionEvents()
                                 self.activityIndicator.stopAnimating()
+                                self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
                     })
                 }
                 
-                if downloadedCount == expectedCount {
-                    
-                    self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                    self.activityIndicator.stopAnimating()
-                }
+//                if downloadedCount == expectedCount {
+//                    
+//                    self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
+//                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+//                    self.activityIndicator.stopAnimating()
+//                }
                 
                 
             } else {
@@ -397,84 +397,91 @@ class NEWTheirQsTableViewController: UITableViewController {
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             requestedQId = self.questionIds[indexPath.row]
             
-            if self.questionsPhoto[indexPath.row] != nil {
+            if expectedCount == 0 {
                 
-                self.questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
-                    
-                    if error != nil {
-                        
-                        println(error)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data!) {
-                            
-                            imageZoom[0] = downloadedImage
-                            
-                            downloadedCount++
-                        }
-                        
-                        if downloadedCount == expectedCount {
-                            
-                            self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
-                        }
-                    }
-                })
-            }
+                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+                
+            } else {
             
-            if self.option1sPhoto[indexPath.row] != nil {
-                
-                self.option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+                if self.questionsPhoto[indexPath.row] != nil {
                     
-                    if error1 != nil {
+                    self.questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
                         
-                        println(error1)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data1!) {
+                        if error != nil {
                             
-                            imageZoom[1] = downloadedImage
+                            println(error)
                             
-                            downloadedCount++
+                        } else {
+                            
+                            
+                            if let downloadedImage = UIImage(data: data!) {
+                                
+                                imageZoom[0] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+                            }
                         }
-                        
-                        if downloadedCount == expectedCount {
-                            
-                            self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
-                        }
-                    }
-                })
-            }
-            
-            if self.option2sPhoto[indexPath.row] != nil {
-                
-                self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+                    })
                     
-                    if error2 != nil {
+                }
+                
+                if self.option1sPhoto[indexPath.row] != nil {
+                    
+                    self.option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
                         
-                        println(error2)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data2!) {
+                        if error1 != nil {
                             
-                            imageZoom[2] = downloadedImage
+                            println(error1)
                             
-                            downloadedCount++
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data1!) {
+                                
+                                imageZoom[1] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+                            }
                         }
+                    })
+                }
+                
+                if self.option2sPhoto[indexPath.row] != nil {
+                    
+                    self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
                         
-                        if downloadedCount == expectedCount {
+                        if error2 != nil {
                             
-                            self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+                            println(error2)
+                            
+                        } else {
+                            
+                            if let downloadedImage = UIImage(data: data2!) {
+                                
+                                imageZoom[2] = downloadedImage
+                                
+                                downloadedCount++
+                            }
+                            
+                            if downloadedCount == expectedCount {
+                                
+                                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+                            }
                         }
-                    }
-                })
+                    })
+                }
             }
-            //}
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
             // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
-            
         }
         view.backgroundColor = UIColor.orangeColor()
         
@@ -1098,7 +1105,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 } else {
                                     
                                     self.questions.append(questionObject["question"] as! String)
-                                    self.questionsPhoto.append(PFFile())
+                                    self.questionsPhoto.append(nil)
                                     tempConfig = "3"
                                 }
                                 // ---------------------------------------------------------------------
@@ -1179,24 +1186,14 @@ class NEWTheirQsTableViewController: UITableViewController {
                                     
                                     if error == nil {
                                         
-                                        println("1")
-                                        
                                         if let temp = pictureObjects {
-                                            
-                                            println("2")
                                             
                                             for pictureObject in temp {
                                                 
-                                                println("3")
-                                                
                                                 if let pic = pictureObject["profilePicture"] as? PFFile {
-                                                    
-                                                    println("4a")
                                                     
                                                     self.askerPhotos.append(pic)
                                                 } else {
-                                                    
-                                                    println("4b")
                                                     
                                                     self.askerPhotos.append(nil)
                                                 }
