@@ -141,6 +141,7 @@ class SettingsViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         
         returningFromSettings = true
+        topOffset = 0
     }
     
     

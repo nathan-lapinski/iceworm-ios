@@ -53,7 +53,7 @@ class WelcomeViewController: UIViewController {
         signInButton.alpha = 0.0
         createAccountButton.alpha = 0.0
         
-        UIView.animateWithDuration(1.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+        UIView.animateWithDuration(1.5, delay: 0.5, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
             
             println("animating")
             
@@ -61,14 +61,16 @@ class WelcomeViewController: UIViewController {
             self.logoImageView.layoutIfNeeded()
             
             }, completion: { finished in
+                
         })
         
-        UIView.animateWithDuration(1.5, delay: 0.5, options: nil, animations: { () -> Void in
+        UIView.animateWithDuration(1.5, delay: 1.0, options: nil, animations: { () -> Void in
             
             self.signInButton.alpha = 1.0
             self.createAccountButton.alpha = 1.0
             
             }, completion: { finished in
+                
         })
         // ANIMATION STUFFS -------------------------------------------------------------
     }

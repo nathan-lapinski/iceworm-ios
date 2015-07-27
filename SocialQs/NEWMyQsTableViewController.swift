@@ -444,9 +444,10 @@ class NEWMyQsTableViewController: UITableViewController {
             
             println("Page loaded from tab bar")
             
-            self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
+            topOffset = 64
             
             refresh()
+            
         }
         
         if returningFromPopover {
@@ -455,8 +456,13 @@ class NEWMyQsTableViewController: UITableViewController {
             
             returningFromPopover = false
             
-            // Adjust top and bottom bounds of table for nav and tab bars
-            self.tableView.contentInset = UIEdgeInsetsMake(0,0,52,0)  // T, L, B, R
+            if myViewReturnedOnce == false {
+                myViewReturnedOnce = true
+                topOffset = 0
+            } else {
+                topOffset = 64
+            }
+            
         }
         
         if returningFromSettings {
@@ -465,9 +471,10 @@ class NEWMyQsTableViewController: UITableViewController {
             
             returningFromSettings = false
             
-            // Adjust top and bottom bounds of table for nav and tab bars
-            self.tableView.contentInset = UIEdgeInsetsMake(0,0,52,0)  // T, L, B, R
+            topOffset = 0
         }
+        
+        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
         
         // **********************************************************************************************
     }

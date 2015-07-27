@@ -74,6 +74,9 @@ var zoomPage = Int()
 // Variable to tell if returning from a popover (ie: don't refresh table)
 var returningFromSettings = false
 var returningFromPopover = false
+var topOffset = CGFloat(0)
+var myViewReturnedOnce = false
+var theirViewReturnedOnce = false
 
 // Groupies variable
 var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]

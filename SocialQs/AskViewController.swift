@@ -151,6 +151,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         returningFromPopover = false
         returningFromSettings = false
+        topOffset = 64
     }
     
     

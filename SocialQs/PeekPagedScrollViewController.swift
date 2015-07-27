@@ -24,6 +24,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     override func viewWillAppear(animated: Bool) {
         
         returningFromPopover = true
+        topOffset = 64
     }
     
     override func viewDidLoad() {

@@ -17,7 +17,7 @@ class NEWTheirQsTableViewController: UITableViewController {
     var option1sPhoto: [PFFile?] = [PFFile]()
     var option2sPhoto: [PFFile?] = [PFFile]()
     var questionsPhoto: [PFFile?]  = [PFFile]()
-    var askerPhotos: [PFFile?]  = [PFFile]()
+    var askerPhotos = Dictionary<String, UIImage?>()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
     //var users = [String: String]()
@@ -224,8 +224,8 @@ class NEWTheirQsTableViewController: UITableViewController {
         var voteId = "stats\(optionId)" // remove??
         
         // Update internal and local storage of "myVotes"
-        myVotes[questionIds[questionId]] = optionId
-        NSUserDefaults.standardUserDefaults().setObject(myVotes, forKey: myVotesStorageKey)
+//        myVotes[questionIds[questionId]] = optionId
+//        NSUserDefaults.standardUserDefaults().setObject(myVotes, forKey: myVotesStorageKey)
         
         // Query Q table to get vote table Id
         // Then access Vote table and do stuffs
@@ -520,7 +520,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                     self.option1Stats.removeAtIndex(indexPath.row)
                     self.option2Stats.removeAtIndex(indexPath.row)
                     self.askers.removeAtIndex(indexPath.row)
-                    self.askerPhotos.removeAtIndex(indexPath.row)
+                    //self.askerPhotos.removeAtIndex(indexPath.row)
                     self.configuration.removeAtIndex(indexPath.row)
                     self.votesId.removeAtIndex(indexPath.row)
                     self.photosId.removeAtIndex(indexPath.row)
@@ -567,8 +567,8 @@ class NEWTheirQsTableViewController: UITableViewController {
         // PUSH - Set up the reload to trigger off the push for "reloadTable"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
         
-        // Reload data upon first entry to view
-        refresh()
+        // Reload data upon first entry to view - NOW HANDLED IN VIEWWILLAPPEAR
+        //refresh()
         
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
@@ -622,6 +622,8 @@ class NEWTheirQsTableViewController: UITableViewController {
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        println("Building cell from user: \(askers[indexPath.row])")
         
         var cell = NEWTheirQsCell()
         
@@ -941,24 +943,30 @@ class NEWTheirQsTableViewController: UITableViewController {
         cell.questionZoom.tag = indexPath.row
         
         // Set askerPhoto
-        if askerPhotos[indexPath.row] != nil {
-            
-            askerPhotos[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
-                
-                if error != nil {
-                    
-                    println("Error retrieving and setting askerPhoto")
-                    println(error)
-                    
-                } else {
-                    
-                    if let downloadedImage = UIImage(data: data!) {
-                        
-                        cell.profilePicture.image = downloadedImage
-                    }
-                }
-            })
+        if let pic = askerPhotos[askers[indexPath.row]] {
+            cell.profilePicture.image = pic
         }
+        
+        
+//        if let photo = askerPhotos[askers[indexPath.row]] {
+//            
+//            photo!.getDataInBackgroundWithBlock({ (data, error) -> Void in
+//                
+//                if error != nil {
+//                    
+//                    println("Error retrieving and setting askerPhoto")
+//                    println(error)
+//                    
+//                } else {
+//                    
+//                    if let downloadedImage = UIImage(data: data!) {
+//                        
+//                        cell.profilePicture.image = downloadedImage
+//                    }
+//                }
+//            })
+//        }
+        
         
         return cell
     }
@@ -973,9 +981,9 @@ class NEWTheirQsTableViewController: UITableViewController {
             deletedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey)! as! [(String)]
         }
         
-        if NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey) != nil {
-            myVotes = NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey)! as! Dictionary
-        }
+//        if NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey) != nil {
+//            myVotes = NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey)! as! Dictionary
+//        }
         
         if NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey) != nil {
             votedOn1Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey)! as! [(String)]
@@ -997,7 +1005,7 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             println("Page loaded from tab bar")
             
-            self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
+            topOffset = 64
             
             refresh()
             
@@ -1009,8 +1017,12 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             returningFromPopover = false
             
-            // Adjust top and bottom bounds of table for nav and tab bars
-            self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
+            if theirViewReturnedOnce == false {
+                theirViewReturnedOnce = true
+                topOffset = 0
+            } else {
+                topOffset = 64
+            }
             
         }
         
@@ -1020,10 +1032,10 @@ class NEWTheirQsTableViewController: UITableViewController {
             
             returningFromSettings = false
             
-            // Adjust top and bottom bounds of table for nav and tab bars
-            self.tableView.contentInset = UIEdgeInsetsMake(0,0,52,0)  // T, L, B, R
+            topOffset = 0
         }
         
+        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
         
         //    println("USER IS NOT SUBSCRIBED TO RELOADTHEIRTABLE")
         //}
@@ -1054,7 +1066,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                     // Sort by newest created-date first
                     getSocialQsQuery.orderByDescending("createdAt")
                     
-                    // Get only theirQs that I haven't deleted
+                    // Get only theirQs that user hasn't deleted
                     getSocialQsQuery.whereKey("objectId", containedIn: theirQs)
                     
                     // Set query limit to max
@@ -1075,7 +1087,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                             self.option1Stats.removeAll(keepCapacity: true)
                             self.option2Stats.removeAll(keepCapacity: true)
                             self.askers.removeAll(keepCapacity: true)
-                            self.askerPhotos.removeAll(keepCapacity: true)
+                            //self.askerPhotos.removeAll(keepCapacity: true)
                             self.configuration.removeAll(keepCapacity: true)
                             self.votesId.removeAll(keepCapacity: true)
                             self.photosId.removeAll(keepCapacity: true)
@@ -1179,46 +1191,22 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 
                                 self.askers.append(questionObject["askername"] as! String)
                                 
-                                // Download asker profile picture
-                                var pictureQuery = PFQuery(className: "_User")
-                                pictureQuery.whereKey("username", equalTo: questionObject["askername"]! as! String)
-                                pictureQuery.findObjectsInBackgroundWithBlock({ (pictureObjects, error) -> Void in
+                            }
+                            
+                            // Ensure all queries have completed THEN get askerPhotos
+                            if self.questionsPhoto.count == self.questions.count {
+                                
+                                // Get profile pictures with code block, then update table
+                                self.getProfilePictures() { (complete: Bool) in
                                     
-                                    if error == nil {
-                                        
-                                        if let temp = pictureObjects {
-                                            
-                                            for pictureObject in temp {
-                                                
-                                                if let pic = pictureObject["profilePicture"] as? PFFile {
-                                                    
-                                                    self.askerPhotos.append(pic)
-                                                } else {
-                                                    
-                                                    self.askerPhotos.append(nil)
-                                                }
-                                            }
-                                        }
-                                        
-                                    } else {
-                                        
-                                        println("Profile Picture download failed")
-                                        println(error)
-                                        
-                                        self.askerPhotos.append(nil)
-                                    }
+                                    println("COMPLETE!!")
+                                    println(self.askerPhotos)
+                                    println("Reloading Table")
+                                    self.tableView.reloadData()
                                     
-                                    // Ensure all queries have completed THEN refresh the table!
-                                    if self.questionsPhoto.count == self.askerPhotos.count {
-                                        
-                                        println("Reloading Table")
-                                        
-                                        self.tableView.reloadData()
-                                        
-                                        // Kill refresher when query finished
-                                        self.refresher.endRefreshing()
-                                    }
-                                })
+                                    // Kill refresher when query finished
+                                    self.refresher.endRefreshing()
+                                }
                             }
                         }
                     }
@@ -1228,6 +1216,101 @@ class NEWTheirQsTableViewController: UITableViewController {
                     // NO Qs
                     
                 }
+            }
+        })
+    }
+    
+    
+    func getProfilePictures(completion: (complete: Bool) -> Void) {
+        
+        println("retrieving profiles pictures")
+        
+        // CHANGE THIS!! **************************************************************************************************************************************************
+        askerPhotos.removeAll(keepCapacity: true)
+        // CHANGE THIS!! **************************************************************************************************************************************************
+        
+        // Download asker profile picture
+        var pictureQuery = PFQuery(className: "_User")
+        pictureQuery.whereKey("username", containedIn: askers)
+        pictureQuery.findObjectsInBackgroundWithBlock({ (pictureObjects, error) -> Void in
+            
+            if error == nil {
+                
+                if let temp = pictureObjects {
+                    
+                    let numberOfObjects = temp.count
+                    var count = 0
+                    
+                    for pictureObject in temp {
+                        
+                        var askername = pictureObject["username"] as! String
+                        
+                        println("OBJECT FOR \(askername)")
+                        
+                        if let pic = pictureObject["profilePicture"] as? PFFile {
+                            
+                            if let test = self.askerPhotos[askername] {
+                                // entry exists in dictionary
+                                
+                            } else {
+                                
+                                pic.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                                    
+                                    if error != nil {
+                                        
+                                        println("Error retrieving and setting askerPhoto")
+                                        println(error)
+                                        
+                                        count++
+                                        println("count +1: pic retrieval error")
+                                        
+                                        if count == numberOfObjects {
+                                            
+                                            completion(complete: true)
+                                        }
+                                        
+                                    } else {
+                                        
+                                        if let downloadedImage = UIImage(data: data!) {
+                                            
+                                            self.askerPhotos[askername] = downloadedImage
+                                            
+                                            println(self.askerPhotos)
+                                            
+                                        }
+                                        
+                                        count++
+                                        println("count +1: pic retrieved")
+                                        
+                                        if count == numberOfObjects {
+                                            
+                                            completion(complete: true)
+                                        }
+                                    }
+                                })
+                            }
+                            
+                        } else {
+                            
+                            // No PFFile image available
+                            count++
+                            println("count +1: no image available")
+                            
+                            if count == numberOfObjects {
+                                
+                                completion(complete: true)
+                            }
+                        }
+                        
+                        println("count: \(count)")
+                        println("waiting for: \(numberOfObjects)")
+                    }
+                }
+                
+            } else {
+                
+                println("Profile Picture download failed")
+                println(error)
             }
         })
     }

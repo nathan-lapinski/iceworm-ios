@@ -68,6 +68,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
     override func viewWillAppear(animated: Bool) {
         
+        topOffset = 64
+        
         // Manually call refresh upon loading to get most up to datest datas
         loadUsers("")
         
