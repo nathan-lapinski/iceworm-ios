@@ -152,6 +152,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         returningFromPopover = false
         returningFromSettings = false
         topOffset = 64
+        
+        println(isGroupieName)
+        println(isGroupieQId)
     }
     
     
@@ -485,47 +488,45 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         //var usersToQuery = isGroupieQId// + [uQId]
         
         
+//        //////////////////////////////////////////////////////////////////////////////
+//        // LATER - Do this only if isGroupies is NOT empty
+//        var appFriends = [String]()
+//        var currentUsersForQ = [String]()
+//        var untappedUsersForQ = [String]()
+//        
+//        // Get List Of Friends using SOCIALQS
+//        var socialQsFriendsRequest = FBSDKGraphRequest(graphPath:"/me/friends", parameters: nil)
+//        socialQsFriendsRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+//            
+//            if error == nil {
+//                
+//                var temp: AnyObject = result["data"]!!
+//                
+//                for var i = 0; i < temp.count; i++ {
+//                    appFriends.append(temp[i]["name"]!! as! String)
+//                }
+//                
+//                let set1 = Set(isGroupieName)
+//                let set2 = Set(appFriends)
+//                currentUsersForQ = Array(set1.intersect(set2))
+//                let set3 = Set(currentUsersForQ)
+//                untappedUsersForQ = Array(set1.subtract(set3))
+//                
+//            } else {
+//                
+//                println("Error Getting Friends \(error)")
+//            }
+//        }
+//        //////////////////////////////////////////////////////////////////////////////
         
         
-        
-        //////////////////////////////////////////////////////////////////////////////
-        // LATER - Do this only if isGroupies is NOT empty
-        var appFriends = [String]()
-        var currentUsersForQ = [String]()
-        var untappedUsersForQ = [String]()
-        
-        // Get List Of Friends using SOCIALQS
-        var socialQsFriendsRequest = FBSDKGraphRequest(graphPath:"/me/friends", parameters: nil)
-        socialQsFriendsRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
-            if error == nil {
-                
-                var temp: AnyObject = result["data"]!!
-                
-                for var i = 0; i < temp.count; i++ {
-                    appFriends.append(temp[i]["name"]!! as! String)
-                }
-                
-                let set1 = Set(isGroupieName)
-                let set2 = Set(appFriends)
-                currentUsersForQ = Array(set1.intersect(set2))
-                let set3 = Set(currentUsersForQ)
-                untappedUsersForQ = Array(set1.subtract(set3))
-                
-            } else {
-                println("Error Getting Friends \(error)")
-            }
-        }
-        //////////////////////////////////////////////////////////////////////////////
-        
-        
-        
-        
+        //var usersToQuery = isGroupieName
         
         // Add qId to "UserQs" table ------
         var userQsQuery = PFQuery(className: "UserQs")
         
-        if currentUsersForQ.count > 0 {
-            userQsQuery.whereKey("objectId", containedIn: currentUsersForQ)
+        if isGroupieName.count > 0 {
+            userQsQuery.whereKey("username", containedIn: isGroupieName)
         }
         
         // Execute query
@@ -584,9 +585,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             toUsers.whereKey("username", containedIn: isGroupieName)
             pushQuery.whereKey("user", matchesQuery: toUsers)
             
-        } else { // If sendToGroupies is empty, filter push to all users
+        } else {
+            // If sendToGroupies is empty, filter push to all users
+            // ********************************
+            // CHANGE THIS LATER!!!!!!
+            // ********************************
             pushQuery.whereKey("user", notContainedIn: isGroupieName)
-            pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
+            //pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
         }
         
         var pushDirected: PFPush = PFPush()
