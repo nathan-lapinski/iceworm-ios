@@ -264,6 +264,22 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                             self.option1  = ""
                             self.option2  = ""
                             
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
                             // Add qId to "UserQs" table - MyQs -------------------------------
                             var userQsQuery = PFQuery(className: "UserQs")
                             userQsQuery.whereKey("objectId", equalTo: uQId)
@@ -466,13 +482,50 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         println("Assigning Q to users")
         
         // Query all "groupies" and myself (to add to myQs)
-        var usersToQuery = isGroupieQId// + [uQId]
+        //var usersToQuery = isGroupieQId// + [uQId]
+        
+        
+        
+        
+        
+        //////////////////////////////////////////////////////////////////////////////
+        // LATER - Do this only if isGroupies is NOT empty
+        var appFriends = [String]()
+        var currentUsersForQ = [String]()
+        var untappedUsersForQ = [String]()
+        
+        // Get List Of Friends using SOCIALQS
+        var socialQsFriendsRequest = FBSDKGraphRequest(graphPath:"/me/friends", parameters: nil)
+        socialQsFriendsRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+            if error == nil {
+                
+                var temp: AnyObject = result["data"]!!
+                
+                for var i = 0; i < temp.count; i++ {
+                    appFriends.append(temp[i]["name"]!! as! String)
+                }
+                
+                let set1 = Set(isGroupieName)
+                let set2 = Set(appFriends)
+                currentUsersForQ = Array(set1.intersect(set2))
+                let set3 = Set(currentUsersForQ)
+                untappedUsersForQ = Array(set1.subtract(set3))
+                
+            } else {
+                println("Error Getting Friends \(error)")
+            }
+        }
+        //////////////////////////////////////////////////////////////////////////////
+        
+        
+        
+        
         
         // Add qId to "UserQs" table ------
         var userQsQuery = PFQuery(className: "UserQs")
         
-        if isGroupieQId.count > 0 {
-            userQsQuery.whereKey("objectId", containedIn: usersToQuery)
+        if currentUsersForQ.count > 0 {
+            userQsQuery.whereKey("objectId", containedIn: currentUsersForQ)
         }
         
         // Execute query
@@ -646,7 +699,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         // Add gesture recognizer to cell - dismiss keyboard
         //self.askTable.addGestureRecognizer(tapGesture)
-        
         
         return cell
     }

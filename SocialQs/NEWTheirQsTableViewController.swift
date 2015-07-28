@@ -623,8 +623,6 @@ class NEWTheirQsTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        println("Building cell from user: \(askers[indexPath.row])")
-        
         var cell = NEWTheirQsCell()
         
         var option1String = ""
@@ -947,27 +945,6 @@ class NEWTheirQsTableViewController: UITableViewController {
             cell.profilePicture.image = pic
         }
         
-        
-//        if let photo = askerPhotos[askers[indexPath.row]] {
-//            
-//            photo!.getDataInBackgroundWithBlock({ (data, error) -> Void in
-//                
-//                if error != nil {
-//                    
-//                    println("Error retrieving and setting askerPhoto")
-//                    println(error)
-//                    
-//                } else {
-//                    
-//                    if let downloadedImage = UIImage(data: data!) {
-//                        
-//                        cell.profilePicture.image = downloadedImage
-//                    }
-//                }
-//            })
-//        }
-        
-        
         return cell
     }
     
@@ -977,9 +954,9 @@ class NEWTheirQsTableViewController: UITableViewController {
         
         // MAKE FUNCTION -----------------------------------------------------------
         // Recall deleted/dismissed data
-        if NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey) != nil {
-            deletedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey)! as! [(String)]
-        }
+//        if NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey) != nil {
+//            deletedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey)! as! [(String)]
+//        }
         
 //        if NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey) != nil {
 //            myVotes = NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey)! as! Dictionary
@@ -1199,9 +1176,7 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 // Get profile pictures with code block, then update table
                                 self.getProfilePictures() { (complete: Bool) in
                                     
-                                    println("COMPLETE!!")
-                                    println(self.askerPhotos)
-                                    println("Reloading Table")
+                                    // Reload table data
                                     self.tableView.reloadData()
                                     
                                     // Kill refresher when query finished
@@ -1223,9 +1198,7 @@ class NEWTheirQsTableViewController: UITableViewController {
     
     func getProfilePictures(completion: (complete: Bool) -> Void) {
         
-        println("retrieving profiles pictures")
-        
-        // CHANGE THIS!! **************************************************************************************************************************************************
+        // CHANGE THIS!! Shouldn't have to rebuild this each time *********************************************************************************************************
         askerPhotos.removeAll(keepCapacity: true)
         // CHANGE THIS!! **************************************************************************************************************************************************
         
@@ -1245,8 +1218,6 @@ class NEWTheirQsTableViewController: UITableViewController {
                         
                         var askername = pictureObject["username"] as! String
                         
-                        println("OBJECT FOR \(askername)")
-                        
                         if let pic = pictureObject["profilePicture"] as? PFFile {
                             
                             if let test = self.askerPhotos[askername] {
@@ -1262,7 +1233,6 @@ class NEWTheirQsTableViewController: UITableViewController {
                                         println(error)
                                         
                                         count++
-                                        println("count +1: pic retrieval error")
                                         
                                         if count == numberOfObjects {
                                             
@@ -1275,12 +1245,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                                             
                                             self.askerPhotos[askername] = downloadedImage
                                             
-                                            println(self.askerPhotos)
-                                            
                                         }
                                         
                                         count++
-                                        println("count +1: pic retrieved")
                                         
                                         if count == numberOfObjects {
                                             
@@ -1294,16 +1261,12 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             // No PFFile image available
                             count++
-                            println("count +1: no image available")
                             
                             if count == numberOfObjects {
                                 
                                 completion(complete: true)
                             }
                         }
-                        
-                        println("count: \(count)")
-                        println("waiting for: \(numberOfObjects)")
                     }
                 }
                 

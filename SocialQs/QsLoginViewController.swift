@@ -50,6 +50,22 @@ class QsLoginViewController: UIViewController {
                 //Store user information locally
                 self.storeUserInfo(PFUser.currentUser()!.username!)
                 
+                
+                // PUT IN GLOBAL FUNCTION ------------------------------
+                // Get My Info facebook info and set my name
+                var meRequest = FBSDKGraphRequest(graphPath:"/me", parameters: nil);
+                
+                meRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+                    if error == nil {
+                        name = result["name"]!! as! String
+                    } else {
+                        println("Error Getting Friends \(error)");
+                    }
+                }
+                // PUT IN GLOBAL FUNCTION ------------------------------
+                
+                
+                
                 if user.isNew {
                     
                     println("User signed up and logged in through Facebook!")
@@ -76,6 +92,12 @@ class QsLoginViewController: UIViewController {
             } else {
                 
                 println("Uh oh. The user cancelled the Facebook login.")
+                
+                // Stop animation - hides when stopped (above) hides spinner automatically
+                self.activityIndicator.stopAnimating()
+                // Release lock on app input
+                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                
                 self.navigationController?.navigationBarHidden = false
             }
         }
@@ -231,12 +253,12 @@ class QsLoginViewController: UIViewController {
             votedOn2Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey)! as! [String]
         }
         
-        // Recall myVotes if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey("myVotes") != nil {
-            
-            myVotes = NSUserDefaults.standardUserDefaults().objectForKey("myVotesStorageKey")! as! Dictionary
-            
-        }
+//        // Recall myVotes if applicable
+//        if NSUserDefaults.standardUserDefaults().objectForKey("myVotes") != nil {
+//            
+//            myVotes = NSUserDefaults.standardUserDefaults().objectForKey("myVotesStorageKey")! as! Dictionary
+//            
+//        }
     }
     
     

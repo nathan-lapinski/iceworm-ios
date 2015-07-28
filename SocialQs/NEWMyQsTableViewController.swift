@@ -31,9 +31,6 @@ class NEWMyQsTableViewController: UITableViewController {
         
         imageZoom = [nil, nil, nil]
         
-        println(imageZoom)
-        println(sender.tag)
-        
         zoomPage = 0
         
         questionZoom = self.questions[sender.tag]
@@ -70,7 +67,6 @@ class NEWMyQsTableViewController: UITableViewController {
         
         setPhotosToZoom(sender)
     }
-    
     
 
     func setPhotosToZoom(sender: AnyObject) {
@@ -293,7 +289,6 @@ class NEWMyQsTableViewController: UITableViewController {
                             }
                         }
                     })
-                    
                 }
                 
                 if self.option1sPhoto[indexPath.row] != nil {
@@ -353,7 +348,7 @@ class NEWMyQsTableViewController: UITableViewController {
             // Change setEditing to cause swipe to reset
             // Their Qs does this on its own, but nicer (when the page
             // isn't visible - idk why this page doesn't... =/
-            // (it used to...)
+            // (it used to...??)
             self.tableView.setEditing(false, animated: true)
             
         }

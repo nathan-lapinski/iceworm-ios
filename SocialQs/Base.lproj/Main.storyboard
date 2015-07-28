@@ -131,9 +131,9 @@
                                     <constraint firstAttribute="width" constant="100" id="m9R-wG-R4e"/>
                                 </constraints>
                             </imageView>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="username" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yfh-P0-Irp">
-                                <rect key="frame" x="124" y="81" width="76" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yfh-P0-Irp">
+                                <rect key="frame" x="124" y="81" width="215" height="24"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="20"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -164,6 +164,12 @@
                                     <constraint firstAttribute="width" constant="30" id="WM7-DA-fay"/>
                                 </constraints>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="@handkle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HhJ-Gm-5Tv">
+                                <rect key="frame" x="124" y="103" width="215" height="21"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="14"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -215,8 +221,11 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="appInfo" destination="zPt-sG-ZeG" id="7R5-md-1qT"/>
+                        <outlet property="facebookLogo" destination="WgT-Jk-ISL" id="9B9-V7-MwY"/>
+                        <outlet property="handleLabel" destination="HhJ-Gm-5Tv" id="S2R-lj-cGZ"/>
                         <outlet property="linkWithFacebook" destination="Q3H-JC-wMC" id="tFR-6K-VnY"/>
                         <outlet property="logout" destination="GP7-Jn-b76" id="Rec-5u-qhf"/>
+                        <outlet property="nameLabel" destination="Yfh-P0-Irp" id="aoQ-SR-kTa"/>
                         <outlet property="profilePictureImageView" destination="Cjh-SY-Mb6" id="DCh-uk-ZWv"/>
                     </connections>
                 </viewController>

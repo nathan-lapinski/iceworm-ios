@@ -17,6 +17,10 @@ class SettingsViewController: UIViewController {
     @IBOutlet var logout: UIButton!
     @IBOutlet var appInfo: UILabel!
     @IBOutlet var profilePictureImageView: UIImageView!
+    @IBOutlet var facebookLogo: UIImageView!
+    @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var handleLabel: UILabel!
+    
     
     @IBAction func logoutButton(sender: AnyObject) { launchLogoutPopover() }
     
@@ -75,6 +79,10 @@ class SettingsViewController: UIViewController {
                     
                     println("Facebook Link error")
                     println(error)
+                    
+                    self.updateImageAndButton(false)
+                    
+                    displayAlert("Error", "The Facebook user currently logged in on this device is associated with another SocialQs account", self)
                 }
             })
             
@@ -106,13 +114,21 @@ class SettingsViewController: UIViewController {
         
         if linked {
             
-            self.profilePictureImageView.image = profilePicture
-            self.linkWithFacebook.setTitle("Unlink Facebook Account", forState: UIControlState.Normal)
+            nameLabel.text = name
+            handleLabel.text = "@\(myName)"
+            profilePictureImageView.image = profilePicture
+            linkWithFacebook.setTitle("Unlink Facebook Account", forState: UIControlState.Normal)
+            facebookLogo.hidden = true
+            linkWithFacebook.hidden = true
             
         } else {
             
-            //self.profilePictureImageView.image = UIImage(named: "profile.png")
-            self.linkWithFacebook.setTitle("Link Facebook Account", forState: UIControlState.Normal)
+            nameLabel.text = ""
+            handleLabel.text = "@\(myName)"
+            //profilePictureImageView.image = UIImage(named: "profile.png")
+            linkWithFacebook.setTitle("Link Facebook Account", forState: UIControlState.Normal)
+            facebookLogo.hidden = false
+            linkWithFacebook.hidden = false
         }
     }
     
@@ -122,6 +138,8 @@ class SettingsViewController: UIViewController {
         
         // Update image and button based on FB link status
         updateImageAndButton(PFFacebookUtils.isLinkedWithUser(user))
+        
+        println(PFFacebookUtils.isLinkedWithUser(user))
         
         logout.layer.cornerRadius = cornerRadius
         logout.backgroundColor = buttonBackgroundColor

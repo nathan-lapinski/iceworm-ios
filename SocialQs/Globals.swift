@@ -14,25 +14,26 @@ import Parse
 var myName = ""
 var uId = ""
 var uQId = ""
-var firstName = ""
-var lastNmae = ""
+var name = ""
+
+// Profile Picture variables
+var profilePicture = UIImage()
 
 // Set constants for formatting buttons - universal settings
 let bgAlpha: CGFloat = 0.7
 let bgColor = UIColor(red: 58/255, green: 154/255, blue: 188/255, alpha: bgAlpha)
 let winColor = UIColor(red: 58/255, green: 154/255, blue: 188/255, alpha: 1.0)
 let loseColor = UIColor(red: 85/255, green: 85/255, blue: 85/255, alpha: 1.0)
-let buttonAlpha: CGFloat = 0.8
-let buttonBackgroundColor = UIColor(red: 239/256, green: 239/256, blue: 240/256, alpha: buttonAlpha)
+let buttonBackgroundColor = UIColor(red: 239/256, green: 239/256, blue: 240/256, alpha: 0.8)
 let buttonTextColor = UIColor(red: 11/256, green: 11/256, blue: 11/256, alpha: 1.0)
 let cornerRadius: CGFloat = 2.0
-let insets: CGFloat = 5
-let buttonEdge = UIEdgeInsetsMake(insets, insets, insets, insets)
+//let insets: CGFloat = 5
+//let buttonEdge = UIEdgeInsetsMake(insets, insets, insets, insets)
 
 // Colors to match SQ background images
-let mainColorOrange = UIColor(red: 239/256, green: 94/256, blue: 31/256, alpha: 1.0)
 let mainColorBlue = UIColor(red: 58/256, green: 154/256, blue: 188/256, alpha: 1.0)
-let mainColorPink = UIColor(red: 194/256, green: 55/256, blue: 109/256, alpha: 1.0)
+//let mainColorOrange = UIColor(red: 239/256, green: 94/256, blue: 31/256, alpha: 1.0)
+//let mainColorPink = UIColor(red: 194/256, green: 55/256, blue: 109/256, alpha: 1.0)
 
 // Tab bar colors
 let activeTabColor = UIColor.whiteColor()
@@ -49,8 +50,8 @@ let myVotesStorageKey = "votes"
 let profilePictureKey = "profilePicture"
 
 // Arrays for displaying questions
-var deletedMyQuestions = [String]() // questions DELETED by current user
-var deletedTheirQuestions = [String]() // questions DELETED by current user
+//var deletedMyQuestions = [String]() // questions DELETED by current user
+//var deletedTheirQuestions = [String]() // questions DELETED by current user
 var votedOn1Ids = [String]() // questions VOTED-UPON by current user
 var votedOn2Ids = [String]() // questions VOTED-UPON by current user
 
@@ -58,10 +59,7 @@ var votedOn2Ids = [String]() // questions VOTED-UPON by current user
 var viewQ = Dictionary<String, Any>()//String, String, String, String, PFFile, PFFile, PFFile,
 
 // Variable to track how user voted - store to NSUserDefaults //
-var myVotes = Dictionary<String, Int>()
-
-// Profile Picture variables
-var profilePicture = UIImage()
+//var myVotes = Dictionary<String, Int>()
 
 // Value for passing qId to results ("votes") display
 var requestedQId = ""
@@ -84,4 +82,4 @@ var isGroupieQId = [String]()
 var warningSeen = false
 
 // String to determine if option is text or photo
-var photoString = "|/~_</|"
+//var photoString = "|/~_</|"

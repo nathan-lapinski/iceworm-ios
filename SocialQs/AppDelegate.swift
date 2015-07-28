@@ -21,10 +21,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Parse.enableLocalDatastore()
         
         // SocialQs Dev --------------------------------------------------------------------------------------------------------------
-        //Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
+        Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
         
         // SocialQs Test 4 -----------------------------------------------------------------------------------------------------------
-        Parse.setApplicationId("GePc935BnwSJ27iNNE3lKEv1VEgWLjdApRto0AQ7", clientKey: "nH1Kr6kpym4lYVxg22sO0B0fvBMwc744hwaHq1yE")
+        //Parse.setApplicationId("GePc935BnwSJ27iNNE3lKEv1VEgWLjdApRto0AQ7", clientKey: "nH1Kr6kpym4lYVxg22sO0B0fvBMwc744hwaHq1yE")
         
         
         // SocialQs Test 3 -----------------------------------------------------------------------------------------------------------

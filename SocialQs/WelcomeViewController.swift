@@ -98,6 +98,21 @@ class WelcomeViewController: UIViewController {
             uId = PFUser.currentUser()!.objectId!
             uQId = PFUser.currentUser()?["uQId"]! as! String
             
+            
+            // PUT IN GLOBAL FUNCTION ------------------------------
+            // Get My Info facebook info and set my name
+            var meRequest = FBSDKGraphRequest(graphPath:"/me", parameters: nil);
+            
+            meRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+                if error == nil {
+                    name = result["name"]!! as! String
+                } else {
+                    println("Error Getting Friends \(error)");
+                }
+            }
+            // PUT IN GLOBAL FUNCTION ------------------------------
+            
+            
             // Get profile picture
             if let userPicture = PFUser.currentUser()?["profilePicture"] as? PFFile {
                 

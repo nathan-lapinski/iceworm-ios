@@ -21,6 +21,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     var userids = [""]
     var users = [String]()
     var objectsArray = [Objects]()
+    var allFriends = [String]()
+    var allFriendsIds = [String]()
+    var filteredFriends = [String]()
+    var filteredFriendsIds = [String]()
     
     struct Objects {
         var sectionName: String!
@@ -34,7 +38,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     @IBAction func dismissPressed(sender: AnyObject) {
         
         presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
-        
     }
     
 
@@ -55,6 +58,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         
         // Set table background image
         self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg4.png"))
+        self.tableView.backgroundView?.alpha = 0.4
+        self.tableView.backgroundColor = UIColor.whiteColor()
         
         // Set separator color
         tableView.separatorColor = UIColor.lightGrayColor()
@@ -70,60 +75,83 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         
         topOffset = 64
         
-        // Manually call refresh upon loading to get most up to datest datas
-        loadUsers("")
+        // Get List Of Friends using SOCIALQS
+        //var socialQsFriendsRequest = FBSDKGraphRequest(graphPath:"/me/friends", parameters: nil);
+        // Get List Of All Friends
+        var allFriendsRequest = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id&limit=1000", parameters: nil);
         
+        allFriendsRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+            if error == nil {
+                
+                var temp: AnyObject = result["data"]!!
+                
+                for var i = 0; i < temp.count; i++ {
+                    //println(temp[i]["name"]!! as! String)
+                    //println(temp[i]["id"]!! as! String)
+                    self.allFriends.append(temp[i]["name"]!! as! String)
+                    self.allFriendsIds.append(temp[i]["id"]!! as! String)
+                }
+                
+                // Manually call refresh upon loading to get most up to datest datas
+                self.loadUsers("")
+                
+            } else {
+                println("Error Getting Friends \(error)");
+            }
+        }
     }
     
     
     func loadUsers(name: String) {
         
-        var findUsers = PFUser.query()
-        
         if !name.isEmpty {
-            findUsers?.whereKey("username", containsString: name.lowercaseString) // search against lower case
+            
+            // Filter users by serachBar input
+            var filteredStrings = self.allFriends.filter({(item: String) -> Bool in
+                
+                var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
+                return stringMatch != nil ? true : false
+            })
+            
+            // reset all entries in filtered users
+            filteredFriendsIds.removeAll(keepCapacity: true)
+            
+            // Fill FB userIds
+            for name in filteredStrings {
+                var index = find(allFriends, name)!
+                filteredFriendsIds.append(allFriendsIds[index])
+            }
+            
+            // Set arrays to fill table
+            usernames = filteredStrings
+            userids = filteredFriendsIds
+            
+        } else {
+            
+            // else keep all users in view
+            usernames = allFriends
+            userids = allFriendsIds
         }
         
-        findUsers?.whereKey("username", notEqualTo: myName)
         
-        findUsers?.findObjectsInBackgroundWithBlock({ (userObjects, error) -> Void in
-            
-            if error == nil {
-                
-                if let users = userObjects {
-                    
-                    self.usernames.removeAll(keepCapacity: true)
-                    self.userids.removeAll(keepCapacity: true)
-                    
-                    for object in users {
-                        
-                        if let user = object as? PFUser {
-                            
-                            self.usernames.append(user.username!)
-                            self.userids.append(user["uQId"]! as! String)
-                            
-                        }
-                    }
-                }
-                
-                self.objectsArray = [Objects(sectionName: self.section1, sectionObjects: self.objs1), Objects(sectionName: self.section2, sectionObjects: self.usernames)]
-                
-                self.tableView.reloadData()
-                
-            }
-        })
+        
+        
+        
+        self.objectsArray = [Objects(sectionName: self.section1, sectionObjects: self.objs1), Objects(sectionName: self.section2, sectionObjects: self.usernames)]
+        
+        self.tableView.reloadData()
     }
+    
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         
         loadUsers(searchText)
-        
     }
+    
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
         
         loadUsers("")
-        
     }
     
 
@@ -208,14 +236,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 if var removeIndex = find(isGroupieName, followedObjectName) {
                     
                     isGroupieName.removeAtIndex(removeIndex)
-                    
                 }
                 
                 // Remove user from isGroupieQId
                 if var removeIndex = find(isGroupieQId, followedObjectId) {
                     
                     isGroupieQId.removeAtIndex(removeIndex)
-                    
                 }
                 
             } else {
@@ -279,9 +305,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         tableView.beginUpdates()
         tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
         tableView.endUpdates()
-        
-        println(isGroupieName)
-        println(isGroupieQId)
         
         // SEND DATA BACK -------------------------------------------------------------------------
         // SEND DATA BACK -------------------------------------------------------------------------

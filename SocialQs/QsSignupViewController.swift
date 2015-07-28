@@ -85,6 +85,22 @@ class QsSignupViewController: UIViewController {
                     // repeats in settings
                     // MAKE FUNCTION -----------------------------------------------------
                     
+                    // PUT IN GLOBAL FUNCTION ------------------------------
+                    // Get My Info facebook info and set my name
+                    var meRequest = FBSDKGraphRequest(graphPath:"/me", parameters: nil);
+                    
+                    meRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+                        if error == nil {
+                            name = result["name"]!! as! String
+                        } else {
+                            println("Error Getting Friends \(error)");
+                        }
+                    }
+                    // PUT IN GLOBAL FUNCTION ------------------------------
+                    
+                    
+                    
+                    
                     // Create entry in UserQs table
                     self.createUserQs(self.username.text)
                     
@@ -111,6 +127,12 @@ class QsSignupViewController: UIViewController {
             } else {
                 
                 println("Uh oh. The user cancelled the Facebook login.")
+                
+                // Stop animation - hides when stopped (above) hides spinner automatically
+                self.activityIndicator.stopAnimating()
+                // Release lock on app input
+                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                
                 self.navigationController?.navigationBarHidden = false
             }
         }
@@ -181,7 +203,6 @@ class QsSignupViewController: UIViewController {
                     
                     // Stop animation - hides when stopped (above) hides spinner automatically
                     self.activityIndicator.stopAnimating()
-                    
                     // Release app input block
                     UIApplication.sharedApplication().endIgnoringInteractionEvents()
                     
