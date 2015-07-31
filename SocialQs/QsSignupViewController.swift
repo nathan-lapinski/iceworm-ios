@@ -132,7 +132,6 @@ class QsSignupViewController: UIViewController {
                     if let errorString = error!.userInfo?["error"] as? String {
                         
                         errorMessage = errorString
-                        
                     }
                     
                     blockUI(false, self.signupSpinner, self.signupBlurView, self)
@@ -161,24 +160,28 @@ class QsSignupViewController: UIViewController {
                     
                     if error == nil {
                         
-                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                        myName = username.lowercaseString
-                        uId = user!.objectId!
-                        uQId = userQ.objectId!
+//                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+//                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+//                        myName = username.lowercaseString
+//                        uId = user!.objectId!
+//                        uQId = userQ.objectId!
+//                        
+//                        // Store username locally
+//                        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+//                        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+//                        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
+//                        
+//                        let installation = PFInstallation.currentInstallation()
+//                        installation["user"] = PFUser.currentUser()
+//                        installation.saveInBackground()
+//                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+//                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
                         
-                        // Store username locally
-                        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-                        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
-                        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
-                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
+                        storeUserInfo(username.lowercaseString, true, { (isFinished) -> Void in
+                            
+                            blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                        })
                         
-                        blockUI(false, self.signupSpinner, self.signupBlurView, self)
-                        
-                        let installation = PFInstallation.currentInstallation()
-                        installation["user"] = PFUser.currentUser()
-                        installation.saveInBackground()
                         
                     } else {
                         

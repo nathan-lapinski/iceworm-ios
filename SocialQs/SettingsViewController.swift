@@ -119,15 +119,17 @@ class SettingsViewController: UIViewController {
         if linked {
             
             nameLabel.text = name
-            handleLabel.text = "@\(myName)"
+            handleLabel.text = "@\(username)"
             linkWithFacebook.setTitle("Unlink Facebook Account", forState: UIControlState.Normal)
             facebookLogo.hidden = true
             linkWithFacebook.hidden = true
             
         } else {
             
-            nameLabel.text = ""
-            handleLabel.text = "@\(myName)"
+            //nameLabel.text = ""
+            //handleLabel.text = "@\(myName)"
+            nameLabel.text = "@\(username)"
+            handleLabel.text = "@\(username)"
             //profilePictureImageView.image = UIImage(named: "profile.png")
             linkWithFacebook.setTitle("Link Facebook Account", forState: UIControlState.Normal)
             //facebookLogo.hidden = false
@@ -152,7 +154,7 @@ class SettingsViewController: UIViewController {
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String
         
-        logout.setTitle("Log Out " + myName, forState: UIControlState.Normal)
+        logout.setTitle("Log Out " + username, forState: UIControlState.Normal)
         appInfo.text = "Version: " + version! + "\nBuild: (" + build! + ")"
     }
     
@@ -166,22 +168,30 @@ class SettingsViewController: UIViewController {
     
     func logOut() -> Void {
         
-        myName = ""
-        uId = ""
-        uQId = ""
-        
-        // Logout PFUser
-        PFUser.logOutInBackgroundWithBlock { (error) -> Void in
+        // Store all data for loading next time
+        storeUserInfo(username, false) { (isFinished) -> Void in
             
-            if error == nil {
+            //myName = ""
+            //name = ""
+            //uId = ""
+            //uQId = ""
+            
+            // Logout PFUser
+            PFUser.logOutInBackgroundWithBlock { (error) -> Void in
                 
-                // Clear username, uId and uQId locally
-                NSUserDefaults.standardUserDefaults().setObject("", forKey: "myName")
-                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uId")
-                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uQId")
-                
-                // Switch back to welcome screen
-                self.performSegueWithIdentifier("logout", sender: self)
+                if error == nil {
+                    
+                    //                // Clear username, uId and uQId locally
+                    //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "myName")
+                    //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "name")
+                    //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uId")
+                    //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uQId")
+                    
+                    
+                    // Switch back to welcome screen
+                    println("Logout complete, performing segue to welcome view")
+                    self.performSegueWithIdentifier("logout", sender: self)
+                }
             }
         }
     }

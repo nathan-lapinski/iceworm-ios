@@ -14,19 +14,19 @@ class QsLoginViewController: UIViewController {
     var loginSpinner = UIActivityIndicatorView()
     var loginBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     
-    @IBOutlet var username: UITextField!
-    @IBOutlet var password: UITextField!
+    @IBOutlet var usernameTextField: UITextField!
+    @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var loginButton: UIButton!
     @IBOutlet var loginFacebookButton: UIButton!
     @IBOutlet var logoVerticalSpace: NSLayoutConstraint!
     
     @IBAction func cancelButtonPressed(sender: AnyObject) {
         
-        username.text = ""
-        password.text = ""
+        usernameTextField.text = ""
+        passwordTextField.text = ""
         
-        username.resignFirstResponder()
-        password.resignFirstResponder()
+        usernameTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
         
         performSegueWithIdentifier("cancelLogIn", sender: self)
     }
@@ -42,7 +42,7 @@ class QsLoginViewController: UIViewController {
             if let user = user { // facebook login successful
                 
                 //Store user information locally
-                self.storeUserInfo(PFUser.currentUser()!.username!)
+                storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in })
                 
                 if user.isNew {
                     
@@ -81,8 +81,11 @@ class QsLoginViewController: UIViewController {
     // This function processes the login procedure
     @IBAction func loginButtonPressed(sender: AnyObject) {
         
+        usernameTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
+        
         // Error out with pop-up if username and/or password are missing
-        if username.text == "" || password.text == "" {
+        if usernameTextField.text == "" || passwordTextField.text == "" {
             
             displayAlert("Way to go Rain Man", "I think you forgot something. Please enter a username and password.", self)
             
@@ -94,14 +97,14 @@ class QsLoginViewController: UIViewController {
             var errorMessage = "Please try again later"
             
             // Run Parse.com login procedure
-            PFUser.logInWithUsernameInBackground(username.text.lowercaseString, password: password.text, block: { (user, error) -> Void in
+            PFUser.logInWithUsernameInBackground(usernameTextField.text.lowercaseString, password: passwordTextField.text, block: { (user, error) -> Void in
                 
                 if user != nil { // standard login successful
                     
                     self.performSegueWithIdentifier("signedIn", sender: self)
                     
                     //Store user information locally
-                    self.storeUserInfo(self.username.text)
+                    storeUserInfo(self.usernameTextField.text, false, { (isFinished) -> Void in })
                     
                 } else {
                     
@@ -119,53 +122,53 @@ class QsLoginViewController: UIViewController {
     }
     
     
-    func storeUserInfo(username: String) {
-        
-        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-        myName = username.lowercaseString
-        uId = PFUser.currentUser()!.objectId!
-        uQId = PFUser.currentUser()?["uQId"]! as! String
-        
-        // Store username locally
-        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
-        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
-        
-        // Store votedOnIds locally
-        var userQsQuery = PFQuery(className: "UserQs")
-        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
-            
-            if error != nil {
-                
-                println("Error loading UserQs/votedOnId")
-                println(error)
-                
-            } else {
-                
-                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
-                    
-                    votedOn1Ids = votedOn1Id
-                    
-                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
-                }
-                
-                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
-                    
-                    votedOn2Ids = votedOn2Id
-                    
-                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-                }
-            }
-        })
-        
-        // Set PFInstallation pointer to user table
-        let installation = PFInstallation.currentInstallation()
-        installation["user"] = PFUser.currentUser()
-        installation.saveInBackground()
-        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-    }
+//    func storeUserInfo(username: String) {
+//        
+//        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+//        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+//        myName = username.lowercaseString
+//        uId = PFUser.currentUser()!.objectId!
+//        uQId = PFUser.currentUser()?["uQId"]! as! String
+//        
+//        // Store username locally
+//        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+//        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+//        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
+//        
+//        // Store votedOnIds locally
+//        var userQsQuery = PFQuery(className: "UserQs")
+//        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
+//            
+//            if error != nil {
+//                
+//                println("Error loading UserQs/votedOnId")
+//                println(error)
+//                
+//            } else {
+//                
+//                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
+//                    
+//                    votedOn1Ids = votedOn1Id
+//                    
+//                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
+//                }
+//                
+//                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
+//                    
+//                    votedOn2Ids = votedOn2Id
+//                    
+//                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
+//                }
+//            }
+//        })
+//        
+//        // Set PFInstallation pointer to user table
+//        let installation = PFInstallation.currentInstallation()
+//        installation["user"] = PFUser.currentUser()
+//        installation.saveInBackground()
+//        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+//        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+//    }
     
     
     override func viewDidLoad() {
@@ -185,24 +188,27 @@ class QsLoginViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         
         // Recall myName if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey("myName") != nil {
+        if NSUserDefaults.standardUserDefaults().objectForKey(usernameStorageKey) != nil {
             
-            myName = NSUserDefaults.standardUserDefaults().objectForKey("myName")! as! String
+            username = NSUserDefaults.standardUserDefaults().objectForKey(usernameStorageKey)! as! String
+        }
+        
+        // Recall name if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey(nameStorageKey) != nil {
             
+            name = NSUserDefaults.standardUserDefaults().objectForKey(nameStorageKey)! as! String
         }
         
         // Recall uId if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey("uId") != nil {
+        if NSUserDefaults.standardUserDefaults().objectForKey(uIdStorageKey) != nil {
             
-            uId = NSUserDefaults.standardUserDefaults().objectForKey("uId")! as! String
-            
+            uId = NSUserDefaults.standardUserDefaults().objectForKey(uIdStorageKey)! as! String
         }
         
         // Recall uQId if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey("uQId") != nil {
+        if NSUserDefaults.standardUserDefaults().objectForKey(uQIdStorageKey) != nil {
             
-            uQId = NSUserDefaults.standardUserDefaults().objectForKey("uQId")! as! String
-            
+            uQId = NSUserDefaults.standardUserDefaults().objectForKey(uQIdStorageKey)! as! String
         }
         
         // Recall votedOnIds if applicable

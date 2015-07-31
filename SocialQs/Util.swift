@@ -140,9 +140,95 @@ func getPersonalInfoFromFacebook(completion: (Bool) -> Void) {
 }
 
 
+func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> Void) {
+    
+    // Store login information in globals
+    username = usernameToStore.lowercaseString
+    uId = PFUser.currentUser()!.objectId!
+    uQId = PFUser.currentUser()?["uQId"]! as! String
+    
+    // Set NSUserDefault storage keys
+    usernameStorageKey = username + "myName"
+    nameStorageKey     = username + "name"
+    uIdStorageKey      = username + "uId"
+    uQIdStorageKey     = username + "uQId"
+    myVoted1StorageKey = username + "votedOn1Ids"
+    myVoted2StorageKey = username + "votedOn2Ids"
+    //myVotesStorageKey  = username + "votes"
+    profilePictureKey  = username + "profilePicture"
+    deletedTheirStorageKey = username + "deletedTheirPermanent"
+    
+    // Store username locally
+    NSUserDefaults.standardUserDefaults().setObject(username, forKey: usernameStorageKey)
+    NSUserDefaults.standardUserDefaults().setObject(uId, forKey: uIdStorageKey)
+    NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: uQIdStorageKey)
+    
+    if isNew {
+        
+        // Set PFInstallation pointer to user table
+        let installation = PFInstallation.currentInstallation()
+        installation["user"] = PFUser.currentUser()
+        installation.saveInBackgroundWithBlock({ (success, error) -> Void in
+            
+            if error == nil {
+                
+                println("New user data stored!")
+                
+            } else {
+                
+                println("Error storing new user data:")
+                println(error)
+                
+            }
+            
+            println("New user data has been stored")
+            completion(true)
+        })
+        
+    } else {
+        
+        // If has name set, store it
+        if name != "" {
+            
+            NSUserDefaults.standardUserDefaults().setObject(name, forKey: nameStorageKey)
+        }
+    
+        // Store votedOnIds locally
+        var userQsQuery = PFQuery(className: "UserQs")
+        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
+            
+            if error != nil {
+                
+                println("Error loading UserQs/votedOnId")
+                println(error)
+                
+            } else {
+                
+                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
+                    
+                    votedOn1Ids = votedOn1Id
+                    
+                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
+                }
+                
+                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
+                    
+                    votedOn2Ids = votedOn2Id
+                    
+                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
+                }
+                
+                println("Returning user data has been stored")
+                completion(true)
+            }
+        })
+    }
+}
+
+
 /*
 func storeLocal() { // Currently has no inputs, uses globals
-    
+
     // NSUserDefaults Storage Keys
     let myVoted1StorageKey = myName + "votedOn1Ids"
     let myVoted2StorageKey = myName + "votedOn2Ids"

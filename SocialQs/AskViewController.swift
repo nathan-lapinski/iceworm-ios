@@ -36,7 +36,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? Int
     let picker = UIImagePickerController()
-    var activityIndicator = UIActivityIndicatorView()
+    
+    var askSpinner = UIActivityIndicatorView()
+    var askBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     
     @IBOutlet var askTable: UITableView!
     @IBAction func groupiesButtonAction(sender: AnyObject) { }
@@ -160,20 +162,22 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     func submitQ(sender: AnyObject) -> Void {
         
-        // Blur screen while Q upload is processing
-        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.frame = self.view.frame
-        self.view.addSubview(blurView)
+        blockUI(true, askSpinner, askBlurView, self)
         
-        // Setup spinner and block application input
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+//        // Blur screen while Q upload is processing
+//        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
+//        let blurView = UIVisualEffectView(effect: blurEffect)
+//        blurView.frame = self.view.frame
+//        self.view.addSubview(blurView)
+//        
+//        // Setup spinner and block application input
+//        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+//        activityIndicator.center = self.view.center
+//        activityIndicator.hidesWhenStopped = true
+//        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+//        view.addSubview(activityIndicator)
+//        activityIndicator.startAnimating()
+//        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
         // CREATE ENTRY FOR FULL RES IMAGES (upload later) -------------------------------------------------------------
         var photos = PFObject(className: "PhotoFullMetalBlacket")
@@ -258,30 +262,14 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                             
                             var currentQId = socialQ.objectId!
                             
-                            // Unlock application interaction and halt spinner
-                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                            self.activityIndicator.stopAnimating()
+//                            // Unlock application interaction and halt spinner
+//                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
+//                            self.activityIndicator.stopAnimating()
                             
                             // Reset all fields after submitting
                             self.question = ""
                             self.option1  = ""
                             self.option2  = ""
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
                             
                             // Add qId to "UserQs" table - MyQs -------------------------------
                             var userQsQuery = PFQuery(className: "UserQs")
@@ -310,8 +298,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                         // clear text and photo entries
                                         self.cancelButtonAction(sender)
                                         
-                                        // Un-blur ASK tab
-                                        blurView.removeFromSuperview()
+//                                        // Un-blur ASK tab
+//                                        blurView.removeFromSuperview()
+                                        
+                                        blockUI(false, self.askSpinner, self.askBlurView, self)
                                         
                                         // ---- Upload full res images if necessary ---------------------------------------------
                                         var expectedCount = 0
@@ -600,7 +590,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         // Create dictionary to send JSON to parse/to other devices
         //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
         //pushDirected.setData(dataDirected)////
-        pushDirected.setMessage("New Q from \(myName)!")
+        pushDirected.setMessage("New Q from \(username)!")
         
         // Send Push Notifications
         pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in

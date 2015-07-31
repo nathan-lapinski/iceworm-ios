@@ -516,8 +516,8 @@
                     <connections>
                         <outlet property="loginButton" destination="UWX-Kz-HNN" id="AK0-ez-dWG"/>
                         <outlet property="loginFacebookButton" destination="QZw-yD-mr5" id="uk6-EG-i3F"/>
-                        <outlet property="password" destination="oou-Lj-FLs" id="7TS-9o-IpZ"/>
-                        <outlet property="username" destination="NIE-RW-hLL" id="maB-6U-a1w"/>
+                        <outlet property="passwordTextField" destination="oou-Lj-FLs" id="uRv-dk-foE"/>
+                        <outlet property="usernameTextField" destination="NIE-RW-hLL" id="YcL-Nm-Yuv"/>
                         <segue destination="ZJ0-6y-W0S" kind="presentation" identifier="signedIn" id="i2W-g3-zd6"/>
                     </connections>
                 </viewController>
@@ -990,7 +990,7 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
-                        <outlet property="username" destination="C68-Ow-DD2" id="quR-b8-zwz"/>
+                        <outlet property="usernameTextField" destination="C68-Ow-DD2" id="PEr-Xh-iZd"/>
                         <segue destination="ZJ0-6y-W0S" kind="presentation" identifier="signedUp2" modalTransitionStyle="flipHorizontal" id="aPw-PS-bwz"/>
                     </connections>
                 </viewController>
@@ -2713,8 +2713,8 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Vfu-5X-YNT"/>
-        <segue reference="V95-x7-eNQ"/>
-        <segue reference="u0a-cW-CdR"/>
+        <segue reference="aPw-PS-bwz"/>
+        <segue reference="kfF-Cv-ckS"/>
         <segue reference="Nkj-Su-cOz"/>
     </inferredMetricsTieBreakers>
 </document>

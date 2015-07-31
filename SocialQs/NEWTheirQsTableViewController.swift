@@ -26,9 +26,10 @@ class NEWTheirQsTableViewController: UITableViewController {
     var votesId = [String]()
     var photosId = [String]()
     //var dismissedTheirStorageKey = myName + "dismissedTheirPermanent"
-    var deletedTheirStorageKey = myName + "deletedTheirPermanent"
+    
     var refresher: UIRefreshControl!
-    var activityIndicator = UIActivityIndicatorView()
+    var theirQsSpinner = UIActivityIndicatorView()
+    var theirQsBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     
     @IBAction func vote1ButtonAction(sender: AnyObject) { castVote(sender.tag, optionId: 1) }
     
@@ -81,14 +82,16 @@ class NEWTheirQsTableViewController: UITableViewController {
     
     func setPhotosToZoom(sender: AnyObject) {
         
-        // Setup spinner and block application input
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        blockUI(true, theirQsSpinner, theirQsBlurView, self)
+        
+//        // Setup spinner and block application input
+//        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+//        activityIndicator.center = self.view.center
+//        activityIndicator.hidesWhenStopped = true
+//        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+//        view.addSubview(activityIndicator)
+//        activityIndicator.startAnimating()
+//        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
         var expectedCount = 0
         var downloadedCount = 0
@@ -125,8 +128,10 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                self.activityIndicator.stopAnimating()
+//                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+//                                self.activityIndicator.stopAnimating()
+                                blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
+                                
                                 self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
@@ -154,8 +159,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                self.activityIndicator.stopAnimating()
+                                //                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                //                                self.activityIndicator.stopAnimating()
+                                blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
                                 self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
@@ -183,8 +189,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                self.activityIndicator.stopAnimating()
+                                //                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                //                                self.activityIndicator.stopAnimating()
+                                blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
                                 self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
                             }
                         }
@@ -212,14 +219,16 @@ class NEWTheirQsTableViewController: UITableViewController {
     // Function to process the casting of votes
     func castVote(questionId: Int, optionId: Int) {
         
-        // Setup spinner and black application input
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        blockUI(true, theirQsSpinner, theirQsBlurView, self)
+        
+//        // Setup spinner and black application input
+//        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
+//        activityIndicator.center = self.view.center
+//        activityIndicator.hidesWhenStopped = true
+//        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+//        view.addSubview(activityIndicator)
+//        activityIndicator.startAnimating()
+//        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
         var voteId = "stats\(optionId)" // remove??
         
@@ -253,10 +262,10 @@ class NEWTheirQsTableViewController: UITableViewController {
                                 
                                 // NEW VOTES TABLE
                                 if optionId == 1 {
-                                    voteObjects!.addObject(myName, forKey: "option1VoterName")
+                                    voteObjects!.addObject(username, forKey: "option1VoterName")
                                     voteObjects!.saveInBackground()
                                 } else {
-                                    voteObjects!.addObject(myName, forKey: "option2VoterName")
+                                    voteObjects!.addObject(username, forKey: "option2VoterName")
                                     voteObjects!.saveInBackground()
                                 }
                                 
@@ -296,8 +305,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                                                     self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
                                                     self.tableView.endUpdates()
                                                     
-                                                    self.activityIndicator.stopAnimating()
-                                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+//                                                    self.activityIndicator.stopAnimating()
+//                                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                                    blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
                                                 }
                                             })
                                             // ---------------------------------------------------------------------------------------------------------------
@@ -307,8 +317,9 @@ class NEWTheirQsTableViewController: UITableViewController {
                                             println("Increment error:")
                                             println(error)
                                             
-                                            self.activityIndicator.stopAnimating()
-                                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                            // self.activityIndicator.stopAnimating()
+                                            // UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                                            blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
                                         }
                                     }
                                 })

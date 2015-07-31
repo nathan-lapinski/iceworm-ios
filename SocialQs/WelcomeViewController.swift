@@ -114,73 +114,85 @@ class WelcomeViewController: UIViewController {
         // **** Only this this if these are not already stored for the CURRENT USER ****
         //
         //
+        
+        
+        storeUserInfo(PFUser.currentUser()!.username!, false) { (isFinished) -> Void in
+        
+            // put inside completion handler
+            self.performSegueWithIdentifier("alreadySignedIn", sender: self)
+        }
+        
+        
         // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
         // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
         // login successful
-        myName = PFUser.currentUser()!.username!
-        uId = PFUser.currentUser()!.objectId!
-        uQId = PFUser.currentUser()?["uQId"]! as! String
-      
-        if PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
-            
-            getPersonalInfoFromFacebook() { (isFinished) -> Void in
-                
-                if isFinished {
-                    
-                } else {
-                    
-                    println("Could not gather FB info - welcomeViewController")
-                }
-            }
-        }
+//        username = PFUser.currentUser()!.username!
+//        uId = PFUser.currentUser()!.objectId!
+//        uQId = PFUser.currentUser()?["uQId"]! as! String
+//      
+//        if PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
+//            
+//            getPersonalInfoFromFacebook() { (isFinished) -> Void in
+//                
+//                if isFinished {
+//                    
+//                } else {
+//                    
+//                    println("Could not gather FB info - welcomeViewController")
+//                }
+//            }
+//        }
+//        
+//        // Store username locally
+//        NSUserDefaults.standardUserDefaults().setObject(username, forKey: usernameStorageKey)
+//        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: uIdStorageKey)
+//        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: uQIdStorageKey)
+//        //NSUserDefaults.standardUserDefaults().setObject(profilePicture, forKey: profilePictureKey)
+//        
+//        // Set PFInstallation pointer to user table
+//        let installation = PFInstallation.currentInstallation()
+//        installation["user"] = PFUser.currentUser()
+//        installation.saveInBackground()
+//        // Add user-specific channel to installation
+//        //installation.addUniqueObject(myName, forKey: "channels")
+//        //installation.saveInBackground()
+//        
+//        // **** ALWAYS do this in case these have been updated by another device
+//        // Store votedOnIds locally
+//        votedOn1Ids.removeAll(keepCapacity: true)
+//        votedOn2Ids.removeAll(keepCapacity: true)
+//        var userQsQuery = PFQuery(className: "UserQs")
+//        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
+//            
+//            if error != nil {
+//                
+//                println("Error loading UserQs/votedOnId")
+//                println(error)
+//                
+//            } else {
+//                
+//                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
+//                    
+//                    votedOn1Ids = votedOn1Id
+//                    
+//                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
+//                }
+//                
+//                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
+//                    
+//                    votedOn2Ids = votedOn2Id
+//                    
+//                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
+//                }
+//                // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+//                // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
         
-        // Store username locally
-        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
-        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
-        //NSUserDefaults.standardUserDefaults().setObject(profilePicture, forKey: profilePictureKey)
+                
+                
+                
         
-        // Set PFInstallation pointer to user table
-        let installation = PFInstallation.currentInstallation()
-        installation["user"] = PFUser.currentUser()
-        installation.saveInBackground()
-        // Add user-specific channel to installation
-        //installation.addUniqueObject(myName, forKey: "channels")
-        //installation.saveInBackground()
-        
-        // **** ALWAYS do this in case these have been updated by another device
-        // Store votedOnIds locally
-        votedOn1Ids.removeAll(keepCapacity: true)
-        votedOn2Ids.removeAll(keepCapacity: true)
-        var userQsQuery = PFQuery(className: "UserQs")
-        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
-            
-            if error != nil {
-                
-                println("Error loading UserQs/votedOnId")
-                println(error)
-                
-            } else {
-                
-                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
-                    
-                    votedOn1Ids = votedOn1Id
-                    
-                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
-                }
-                
-                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
-                    
-                    votedOn2Ids = votedOn2Id
-                    
-                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-                }
-                // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-                // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-                
-                self.performSegueWithIdentifier("alreadySignedIn", sender: self)
-            }
-        })
+//            }
+//        })
     }
     
 

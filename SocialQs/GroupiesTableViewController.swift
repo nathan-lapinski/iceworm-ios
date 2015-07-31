@@ -61,7 +61,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         
         searchBar.delegate = self
         
-        if myName == "" { println("myName is empty!") }
+        if username == "" { println("myName is empty!") }
         
         // Title table controller
         self.title = "Select Groupies"
@@ -104,9 +104,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 var temp: AnyObject = result["data"]!!
                 
                 for var i = 0; i < temp.count; i++ {
-                    println(i)
-                    //self.allFriends.append(temp[i]["name"]!! as! String)
-                    //self.allFriendsIds.append(temp[i]["id"]!! as! String)
+                    
                     self.allFriendsDictionary[temp[i]["id"]!! as! String] = temp[i]["name"]!! as? String
                 }
                 
@@ -129,8 +127,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
     func loadUsers(name: String) {
         
-        println("Loading SQ users")
-        
         var findUsers = PFUser.query()
         
         if !name.isEmpty {
@@ -138,7 +134,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             findUsers?.whereKey("username", containsString: name.lowercaseString) // search against lower case
         }
         
-        findUsers?.whereKey("username", notEqualTo: myName)
+        findUsers?.whereKey("username", notEqualTo: username)
         
         findUsers?.findObjectsInBackgroundWithBlock({ (userObjects, error) -> Void in
             
@@ -165,7 +161,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 if !name.isEmpty {
                     
                     // Filter users by serachBar input
-                    //var filteredStrings = self.allFriends.filter({(item: String) -> Bool in
                     var filteredStrings = self.tempNames.filter({(item: String) -> Bool in
                         
                         var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
@@ -220,6 +215,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         return objectsArray[section].sectionObjects.count
     }
 
@@ -285,8 +281,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             // Check if already following and UNFOLLOW instead
             if contains(isGroupieName, followedObjectName) {
                 
-                //println("\(followedObjectName) is no longer being followed")
-                
                 // Remove user from isGroupieName
                 if var removeIndex = find(isGroupieName, followedObjectName) {
                     
@@ -300,8 +294,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 }
                 
             } else {
-                
-                //println("\(followedObjectName) is now being followed")
                 
                 // Add user to isGroupieName
                 isGroupieName.append(followedObjectName)

@@ -11,7 +11,7 @@ import UIKit
 import Parse
 
 // Database values for local storage
-var myName = ""
+var username = ""
 var uId = ""
 var uQId = ""
 var name = ""
@@ -40,14 +40,15 @@ let activeTabColor = UIColor.whiteColor()
 let inactiveTabColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
 
 // NSUserDefault Storage Keys - Move to login later ("myName" does nothing in this case)
-//let myVoted1StorageKey = myName + "votedOn1Ids"
-//let myVoted2StorageKey = myName + "votedOn2Ids"
-//let myVotesStorageKey = myName + "votes"
-//let profilePictureKey = myName + "profilePicture"
-let myVoted1StorageKey = "votedOn1Ids"
-let myVoted2StorageKey = "votedOn2Ids"
-let myVotesStorageKey = "votes"
-let profilePictureKey = "profilePicture"
+var usernameStorageKey = "username"
+var nameStorageKey     = "name"
+var uIdStorageKey      = "uId"
+var uQIdStorageKey     = "uQId"
+var myVoted1StorageKey = "votedOn1Ids"
+var myVoted2StorageKey = "votedOn2Ids"
+//var myVotesStorageKey  = "votes"
+var profilePictureKey  = "profilePicture"
+var deletedTheirStorageKey = "deletedTheirPermanent"
 
 // Arrays for displaying questions
 //var deletedMyQuestions = [String]() // questions DELETED by current user

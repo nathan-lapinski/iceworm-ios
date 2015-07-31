@@ -13,19 +13,19 @@ class UsernameViewController: UIViewController {
     var usernameSpinner = UIActivityIndicatorView()
     var usernameBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     
-    @IBOutlet var username: UITextField!
+    @IBOutlet var usernameTextField: UITextField!
     
     @IBAction func submitUsernameButtonPressed(sender: AnyObject) {
         
-        username.resignFirstResponder()
+        usernameTextField.resignFirstResponder()
         
-        checkIfUserExists(username.text) { (isUser) -> Void in
+        checkIfUserExists(usernameTextField.text) { (isUser) -> Void in
             
             if isUser == true {
                 
-                displayAlert("That username is already taken!", "Please select a new one.", self)
+                displayAlert("That username is already taken!", "Please select a new one", self)
                 
-                self.username.text = ""
+                self.usernameTextField.text = ""
                 
             } else {
                 
@@ -33,12 +33,12 @@ class UsernameViewController: UIViewController {
                 
                 // save username to Parse
                 let query = PFUser.currentUser()
-                query?.username = self.username.text
+                query?.username = self.usernameTextField.text
                 query?.saveInBackgroundWithBlock({ (success, error) -> Void in
                     
                     if success {
                         
-                        myName = self.username.text
+                        username = self.usernameTextField.text
                         
                         displayAlert("Welcome to SocialQs", "", self)
                         self.performSegueWithIdentifier("signedUp2", sender: self)
@@ -56,12 +56,12 @@ class UsernameViewController: UIViewController {
     }
     
     
-    func checkIfUserExists(username: String, completion: ((isUser: Bool?) -> Void)!) {
+    func checkIfUserExists(usernameToCheck: String, completion: ((isUser: Bool?) -> Void)!) {
         
         var isPresent: Bool = false;
         
         let query: PFQuery = PFQuery(className: "_User")
-        query.whereKey("username", equalTo: username)
+        query.whereKey("username", equalTo: usernameToCheck)
         query.findObjectsInBackgroundWithBlock {
             (objects: [AnyObject]?, error: NSError?) -> Void in
             
