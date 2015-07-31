@@ -154,9 +154,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         returningFromPopover = false
         returningFromSettings = false
         topOffset = 64
-        
-        println(isGroupieName)
-        println(isGroupieQId)
     }
     
     
@@ -300,7 +297,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                         
 //                                        // Un-blur ASK tab
 //                                        blurView.removeFromSuperview()
-                                        
                                         blockUI(false, self.askSpinner, self.askBlurView, self)
                                         
                                         // ---- Upload full res images if necessary ---------------------------------------------
@@ -366,8 +362,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                             self.isPhoto[0] = false
                             
                             // Resize to FULL RES SIZE and upload to SocialQs table
-                            let imageQFull = self.RBResizeImage(self.chosenImage[0]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-                            let imageQDataFull = UIImagePNGRepresentation(imageQFull)
+                            //let imageQFull = self.RBResizeImage(self.chosenImage[0]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
+                            let imageQDataFull = UIImagePNGRepresentation(self.chosenImage[0]!)
                             
                             var imageQFileFull = PFFile(name: "questionImage.png", data: imageQDataFull)
                             
@@ -399,8 +395,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                             self.isPhoto[1] = false
                             
                             // Resize to THUMBNAIL and upload to SocialQs table
-                            let imageO1Full = self.RBResizeImage(self.chosenImage[1]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-                            let imageO1DataFull = UIImagePNGRepresentation(imageO1Full)
+                            //let imageO1Full = self.RBResizeImage(self.chosenImage[1]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
+                            let imageO1DataFull = UIImagePNGRepresentation(self.chosenImage[1]!)
                             
                             var imageO1FileFull = PFFile(name: "option1Image.png", data: imageO1DataFull)
                             
@@ -432,8 +428,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                             self.isPhoto[2] = false
                             
                             // Resize to THUMBNAIL and upload to SocialQs table
-                            let imageO2Full = self.RBResizeImage(self.chosenImage[2]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-                            let imageO2DataFull = UIImagePNGRepresentation(imageO2Full)
+                            //let imageO2Full = self.RBResizeImage(self.chosenImage[2]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
+                            let imageO2DataFull = UIImagePNGRepresentation(self.chosenImage[2]!)
                             
                             var imageO2FileFull = PFFile(name: "option2Image.png", data: imageO2DataFull)
                             
@@ -793,7 +789,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         if whichCell == 0 {
             
-            chosenImage[0] = info[UIImagePickerControllerOriginalImage] as? UIImage
+            chosenImage[0] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
             
             isPhoto[Int(whichCell)] = true
             
@@ -801,13 +797,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             imageCount = imageCount + 1
             
-            chosenImage[(imageCount % 2) + 1] = info[UIImagePickerControllerOriginalImage] as? UIImage
+            chosenImage[(imageCount % 2) + 1] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
             
             isPhoto[Int(whichCell) + (imageCount % 2)] = true
             
         } else if whichCell == -1 {
             
-            chosenImage[(imageCount % 2) + 1] = info[UIImagePickerControllerOriginalImage] as? UIImage
+            chosenImage[(imageCount % 2) + 1] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
             
             isPhoto[Int(whichCell) + (imageCount % 2)] = true
         }
