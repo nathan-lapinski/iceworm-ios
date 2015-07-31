@@ -11,7 +11,8 @@ import Parse
 
 class QsLoginViewController: UIViewController {
     
-    var activityIndicator = UIActivityIndicatorView()
+    var loginSpinner = UIActivityIndicatorView()
+    var loginBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     
     @IBOutlet var username: UITextField!
     @IBOutlet var password: UITextField!
@@ -32,14 +33,7 @@ class QsLoginViewController: UIViewController {
     
     @IBAction func loginFacebookButtonPressed(sender: AnyObject) {
         
-        // Setup spinner and block application input
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        blockUI(true, loginSpinner, loginBlurView, self)
         
         let permissions = ["public_profile", "email", "user_friends"]
         
@@ -50,55 +44,36 @@ class QsLoginViewController: UIViewController {
                 //Store user information locally
                 self.storeUserInfo(PFUser.currentUser()!.username!)
                 
-                
-                // PUT IN GLOBAL FUNCTION ------------------------------
-                // Get My Info facebook info and set my name
-                var meRequest = FBSDKGraphRequest(graphPath:"/me", parameters: nil);
-                
-                meRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
-                    if error == nil {
-                        name = result["name"]!! as! String
-                    } else {
-                        println("Error Getting Friends \(error)");
-                    }
-                }
-                // PUT IN GLOBAL FUNCTION ------------------------------
-                
-                
-                
                 if user.isNew {
                     
                     println("User signed up and logged in through Facebook!")
                     
-                    self.performSegueWithIdentifier("signedIn", sender: self)
-                    
-                    // Stop animation - hides when stopped (above) hides spinner automatically
-                    self.activityIndicator.stopAnimating()
-                    // Release lock on app input
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                    
                 } else {
                     
                     println("User logged in through Facebook!")
+                }
+            
+                getPersonalInfoFromFacebook() { (isFinished) -> Void in
                     
-                    self.performSegueWithIdentifier("signedIn", sender: self)
-                    
-                    // Stop animation - hides when stopped (above) hides spinner automatically
-                    self.activityIndicator.stopAnimating()
-                    // Release lock on app input
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                    if isFinished {
+                        
+                        self.performSegueWithIdentifier("signedIn", sender: self)
+                        
+                        blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                        
+                    } else {
+                        
+                        println("Could not gather FB info - logInViewController")
+                    }
                 }
                 
             } else {
                 
                 println("Uh oh. The user cancelled the Facebook login.")
                 
-                // Stop animation - hides when stopped (above) hides spinner automatically
-                self.activityIndicator.stopAnimating()
-                // Release lock on app input
-                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                
                 self.navigationController?.navigationBarHidden = false
+                
+                blockUI(false, self.loginSpinner, self.loginBlurView, self)
             }
         }
     }
@@ -113,14 +88,7 @@ class QsLoginViewController: UIViewController {
             
         } else {
             
-            // Setup spinner and block application input
-            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-            activityIndicator.center = self.view.center
-            activityIndicator.hidesWhenStopped = true
-            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-            view.addSubview(activityIndicator)
-            activityIndicator.startAnimating()
-            UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+            blockUI(true, self.loginSpinner, self.loginBlurView, self)
             
             // Generic error - this will be changed below based on error returned from Parse.com
             var errorMessage = "Please try again later"
@@ -128,33 +96,28 @@ class QsLoginViewController: UIViewController {
             // Run Parse.com login procedure
             PFUser.logInWithUsernameInBackground(username.text.lowercaseString, password: password.text, block: { (user, error) -> Void in
                 
-                // Stop animation - hides when stopped (above) hides spinner automatically
-                self.activityIndicator.stopAnimating()
-                
-                // Release lock on app input
-                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                
                 if user != nil { // standard login successful
+                    
+                    self.performSegueWithIdentifier("signedIn", sender: self)
                     
                     //Store user information locally
                     self.storeUserInfo(self.username.text)
-                    
-                    self.performSegueWithIdentifier("signedIn", sender: self)
                     
                 } else {
                     
                     if let errorString = error!.userInfo?["error"] as? String {
                         
                         errorMessage = errorString
-                        
                     }
                     
                     displayAlert("Failed Login", errorMessage, self)
                 }
+                
+                blockUI(false, self.loginSpinner, self.loginBlurView, self)
             })
         }
     }
-
+    
     
     func storeUserInfo(username: String) {
         

@@ -13,6 +13,10 @@ class SettingsViewController: UIViewController {
     
     var user = PFUser.currentUser()!
     
+    //var blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
+    var settingsSpinner = UIActivityIndicatorView()
+    var settingsBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+    
     @IBOutlet var linkWithFacebook: UIButton!
     @IBOutlet var logout: UIButton!
     @IBOutlet var appInfo: UILabel!
@@ -21,12 +25,13 @@ class SettingsViewController: UIViewController {
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var handleLabel: UILabel!
     
-    
     @IBAction func logoutButton(sender: AnyObject) { launchLogoutPopover() }
     
     @IBAction func linkWithFacebookAction(sender: AnyObject) {
         
         if !PFFacebookUtils.isLinkedWithUser(user) {
+            
+            blockUI(true, settingsSpinner, settingsBlurView, self)
             
             let permissions = ["public_profile", "email", "user_friends"]
             
@@ -36,44 +41,23 @@ class SettingsViewController: UIViewController {
                     
                     println("User is linked with Facebook")
                     
-                    // MAKE FUNCTION -----------------------------------------------------
-                    // repeats in signup
-                    // MAKE FUNCTION -----------------------------------------------------
-                    // Get profile pic from FB and store it locally (var) and on Parse
-                    var accessToken = FBSDKAccessToken.currentAccessToken().tokenString
-                    var url = NSURL(string: "https://graph.facebook.com/me/picture?type=large&return_ssl_resources=1&access_token=" + accessToken)
-                    let urlRequest = NSURLRequest(URL: url!)
-                    NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+                    getPersonalInfoFromFacebook() { (isFinished) -> Void in
                         
-                        // Set app iamge
-                        let image = UIImage(data: data)
-                        profilePicture = image!
-                        
-                        // Store image in Parse DB
-                        //
-                        // CHECK IF ALREADY EXISTS
-                        //
-                        var user = PFUser.currentUser()
-                        let imageData = UIImagePNGRepresentation(image)
-                        let picture = PFFile(name:"profilePicture.png", data: imageData)
-                        user!.setObject(picture, forKey: "profilePicture")
-                        
-                        user!.saveInBackgroundWithBlock({ (success, error) -> Void in
-                            if error == nil {
-                                
-                                println("image saved successfully")
-                                
-                            } else {
-                                
-                                println("image not saved")
-                            }
-                        })
-                        
-                        self.updateImageAndButton(true)
+                        if isFinished {
+                            
+                            println("!!!!!!!!!!!!!!!!")
+                            
+                            blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
+                            
+                            self.updateImageAndButton(true)
+                            
+                        } else {
+                            
+                            println("Could not gather FB info - settingsViewController")
+                            
+                            blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
+                        }
                     }
-                    // MAKE FUNCTION -----------------------------------------------------
-                    // repeats in signup
-                    // MAKE FUNCTION -----------------------------------------------------
                     
                 } else {
                     
@@ -82,15 +66,35 @@ class SettingsViewController: UIViewController {
                     
                     self.updateImageAndButton(false)
                     
-                    displayAlert("Error", "The Facebook user currently logged in on this device is associated with another SocialQs account", self)
+                    displayAlert("Error", "Please verify that the Facebook user currently logged in on this device is not associated with another SocialQs account and try again later", self)
+                    
+                    blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
                 }
             })
             
         } else { // UNLINK FACEBOOK
             
+//            if let pwTest = PFUser.currentUser()!["password"] as? String {
+//                
+//                println("<><><><><><><><>")
+//                println(pwTest)
+//                println("<><><><><><><><>")
+//            } else {
+//                
+//                
+//                println("<><><><><><><><>")
+//                println("No password")
+//            }
+            
             //
             //
             // TEST IF REGULAR PARSE ACCOUNT IS SETUP - REQUIRE SETUP IF NO
+            //
+            //
+            //
+            //
+            //
+            //
             //
             //
             
@@ -116,7 +120,6 @@ class SettingsViewController: UIViewController {
             
             nameLabel.text = name
             handleLabel.text = "@\(myName)"
-            profilePictureImageView.image = profilePicture
             linkWithFacebook.setTitle("Unlink Facebook Account", forState: UIControlState.Normal)
             facebookLogo.hidden = true
             linkWithFacebook.hidden = true
@@ -127,9 +130,11 @@ class SettingsViewController: UIViewController {
             handleLabel.text = "@\(myName)"
             //profilePictureImageView.image = UIImage(named: "profile.png")
             linkWithFacebook.setTitle("Link Facebook Account", forState: UIControlState.Normal)
-            facebookLogo.hidden = false
-            linkWithFacebook.hidden = false
+            //facebookLogo.hidden = false
+            //linkWithFacebook.hidden = false
         }
+        
+        profilePictureImageView.image = profilePicture
     }
     
     
@@ -141,12 +146,8 @@ class SettingsViewController: UIViewController {
         
         println(PFFacebookUtils.isLinkedWithUser(user))
         
-        logout.layer.cornerRadius = cornerRadius
-        logout.backgroundColor = buttonBackgroundColor
-        logout.titleLabel?.textColor = buttonTextColor
-        linkWithFacebook.layer.cornerRadius = cornerRadius
-        linkWithFacebook.backgroundColor = buttonBackgroundColor
-        linkWithFacebook.titleLabel?.textColor = buttonTextColor
+        formatButton(logout)
+        formatButton(linkWithFacebook)
         
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String

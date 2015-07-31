@@ -11,8 +11,10 @@ import Parse
 
 class QsSignupViewController: UIViewController {
     
-    var activityIndicator = UIActivityIndicatorView()
     var newUsername = ""
+    
+    var signupSpinner = UIActivityIndicatorView()
+    var signupBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     
     @IBOutlet var username: UITextField!
     @IBOutlet var password: UITextField!
@@ -29,118 +31,48 @@ class QsSignupViewController: UIViewController {
             
             if let user = user {
                 
-                // Setup spinner and block application input
-                self.activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-                self.activityIndicator.center = self.view.center
-                self.activityIndicator.hidesWhenStopped = true
-                self.activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-                self.view.addSubview(self.activityIndicator)
-                self.activityIndicator.startAnimating()
-                UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-                
-                // Blur screen while account processing
-                let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
-                let blurView = UIVisualEffectView(effect: blurEffect)
-                blurView.frame = self.view.frame
-                self.view.addSubview(blurView)
+                blockUI(true, self.signupSpinner, self.signupBlurView, self)
                 
                 if user.isNew {
                     
                     println("User signed up and logged in through Facebook!")
                     
-                    // MAKE FUNCTION -----------------------------------------------------
-                    // repeats in setting
-                    // MAKE FUNCTION -----------------------------------------------------
-                    // Get profile pic from FB and store it locally (var) and on Parse
-                    var accessToken = FBSDKAccessToken.currentAccessToken().tokenString
-                    var url = NSURL(string: "https://graph.facebook.com/me/picture?type=large&return_ssl_resources=1&access_token=" + accessToken)
-                    let urlRequest = NSURLRequest(URL: url!)
-                    NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    
+                    dispatch_async(backgroundQueue, {
                         
-                        // Set app iamge
-                        let image = UIImage(data: data)
-                        profilePicture = image!
+                        // This is run on the background queue //
+                        // Create entry in UserQs table
+                        self.createUserQs(self.username.text)
                         
-                        // Store image in Parse DB
-                        //
-                        // CHECK IF ALREADY EXISTS ON PARSE
-                        //
-                        var user = PFUser.currentUser()
-                        let imageData = UIImagePNGRepresentation(image)
-                        let picture = PFFile(name:"profilePicture.png", data: imageData)
-                        user!.setObject(picture, forKey: "profilePicture")
-                        
-                        user!.saveInBackgroundWithBlock({ (success, error) -> Void in
-                            if error == nil {
-                                
-                                println("image saved successfully")
-                                
-                            } else {
-                                
-                                println("image not saved")
-                            }
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            // This is run on the main queue, after the previous code in outer block //
+                            
+                            self.performSegueWithIdentifier("signedUp", sender: self)
+                            
+                            blockUI(false, self.signupSpinner, self.signupBlurView, self)
                         })
-                    }
-                    // MAKE FUNCTION -----------------------------------------------------
-                    // repeats in settings
-                    // MAKE FUNCTION -----------------------------------------------------
-                    
-                    // PUT IN GLOBAL FUNCTION ------------------------------
-                    // Get My Info facebook info and set my name
-                    var meRequest = FBSDKGraphRequest(graphPath:"/me", parameters: nil);
-                    
-                    meRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
-                        if error == nil {
-                            name = result["name"]!! as! String
-                        } else {
-                            println("Error Getting Friends \(error)");
-                        }
-                    }
-                    // PUT IN GLOBAL FUNCTION ------------------------------
-                    
-                    
-                    
-                    
-                    // Create entry in UserQs table
-                    self.createUserQs(self.username.text)
-                    
-                    // Do this in a completion handler once the above is global
-                    self.performSegueWithIdentifier("signedUp", sender: self)
-                
-                    // End spinner/UI block/unblur
-                    self.activityIndicator.stopAnimating()
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                    blurView.removeFromSuperview()
+                    })
                     
                 } else {
                     
                     println("User logged in through Facebook!")
                     
-                    self.performSegueWithIdentifier("signedUp", sender: self)
+                    self.performSegueWithIdentifier("signedUpWithoutFacebook", sender: self)
                     
-                    // End spinner/UI block/unblur
-                    self.activityIndicator.stopAnimating()
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                    blurView.removeFromSuperview()
+                    blockUI(false, self.signupSpinner, self.signupBlurView, self)
                 }
                 
             } else {
                 
                 println("Uh oh. The user cancelled the Facebook login.")
                 
-                // Stop animation - hides when stopped (above) hides spinner automatically
-                self.activityIndicator.stopAnimating()
-                // Release lock on app input
-                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                blockUI(false, self.signupSpinner, self.signupBlurView, self)
                 
                 self.navigationController?.navigationBarHidden = false
             }
         }
-        
-        // Stop animation - hides when stopped (above) hides spinner automatically
-        self.activityIndicator.stopAnimating()
-        // Release lock on app input
-        UIApplication.sharedApplication().endIgnoringInteractionEvents()
     }
     
     
@@ -160,21 +92,9 @@ class QsSignupViewController: UIViewController {
             
             displayAlert("Way to go, fat fingers.", "Maybe try typing the same password twice", self)
             
-            // ALREADY IN PLACE THROUGH PARSE ------
-            //} else if EMAIL ALREADY USED {
-            //} else if USERNAME ALREADY USED {
-            // ALREADY IN PLACE THROUGH PARSE ------
-            
         } else {
-        
-            // Setup spinner and block application input
-            activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-            activityIndicator.center = self.view.center
-            activityIndicator.hidesWhenStopped = true
-            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-            view.addSubview(activityIndicator)
-            activityIndicator.startAnimating()
-            UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+            
+            blockUI(true, self.signupSpinner, self.signupBlurView, self)
             
             // Generic error - this will be changed below based on error returned from Parse.com
             var errorMessage = "Please try again later"
@@ -190,8 +110,22 @@ class QsSignupViewController: UIViewController {
                 
                 if error == nil { // Signup successful!
                     
-                    // Create entry in UserQs table
-                    self.createUserQs(self.username.text)
+                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    
+                    dispatch_async(backgroundQueue, {
+                        
+                        // This is run on the background queue //
+                        // Create entry in UserQs table
+                        self.createUserQs(self.username.text)
+                        
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            // This is run on the main queue, after the previous code in outer block //
+                            
+                            // Segue "ask" tab
+                            self.performSegueWithIdentifier("signedUpWithoutFacebook", sender: self)
+                        })
+                    })
                     
                 } else { // Signup failed
                     
@@ -201,10 +135,7 @@ class QsSignupViewController: UIViewController {
                         
                     }
                     
-                    // Stop animation - hides when stopped (above) hides spinner automatically
-                    self.activityIndicator.stopAnimating()
-                    // Release app input block
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                    blockUI(false, self.signupSpinner, self.signupBlurView, self)
                     
                     displayAlert("Failed Signup", errorMessage, self)
                 }
@@ -243,24 +174,16 @@ class QsSignupViewController: UIViewController {
                         // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
                         // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
                         
-                        // Stop animation - hides when stopped (above) hides spinner automatically
-                        self.activityIndicator.stopAnimating()
-                        
-                        // Release app input block
-                        UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                        blockUI(false, self.signupSpinner, self.signupBlurView, self)
                         
                         let installation = PFInstallation.currentInstallation()
                         installation["user"] = PFUser.currentUser()
                         installation.saveInBackground()
                         
-                        // Segue "ask" tab
-                        self.performSegueWithIdentifier("signedUp", sender: self)
-                        
                     } else {
                         
                         println("Error storing uQId to UserQs table")
                         println(error)
-                        
                     }
                 })
                 
@@ -268,7 +191,6 @@ class QsSignupViewController: UIViewController {
                 
                 println("Error creating UserQs entry for new user")
                 println(error)
-                
             }
         })
     }
@@ -303,7 +225,8 @@ class QsSignupViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        signUpButton.layer.cornerRadius = cornerRadius
+        formatButton(signUpButton)
+        //signUpButton.layer.cornerRadius = cornerRadius
         
         // Hide nav bar when keyboard present
         navigationController?.hidesBarsOnSwipe = false
@@ -314,14 +237,8 @@ class QsSignupViewController: UIViewController {
     }
     
     
-    override func viewDidAppear(animated: Bool) {
-        
-    }
-    
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     

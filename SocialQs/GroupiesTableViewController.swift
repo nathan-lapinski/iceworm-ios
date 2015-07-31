@@ -10,6 +10,13 @@ import UIKit
 
 class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
+//    struct facebookGroupies {
+//        var handle: String!
+//        var id: String!
+//        var name: String!
+//        var isGroupie: Bool!
+//    }
+    
     let tableFontSize = CGFloat(16)
     let section1: String = ""
     let objs1: [String] = ["All Users"]
@@ -91,11 +98,13 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         //var friendsRequest = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id&limit=1000", parameters: nil);
         
         friendsRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+            
             if error == nil {
                 
                 var temp: AnyObject = result["data"]!!
                 
                 for var i = 0; i < temp.count; i++ {
+                    println(i)
                     //self.allFriends.append(temp[i]["name"]!! as! String)
                     //self.allFriendsIds.append(temp[i]["id"]!! as! String)
                     self.allFriendsDictionary[temp[i]["id"]!! as! String] = temp[i]["name"]!! as? String
@@ -105,7 +114,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                     
                     self.tempIds.append(k)
                     self.tempNames.append(v)
-                    
                 }
                 
                 // Manually call refresh upon loading to get most up to datest datas
@@ -121,9 +129,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
     func loadUsers(name: String) {
         
+        println("Loading SQ users")
+        
         var findUsers = PFUser.query()
         
         if !name.isEmpty {
+            
             findUsers?.whereKey("username", containsString: name.lowercaseString) // search against lower case
         }
         
@@ -142,7 +153,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                         
                         if let user = object as? PFUser {
                             
-                            if user["authData"] == nil {
+                            if (user["authData"] == nil) && (user.username != nil) && (user["uQId"] != nil) {
                                 
                                 self.socialQsNames.append(user.username!)
                                 self.socialQsIds.append(user["uQId"]! as! String)

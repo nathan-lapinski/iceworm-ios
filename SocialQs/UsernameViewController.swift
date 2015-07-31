@@ -10,7 +10,8 @@ import UIKit
 
 class UsernameViewController: UIViewController {
     
-    var activityIndicator = UIActivityIndicatorView()
+    var usernameSpinner = UIActivityIndicatorView()
+    var usernameBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     
     @IBOutlet var username: UITextField!
     
@@ -28,14 +29,7 @@ class UsernameViewController: UIViewController {
                 
             } else {
                 
-                // Setup spinner and block application input
-                self.activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-                self.activityIndicator.center = self.view.center
-                self.activityIndicator.hidesWhenStopped = true
-                self.activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-                self.view.addSubview(self.activityIndicator)
-                self.activityIndicator.startAnimating()
-                UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+                blockUI(true, self.usernameSpinner, self.usernameBlurView, self)
                 
                 // save username to Parse
                 let query = PFUser.currentUser()
@@ -49,15 +43,13 @@ class UsernameViewController: UIViewController {
                         displayAlert("Welcome to SocialQs", "", self)
                         self.performSegueWithIdentifier("signedUp2", sender: self)
                         
-                        // Unlock application interaction and halt spinner
-                        UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                        self.activityIndicator.stopAnimating()
-                        
                     } else {
                         
                         println("Error saving new username")
                         println(error)
                     }
+                    
+                    blockUI(false, self.usernameSpinner, self.usernameBlurView, self)
                 })
             }
         }

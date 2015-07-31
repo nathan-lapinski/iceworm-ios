@@ -24,8 +24,10 @@ class NEWMyQsTableViewController: UITableViewController {
     var votesId = [String]()
     var photosId = [String]()
     //var deletedMyStorageKey = myName + "deletedMyPermanent"
+    
     var refresher: UIRefreshControl!
-    var activityIndicator = UIActivityIndicatorView()
+    var myQsSpinner = UIActivityIndicatorView()
+    var myQsBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     
     @IBAction func zoomQButton(sender: AnyObject) {
         
@@ -71,14 +73,7 @@ class NEWMyQsTableViewController: UITableViewController {
 
     func setPhotosToZoom(sender: AnyObject) {
         
-        // Setup spinner and block application input
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        blockUI(true, myQsSpinner, myQsBlurView, self)
         
         var expectedCount = 0
         var downloadedCount = 0
@@ -115,8 +110,7 @@ class NEWMyQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                self.activityIndicator.stopAnimating()
+                                blockUI(false, self.myQsSpinner, self.myQsBlurView, self)
                                 self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
                             }
                         }
@@ -144,8 +138,7 @@ class NEWMyQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                self.activityIndicator.stopAnimating()
+                                blockUI(false, self.myQsSpinner, self.myQsBlurView, self)
                                 self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
                             }
                         }
@@ -173,8 +166,7 @@ class NEWMyQsTableViewController: UITableViewController {
                             
                             if downloadedCount == expectedCount {
                                 
-                                UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                self.activityIndicator.stopAnimating()
+                                blockUI(false, self.myQsSpinner, self.myQsBlurView, self)
                                 self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
                             }
                         }
@@ -182,8 +174,11 @@ class NEWMyQsTableViewController: UITableViewController {
                 }
                 
             } else {
+                
                 println("Full res photo query from MyQs tab failed")
                 println(error)
+                
+                blockUI(false, self.myQsSpinner, self.myQsBlurView, self)
             }
         })
         // GLOBAL FUNCTION -------------------------------------------------------
@@ -442,7 +437,6 @@ class NEWMyQsTableViewController: UITableViewController {
             topOffset = 64
             
             refresh()
-            
         }
         
         if returningFromPopover {
@@ -457,7 +451,6 @@ class NEWMyQsTableViewController: UITableViewController {
             } else {
                 topOffset = 64
             }
-            
         }
         
         if returningFromSettings {

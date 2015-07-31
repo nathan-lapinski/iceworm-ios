@@ -14,7 +14,12 @@ class WelcomeViewController: UIViewController {
     @IBOutlet var createAccountButton: UIButton!
     
     @IBOutlet var logoImageView: UIImageView!
+    
     @IBOutlet var logoTopConstraint: NSLayoutConstraint!
+    @IBOutlet var logInButtonRightConstraint: NSLayoutConstraint!
+    @IBOutlet var logInButtonLeftConstraint: NSLayoutConstraint!
+    @IBOutlet var createAccountButtonRightContraint: NSLayoutConstraint!
+    @IBOutlet var createAccountButtonLeftContraint: NSLayoutConstraint!
     
     @IBAction func signInButton(sender: AnyObject) {
         
@@ -30,161 +35,152 @@ class WelcomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
+        signInButton.hidden = true
+        createAccountButton.hidden = true
         
-        /*
-        if warningSeen == false {
-            
-            let title = "DATA USAGE"
-            let message = "SocialQs has not yet been optimized for data usage and it is unclear how much data the app will transfer with the implementation of images. If your data plan is limited you may wish to limit your SocialQs usage to Wi-Fi only until this issue is investigated."
-            displayAlert(title, message, self)
-        }
-        */
+        //let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         
-        signInButton.layer.cornerRadius = cornerRadius
-        createAccountButton.layer.cornerRadius = cornerRadius
+        //signInButton.layer.cornerRadius = cornerRadius
+        //createAccountButton.layer.cornerRadius = cornerRadius
         
         //signInButton.hidden = true
         //createAccountButton.hidden = true
         
-        // ANIMATION STUFFS -------------------------------------------------------------
-        logoTopConstraint.constant = 0
-        logoImageView.layoutIfNeeded()
-        signInButton.alpha = 0.0
-        createAccountButton.alpha = 0.0
-        
-        UIView.animateWithDuration(1.5, delay: 0.5, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-            
-            println("animating")
-            
-            self.logoTopConstraint.constant = -70
-            self.logoImageView.layoutIfNeeded()
-            
-            }, completion: { finished in
-                
-        })
-        
-        UIView.animateWithDuration(1.5, delay: 1.0, options: nil, animations: { () -> Void in
-            
-            self.signInButton.alpha = 1.0
-            self.createAccountButton.alpha = 1.0
-            
-            }, completion: { finished in
-                
-        })
-        // ANIMATION STUFFS -------------------------------------------------------------
-    }
-    
-    
-    override func viewDidLayoutSubviews() {
-        
-    }
-    
-    
-    override func viewDidAppear(animated: Bool) {
-        
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
             
-            //
-            //
-            // **** Only this this if these are not already stored for the CURRENT USER ****
-            //
-            //
-            // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-            // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-            // login successful
-            myName = PFUser.currentUser()!.username!
-            uId = PFUser.currentUser()!.objectId!
-            uQId = PFUser.currentUser()?["uQId"]! as! String
-            
-            
-            // PUT IN GLOBAL FUNCTION ------------------------------
-            // Get My Info facebook info and set my name
-            var meRequest = FBSDKGraphRequest(graphPath:"/me", parameters: nil);
-            
-            meRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
-                if error == nil {
-                    name = result["name"]!! as! String
-                } else {
-                    println("Error Getting Friends \(error)");
-                }
-            }
-            // PUT IN GLOBAL FUNCTION ------------------------------
-            
-            
-            // Get profile picture
-            if let userPicture = PFUser.currentUser()?["profilePicture"] as? PFFile {
-                
-                println("Retrieving image from Parse")
-                
-                userPicture.getDataInBackgroundWithBlock { (imageData: NSData?, error: NSError?) -> Void in
-                    
-                    if ((error) == nil) {
-                        
-                        println("Retrieving profile picture")
-                        profilePicture = UIImage(data:imageData!)!
-                    }
-                }
-            }
-            
-            // Store username locally
-            NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-            NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
-            NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
-            //NSUserDefaults.standardUserDefaults().setObject(profilePicture, forKey: profilePictureKey)
-            
-            // Set PFInstallation pointer to user table
-            let installation = PFInstallation.currentInstallation()
-            installation["user"] = PFUser.currentUser()
-            installation.saveInBackground()
-            // Add user-specific channel to installation
-            //installation.addUniqueObject(myName, forKey: "channels")
-            //installation.saveInBackground()
-            
-            // **** ALWAYS do this in case these have been updated by another device
-            // Store votedOnIds locally
-            votedOn1Ids.removeAll(keepCapacity: true)
-            votedOn2Ids.removeAll(keepCapacity: true)
-            var userQsQuery = PFQuery(className: "UserQs")
-            userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
-                
-                if error != nil {
-                    
-                    println("Error loading UserQs/votedOnId")
-                    println(error)
-                    
-                } else {
-                    
-                    if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
-                        
-                        votedOn1Ids = votedOn1Id
-                        
-                        NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
-                    }
-                    
-                    if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
-                        
-                        votedOn2Ids = votedOn2Id
-                        
-                        NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-                    }
-                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-                    // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-                    
-                    
-                    self.performSegueWithIdentifier("alreadySignedIn", sender: self)
-                }
-            })
+            signInCurrentUser()
             
         } else {
             
             signInButton.hidden = false
             createAccountButton.hidden = false
+            
+            // ANIMATION STUFFS -------------------------------------------------------------
+            logoTopConstraint.constant = 0
+            logoImageView.layoutIfNeeded()
+            
+            signInButton.alpha = 0.0
+            createAccountButton.alpha = 0.0
+            logInButtonRightConstraint.constant = self.view.frame.width / 2 - 10
+            logInButtonLeftConstraint.constant = self.view.frame.width / 2 - 10
+            signInButton.enabled = false
+            signInButton.layoutIfNeeded()
+            
+            createAccountButtonRightContraint.constant = self.view.frame.width / 2 - 10
+            createAccountButtonLeftContraint.constant = self.view.frame.width / 2 - 10
+            createAccountButton.enabled = false
+            createAccountButton.layoutIfNeeded()
+            
+            UIView.animateWithDuration(2.0, delay: 0.5, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                self.logoTopConstraint.constant = -70
+                self.logoImageView.layoutIfNeeded()
+                
+                }, completion: { finished in
+            })
+            
+            UIView.animateWithDuration(1.8, delay: 0.4, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                self.createAccountButtonRightContraint.constant = 22
+                self.createAccountButtonLeftContraint.constant = 21
+                self.createAccountButton.layoutIfNeeded()
+                self.createAccountButton.alpha = 1.0
+                
+                }, completion: { finished in
+                    
+                    self.createAccountButton.enabled = true
+            })
+            
+            UIView.animateWithDuration(1.8, delay: 0.9, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                self.logInButtonRightConstraint.constant = 22
+                self.logInButtonLeftConstraint.constant = 21
+                self.signInButton.layoutIfNeeded()
+                self.signInButton.alpha = 1.0
+                
+                }, completion: { finished in
+                    
+                    self.signInButton.enabled = true
+            })
+            // ANIMATION STUFFS -------------------------------------------------------------
+        }
+    }
+    
+    
+    func signInCurrentUser() {
+        //
+        //
+        // **** Only this this if these are not already stored for the CURRENT USER ****
+        //
+        //
+        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+        // login successful
+        myName = PFUser.currentUser()!.username!
+        uId = PFUser.currentUser()!.objectId!
+        uQId = PFUser.currentUser()?["uQId"]! as! String
+      
+        if PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
+            
+            getPersonalInfoFromFacebook() { (isFinished) -> Void in
+                
+                if isFinished {
+                    
+                } else {
+                    
+                    println("Could not gather FB info - welcomeViewController")
+                }
+            }
         }
         
+        // Store username locally
+        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
+        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
+        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
+        //NSUserDefaults.standardUserDefaults().setObject(profilePicture, forKey: profilePictureKey)
         
+        // Set PFInstallation pointer to user table
+        let installation = PFInstallation.currentInstallation()
+        installation["user"] = PFUser.currentUser()
+        installation.saveInBackground()
+        // Add user-specific channel to installation
+        //installation.addUniqueObject(myName, forKey: "channels")
+        //installation.saveInBackground()
         
+        // **** ALWAYS do this in case these have been updated by another device
+        // Store votedOnIds locally
+        votedOn1Ids.removeAll(keepCapacity: true)
+        votedOn2Ids.removeAll(keepCapacity: true)
+        var userQsQuery = PFQuery(className: "UserQs")
+        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
+            
+            if error != nil {
+                
+                println("Error loading UserQs/votedOnId")
+                println(error)
+                
+            } else {
+                
+                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
+                    
+                    votedOn1Ids = votedOn1Id
+                    
+                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
+                }
+                
+                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
+                    
+                    votedOn2Ids = votedOn2Id
+                    
+                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
+                }
+                // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+                // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
+                
+                self.performSegueWithIdentifier("alreadySignedIn", sender: self)
+            }
+        })
     }
     
 

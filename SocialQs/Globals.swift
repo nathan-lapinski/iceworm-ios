@@ -17,7 +17,7 @@ var uQId = ""
 var name = ""
 
 // Profile Picture variables
-var profilePicture = UIImage()
+var profilePicture = UIImage(named: "profile.png")
 
 // Set constants for formatting buttons - universal settings
 let bgAlpha: CGFloat = 0.7

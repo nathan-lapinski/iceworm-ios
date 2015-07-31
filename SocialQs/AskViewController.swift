@@ -709,14 +709,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     
-    func formatButton(_button: UIButton) {
-        
-        _button.layer.cornerRadius = cornerRadius
-        _button.backgroundColor = buttonBackgroundColor
-        _button.titleLabel?.textColor = buttonTextColor
-    }
-    
-    
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
         if indexPath.row == 0 {

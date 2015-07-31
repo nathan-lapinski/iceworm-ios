@@ -28,7 +28,7 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Amo-91-rBz">
                                             <rect key="frame" x="26" y="11" width="323" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -45,13 +45,13 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Groupies" id="byY-cz-3On">
                         <barButtonItem key="leftBarButtonItem" systemItem="done" id="B7P-4T-edn">
-                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="dismissPressed:" destination="vsF-Lg-w3g" id="uRv-5y-3u0"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="sEV-Ih-Jcu">
-                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
@@ -120,7 +120,7 @@
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="71" id="qfR-CE-NHF"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="24"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile" translatesAutoresizingMaskIntoConstraints="NO" id="Cjh-SY-Mb6">
@@ -137,7 +137,7 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q3H-JC-wMC">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q3H-JC-wMC">
                                 <rect key="frame" x="36" y="266" width="303" height="40"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -157,7 +157,7 @@
                                     <action selector="linkWithFacebookAction:" destination="OY2-PK-A5I" eventType="touchUpInside" id="8oG-WQ-3Iq"/>
                                 </connections>
                             </button>
-                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="share_facebook" translatesAutoresizingMaskIntoConstraints="NO" id="WgT-Jk-ISL">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="share_facebook" translatesAutoresizingMaskIntoConstraints="NO" id="WgT-Jk-ISL">
                                 <rect key="frame" x="42" y="271" width="30" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="7AN-tQ-yxT"/>
@@ -167,7 +167,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="@handkle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HhJ-Gm-5Tv">
                                 <rect key="frame" x="124" y="103" width="215" height="21"/>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -309,6 +309,10 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="createAccountButton" destination="THj-hZ-wlM" id="vgi-6e-DV1"/>
+                        <outlet property="createAccountButtonLeftContraint" destination="Fg9-bC-Ljl" id="Sip-ob-dd0"/>
+                        <outlet property="createAccountButtonRightContraint" destination="0fU-Sb-XtR" id="dzN-Ab-JNc"/>
+                        <outlet property="logInButtonLeftConstraint" destination="hEk-kf-IlA" id="dap-SG-rqJ"/>
+                        <outlet property="logInButtonRightConstraint" destination="xxc-P2-3ut" id="7aS-ku-Poh"/>
                         <outlet property="logoImageView" destination="RUR-YB-je1" id="pXv-Me-aka"/>
                         <outlet property="logoTopConstraint" destination="7hv-ce-rj5" id="lwE-JF-rT2"/>
                         <outlet property="signInButton" destination="oNk-hc-SR7" id="ndz-DU-bZg"/>
@@ -500,7 +504,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Log In" id="hoZ-N9-tFr">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="0gh-aN-P7Y">
-                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="cancelButtonPressed:" destination="Sak-K0-qCI" id="gBe-TW-xmy"/>
                                 <segue destination="keB-Ft-4UR" kind="presentation" identifier="cancelLogIn" modalTransitionStyle="flipHorizontal" id="kfF-Cv-ckS"/>
@@ -807,7 +811,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Sign Up" id="wuf-Bp-hqy">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="gEo-Wj-1d7">
-                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <segue destination="keB-Ft-4UR" kind="presentation" identifier="cancelSignUp" id="sQf-7n-mye"/>
                             </connections>
@@ -824,6 +828,7 @@
                         <segue destination="ZiS-cB-dzR" kind="popoverPresentation" identifier="signedUp" popoverAnchorView="tub-91-Wzs" id="SBt-an-vPT">
                             <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                         </segue>
+                        <segue destination="ZJ0-6y-W0S" kind="presentation" identifier="signedUpWithoutFacebook" id="V95-x7-eNQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H2z-yK-qpd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -861,7 +866,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Votes" id="NxN-Hs-Jyk">
                         <barButtonItem key="leftBarButtonItem" systemItem="stop" id="08B-GA-xzf">
-                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="dismissPressed:" destination="34W-AU-OGO" id="Mi0-mQ-RA8"/>
                             </connections>
@@ -956,7 +961,7 @@
                                     <constraint firstAttribute="width" constant="325" id="mRc-Yt-6jz"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="20"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="default">
                                     <mask key="constraints">
@@ -1684,7 +1689,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="F6n-qk-dzy">
                         <barButtonItem key="leftBarButtonItem" systemItem="stop" id="eSq-aY-ILU">
-                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="dismissPressed:" destination="CJm-ca-6Aw" id="mPk-De-Rqy"/>
                             </connections>
@@ -2594,7 +2599,7 @@
                                                 <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dr5-eg-Uk5">
                                                     <rect key="frame" x="166" y="42" width="11" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -2708,7 +2713,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Vfu-5X-YNT"/>
-        <segue reference="JxC-Xe-7gf"/>
+        <segue reference="V95-x7-eNQ"/>
         <segue reference="u0a-cW-CdR"/>
         <segue reference="Nkj-Su-cOz"/>
     </inferredMetricsTieBreakers>
