@@ -14,12 +14,16 @@ class WelcomeViewController: UIViewController {
     @IBOutlet var createAccountButton: UIButton!
     
     @IBOutlet var logoImageView: UIImageView!
+    @IBOutlet var bgImageView: UIImageView!
     
     @IBOutlet var logoTopConstraint: NSLayoutConstraint!
     @IBOutlet var logInButtonRightConstraint: NSLayoutConstraint!
     @IBOutlet var logInButtonLeftConstraint: NSLayoutConstraint!
     @IBOutlet var createAccountButtonRightContraint: NSLayoutConstraint!
     @IBOutlet var createAccountButtonLeftContraint: NSLayoutConstraint!
+    @IBOutlet var logInButtonTopConstraint: NSLayoutConstraint!
+    @IBOutlet var buttonSpacingConstraint: NSLayoutConstraint!
+    @IBOutlet var bgTopConstraint: NSLayoutConstraint!
     
     @IBAction func signInButton(sender: AnyObject) {
         
@@ -57,51 +61,35 @@ class WelcomeViewController: UIViewController {
             createAccountButton.hidden = false
             
             // ANIMATION STUFFS -------------------------------------------------------------
+            bgTopConstraint.constant = 0
+            bgImageView.layoutIfNeeded()
+            
             logoTopConstraint.constant = 0
             logoImageView.layoutIfNeeded()
             
-            signInButton.alpha = 0.0
-            createAccountButton.alpha = 0.0
-            logInButtonRightConstraint.constant = self.view.frame.width / 2 - 10
-            logInButtonLeftConstraint.constant = self.view.frame.width / 2 - 10
+            self.buttonSpacingConstraint.constant = 120
+            self.logInButtonTopConstraint.constant = 670
             signInButton.enabled = false
             signInButton.layoutIfNeeded()
             
-            createAccountButtonRightContraint.constant = self.view.frame.width / 2 - 10
-            createAccountButtonLeftContraint.constant = self.view.frame.width / 2 - 10
             createAccountButton.enabled = false
             createAccountButton.layoutIfNeeded()
             
-            UIView.animateWithDuration(2.0, delay: 0.5, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+            UIView.animateWithDuration(2.5, delay: 0.3, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.3, options: nil, animations: { () -> Void in
                 
-                self.logoTopConstraint.constant = -70
+                self.bgTopConstraint.constant = -80
+                self.logoTopConstraint.constant = -130
+                self.logInButtonTopConstraint.constant = 178
+                self.buttonSpacingConstraint.constant = 8
+                self.bgImageView.layoutIfNeeded()
                 self.logoImageView.layoutIfNeeded()
-                
-                }, completion: { finished in
-            })
-            
-            UIView.animateWithDuration(1.8, delay: 0.4, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-                
-                self.createAccountButtonRightContraint.constant = 22
-                self.createAccountButtonLeftContraint.constant = 21
                 self.createAccountButton.layoutIfNeeded()
-                self.createAccountButton.alpha = 1.0
-                
-                }, completion: { finished in
-                    
-                    self.createAccountButton.enabled = true
-            })
-            
-            UIView.animateWithDuration(1.8, delay: 0.9, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-                
-                self.logInButtonRightConstraint.constant = 22
-                self.logInButtonLeftConstraint.constant = 21
                 self.signInButton.layoutIfNeeded()
-                self.signInButton.alpha = 1.0
                 
-                }, completion: { finished in
+                }, completion: { (isFinished) -> Void in
                     
                     self.signInButton.enabled = true
+                    self.createAccountButton.enabled = true
             })
             // ANIMATION STUFFS -------------------------------------------------------------
         }
@@ -114,85 +102,12 @@ class WelcomeViewController: UIViewController {
         // **** Only this this if these are not already stored for the CURRENT USER ****
         //
         //
+        storeUserInfo(PFUser.currentUser()!.username!, false) {
+            
+            (isFinished) -> Void in
         
-        
-        storeUserInfo(PFUser.currentUser()!.username!, false) { (isFinished) -> Void in
-        
-            // put inside completion handler
             self.performSegueWithIdentifier("alreadySignedIn", sender: self)
         }
-        
-        
-        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-        // login successful
-//        username = PFUser.currentUser()!.username!
-//        uId = PFUser.currentUser()!.objectId!
-//        uQId = PFUser.currentUser()?["uQId"]! as! String
-//      
-//        if PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
-//            
-//            getPersonalInfoFromFacebook() { (isFinished) -> Void in
-//                
-//                if isFinished {
-//                    
-//                } else {
-//                    
-//                    println("Could not gather FB info - welcomeViewController")
-//                }
-//            }
-//        }
-//        
-//        // Store username locally
-//        NSUserDefaults.standardUserDefaults().setObject(username, forKey: usernameStorageKey)
-//        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: uIdStorageKey)
-//        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: uQIdStorageKey)
-//        //NSUserDefaults.standardUserDefaults().setObject(profilePicture, forKey: profilePictureKey)
-//        
-//        // Set PFInstallation pointer to user table
-//        let installation = PFInstallation.currentInstallation()
-//        installation["user"] = PFUser.currentUser()
-//        installation.saveInBackground()
-//        // Add user-specific channel to installation
-//        //installation.addUniqueObject(myName, forKey: "channels")
-//        //installation.saveInBackground()
-//        
-//        // **** ALWAYS do this in case these have been updated by another device
-//        // Store votedOnIds locally
-//        votedOn1Ids.removeAll(keepCapacity: true)
-//        votedOn2Ids.removeAll(keepCapacity: true)
-//        var userQsQuery = PFQuery(className: "UserQs")
-//        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
-//            
-//            if error != nil {
-//                
-//                println("Error loading UserQs/votedOnId")
-//                println(error)
-//                
-//            } else {
-//                
-//                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
-//                    
-//                    votedOn1Ids = votedOn1Id
-//                    
-//                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
-//                }
-//                
-//                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
-//                    
-//                    votedOn2Ids = votedOn2Id
-//                    
-//                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-//                }
-//                // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-//                // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-        
-                
-                
-                
-        
-//            }
-//        })
     }
     
 

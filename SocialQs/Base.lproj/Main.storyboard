@@ -245,10 +245,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash3_noLogo" translatesAutoresizingMaskIntoConstraints="NO" id="teb-Nr-4cT">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg3_long" translatesAutoresizingMaskIntoConstraints="NO" id="teb-Nr-4cT">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="1334"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="667" id="6ea-cL-dKt"/>
+                                    <constraint firstAttribute="height" constant="1334" id="6ea-cL-dKt"/>
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash3_logoOnly" translatesAutoresizingMaskIntoConstraints="NO" id="RUR-YB-je1">
@@ -259,7 +259,7 @@
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oNk-hc-SR7">
-                                <rect key="frame" x="37" y="198" width="300" height="40"/>
+                                <rect key="frame" x="32" y="198" width="311" height="40"/>
                                 <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="2ea-sE-nIK"/>
@@ -275,7 +275,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="THj-hZ-wlM">
-                                <rect key="frame" x="37" y="246" width="300" height="40"/>
+                                <rect key="frame" x="32" y="246" width="311" height="40"/>
                                 <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="Dmn-TZ-AFF"/>
@@ -297,22 +297,38 @@
                             <constraint firstAttribute="trailingMargin" secondItem="teb-Nr-4cT" secondAttribute="trailing" constant="-16" id="12Y-0F-wBC"/>
                             <constraint firstItem="RUR-YB-je1" firstAttribute="top" secondItem="EOD-l8-AKz" secondAttribute="topMargin" id="7hv-ce-rj5"/>
                             <constraint firstItem="THj-hZ-wlM" firstAttribute="leading" secondItem="EOD-l8-AKz" secondAttribute="leadingMargin" constant="21" id="Fg9-bC-Ljl"/>
+                            <constraint firstItem="oNk-hc-SR7" firstAttribute="top" secondItem="3qc-9P-A2V" secondAttribute="bottom" constant="178" id="MA8-Nz-SWC"/>
                             <constraint firstItem="teb-Nr-4cT" firstAttribute="top" secondItem="EOD-l8-AKz" secondAttribute="topMargin" id="Nm3-V8-q9X"/>
-                            <constraint firstItem="THj-hZ-wlM" firstAttribute="top" secondItem="teb-Nr-4cT" secondAttribute="top" constant="246" id="RaJ-w9-hcl"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="THj-hZ-wlM" secondAttribute="trailing" constant="16" id="TaG-gJ-fLt"/>
                             <constraint firstAttribute="centerX" secondItem="RUR-YB-je1" secondAttribute="centerX" id="Uw9-4Z-kh1"/>
                             <constraint firstItem="THj-hZ-wlM" firstAttribute="top" secondItem="oNk-hc-SR7" secondAttribute="bottom" constant="8" id="WmA-Hh-T0D"/>
                             <constraint firstItem="oNk-hc-SR7" firstAttribute="leading" secondItem="EOD-l8-AKz" secondAttribute="leadingMargin" constant="21" id="hEk-kf-IlA"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="oNk-hc-SR7" secondAttribute="trailing" constant="22" id="jWq-s3-3rg"/>
                             <constraint firstItem="teb-Nr-4cT" firstAttribute="leading" secondItem="EOD-l8-AKz" secondAttribute="leadingMargin" constant="-16" id="mHo-qi-niI"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="oNk-hc-SR7" secondAttribute="trailing" constant="22" id="xxc-P2-3ut"/>
+                            <constraint firstItem="THj-hZ-wlM" firstAttribute="leading" secondItem="EOD-l8-AKz" secondAttribute="leadingMargin" constant="16" id="n6M-hc-MKX"/>
+                            <constraint firstItem="oNk-hc-SR7" firstAttribute="leading" secondItem="EOD-l8-AKz" secondAttribute="leadingMargin" constant="16" id="oSt-gb-IUE"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="oNk-hc-SR7" secondAttribute="trailing" constant="16" id="xxc-P2-3ut"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="hEk-kf-IlA"/>
+                                <exclude reference="jWq-s3-3rg"/>
+                                <exclude reference="0fU-Sb-XtR"/>
+                                <exclude reference="Fg9-bC-Ljl"/>
+                            </mask>
+                        </variation>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
+                        <outlet property="bgImageView" destination="teb-Nr-4cT" id="rtP-iR-Mz1"/>
+                        <outlet property="bgTopConstraint" destination="Nm3-V8-q9X" id="Ud9-Er-HWJ"/>
+                        <outlet property="buttonSpacingConstraint" destination="WmA-Hh-T0D" id="PJs-TB-9Ux"/>
                         <outlet property="createAccountButton" destination="THj-hZ-wlM" id="vgi-6e-DV1"/>
                         <outlet property="createAccountButtonLeftContraint" destination="Fg9-bC-Ljl" id="Sip-ob-dd0"/>
                         <outlet property="createAccountButtonRightContraint" destination="0fU-Sb-XtR" id="dzN-Ab-JNc"/>
                         <outlet property="logInButtonLeftConstraint" destination="hEk-kf-IlA" id="dap-SG-rqJ"/>
                         <outlet property="logInButtonRightConstraint" destination="xxc-P2-3ut" id="7aS-ku-Poh"/>
+                        <outlet property="logInButtonTopConstraint" destination="MA8-Nz-SWC" id="32a-d1-xuU"/>
                         <outlet property="logoImageView" destination="RUR-YB-je1" id="pXv-Me-aka"/>
                         <outlet property="logoTopConstraint" destination="7hv-ce-rj5" id="lwE-JF-rT2"/>
                         <outlet property="signInButton" destination="oNk-hc-SR7" id="ndz-DU-bZg"/>
@@ -2702,6 +2718,7 @@
     <resources>
         <image name="bg3" width="621" height="1104"/>
         <image name="bg3WithLogo" width="621" height="1104"/>
+        <image name="bg3_long" width="621" height="2208"/>
         <image name="book-cover-star-7" width="30" height="30"/>
         <image name="camera" width="100" height="100"/>
         <image name="message-7" width="30" height="30"/>
@@ -2712,9 +2729,9 @@
         <image name="splash3_noLogo" width="621" height="1104"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Vfu-5X-YNT"/>
-        <segue reference="aPw-PS-bwz"/>
-        <segue reference="kfF-Cv-ckS"/>
+        <segue reference="sQf-7n-mye"/>
+        <segue reference="JxC-Xe-7gf"/>
         <segue reference="Nkj-Su-cOz"/>
+        <segue reference="Vfu-5X-YNT"/>
     </inferredMetricsTieBreakers>
 </document>
