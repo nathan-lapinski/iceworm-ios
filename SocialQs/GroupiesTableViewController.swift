@@ -20,10 +20,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         var id: String
     }
     
+    var viewWillAppearCount = 0
+    
     let tableFontSize = CGFloat(16)
     let section1: String = ""
     let objs1: [String] = ["All Users"]
-    let section2: String = "Facebook Friends"
+    let section2: String = ""//"Facebook Friends"
     var objs2: [String] = [String]()
     let section3: String = "SocialQs Friends"
     var allSelected = Bool()
@@ -37,6 +39,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     var users = [String]()
     var objectsArray = [Objects]()
     var allFriendsDictionary = Dictionary<String, friendStruct>()
+    var allFriendsDictionary2 = [Dictionary<String, AnyObject>]()
+    var allFriendsDictionary2Filtered = [Dictionary<String, AnyObject>]()
     var allFriendsDictionarySorted = Dictionary<String, String>()
     var filteredFriends = [String]()
     var filteredFriendsIds = [friendStruct]()
@@ -87,6 +91,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                             if error == nil {
                                 
                                 self.allFriendsDictionary[objects![0].username!!] = friendStruct(type: "socialQs", id: objects![0].objectId!!)
+                                self.allFriendsDictionary2.append(["name": objects![0].username!!, "type": "socialQs", "id": objects![0].objectId!!])//, "pic": UIImagePNGRepresentation(UIImage(named: "camera.png"))])
                             }
                             
                             self.loadUsers("")
@@ -150,7 +155,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         tempIds.removeAll(keepCapacity: true)
         
         // Get List Of Friends who have SOCIALQS
-        var friendsRequest = FBSDKGraphRequest(graphPath:"/me/friends", parameters: nil);
+        var friendsRequest = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
         // Get List Of All Friends
         //var friendsRequest = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id&limit=1000", parameters: nil);
         
@@ -162,8 +167,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 
                 for var i = 0; i < temp.count; i++ {
                     
+                    //println(temp[i]!["picture"]!!["data"]!!["url"]!!)
+                    
                     //self.allFriendsDictionary[temp[i]["id"]!! as! String] = temp[i]["name"]!! as? String
                     self.allFriendsDictionary[temp[i]["name"]!! as! String] = friendStruct(type: "facebookWithApp", id: temp[i]["id"]!! as! String)
+                    
+                    self.allFriendsDictionary2.append(["name": temp[i]["name"]!! as! String, "type": "facebookWithApp", "id": temp[i]["id"]!! as! String])//, "picURL": temp[i]!["picture"]!!["data"]!!["url"]!!])
                 }
                 
                 // Manually call refresh upon loading to get most up to datest datas
@@ -172,6 +181,19 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             } else {
                 
                 println("Error Getting Friends \(error)")
+                
+                if self.viewWillAppearCount > 3 {
+                    
+                    self.viewWillAppearCount = 0
+                    
+                    displayAlert("Sorry", "There was an error retrieving your friends. Please try again shortly!", self)
+                    
+                } else {
+                    
+                    self.viewWillAppearCount++
+                    
+                    self.viewWillAppear(true)
+                }
             }
         }
     }
@@ -179,81 +201,95 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
     func loadUsers(name: String) {
         
-        let sortedArray = sorted(self.allFriendsDictionary, {$0.0 < $1.0})
-        self.tempNames = sortedArray.map {return $0.0 }
-        self.tempIds = sortedArray.map {return $0.1 }
+//        self.allFriendsDictionary2.sort { (item1, item2) -> Bool in
+//            
+//            let t1 = (item1["name"] as! String).lowercaseString
+//            let t2 = (item2["name"] as! String).lowercaseString
+//            
+//            return t1 < t2
+//        }
         
-        println(sortedArray)
-        println(self.tempNames[2])
-        println(self.tempIds[2].id)
+        tempNames.removeAll(keepCapacity: true)
+        //tempIds.removeAll(keepCapacity: true)
         
-        var findUsers = PFUser.query()
+        for temp in allFriendsDictionary2 {
+            
+            tempNames.append(temp["name"] as! String)
+            //tempIds.append(temp["id"] as! String)
+        }
         
         if !name.isEmpty {
             
-            findUsers?.whereKey("username", containsString: name.lowercaseString) // search against lower case
+            // Filter users by searchBar input
+            var filteredStrings = self.tempNames.filter({(item: String) -> Bool in
+                
+                var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
+                return stringMatch != nil ? true : false
+            })
+            
+            
+            
+            // reset all entries in filtered users
+            //self.filteredFriendsIds.removeAll(keepCapacity: true)
+            self.allFriendsDictionary2Filtered.removeAll(keepCapacity: true)
+            
+            // Fill FB userIds
+            for name in filteredStrings {
+                var index = find(self.tempNames, name)!
+                //self.filteredFriendsIds.append(self.tempIds[index])
+                self.allFriendsDictionary2Filtered.append(self.allFriendsDictionary2[index])
+            }
+            
+            // Set arrays to fill table
+            self.facebookNames = filteredStrings
+            //self.facebookIds = self.filteredFriendsIds
+            
+            self.allFriendsDictionary2Filtered.sort { (item1, item2) -> Bool in
+                
+                let t1 = (item1["name"] as! String).lowercaseString
+                let t2 = (item2["name"] as! String).lowercaseString
+                
+                return t1 < t2
+            }
+            
+            println(allFriendsDictionary2Filtered)
+            
+            tempNames.removeAll(keepCapacity: true)
+            //tempIds.removeAll(keepCapacity: true)
+            
+            for temp in allFriendsDictionary2Filtered {
+                
+                tempNames.append(temp["name"] as! String)
+                //tempIds.append(temp["id"] as! String)
+            }
+            
+        } else {
+            
+            self.allFriendsDictionary2.sort { (item1, item2) -> Bool in
+                
+                let t1 = (item1["name"] as! String).lowercaseString
+                let t2 = (item2["name"] as! String).lowercaseString
+                
+                return t1 < t2
+            }
+            
+            tempNames.removeAll(keepCapacity: true)
+            //tempIds.removeAll(keepCapacity: true)
+            
+            for temp in allFriendsDictionary2 {
+                
+                tempNames.append(temp["name"] as! String)
+                //tempIds.append(temp["id"] as! String)
+            }
+            
+            // else keep all users in view
+            self.facebookNames = self.tempNames
+            //self.facebookIds = self.tempIds
         }
         
-        findUsers?.whereKey("username", notEqualTo: username)
+        self.objectsArray = [Objects(sectionName: self.section1, sectionObjects: self.objs1), Objects(sectionName: self.section2, sectionObjects: self.facebookNames)]//, Objects(sectionName: self.section3, sectionObjects: self.socialQsNames)]
         
-        findUsers?.findObjectsInBackgroundWithBlock({ (userObjects, error) -> Void in
-            
-            if error == nil {
-                
-                if let users = userObjects {
-                    
-                    self.socialQsNames.removeAll(keepCapacity: true)
-                    self.socialQsIds.removeAll(keepCapacity: true)
-                    
-                    for object in users {
-                        
-                        if let user = object as? PFUser {
-                            
-                            if (user["authData"] == nil) && (user.username != nil) && (user["uQId"] != nil) {
-                                
-                                self.socialQsNames.append(user.username!)
-                                self.socialQsIds.append(user["uQId"]! as! String)
-                            }
-                        }
-                    }
-                }
-                
-                if !name.isEmpty {
-                    
-                    // Filter users by serachBar input
-                    var filteredStrings = self.tempNames.filter({(item: String) -> Bool in
-                        
-                        var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
-                        return stringMatch != nil ? true : false
-                    })
-                    
-                    // reset all entries in filtered users
-                    self.filteredFriendsIds.removeAll(keepCapacity: true)
-                    
-                    // Fill FB userIds
-                    for name in filteredStrings {
-                        var index = find(self.tempNames, name)!
-                        self.filteredFriendsIds.append(self.tempIds[index])
-                    }
-                    
-                    // Set arrays to fill table
-                    self.facebookNames = filteredStrings
-                    self.facebookIds = self.filteredFriendsIds
-                    
-                } else {
-                    
-                    // else keep all users in view
-                    self.facebookNames = self.tempNames
-                    self.facebookIds = self.tempIds
-                }
-                
-                println(self.tempNames)
-                
-                self.objectsArray = [Objects(sectionName: self.section1, sectionObjects: self.objs1), Objects(sectionName: self.section2, sectionObjects: self.facebookNames), Objects(sectionName: self.section3, sectionObjects: self.socialQsNames)]
-                
-                self.tableView.reloadData()
-            }
-        })
+        self.tableView.reloadData()
     }
     
     
@@ -410,9 +446,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         tableView.beginUpdates()
         tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
         tableView.endUpdates()
-        
-        // SEND DATA BACK -------------------------------------------------------------------------
-        // SEND DATA BACK -------------------------------------------------------------------------
     }
     
     
