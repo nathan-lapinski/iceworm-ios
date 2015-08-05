@@ -11,12 +11,6 @@ import UIKit
 
 func blockUI(block: Bool, _activityIndicator: UIActivityIndicatorView, _blurView: UIVisualEffectView, sender: UIViewController) {
     
-    //var activityIndicator = UIActivityIndicatorView()
-    
-    // Blur screen while Q upload is processing
-    //let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
-    //var blurView = UIVisualEffectView(effect: blurEffect)
-    
     if block == true {
         
         println("Blocking UI")
@@ -26,7 +20,6 @@ func blockUI(block: Bool, _activityIndicator: UIActivityIndicatorView, _blurView
         sender.view.addSubview(_blurView)
         
         // Setup and start spinner
-        //_activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
         _activityIndicator.center = sender.view.center
         _activityIndicator.hidesWhenStopped = true
         _activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
@@ -58,20 +51,9 @@ func displayAlert(title: String, message: String, sender: UIViewController) {
     
     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
         
-        //self.dismissViewControllerAnimated(true, completion: nil)
-        
     }))
-    
-    // Delay view of ViewController until next loop to prevent:
-    // "Warning: Attempt to present UIALertController on xViewController
-    //           whose view is not in the window hierarchy!"
-    
-    
-    
-    //dispatch_async(dispatch_get_main_queue(), {
         
         sender.presentViewController(alert, animated: true, completion: nil)
-    //})
 }
 
 func formatButton(_button: UIButton) {
@@ -140,6 +122,12 @@ func getPersonalInfoFromFacebook(completion: (Bool) -> Void) {
 }
 
 
+func globalBlurView() -> (UIVisualEffectView) {
+    
+    return UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+}
+
+
 func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> Void) {
     
     // Store login information in globals
@@ -181,7 +169,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
                 
             }
             
-            println("New user data has been stored")
             completion(true)
         })
         
@@ -224,29 +211,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
         })
     }
 }
-
-
-/*
-func storeLocal() { // Currently has no inputs, uses globals
-
-    // NSUserDefaults Storage Keys
-    let myVoted1StorageKey = myName + "votedOn1Ids"
-    let myVoted2StorageKey = myName + "votedOn2Ids"
-    var myVotesStorageKey = myName + "votes"
-    var profilePictureKey = myName + "profilePicture"
-    
-    // Store actual data - during: login, signup, loginSkip (from welcomeViewController)
-    //if...
-    
-    //if...
-    //.
-    //.
-    //.
-    
-    
-}
-*/
-
 
 
 

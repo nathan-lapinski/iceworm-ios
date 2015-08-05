@@ -15,7 +15,7 @@ class SettingsViewController: UIViewController {
     
     //var blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
     var settingsSpinner = UIActivityIndicatorView()
-    var settingsBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+    var settingsBlurView = globalBlurView()
     
     @IBOutlet var linkWithFacebook: UIButton!
     @IBOutlet var logout: UIButton!

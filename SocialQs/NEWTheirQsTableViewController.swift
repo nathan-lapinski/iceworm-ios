@@ -20,16 +20,14 @@ class NEWTheirQsTableViewController: UITableViewController {
     var askerPhotos = Dictionary<String, UIImage?>()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
-    //var users = [String: String]()
     var askers = [String]()
     var configuration = [String]()
     var votesId = [String]()
     var photosId = [String]()
-    //var dismissedTheirStorageKey = myName + "dismissedTheirPermanent"
     
     var refresher: UIRefreshControl!
     var theirQsSpinner = UIActivityIndicatorView()
-    var theirQsBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+    var theirQsBlurView = globalBlurView()
     
     @IBAction func vote1ButtonAction(sender: AnyObject) { castVote(sender.tag, optionId: 1) }
     

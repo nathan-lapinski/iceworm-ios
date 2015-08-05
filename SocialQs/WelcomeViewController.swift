@@ -68,14 +68,14 @@ class WelcomeViewController: UIViewController {
             logoImageView.layoutIfNeeded()
             
             self.buttonSpacingConstraint.constant = 120
-            self.logInButtonTopConstraint.constant = 670
+            self.logInButtonTopConstraint.constant = self.view.frame.height + 5//670
             signInButton.enabled = false
             signInButton.layoutIfNeeded()
             
             createAccountButton.enabled = false
             createAccountButton.layoutIfNeeded()
             
-            UIView.animateWithDuration(2.5, delay: 0.3, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.3, options: nil, animations: { () -> Void in
+            UIView.animateWithDuration(2.5, delay: 1.0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.3, options: nil, animations: { () -> Void in
                 
                 self.bgTopConstraint.constant = -80
                 self.logoTopConstraint.constant = -130

@@ -12,7 +12,7 @@ import Parse
 class QsLoginViewController: UIViewController {
     
     var loginSpinner = UIActivityIndicatorView()
-    var loginBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+    var loginBlurView = globalBlurView()
     
     @IBOutlet var usernameTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
@@ -120,55 +120,6 @@ class QsLoginViewController: UIViewController {
             })
         }
     }
-    
-    
-//    func storeUserInfo(username: String) {
-//        
-//        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-//        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-//        myName = username.lowercaseString
-//        uId = PFUser.currentUser()!.objectId!
-//        uQId = PFUser.currentUser()?["uQId"]! as! String
-//        
-//        // Store username locally
-//        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-//        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
-//        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
-//        
-//        // Store votedOnIds locally
-//        var userQsQuery = PFQuery(className: "UserQs")
-//        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
-//            
-//            if error != nil {
-//                
-//                println("Error loading UserQs/votedOnId")
-//                println(error)
-//                
-//            } else {
-//                
-//                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
-//                    
-//                    votedOn1Ids = votedOn1Id
-//                    
-//                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
-//                }
-//                
-//                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
-//                    
-//                    votedOn2Ids = votedOn2Id
-//                    
-//                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-//                }
-//            }
-//        })
-//        
-//        // Set PFInstallation pointer to user table
-//        let installation = PFInstallation.currentInstallation()
-//        installation["user"] = PFUser.currentUser()
-//        installation.saveInBackground()
-//        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-//        // MAKE GLOBAL FUNCTION (repeats in QsSignUpViewController ------------
-//    }
     
     
     override func viewDidLoad() {

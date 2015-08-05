@@ -14,7 +14,7 @@ class QsSignupViewController: UIViewController {
     var newUsername = ""
     
     var signupSpinner = UIActivityIndicatorView()
-    var signupBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+    var signupBlurView = globalBlurView()
     
     @IBOutlet var username: UITextField!
     @IBOutlet var password: UITextField!

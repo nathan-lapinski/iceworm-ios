@@ -23,51 +23,70 @@ class NEWMyQsTableViewController: UITableViewController {
     var configuration = [String]()
     var votesId = [String]()
     var photosId = [String]()
-    //var deletedMyStorageKey = myName + "deletedMyPermanent"
     
     var refresher: UIRefreshControl!
     var myQsSpinner = UIActivityIndicatorView()
-    var myQsBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+    var myQsBlurView = globalBlurView()
     
     @IBAction func zoomQButton(sender: AnyObject) {
         
-        imageZoom = [nil, nil, nil]
+        if !contains(isUploading, questionIds[sender.tag]) {
         
-        zoomPage = 0
-        
-        questionZoom = self.questions[sender.tag]
-        
-        setPhotosToZoom(sender)
+            imageZoom = [nil, nil, nil]
+            
+            zoomPage = 0
+            
+            questionZoom = self.questions[sender.tag]
+            
+            setPhotosToZoom(sender)
+        } else {
+            
+            displayAlert("Error", "These images are still uploading. Please try again shortly!", self)
+        }
     }
     
     @IBAction func zoom1ButtonAction(sender: AnyObject) {
         
-        imageZoom = [nil, nil, nil]
-        
-        if self.questionsPhoto[sender.tag] != nil {
-            zoomPage = 1
+        if !contains(isUploading, questionIds[sender.tag]) {
+            
+            imageZoom = [nil, nil, nil]
+            
+            if self.questionsPhoto[sender.tag] != nil {
+                zoomPage = 1
+            } else {
+                zoomPage = 0
+            }
+            
+            questionZoom = self.questions[sender.tag]
+            
+            setPhotosToZoom(sender)
+            
         } else {
-            zoomPage = 0
+            
+            displayAlert("Error", "These images are still uploading. Please try again shortly!", self)
         }
-        
-        questionZoom = self.questions[sender.tag]
-        
-        setPhotosToZoom(sender)
     }
     
     @IBAction func zoom2ButtonAction(sender: AnyObject) {
         
-        imageZoom = [nil, nil, nil]
-        
-        if self.questionsPhoto[sender.tag] != nil {
-            zoomPage = 2
+        if !contains(isUploading, questionIds[sender.tag]) {
+            
+            imageZoom = [nil, nil, nil]
+            
+            if self.questionsPhoto[sender.tag] != nil {
+                zoomPage = 2
+            } else {
+                zoomPage = 1
+            }
+            
+            questionZoom = self.questions[sender.tag]
+            
+            setPhotosToZoom(sender)
+            
         } else {
-            zoomPage = 1
+            
+            displayAlert("Error", "These images are still uploading. Please try again shortly!", self)
         }
-        
-        questionZoom = self.questions[sender.tag]
-        
-        setPhotosToZoom(sender)
     }
     
 

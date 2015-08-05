@@ -10,12 +10,15 @@ import UIKit
 
 class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
-//    struct facebookGroupies {
-//        var handle: String!
-//        var id: String!
-//        var name: String!
-//        var isGroupie: Bool!
-//    }
+    struct Objects {
+        var sectionName: String!
+        var sectionObjects: [String]!
+    }
+    
+    struct friendStruct {
+        var type: String
+        var id: String
+    }
     
     let tableFontSize = CGFloat(16)
     let section1: String = ""
@@ -25,31 +28,85 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     let section3: String = "SocialQs Friends"
     var allSelected = Bool()
     
+    var friendEntry: UITextField!
+    
     var facebookNames = [""]
-    var facebookIds = [""]
+    var facebookIds = [friendStruct]()
     var socialQsNames = [""]
     var socialQsIds = [""]
     var users = [String]()
     var objectsArray = [Objects]()
-    //var allFriends = [String]()
-    //var allFriendsIds = [String]()
-    // This dictionary must use FB User Id for key to prevent multiple name overwrites
-    var allFriendsDictionary = Dictionary<String, String>()
+    var allFriendsDictionary = Dictionary<String, friendStruct>()
     var allFriendsDictionarySorted = Dictionary<String, String>()
     var filteredFriends = [String]()
-    var filteredFriendsIds = [String]()
+    var filteredFriendsIds = [friendStruct]()
     var tempNames = [String]()
-    var tempIds = [String]()
+    var tempIds = [friendStruct]()
     
-    struct Objects {
-        var sectionName: String!
-        var sectionObjects: [String]!
+    @IBOutlet var searchBar: UISearchBar!
+    @IBAction func optionsPressed(sender: AnyObject) {
+        
+        func configurationTextField(textField: UITextField!) {
+            
+            textField.placeholder = "Enter an item"
+            friendEntry = textField
+        }
+        
+        func handleCancel(alertView: UIAlertAction!) {
+            
+            println("Cancelled !!")
+        }
+        
+        var alert = UIAlertController(title: "Enter Input", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+        
+        alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+            
+            // Check for SocialQs username of \(friendEntry)
+            var friendQuery = PFQuery(className: "_User")
+            friendQuery.whereKey("username", equalTo: self.friendEntry.text)
+            
+            friendQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                
+                if error == nil {
+                    
+                    if objects!.count > 0 {
+                            
+                        // Add this user to current users permanent friends AND ensure this friend is automatically a groupie for this Q
+                        mySocialQsFriends.append(objects![0]["username"] as! String)
+                        
+                        // Query for User info for mySocialQsFriends
+                        var socialQsFriendQuery = PFUser.query()!
+                        socialQsFriendQuery.whereKey("username", equalTo: self.friendEntry.text)
+                        
+                        socialQsFriendQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                            
+                            if error == nil {
+                                
+                                self.allFriendsDictionary[objects![0].username!!] = friendStruct(type: "socialQs", id: objects![0].objectId!!)
+                            }
+                            
+                            self.loadUsers("")
+                        })
+                        
+                    } else {
+                    
+                        displayAlert("Oops!", "The SocialQs handle \(self.friendEntry.text) could not be found. Please check the spelling and try again!", self)
+                    }
+                }
+            })
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: {
+            
+            println("completion block")
+        })
     }
     
     @IBOutlet var doneButton: UIBarButtonItem!
-    
-    @IBOutlet var searchBar: UISearchBar!
-    
     @IBAction func dismissPressed(sender: AnyObject) {
         
         presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
@@ -105,13 +162,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 
                 for var i = 0; i < temp.count; i++ {
                     
-                    self.allFriendsDictionary[temp[i]["id"]!! as! String] = temp[i]["name"]!! as? String
-                }
-                
-                for (k,v) in (Array(self.allFriendsDictionary).sorted {$0.1 < $1.1}) {
-                    
-                    self.tempIds.append(k)
-                    self.tempNames.append(v)
+                    //self.allFriendsDictionary[temp[i]["id"]!! as! String] = temp[i]["name"]!! as? String
+                    self.allFriendsDictionary[temp[i]["name"]!! as! String] = friendStruct(type: "facebookWithApp", id: temp[i]["id"]!! as! String)
                 }
                 
                 // Manually call refresh upon loading to get most up to datest datas
@@ -126,6 +178,14 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
     
     func loadUsers(name: String) {
+        
+        let sortedArray = sorted(self.allFriendsDictionary, {$0.0 < $1.0})
+        self.tempNames = sortedArray.map {return $0.0 }
+        self.tempIds = sortedArray.map {return $0.1 }
+        
+        println(sortedArray)
+        println(self.tempNames[2])
+        println(self.tempIds[2].id)
         
         var findUsers = PFUser.query()
         
@@ -187,6 +247,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                     self.facebookIds = self.tempIds
                 }
                 
+                println(self.tempNames)
+                
                 self.objectsArray = [Objects(sectionName: self.section1, sectionObjects: self.objs1), Objects(sectionName: self.section2, sectionObjects: self.facebookNames), Objects(sectionName: self.section3, sectionObjects: self.socialQsNames)]
                 
                 self.tableView.reloadData()
@@ -247,8 +309,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             
             // Format cell backgrounds
             cell.backgroundColor = UIColor.clearColor()
-            //if indexPath.row % 2 == 0 { cell.backgroundColor = UIColor.clearColor() }
-            //else { cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4) }
             
             cell.usernameLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)
             
@@ -276,7 +336,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         if indexPath.section == 1 {
             
             let followedObjectName = facebookNames[indexPath.row] as String
-            let followedObjectId = facebookIds[indexPath.row] as String
+            let followedObjectId = facebookIds[indexPath.row].id as String
             
             // Check if already following and UNFOLLOW instead
             if contains(isGroupieName, followedObjectName) {
@@ -330,7 +390,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
                 
                 allSelected = true
                 isGroupieName = facebookNames
-                isGroupieQId = facebookIds
+//                isGroupieQId = facebookIds
                 
             } else if allSelected == true {
                 

@@ -19,7 +19,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     var oPhoto = false
     var imageCount = -1
     
-    var chosenImage = [UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
+    var chosenImageHighRes: [UIImage?] = [nil, nil, nil]
+    var chosenImageThumbnail: [UIImage?] = [nil, nil, nil]
     
     let tableBackgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.3))
     
@@ -28,17 +29,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     var option2 = String()
     
     var whichCell = -1
-    var qCell: Int = 0
-    var o1Cell: Int = 0
     
-    var filled = ["Q": 0, "O1": 0, "O2": 0]
-    var isPhoto = [0: false, 1: false, 2: false]
-    
-    let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? Int
     let picker = UIImagePickerController()
     
     var askSpinner = UIActivityIndicatorView()
-    var askBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+    var askBlurView = globalBlurView()
     
     @IBOutlet var askTable: UITableView!
     @IBAction func groupiesButtonAction(sender: AnyObject) { }
@@ -48,6 +43,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         clear = true
         askTable.reloadData()
+        
+        chosenImageHighRes = [nil, nil, nil]
+        chosenImageThumbnail = [nil, nil, nil]
         
         qPhoto = false
         oPhoto = false
@@ -112,9 +110,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             dispatch_async(dispatch_get_main_queue()) { () -> Void in
                 
-                if (self.chosenImage[0] != UIImage(named: "camera.png") || self.question != "")
-                    && (self.chosenImage[0] != UIImage(named: "camera.png") || self.option1 != "")
-                    && (self.chosenImage[0] != UIImage(named: "camera.png") || self.option2 != "") {
+                if (self.chosenImageThumbnail[0] != nil || self.question != "")
+                    && (self.chosenImageThumbnail[0] != nil || self.option1 != "")
+                    && (self.chosenImageThumbnail[0] != nil || self.option2 != "") {
                     
                     // Submit Q
                     self.submitQ(sender)
@@ -146,6 +144,18 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         askTable.addGestureRecognizer(tapGesture)
         
         self.askTable.backgroundColor = UIColor.clearColor()
+        
+        // Initiate Push Notifications
+        let userNotificationTypes = (UIUserNotificationType.Alert | UIUserNotificationType.Badge |  UIUserNotificationType.Sound)
+        let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
+        UIApplication.sharedApplication().registerForRemoteNotifications()
+        
+        //
+        // Does this AFTER notifications prompted is closed and if declined:
+//        if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
+//            displayAlert("Please reconsider", "SocialQs uses notification methods to minimize data usage and ensure users have recieve quick service! Follow the link in the SocialQs settings page to enable notifications.", self)
+//        }
     }
     
     
@@ -160,21 +170,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     func submitQ(sender: AnyObject) -> Void {
         
         blockUI(true, askSpinner, askBlurView, self)
-        
-//        // Blur screen while Q upload is processing
-//        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
-//        let blurView = UIVisualEffectView(effect: blurEffect)
-//        blurView.frame = self.view.frame
-//        self.view.addSubview(blurView)
-//        
-//        // Setup spinner and block application input
-//        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-//        activityIndicator.center = self.view.center
-//        activityIndicator.hidesWhenStopped = true
-//        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-//        view.addSubview(activityIndicator)
-//        activityIndicator.startAnimating()
-//        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
         // CREATE ENTRY FOR FULL RES IMAGES (upload later) -------------------------------------------------------------
         var photos = PFObject(className: "PhotoFullMetalBlacket")
@@ -204,10 +199,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     }
                     
                     // Q photo
-                    if self.isPhoto[0] == true {
+                    //if self.isPhoto[0] == true {
+                    if self.chosenImageThumbnail[0] != nil {
                         
                         // Resize to THUMBNAIL and upload to SocialQs table
-                        let imageQ = self.RBResizeImage(self.chosenImage[0]!, targetSize: CGSize(width: self.thumbnailMax, height: self.thumbnailMax))
+                        let imageQ = self.chosenImageThumbnail[0]
                         let imageQData = UIImagePNGRepresentation(imageQ)
                         
                         var imageQFile: PFFile = PFFile(name: "questionImage.png", data: imageQData)
@@ -222,10 +218,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     }
                     
                     // Check if O1 is photo or text and upload
-                    if self.isPhoto[1] == true {
+                    if self.chosenImageThumbnail[1] != nil {
                         
                         // Resize to THUMBNAIL and upload to SocialQs table
-                        let imageO1 = self.RBResizeImage(self.chosenImage[1]!, targetSize: CGSize(width: self.thumbnailMax, height: self.thumbnailMax))
+                        let imageO1 = self.chosenImageThumbnail[1]
                         let imageO1Data = UIImagePNGRepresentation(imageO1)
                         
                         var imageO1File: PFFile = PFFile(name: "option1Image.png", data: imageO1Data)
@@ -234,10 +230,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     }
                     
                     // Check if O2 is photo or text and upload
-                    if self.isPhoto[2] == true {
+                    if self.chosenImageThumbnail[2] != nil {
                         
                         // Resize to THUMBNAIL and upload to SocialQs table
-                        let imageO2 = self.RBResizeImage(self.chosenImage[2]!, targetSize: CGSize(width: self.thumbnailMax, height: self.thumbnailMax))
+                        let imageO2 = self.chosenImageThumbnail[2]
                         let imageO2Data = UIImagePNGRepresentation(imageO2)
                         
                         let imageO2File = PFFile(name: "option2Image.png", data: imageO2Data)
@@ -258,10 +254,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                         if error == nil {
                             
                             var currentQId = socialQ.objectId!
-                            
-//                            // Unlock application interaction and halt spinner
-//                            UIApplication.sharedApplication().endIgnoringInteractionEvents()
-//                            self.activityIndicator.stopAnimating()
+                            isUploading.append(currentQId)
                             
                             // Reset all fields after submitting
                             self.question = ""
@@ -295,17 +288,16 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                         // clear text and photo entries
                                         self.cancelButtonAction(sender)
                                         
-//                                        // Un-blur ASK tab
-//                                        blurView.removeFromSuperview()
+                                        // Unblock UI and remove spinner
                                         blockUI(false, self.askSpinner, self.askBlurView, self)
                                         
                                         // ---- Upload full res images if necessary ---------------------------------------------
                                         var expectedCount = 0
                                         var downloadedCount = 0
                                         
-                                        if self.isPhoto[0] == true { expectedCount++ }
-                                        if self.isPhoto[1] == true { expectedCount++ }
-                                        if self.isPhoto[2] == true { expectedCount++ }
+                                        if self.chosenImageThumbnail[0] != nil { expectedCount++ }
+                                        if self.chosenImageThumbnail[1] != nil { expectedCount++ }
+                                        if self.chosenImageThumbnail[2] != nil { expectedCount++ }
                                         
                                         if expectedCount > 0 {
                                             
@@ -352,18 +344,25 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             if error == nil {
                 
+                let uploadComplete = { () -> () in
+                    
+                    let index = find(isUploading, currentQId)
+                    isUploading.removeAtIndex(index!)
+                    
+                    // Send push notifications of new Q and assign Q to appropriate users
+                    self.sendPushes()
+                    self.assignQsToUsers(currentQId)
+                }
+                
                 if let temp = photoObjects {
                     
                     for photoObject in temp {
                         
                         // Q photo
-                        if self.isPhoto[0] == true {
+                        if self.chosenImageHighRes[0] != nil {
                             
-                            self.isPhoto[0] = false
-                            
-                            // Resize to FULL RES SIZE and upload to SocialQs table
-                            //let imageQFull = self.RBResizeImage(self.chosenImage[0]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-                            let imageQDataFull = UIImagePNGRepresentation(self.chosenImage[0]!)
+                            // Upload  FULL RES to SocialQs table
+                            let imageQDataFull = UIImagePNGRepresentation(self.chosenImageHighRes[0]!)
                             
                             var imageQFileFull = PFFile(name: "questionImage.png", data: imageQDataFull)
                             
@@ -373,13 +372,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                 if error == nil {
                                     println("Full Res Q Photo Uploaded!")
                                     
+                                    self.chosenImageHighRes[0] = nil
                                     downloadedCount++
                                     
                                     if downloadedCount == expectedCount {
                                         
-                                        // Send push notifications of new Q and assign Q to appropriate users
-                                        self.sendPushes()
-                                        self.assignQsToUsers(currentQId)
+                                        uploadComplete()
                                     }
                                     
                                 } else {
@@ -390,13 +388,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                         }
                         
                         // O1 photo
-                        if self.isPhoto[1] == true {
+                        if self.chosenImageHighRes[1] != nil {
                             
-                            self.isPhoto[1] = false
-                            
-                            // Resize to THUMBNAIL and upload to SocialQs table
-                            //let imageO1Full = self.RBResizeImage(self.chosenImage[1]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-                            let imageO1DataFull = UIImagePNGRepresentation(self.chosenImage[1]!)
+                            // Upload  FULL RES to SocialQs table
+                            let imageO1DataFull = UIImagePNGRepresentation(self.chosenImageHighRes[1]!)
                             
                             var imageO1FileFull = PFFile(name: "option1Image.png", data: imageO1DataFull)
                             
@@ -406,13 +401,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                 if error == nil {
                                     println("Full Res O1 Photo Uploaded!")
                                     
+                                    self.chosenImageHighRes[1] = nil
                                     downloadedCount++
                                     
                                     if downloadedCount == expectedCount {
                                         
-                                        // Send push notifications of new Q and assign Q to appropriate users
-                                        self.sendPushes()
-                                        self.assignQsToUsers(currentQId)
+                                        uploadComplete()
                                     }
                                     
                                 } else {
@@ -423,13 +417,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                         }
                         
                         // O2 photo
-                        if self.isPhoto[2] == true {
+                        if self.chosenImageHighRes[2] != nil {
                             
-                            self.isPhoto[2] = false
-                            
-                            // Resize to THUMBNAIL and upload to SocialQs table
-                            //let imageO2Full = self.RBResizeImage(self.chosenImage[2]!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-                            let imageO2DataFull = UIImagePNGRepresentation(self.chosenImage[2]!)
+                            // Upload  FULL RES to SocialQs table
+                            let imageO2DataFull = UIImagePNGRepresentation(self.chosenImageHighRes[2]!)
                             
                             var imageO2FileFull = PFFile(name: "option2Image.png", data: imageO2DataFull)
                             
@@ -439,13 +430,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                 if error == nil {
                                     println("Full Res O2 Photo Uploaded!")
                                     
+                                    self.chosenImageHighRes[2] = nil
                                     downloadedCount++
                                     
                                     if downloadedCount == expectedCount {
                                         
-                                        // Send push notifications of new Q and assign Q to appropriate users
-                                        self.sendPushes()
-                                        self.assignQsToUsers(currentQId)
+                                        uploadComplete()
                                     }
                                     
                                 } else {
@@ -469,44 +459,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     func assignQsToUsers(currentQId: String) {
         
         println("Assigning Q to users")
-        
-        // Query all "groupies" and myself (to add to myQs)
-        //var usersToQuery = isGroupieQId// + [uQId]
-        
-        
-//        //////////////////////////////////////////////////////////////////////////////
-//        // LATER - Do this only if isGroupies is NOT empty
-//        var appFriends = [String]()
-//        var currentUsersForQ = [String]()
-//        var untappedUsersForQ = [String]()
-//        
-//        // Get List Of Friends using SOCIALQS
-//        var socialQsFriendsRequest = FBSDKGraphRequest(graphPath:"/me/friends", parameters: nil)
-//        socialQsFriendsRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
-//            
-//            if error == nil {
-//                
-//                var temp: AnyObject = result["data"]!!
-//                
-//                for var i = 0; i < temp.count; i++ {
-//                    appFriends.append(temp[i]["name"]!! as! String)
-//                }
-//                
-//                let set1 = Set(isGroupieName)
-//                let set2 = Set(appFriends)
-//                currentUsersForQ = Array(set1.intersect(set2))
-//                let set3 = Set(currentUsersForQ)
-//                untappedUsersForQ = Array(set1.subtract(set3))
-//                
-//            } else {
-//                
-//                println("Error Getting Friends \(error)")
-//            }
-//        }
-//        //////////////////////////////////////////////////////////////////////////////
-        
-        
-        //var usersToQuery = isGroupieName
         
         // Add qId to "UserQs" table ------
         var userQsQuery = PFQuery(className: "UserQs")
@@ -626,7 +578,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 
                 // Fill question text
                 if cell.questionTextField.text != "" { question = cell.questionTextField.text }
-                cell.questionImageView.image = chosenImage[indexPath.row]
+                if chosenImageThumbnail[0] == nil {
+                    cell.questionImageView.image = UIImage(named: "camera.png")
+                } else {
+                    cell.questionImageView.image = chosenImageThumbnail[indexPath.row]
+                }
                 
             } else {
                 
@@ -647,18 +603,25 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             if clear == false {
                 
-                    if cell.option1TextField.text != "" || cell.option2TextField.text != "" {
-                        option1 = cell.option1TextField.text
-                        option2 = cell.option2TextField.text
+                if cell.option1TextField.text != "" || cell.option2TextField.text != "" {
+                    option1 = cell.option1TextField.text
+                    option2 = cell.option2TextField.text
                 }
                 
-                cell.option1ImageView.image = chosenImage[1]
-                cell.option2ImageView.image = chosenImage[2]
+                if chosenImageThumbnail[1] == nil {
+                    cell.option1ImageView.image = UIImage(named: "camera.png")
+                } else {
+                    cell.option1ImageView.image = chosenImageThumbnail[1]
+                }
+                
+                if chosenImageThumbnail[2] == nil {
+                    cell.option2ImageView.image = UIImage(named: "camera.png")
+                } else {
+                    cell.option2ImageView.image = chosenImageThumbnail[2]
+                }
                 
             } else {
                 
-                cell.option1ImageView.image = UIImage(named: "camera.png")
-                cell.option2ImageView.image = UIImage(named: "camera.png")
                 cell.option1TextField.text = ""
                 cell.option2TextField.text = ""
             }
@@ -688,9 +651,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         // Set cell background color
         cell.backgroundColor = tableBackgroundColor
         
-        // Add gesture recognizer to cell - dismiss keyboard
-        //self.askTable.addGestureRecognizer(tapGesture)
-        
         return cell
     }
     
@@ -717,17 +677,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     func resignKeyboard() { self.askTable.endEditing(true) }
     
-    /*
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-    
-    textField.resignFirstResponder() // Dismiss the keyboard
-    
-    // Call submit routine to cause switch to results page
-    submitButtonAction(textField)
-    
-    return true
-    }
-    */
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         self.view.endEditing(true)
@@ -765,11 +714,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         //let cancelAction = UIAlertAction(title: "Cancel", style: .Destructive) { (action) -> Void in
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) -> Void in
             
-            if self.whichCell == 0 && self.chosenImage[0] == UIImage(named: "camera.png") {
+            if self.whichCell == 0 && self.chosenImageThumbnail[0] == UIImage(named: "camera.png") {
                 self.qPhoto = !self.qPhoto
-            } else if self.whichCell == 1 && self.chosenImage[2] == UIImage(named: "camera.png") {
-                self.chosenImage[1] = UIImage(named: "camera.png")
-                self.chosenImage[2] = UIImage(named: "camera.png")
+            } else if self.whichCell == 1 && self.chosenImageThumbnail[2] == UIImage(named: "camera.png") {
+                self.chosenImageThumbnail[1] = UIImage(named: "camera.png")
+                self.chosenImageThumbnail[2] = UIImage(named: "camera.png")
+                self.chosenImageHighRes[1] = nil
+                self.chosenImageHighRes[2] = nil
                 self.askTable.reloadData() // Could just reload row...
                 
                 self.oPhoto = !self.oPhoto
@@ -789,30 +740,27 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         if whichCell == 0 {
             
-            chosenImage[0] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-            
-            isPhoto[Int(whichCell)] = true
+            chosenImageHighRes[0] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[0] = RBResizeImage(chosenImageHighRes[0]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
             
         } else if whichCell == 1 {
             
             imageCount = imageCount + 1
             
-            chosenImage[(imageCount % 2) + 1] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-            
-            isPhoto[Int(whichCell) + (imageCount % 2)] = true
+            chosenImageHighRes[(imageCount % 2) + 1] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[(imageCount % 2) + 1] = RBResizeImage(self.chosenImageHighRes[(imageCount % 2) + 1]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
             
         } else if whichCell == -1 {
             
-            chosenImage[(imageCount % 2) + 1] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: self.photoMax, height: self.photoMax))
-            
-            isPhoto[Int(whichCell) + (imageCount % 2)] = true
+            chosenImageHighRes[(imageCount % 2) + 1] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[(imageCount % 2) + 1] = RBResizeImage(chosenImageHighRes[(imageCount % 2) + 1]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
         }
         
         askTable.reloadData()
         
         dismissViewControllerAnimated(true, completion: nil)
         
-        if (imageCount) % 2 == 0 && chosenImage[2] == UIImage(named: "camera.png") {
+        if (imageCount) % 2 == 0 && chosenImageThumbnail[2] == UIImage(named: "camera.png") {
             
             launchImagePickerPopover()
         }
@@ -823,8 +771,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         if whichCell == 0 {
             qPhoto = !qPhoto
         } else {
-            chosenImage[1] = UIImage(named: "camera.png")
-            chosenImage[2] = UIImage(named: "camera.png")
+            chosenImageThumbnail[1] = UIImage(named: "camera.png")
+            chosenImageThumbnail[2] = UIImage(named: "camera.png")
+            chosenImageHighRes[1] = nil
+            chosenImageHighRes[2] = nil
             askTable.reloadData() // Could just reload row...
             
             oPhoto = !oPhoto

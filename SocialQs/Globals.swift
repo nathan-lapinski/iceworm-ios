@@ -56,8 +56,12 @@ var deletedTheirStorageKey = "deletedTheirPermanent"
 var votedOn1Ids = [String]() // questions VOTED-UPON by current user
 var votedOn2Ids = [String]() // questions VOTED-UPON by current user
 
+// Array to store non-FB friends
+var mySocialQsFriends = [String]()
+
 // Dictionary to pass question value to "view votes" controller
-var viewQ = Dictionary<String, Any>()//String, String, String, String, PFFile, PFFile, PFFile,
+var viewQ = Dictionary<String, Any>()
+var isUploading = [String]()
 
 // Variable to track how user voted - store to NSUserDefaults //
 //var myVotes = Dictionary<String, Int>()
@@ -82,5 +86,3 @@ var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
 var isGroupieQId = [String]()
 var warningSeen = false
 
-// String to determine if option is text or photo
-//var photoString = "|/~_</|"
