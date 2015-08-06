@@ -40,15 +40,16 @@ let activeTabColor = UIColor.whiteColor()
 let inactiveTabColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
 
 // NSUserDefault Storage Keys - Move to login later ("myName" does nothing in this case)
-var usernameStorageKey = "username"
-var nameStorageKey     = "name"
-var uIdStorageKey      = "uId"
-var uQIdStorageKey     = "uQId"
-var myVoted1StorageKey = "votedOn1Ids"
-var myVoted2StorageKey = "votedOn2Ids"
+var usernameStorageKey  = "username"
+var nameStorageKey      = "name"
+var uIdStorageKey       = "uId"
+var uQIdStorageKey      = "uQId"
+var myVoted1StorageKey  = "votedOn1Ids"
+var myVoted2StorageKey  = "votedOn2Ids"
 //var myVotesStorageKey  = "votes"
-var profilePictureKey  = "profilePicture"
-var deletedTheirStorageKey = "deletedTheirPermanent"
+var profilePictureKey   = "profilePicture"
+var myFriendsStorageKey = "myFriends"
+//var deletedTheirStorageKey = "deletedTheirPermanent"
 
 // Arrays for displaying questions
 //var deletedMyQuestions = [String]() // questions DELETED by current user
@@ -84,5 +85,10 @@ var theirViewReturnedOnce = false
 // Groupies variable
 var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
 var isGroupieQId = [String]()
+var groupiesDictionary = [Dictionary<String, AnyObject>]()
+var myFriendsDictionary = [Dictionary<String, AnyObject>]()
+var myFriends = [String]()
+
+
 var warningSeen = false
 

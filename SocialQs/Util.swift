@@ -136,15 +136,16 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     uQId = PFUser.currentUser()?["uQId"]! as! String
     
     // Set NSUserDefault storage keys
-    usernameStorageKey = username + "myName"
-    nameStorageKey     = username + "name"
-    uIdStorageKey      = username + "uId"
-    uQIdStorageKey     = username + "uQId"
-    myVoted1StorageKey = username + "votedOn1Ids"
-    myVoted2StorageKey = username + "votedOn2Ids"
+    usernameStorageKey  = username + "myName"
+    nameStorageKey      = username + "name"
+    uIdStorageKey       = username + "uId"
+    uQIdStorageKey      = username + "uQId"
+    myVoted1StorageKey  = username + "votedOn1Ids"
+    myVoted2StorageKey  = username + "votedOn2Ids"
     //myVotesStorageKey  = username + "votes"
-    profilePictureKey  = username + "profilePicture"
-    deletedTheirStorageKey = username + "deletedTheirPermanent"
+    profilePictureKey   = username + "profilePicture"
+    myFriendsStorageKey = username + "myFriends"
+    //deletedTheirStorageKey = username + "deletedTheirPermanent"
     
     // Store username locally
     NSUserDefaults.standardUserDefaults().setObject(username, forKey: usernameStorageKey)
@@ -203,6 +204,12 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
                     votedOn2Ids = votedOn2Id
                     
                     NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
+                }
+                
+                // Recall myFriends if applicable
+                if NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey) != nil {
+                    
+                    myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
                 }
                 
                 println("Returning user data has been stored")

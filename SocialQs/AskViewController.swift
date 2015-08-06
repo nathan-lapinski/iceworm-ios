@@ -164,6 +164,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         returningFromPopover = false
         returningFromSettings = false
         topOffset = 64
+        
+        NSUserDefaults.standardUserDefaults().setObject(myFriends, forKey: myFriendsStorageKey)
     }
     
     

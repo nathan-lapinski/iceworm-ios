@@ -167,10 +167,15 @@ class QsLoginViewController: UIViewController {
             
             votedOn1Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey)! as! [String]
         }
-        
         if NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey) != nil {
             
             votedOn2Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey)! as! [String]
+        }
+        
+        // Recall myFriends if applicable
+        if NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey) != nil {
+            
+            myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
         }
         
 //        // Recall myVotes if applicable
