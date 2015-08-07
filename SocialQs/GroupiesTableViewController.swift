@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
+class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, UIPopoverPresentationControllerDelegate  {
     
     struct Objects {
         var sectionName: String!
@@ -25,9 +25,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     let tableFontSize = CGFloat(16)
     let section1: String = ""
     let objs1: [String] = ["All Users"]
-    let section2: String = ""//"Facebook Friends"
+    let section2: String = "Facebook and sQs Friends"
     var objs2: [String] = [String]()
-    let section3: String = "SocialQs Friends"
+    let section3: String = "sQs Users"
     var allSelected = Bool()
     
     var friendEntry: UITextField!
@@ -38,95 +38,53 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     var socialQsIds = [""]
     var users = [String]()
     var objectsArray = [Objects]()
-//    var allFriendsDictionary = Dictionary<String, friendStruct>()
-    var allFriendsDictionary2 = [Dictionary<String, AnyObject>]()
-    var allFriendsDictionary2Filtered = [Dictionary<String, AnyObject>]()
-//    var allFriendsDictionarySorted = Dictionary<String, String>()
+    //    var allFriendsDictionary = Dictionary<String, friendStruct>()
+    //    var allFriendsDictionarySorted = Dictionary<String, String>()
+//    var allFriendsDictionary2 = [Dictionary<String, AnyObject>]()
+//    var allFriendsDictionary2Filtered = [Dictionary<String, AnyObject>]()
     var filteredFriends = [String]()
 //    var filteredFriendsIds = [friendStruct]()
-    var tempNames = [String]()
+    var fbAndSQNames = [String]()
+    var sqOnlyNames = [String]()
 //    var tempIds = [friendStruct]()
+    var selectedUsers = String() // matches isGroupieName but is not sorted
+    
+    var friendsDictionary = [Dictionary<String, AnyObject>]()
+    var friendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
+    var nonFriendsDictionary = [Dictionary<String, AnyObject>]()
+    var nonFriendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
+    
     
     @IBOutlet var searchBar: UISearchBar!
     @IBAction func optionsPressed(sender: AnyObject) {
         
-        func configurationTextField(textField: UITextField!) {
-            
-            textField.placeholder = ""
-            friendEntry = textField
-        }
-        
-        func handleCancel(alertView: UIAlertAction!) {
-            
-            println("Cancelled !!")
-        }
-        
-        var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alert.addTextFieldWithConfigurationHandler(configurationTextField)
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
-        
-        alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
-            
-            self.addUser(self.friendEntry.text)
-            
-        }))
-        
-        self.presentViewController(alert, animated: true, completion: {
-            
-            println("completion block")
-        })
-    }
-    
-    
-    func addUser(username: String) {
-        
-        var friendQuery = PFQuery(className: "_User")
-        friendQuery.whereKey("username", equalTo: username)
-        
-        friendQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-            
-            if error == nil {
-                
-                if objects!.count > 0 {
-                    
-                    // Add this user to current users permanent friends AND ensure this friend is automatically a groupie for this Q
-                    mySocialQsFriends.append(objects![0]["username"] as! String)
-                    
-                    // Query for User info for mySocialQsFriends
-                    var socialQsFriendQuery = PFUser.query()!
-                    socialQsFriendQuery.whereKey("username", equalTo: username)
-                    
-                    socialQsFriendQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-                        
-                        if error == nil {
-                            
-                            //self.allFriendsDictionary[objects![0].username!!] = friendStruct(type: "socialQs", id: objects![0].objectId!!)
-                            if contains(isGroupieName, username) {
-                                
-                                self.allFriendsDictionary2.append(["name": objects![0].username!!, "type": "socialQs", "id": objects![0].objectId!!, "isSelected": true])//, "pic": UIImagePNGRepresentation(UIImage(named: "camera.png"))])
-                                //myFriendsDictionary.append(["name": objects![0].username!!, "type": "socialQs", "id": objects![0].objectId!!, "isSelected": false])
-                            } else {
-                                
-                                self.allFriendsDictionary2.append(["name": objects![0].username!!, "type": "socialQs", "id": objects![0].objectId!!, "isSelected": false])//, "pic": UIImagePNGRepresentation(UIImage(named: "camera.png"))])
-                            }
-                            
-                            // Add user to myFriends array so they don't have to be re-added
-                            if !contains(myFriends, username) {
-                                myFriends.append(username)
-                            }
-                        }
-                        
-                        self.loadUsers("")
-                    })
-                    
-                } else {
-                    
-                    displayAlert("Oops!", "The SocialQs handle \(self.friendEntry.text) could not be found. Please check the spelling and try again!", self)
-                }
-            }
-        })
+//        func configurationTextField(textField: UITextField!) {
+//            
+//            textField.placeholder = ""
+//            friendEntry = textField
+//        }
+//        
+//        func handleCancel(alertView: UIAlertAction!) {
+//            
+//            println("Cancelled !!")
+//        }
+//        
+//        var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+//        
+//        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+//        
+//        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+//        
+//        alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+//            
+//            self.addUser(self.friendEntry.text)
+//            
+//        }))
+//        
+//        self.presentViewController(alert, animated: true, completion: {
+//            
+//            println("completion block")
+//        })
     }
     
     @IBOutlet var doneButton: UIBarButtonItem!
@@ -137,7 +95,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         isGroupieName.removeAll(keepCapacity: true)
         groupiesDictionary.removeAll(keepCapacity: true)
         
-        for temp in allFriendsDictionary2Filtered {
+        for temp in friendsDictionary {
             if temp["isSelected"] as! Bool == true {
                 groupiesDictionary.append(temp)
                 isGroupieName.append(temp["name"] as! String)
@@ -148,18 +106,28 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
     
-
     override func viewDidLoad() {
         super.viewDidLoad()// Do any additional setup after loading the view.
         
-        searchBar.delegate = self
+        if !PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
+            
+            var alert = UIAlertController(title: "Find Your Friends!", message: "Send this Q to your Facebook friends by linking your account in the SocialQs settings page!", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: { (action) -> Void in }))
+            
+            alert.addAction(UIAlertAction(title: "Settings", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                self.performSegueWithIdentifier("toSettingsFromGroupies", sender: self)
+            }))
+            
+            presentViewController(alert, animated: true, completion: nil)
+        }
         
-        if username == "" { println("myName is empty!") }
+        searchBar.delegate = self
         
         // Title table controller
         self.title = "Select Groupies"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
-    
+        
         // Format Done button
         navigationItem.leftBarButtonItem = doneButton
         navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue", size: tableFontSize)!], forState: UIControlState.Normal)
@@ -177,134 +145,208 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
         allSelected = false
     }
     
-    
     override func viewWillAppear(animated: Bool) {
         
         topOffset = 64
         
-        tempNames.removeAll(keepCapacity: true)
+        friendsDictionary.removeAll(keepCapacity: true)
         
-        // Get List Of Friends who have SOCIALQS
-        var friendsRequest = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
         // Get List Of All Friends
         //var friendsRequest = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id&limit=1000", parameters: nil);
+        // Get List Of Friends who have SOCIALQS
+        var friendsRequest = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
         
-        friendsRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+        friendsRequest.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
             
             if error == nil {
                 
                 var temp: AnyObject = result["data"]!!
                 
+                var tempDict = Dictionary<String, AnyObject>()
+                
                 for var i = 0; i < temp.count; i++ {
+                    
+                    tempDict.removeAll(keepCapacity: true)
+                    
+                    tempDict["name"] = temp[i]["name"]!! as! String
+                    tempDict["type"] = "facebookWithApp"
+                    tempDict["id"] = temp[i]["id"]!! as! String
+                    tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
+                    tempDict["isSelected"] = false
                     
                     if contains(isGroupieName, temp[i]["name"]!! as! String) {
                         
-                        self.allFriendsDictionary2.append(["name": temp[i]["name"]!! as! String, "type": "facebookWithApp", "id": temp[i]["id"]!! as! String, "isSelected": true])//, "picURL": temp[i]!["picture"]!!["data"]!!["url"]!!])
-                    } else {
-                        
-                        self.allFriendsDictionary2.append(["name": temp[i]["name"]!! as! String, "type": "facebookWithApp", "id": temp[i]["id"]!! as! String, "isSelected": false])//, "picURL": temp[i]!["picture"]!!["data"]!!["url"]!!])
+                        tempDict["isSelected"] = true
                     }
+                    
+                    self.friendsDictionary.append(tempDict)
+                    
                 }
                 
-                // Manually call refresh upon loading to get most up to datest datas
-                self.loadUsers("")
+                // get myFriends and add to dictionary
+                var socialQsUsersQuery = PFQuery(className: "_User")
+                socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
+                socialQsUsersQuery.whereKey("username", containedIn: myFriends) // No users that are already myFriends
+                socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
+                
+                socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        if let temp = objects {
+                            
+                            for object in temp {
+                                
+                                var tempDict = Dictionary<String, AnyObject>()
+                                
+                                tempDict["name"] = object.username!!
+                                tempDict["type"] = "socialQs"
+                                tempDict["id"] = object.objectId!!
+                                tempDict["isSelected"] = false
+                                //tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
+                                
+                                self.friendsDictionary.append(tempDict)
+                            }
+                        }
+                        
+                        self.loadUsers("")
+                    }
+                })
                 
             } else {
                 
-                println("Error Getting Friends \(error)")
-                
+                println("Error retrieving Facebook and sQs Users")
+                println(error)
                 if self.viewWillAppearCount > 3 {
-                    
                     self.viewWillAppearCount = 0
-                    
                     displayAlert("Sorry", "There was an error retrieving your friends. Please try again shortly!", self)
-                    
                 } else {
-                    
                     self.viewWillAppearCount++
-                    
                     self.viewWillAppear(true)
                 }
             }
-        }
-        
-        // **** THERE WILL BE A UNIQUENESS PROBLEM HERE UNTIL RELATIONS ARE IMPLIMENTED!!
-        //
-        // Add myFriends to list
-        for username in myFriends {
-            addUser(username)
         }
     }
     
     
     func loadUsers(name: String) {
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // GET sQs users for search purposes
+        // must load each time for search functionality to work
+        //// Pull SocialQs Users (omit anyone who is FB linked) and include in additional section under FB/myFriends
+        var socialQsUsersQuery = PFQuery(className: "_User")
+        socialQsUsersQuery.whereKey("username", containsString: name) // all users with search string in username
+        socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
+        socialQsUsersQuery.whereKey("username", notContainedIn: myFriends) // No users that are already myFriends
+        socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
         
-        tempNames.removeAll(keepCapacity: true)
-        
-        for temp in allFriendsDictionary2 {
+        socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
             
-            tempNames.append(temp["name"] as! String)
-        }
-        
-        if !name.isEmpty {
-            
-            // Filter users by searchBar input
-            var filteredStrings = self.tempNames.filter({(item: String) -> Bool in
+            if error == nil {
                 
-                var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
-                return stringMatch != nil ? true : false
-            })
-            
-            // reset all entries in filtered users
-            self.allFriendsDictionary2Filtered.removeAll(keepCapacity: true)
-            
-            // Fill FB userIds
-            for name in filteredStrings {
-                var index = find(self.tempNames, name)!
-                self.allFriendsDictionary2Filtered.append(self.allFriendsDictionary2[index])
+                self.nonFriendsDictionary.removeAll(keepCapacity: true)
+                
+                if let temp = objects {
+                    
+                    for object in temp {
+                        
+                        var tempDict = Dictionary<String, AnyObject>()
+                        
+                        tempDict["name"] = object.username!!
+                        tempDict["type"] = "socialQs"
+                        tempDict["id"] = object.objectId!!
+                        tempDict["isSelected"] = false
+                        //tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
+                        
+                        self.nonFriendsDictionary.append(tempDict)
+                    }
+                }
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                
+                // Sort dictionaries
+                self.friendsDictionary.sort { (item1, item2) -> Bool in
+                    
+                    let t1 = (item1["name"] as! String).lowercaseString
+                    let t2 = (item2["name"] as! String).lowercaseString
+                    
+                    return t1 < t2
+                }
+                self.nonFriendsDictionary.sort { (item1, item2) -> Bool in
+                    
+                    let t1 = (item1["name"] as! String).lowercaseString
+                    let t2 = (item2["name"] as! String).lowercaseString
+                    
+                    return t1 < t2
+                }
+                
+                // Fill display strings
+                self.fbAndSQNames.removeAll(keepCapacity: true)
+                for temp in self.friendsDictionary {
+                    
+                    self.fbAndSQNames.append(temp["name"] as! String)
+                }
+                self.sqOnlyNames.removeAll(keepCapacity: true)
+                for temp in self.nonFriendsDictionary {
+                    
+                    self.sqOnlyNames.append(temp["name"] as! String)
+                }
+                
+                // reset all entries in filtered users
+                self.friendsDictionaryFiltered.removeAll(keepCapacity: true)
+                self.nonFriendsDictionaryFiltered.removeAll(keepCapacity: true)
+                
+                var sectionTwoItems = [String]()
+                var sectionThreeItems = [String]()
+                
+                // Fill filtered dictionaries from full dict and search key
+                if !name.isEmpty {
+                    
+                    // Filter users by searchBar input
+                    var fbAndSQNamesFiltered = self.fbAndSQNames.filter({(item: String) -> Bool in
+                        
+                        var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
+                        return stringMatch != nil ? true : false
+                    })
+                    var sqOnlyNamesFiltered = self.sqOnlyNames.filter({(item: String) -> Bool in
+                        
+                        var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
+                        return stringMatch != nil ? true : false
+                    })
+                    
+                    // Fill filtered dictionaries
+                    for name in fbAndSQNamesFiltered {
+                        var index = find(self.fbAndSQNames, name)!
+                        self.friendsDictionaryFiltered.append(self.friendsDictionary[index])
+                    }
+                    for name in sqOnlyNamesFiltered {
+                        var index = find(self.sqOnlyNames, name)!
+                        self.nonFriendsDictionaryFiltered.append(self.nonFriendsDictionary[index])
+                    }
+                    
+                    sectionTwoItems = fbAndSQNamesFiltered
+                    sectionThreeItems = sqOnlyNamesFiltered
+                    
+                } else {
+                    
+                    self.friendsDictionaryFiltered = self.friendsDictionary
+                    self.nonFriendsDictionaryFiltered = self.nonFriendsDictionary
+                    
+                    sectionTwoItems = self.fbAndSQNames
+                    sectionThreeItems = self.sqOnlyNames
+                    
+                }
+                
+                // Fill object to populate table
+                self.objectsArray = [Objects(sectionName: self.section1, sectionObjects: [""]), Objects(sectionName: self.section2, sectionObjects: sectionTwoItems), Objects(sectionName: self.section3, sectionObjects: sectionThreeItems)]
+                
+                self.tableView.reloadData()
+                
+            } else {
+                
+                println("Error pulling non-friends")
+                println(error)
             }
-            
-            // Set arrays to fill table
-            //self.facebookNames = filteredStrings
-            
-            self.allFriendsDictionary2Filtered.sort { (item1, item2) -> Bool in
-                
-                let t1 = (item1["name"] as! String).lowercaseString
-                let t2 = (item2["name"] as! String).lowercaseString
-                
-                return t1 < t2
-            }
-            
-            tempNames.removeAll(keepCapacity: true)
-            
-            for temp in allFriendsDictionary2Filtered {
-                
-                tempNames.append(temp["name"] as! String)
-            }
-            
-        } else {
-            
-            self.allFriendsDictionary2.sort { (item1, item2) -> Bool in
-                
-                let t1 = (item1["name"] as! String).lowercaseString
-                let t2 = (item2["name"] as! String).lowercaseString
-                
-                return t1 < t2
-            }
-            
-            self.allFriendsDictionary2Filtered = self.allFriendsDictionary2
-            
-            tempNames.removeAll(keepCapacity: true)
-            
-            for temp in allFriendsDictionary2Filtered {
-                
-                tempNames.append(temp["name"] as! String)
-            }
-        }
-        
-        self.objectsArray = [Objects(sectionName: self.section1, sectionObjects: self.objs1), Objects(sectionName: self.section2, sectionObjects: self.tempNames)]
-        
-        self.tableView.reloadData()
+        })
     }
     
     
@@ -333,99 +375,181 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("groupiesCell", forIndexPath: indexPath) as! GroupiesCell
-    
-        // Configure the cell...
-        cell.usernameLabel.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
-        cell.usernameLabel.textColor = UIColor.darkTextColor() //UIColor.whiteColor()
-        cell.selectionStyle = UITableViewCellSelectionStyle.None
+        var cell = GroupiesCell()
         
         if indexPath.section == 0 {
             
-            cell.backgroundColor = UIColor.clearColor()
-            cell.usernameLabel.font = UIFont(name: "HelveticaNeue", size: tableFontSize)!
+            cell = tableView.dequeueReusableCellWithIdentifier("groupiesHeaderCell", forIndexPath: indexPath) as! GroupiesCell
             
-            if allSelected == false {
-                
-                cell.accessoryType = UITableViewCellAccessoryType.None
-                
-            } else if allSelected == true {
-                
-                cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+            // Configure the cell...
+            cell.selectionStyle = UITableViewCellSelectionStyle.None
+            
+            cell.groupiesLabel.textColor = UIColor.darkTextColor() //UIColor.whiteColor()
+            cell.groupiesLabel.backgroundColor = UIColor.clearColor()
+            
+            if isGroupieName.count > 0 {
+                // Build display string
+                selectedUsers = ", ".join(isGroupieName)
+                cell.groupiesLabel.text = selectedUsers
+                cell.groupiesLabel.textColor = UIColor.darkTextColor()
+            } else {
+                cell.groupiesLabel.text = ""//"Selected Groupies"
+                cell.groupiesLabel.textColor = UIColor.grayColor()
             }
             
-        } else {
-            
-            // Format cell backgrounds
             cell.backgroundColor = UIColor.clearColor()
+            cell.groupiesLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
             
+        } else if indexPath.section == 1 {
+            
+            cell = tableView.dequeueReusableCellWithIdentifier("groupiesCell", forIndexPath: indexPath) as! GroupiesCell
+            
+            // Configure the cell...
+            cell.selectionStyle = UITableViewCellSelectionStyle.None
+            
+            // Format cell
+            cell.backgroundColor = UIColor.clearColor()
+            cell.usernameLabel.textColor = UIColor.darkTextColor() //UIColor.whiteColor()
             cell.usernameLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)
+            cell.usernameLabel.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
             
-            if allFriendsDictionary2Filtered[indexPath.row]["isSelected"] as! Bool == true {
+            // Add profile pics
+            if let image: UIImage = self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage {
+                println("1")
+                cell.profilePictureImageView.image = image
+            } else {
+                
+                if let url = (friendsDictionaryFiltered[indexPath.row]["picURL"]) as? String {
+                    println("2")
+                    let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
+                    
+                    NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+                        
+                        self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(data: data)!
+                        self.friendsDictionary[indexPath.row]["profilePicture"] = UIImage(data: data)!
+                        cell.profilePictureImageView.image = self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage
+                    }
+                    
+                } else {
+                    println("3")
+                    friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(named: "profile.png")!
+                    friendsDictionary[indexPath.row]["profilePicture"] = UIImage(named: "profile.png")!
+                    cell.profilePictureImageView.image = friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage
+                }
+                
+            }
+            
+            cell.profilePictureImageView.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.profilePictureImageView.clipsToBounds = true
+            
+            // add account-type pics
+            if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithApp" {
+                
+                cell.accountTypeImageView.image = UIImage(named: "share_facebook.png")
+                
+            } else if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "socialQs" {
+                
+                cell.accountTypeImageView.image = UIImage(named: "logo_square.png")
+            }
+            cell.accountTypeImageView.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.accountTypeImageView.clipsToBounds = true
+            cell.accountTypeImageView.backgroundColor = mainColorBlue
+            
+            if friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool == true {
                 
                 cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+                cell.accountTypeImageView.alpha = 0.2
                 
             } else {
                 
                 cell.accessoryType = UITableViewCellAccessoryType.None
+                cell.accountTypeImageView.alpha = 1.0
             }
+            
+        } else { // section 2
+            
+            cell = tableView.dequeueReusableCellWithIdentifier("groupiesCell", forIndexPath: indexPath) as! GroupiesCell
+            
+            // Configure the cell...
+            cell.selectionStyle = UITableViewCellSelectionStyle.None
+            
+            // Format cell
+            cell.backgroundColor = UIColor.clearColor()
+            cell.usernameLabel.textColor = UIColor.darkTextColor() //UIColor.whiteColor()
+            cell.usernameLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)
+            cell.usernameLabel.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
+            
+            // Add profile pics
+            cell.profilePictureImageView.image = UIImage(named: "profile.png")
+            cell.profilePictureImageView.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.profilePictureImageView.clipsToBounds = true
+            
+            // add account-type pics
+            cell.accountTypeImageView.image = UIImage(named: "logo_square.png")
+            cell.accountTypeImageView.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.accountTypeImageView.clipsToBounds = true
+            cell.accountTypeImageView.backgroundColor = mainColorBlue
         }
-        
+    
         return cell
     }
     
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
+        // Resign keyboard when tapping on a row
+        self.tableView.endEditing(true)
+        
         // Get cell that has been tapped on
         var cell: UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
         
-        if indexPath.section == 1 {
+        if indexPath.section == 0 {
             
-            allFriendsDictionary2[indexPath.row]["isSelected"] = !(allFriendsDictionary2[indexPath.row]["isSelected"] as! Bool)
-            allFriendsDictionary2Filtered[indexPath.row]["isSelected"] = !(allFriendsDictionary2Filtered[indexPath.row]["isSelected"] as! Bool)
+        } else if indexPath.section == 1 {
+            
+            friendsDictionary[indexPath.row]["isSelected"] = !(friendsDictionary[indexPath.row]["isSelected"] as! Bool)
+            friendsDictionaryFiltered[indexPath.row]["isSelected"] = !(friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool)
+            
+            if (friendsDictionary[indexPath.row]["isSelected"] as! Bool) == true {
+                if !contains(isGroupieName, friendsDictionary[indexPath.row]["name"] as! String) {
+                    isGroupieName.append(friendsDictionary[indexPath.row]["name"] as! String)
+                }
+            } else {
+                let index = find(isGroupieName, friendsDictionary[indexPath.row]["name"] as! String)
+                if index != nil {
+                    isGroupieName.removeAtIndex(index!)
+                }
+            }
             
             var count = 0
-            
-            for var i = 0; i < allFriendsDictionary2.count; i++ {
+            for var i = 0; i < friendsDictionary.count; i++ {
                 
-                if allFriendsDictionary2[i]["isSelected"] as! Bool == true {
+                if friendsDictionary[i]["isSelected"] as! Bool == true {
                     count++
                 }
             }
             
-            if count == allFriendsDictionary2.count {
+        } else { // section 2
+            
+            println(indexPath.row)
+            println(nonFriendsDictionaryFiltered)
+            
+            if !contains(myFriends, nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String) {
                 
-                allSelected = true
+                myFriends.append(nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String)
             }
             
-            
-            
-        } else { // section == 0
-            
-//            if allSelected == false {
-//                
-//                allSelected = true
-//                isGroupieName = facebookNames
-//                isGroupieQId = facebookIds
-//
-//            } else if allSelected == true {
-//                
-//                allSelected = false
-//                isGroupieName.removeAll(keepCapacity: true)
-//                isGroupieQId.removeAll(keepCapacity: true)
-//                
-//            }
-//            
-//            tableView.beginUpdates()
-//            let reload = NSIndexSet(index: 1) // Reload other section
-//            tableView.reloadSections(reload, withRowAnimation: UITableViewRowAnimation.None)
-//            tableView.endUpdates()
+            tableView.reloadData()
             
         }
         
+        selectedUsers = ", ".join(isGroupieName)
+        
+        // refresh applicable rows
+        let sectionZeroIndex = NSIndexPath(forRow: 0, inSection: 0)
         tableView.beginUpdates()
         tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+        //tableView.reloadRowsAtIndexPaths([sectionZeroIndex], withRowAnimation: UITableViewRowAnimation.Automatic)
         tableView.endUpdates()
     }
     
@@ -459,6 +583,20 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate {
             return CGFloat(0)
         }
     }
+    
+    
+    // POPOVER SETTINGS FUNCTIONS
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.None
+    }
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "optionsFloat" {
+            let popoverViewController = segue.destinationViewController as! UIViewController
+            popoverViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
+            popoverViewController.popoverPresentationController!.delegate = self
+        }
+    }
+    // POPOVER SETTINGS FUNCTIONS
     
     
     override func didReceiveMemoryWarning() {

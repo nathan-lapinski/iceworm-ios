@@ -45,8 +45,6 @@ class SettingsViewController: UIViewController {
                         
                         if isFinished {
                             
-                            println("!!!!!!!!!!!!!!!!")
-                            
                             blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
                             
                             self.updateImageAndButton(true)

@@ -57,8 +57,6 @@ var myFriendsStorageKey = "myFriends"
 var votedOn1Ids = [String]() // questions VOTED-UPON by current user
 var votedOn2Ids = [String]() // questions VOTED-UPON by current user
 
-// Array to store non-FB friends
-var mySocialQsFriends = [String]()
 
 // Dictionary to pass question value to "view votes" controller
 var viewQ = Dictionary<String, Any>()
@@ -88,7 +86,9 @@ var isGroupieQId = [String]()
 var groupiesDictionary = [Dictionary<String, AnyObject>]()
 var myFriendsDictionary = [Dictionary<String, AnyObject>]()
 var myFriends = [String]()
+// Array to store non-FB friends
+//var mySocialQsFriends = [String]()
 
-
+var logoutAttempt = false
 var warningSeen = false
 

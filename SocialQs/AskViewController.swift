@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+class AskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     let thumbnailMax = CGFloat(120)
     let photoMax = CGFloat(800)
@@ -647,7 +647,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         // Set separator color
         askTable.separatorColor = UIColor.clearColor()
         
-        // Make cells non-selectable
+        // Make cells non-selectable, visually
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         
         // Set cell background color
@@ -716,16 +716,16 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         //let cancelAction = UIAlertAction(title: "Cancel", style: .Destructive) { (action) -> Void in
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) -> Void in
             
-            if self.whichCell == 0 && self.chosenImageThumbnail[0] == UIImage(named: "camera.png") {
-                self.qPhoto = !self.qPhoto
-            } else if self.whichCell == 1 && self.chosenImageThumbnail[2] == UIImage(named: "camera.png") {
-                self.chosenImageThumbnail[1] = UIImage(named: "camera.png")
-                self.chosenImageThumbnail[2] = UIImage(named: "camera.png")
+            if self.whichCell == 0 && self.chosenImageThumbnail[0] == nil {
+                self.qPhoto = false//!self.qPhoto
+            } else if self.whichCell == 1 && self.chosenImageThumbnail[2] == nil {
+                self.chosenImageThumbnail[1] = nil//UIImage(named: "camera.png")
+                self.chosenImageThumbnail[2] = nil//UIImage(named: "camera.png")
                 self.chosenImageHighRes[1] = nil
                 self.chosenImageHighRes[2] = nil
                 self.askTable.reloadData() // Could just reload row...
                 
-                self.oPhoto = !self.oPhoto
+                self.oPhoto = false//!self.oPhoto
                 self.imageCount = -1
             }
             

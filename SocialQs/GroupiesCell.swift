@@ -10,6 +10,10 @@ import UIKit
 
 class GroupiesCell: UITableViewCell {
     
+    @IBOutlet var groupiesLabel: UITextView!
+    
     @IBOutlet var usernameLabel: UILabel!
+    @IBOutlet var profilePictureImageView: UIImageView!
+    @IBOutlet var accountTypeImageView: UIImageView!
 
 }
