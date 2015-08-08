@@ -73,9 +73,13 @@ func getPersonalInfoFromFacebook(completion: (Bool) -> Void) {
     
     NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
         
-        // Set app iamge
-        let image = UIImage(data: data)
-        profilePicture = image!
+        // Set app image
+        if data != nil {
+            let image = UIImage(data: data)
+            profilePicture = image
+        } else {
+            profilePicture = UIImage(named: "profile.png")
+        }
         
         // Download data in background queue
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
@@ -83,7 +87,7 @@ func getPersonalInfoFromFacebook(completion: (Bool) -> Void) {
         dispatch_async(backgroundQueue, {
             
             var user = PFUser.currentUser()
-            let imageData = UIImagePNGRepresentation(image)
+            let imageData = UIImagePNGRepresentation(profilePicture)
             let picture = PFFile(name:"profilePicture.png", data: imageData)
             user!.setObject(picture, forKey: "profilePicture")
             
@@ -147,10 +151,11 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     myFriendsStorageKey = username + "myFriends"
     //deletedTheirStorageKey = username + "deletedTheirPermanent"
     
-    // Store username locally
+    // Store user info on the phone
     NSUserDefaults.standardUserDefaults().setObject(username, forKey: usernameStorageKey)
     NSUserDefaults.standardUserDefaults().setObject(uId, forKey: uIdStorageKey)
     NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: uQIdStorageKey)
+    //NSUserDefaults.standardUserDefaults().setObject(profilePicture, forKey: profilePictureKey)
     
     if isNew {
         

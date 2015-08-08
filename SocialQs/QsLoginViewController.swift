@@ -41,9 +41,6 @@ class QsLoginViewController: UIViewController {
             
             if let user = user { // facebook login successful
                 
-                //Store user information locally
-                storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in })
-                
                 if user.isNew {
                     
                     println("User signed up and logged in through Facebook!")
@@ -56,6 +53,9 @@ class QsLoginViewController: UIViewController {
                 getPersonalInfoFromFacebook() { (isFinished) -> Void in
                     
                     if isFinished {
+                        
+                        //Store user information locally
+                        storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in })
                         
                         self.performSegueWithIdentifier("signedIn", sender: self)
                         
@@ -178,11 +178,10 @@ class QsLoginViewController: UIViewController {
             myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
         }
         
-//        // Recall myVotes if applicable
-//        if NSUserDefaults.standardUserDefaults().objectForKey("myVotes") != nil {
+//        // Recall profilePicture if applicable
+//        if NSUserDefaults.standardUserDefaults().objectForKey(profilePictureKey) != nil {
 //            
-//            myVotes = NSUserDefaults.standardUserDefaults().objectForKey("myVotesStorageKey")! as! Dictionary
-//            
+//            profilePicture = NSUserDefaults.standardUserDefaults().objectForKey(profilePictureKey)! as? UIImage
 //        }
     }
     

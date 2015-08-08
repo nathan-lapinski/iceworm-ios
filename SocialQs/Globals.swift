@@ -62,6 +62,10 @@ var votedOn2Ids = [String]() // questions VOTED-UPON by current user
 var viewQ = Dictionary<String, Any>()
 var isUploading = [String]()
 
+
+var groupiesGroups = [Dictionary<String,AnyObject>]()
+
+
 // Variable to track how user voted - store to NSUserDefaults //
 //var myVotes = Dictionary<String, Int>()
 

@@ -97,17 +97,29 @@ class WelcomeViewController: UIViewController {
     
     
     func signInCurrentUser() {
+        
+        getPersonalInfoFromFacebook() { (isFinished) -> Void in
+            
+            if isFinished {
+                
+                storeUserInfo(PFUser.currentUser()!.username!, false) {
+                    
+                    (isFinished) -> Void in
+                    
+                    self.performSegueWithIdentifier("alreadySignedIn", sender: self)
+                }
+                
+            } else {
+                
+                println("Could not gather FB info - logInViewController")
+            }
+        }
+        
         //
         //
         // **** Only this this if these are not already stored for the CURRENT USER ****
         //
         //
-        storeUserInfo(PFUser.currentUser()!.username!, false) {
-            
-            (isFinished) -> Void in
-        
-            self.performSegueWithIdentifier("alreadySignedIn", sender: self)
-        }
     }
     
 

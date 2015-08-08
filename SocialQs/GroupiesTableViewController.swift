@@ -23,12 +23,14 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     var viewWillAppearCount = 0
     
     let tableFontSize = CGFloat(16)
+    var keyboardSize = CGFloat()
     let section1: String = ""
     let objs1: [String] = ["All Users"]
     let section2: String = "Facebook and sQs Friends"
     var objs2: [String] = [String]()
     let section3: String = "sQs Users"
-    var allSelected = Bool()
+    //var allSelected = Bool()
+    var searchCancelled = false
     
     var friendEntry: UITextField!
     
@@ -123,6 +125,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         }
         
         searchBar.delegate = self
+        searchBar.searchBarStyle = UISearchBarStyle.Default
+        searchBar.showsCancelButton = true
+        
+        println(searchBar.frame.size.height)
         
         // Title table controller
         self.title = "Select Groupies"
@@ -142,8 +148,33 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
         
         // Initialize allSelected var the first time the controller is presented
-        allSelected = false
+        //allSelected = false
+        
+        // Keyboard open/closed notifications
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"keyboardWillAppear:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"keyboardWillDisappear:", name: UIKeyboardWillHideNotification, object: nil)
     }
+    
+    
+//    func keyboardWillShow(notification: NSNotification) {
+//        
+//        keyboardSize = ((notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()).height
+//    }
+    
+
+    func keyboardWillAppear(notification: NSNotification) {
+//        var searchBarSize = CGFloat(64)
+//        self.tableView.contentInset = UIEdgeInsetsMake(searchBarSize,0,keyboardSize,0)
+    }
+    func keyboardWillDisappear(notification: NSNotification) {
+//        var searchBarSize = CGFloat(64)
+//        self.tableView.contentInset = UIEdgeInsetsMake(searchBarSize,0,0,0)
+    }
+//    override func viewWillDisappear(animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        NSNotificationCenter.defaultCenter().removeObserver(self)
+//    }
+    
     
     override func viewWillAppear(animated: Bool) {
         
@@ -180,7 +211,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     }
                     
                     self.friendsDictionary.append(tempDict)
-                    
                 }
                 
                 // get myFriends and add to dictionary
@@ -230,7 +260,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     
     func loadUsers(name: String) {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // GET sQs users for search purposes
         // must load each time for search functionality to work
         //// Pull SocialQs Users (omit anyone who is FB linked) and include in additional section under FB/myFriends
@@ -261,85 +290,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                         self.nonFriendsDictionary.append(tempDict)
                     }
                 }
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 
-                // Sort dictionaries
-                self.friendsDictionary.sort { (item1, item2) -> Bool in
-                    
-                    let t1 = (item1["name"] as! String).lowercaseString
-                    let t2 = (item2["name"] as! String).lowercaseString
-                    
-                    return t1 < t2
-                }
-                self.nonFriendsDictionary.sort { (item1, item2) -> Bool in
-                    
-                    let t1 = (item1["name"] as! String).lowercaseString
-                    let t2 = (item2["name"] as! String).lowercaseString
-                    
-                    return t1 < t2
-                }
                 
-                // Fill display strings
-                self.fbAndSQNames.removeAll(keepCapacity: true)
-                for temp in self.friendsDictionary {
-                    
-                    self.fbAndSQNames.append(temp["name"] as! String)
-                }
-                self.sqOnlyNames.removeAll(keepCapacity: true)
-                for temp in self.nonFriendsDictionary {
-                    
-                    self.sqOnlyNames.append(temp["name"] as! String)
-                }
                 
-                // reset all entries in filtered users
-                self.friendsDictionaryFiltered.removeAll(keepCapacity: true)
-                self.nonFriendsDictionaryFiltered.removeAll(keepCapacity: true)
+                self.buildUserStrings(name)
                 
-                var sectionTwoItems = [String]()
-                var sectionThreeItems = [String]()
                 
-                // Fill filtered dictionaries from full dict and search key
-                if !name.isEmpty {
-                    
-                    // Filter users by searchBar input
-                    var fbAndSQNamesFiltered = self.fbAndSQNames.filter({(item: String) -> Bool in
-                        
-                        var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
-                        return stringMatch != nil ? true : false
-                    })
-                    var sqOnlyNamesFiltered = self.sqOnlyNames.filter({(item: String) -> Bool in
-                        
-                        var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
-                        return stringMatch != nil ? true : false
-                    })
-                    
-                    // Fill filtered dictionaries
-                    for name in fbAndSQNamesFiltered {
-                        var index = find(self.fbAndSQNames, name)!
-                        self.friendsDictionaryFiltered.append(self.friendsDictionary[index])
-                    }
-                    for name in sqOnlyNamesFiltered {
-                        var index = find(self.sqOnlyNames, name)!
-                        self.nonFriendsDictionaryFiltered.append(self.nonFriendsDictionary[index])
-                    }
-                    
-                    sectionTwoItems = fbAndSQNamesFiltered
-                    sectionThreeItems = sqOnlyNamesFiltered
-                    
-                } else {
-                    
-                    self.friendsDictionaryFiltered = self.friendsDictionary
-                    self.nonFriendsDictionaryFiltered = self.nonFriendsDictionary
-                    
-                    sectionTwoItems = self.fbAndSQNames
-                    sectionThreeItems = self.sqOnlyNames
-                    
-                }
-                
-                // Fill object to populate table
-                self.objectsArray = [Objects(sectionName: self.section1, sectionObjects: [""]), Objects(sectionName: self.section2, sectionObjects: sectionTwoItems), Objects(sectionName: self.section3, sectionObjects: sectionThreeItems)]
-                
-                self.tableView.reloadData()
                 
             } else {
                 
@@ -350,14 +306,102 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     
     
+    func buildUserStrings(name: String) {
+        //:::::::::::::::::::::::::::::::::::::::::::
+        // Sort dictionaries
+        self.friendsDictionary.sort { (item1, item2) -> Bool in
+            
+            let t1 = (item1["name"] as! String).lowercaseString
+            let t2 = (item2["name"] as! String).lowercaseString
+            
+            return t1 < t2
+        }
+        self.nonFriendsDictionary.sort { (item1, item2) -> Bool in
+            
+            let t1 = (item1["name"] as! String).lowercaseString
+            let t2 = (item2["name"] as! String).lowercaseString
+            
+            return t1 < t2
+        }
+        
+        // Fill display strings
+        self.fbAndSQNames.removeAll(keepCapacity: true)
+        for temp in self.friendsDictionary {
+            
+            self.fbAndSQNames.append(temp["name"] as! String)
+        }
+        self.sqOnlyNames.removeAll(keepCapacity: true)
+        for temp in self.nonFriendsDictionary {
+            
+            self.sqOnlyNames.append(temp["name"] as! String)
+        }
+        
+        // reset all entries in filtered users
+        self.friendsDictionaryFiltered.removeAll(keepCapacity: true)
+        self.nonFriendsDictionaryFiltered.removeAll(keepCapacity: true)
+        
+        var sectionTwoItems = [String]()
+        var sectionThreeItems = [String]()
+        
+        // Fill filtered dictionaries from full dict and search key
+        if !name.isEmpty {
+            
+            // Filter users by searchBar input
+            var fbAndSQNamesFiltered = self.fbAndSQNames.filter({(item: String) -> Bool in
+                
+                var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
+                return stringMatch != nil ? true : false
+            })
+            var sqOnlyNamesFiltered = self.sqOnlyNames.filter({(item: String) -> Bool in
+                
+                var stringMatch = item.lowercaseString.rangeOfString(name.lowercaseString)
+                return stringMatch != nil ? true : false
+            })
+            
+            // Fill filtered dictionaries
+            for name in fbAndSQNamesFiltered {
+                var index = find(self.fbAndSQNames, name)!
+                self.friendsDictionaryFiltered.append(self.friendsDictionary[index])
+            }
+            for name in sqOnlyNamesFiltered {
+                var index = find(self.sqOnlyNames, name)!
+                self.nonFriendsDictionaryFiltered.append(self.nonFriendsDictionary[index])
+            }
+            
+            sectionTwoItems = fbAndSQNamesFiltered
+            sectionThreeItems = sqOnlyNamesFiltered
+            
+        } else {
+            
+            self.friendsDictionaryFiltered = self.friendsDictionary
+            self.nonFriendsDictionaryFiltered = self.nonFriendsDictionary
+            
+            sectionTwoItems = self.fbAndSQNames
+            sectionThreeItems = self.sqOnlyNames
+            
+        }
+        
+        // Fill object to populate table
+        self.objectsArray = [
+            Objects(sectionName: self.section1, sectionObjects: [""]),
+            Objects(sectionName: self.section2, sectionObjects: sectionTwoItems),
+            Objects(sectionName: self.section3, sectionObjects: sectionThreeItems)
+        ]
+        
+        self.tableView.reloadData()
+        //:::::::::::::::::::::::::::::::::::::::::::
+    }
+    
+    
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         
         loadUsers(searchText)
     }
     
-    
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
         
+        println("test")
+        searchCancelled = true
         loadUsers("")
     }
     
@@ -374,6 +418,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
 
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        if searchCancelled == true {
+        
+            searchBar.resignFirstResponder()
+            searchCancelled = false
+        }
         
         var cell = GroupiesCell()
         
@@ -415,12 +465,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             // Add profile pics
             if let image: UIImage = self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage {
-                println("1")
+                
                 cell.profilePictureImageView.image = image
             } else {
                 
                 if let url = (friendsDictionaryFiltered[indexPath.row]["picURL"]) as? String {
-                    println("2")
+                    
                     let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
                     
                     NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
@@ -431,7 +481,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     }
                     
                 } else {
-                    println("3")
+                    
                     friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(named: "profile.png")!
                     friendsDictionary[indexPath.row]["profilePicture"] = UIImage(named: "profile.png")!
                     cell.profilePictureImageView.image = friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage
@@ -497,11 +547,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        // Resign keyboard when tapping on a row
-        self.tableView.endEditing(true)
-        
-        // Get cell that has been tapped on
         var cell: UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
+        
+        cell.resignFirstResponder()
         
         if indexPath.section == 0 {
             
@@ -511,12 +559,17 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             friendsDictionaryFiltered[indexPath.row]["isSelected"] = !(friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool)
             
             if (friendsDictionary[indexPath.row]["isSelected"] as! Bool) == true {
+                
                 if !contains(isGroupieName, friendsDictionary[indexPath.row]["name"] as! String) {
+                    
                     isGroupieName.append(friendsDictionary[indexPath.row]["name"] as! String)
                 }
+                
             } else {
+                
                 let index = find(isGroupieName, friendsDictionary[indexPath.row]["name"] as! String)
                 if index != nil {
+                    
                     isGroupieName.removeAtIndex(index!)
                 }
             }
@@ -529,6 +582,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 }
             }
             
+            // refresh applicable rows (do not put this in section 2 - will crash!)
+            tableView.beginUpdates()
+            tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+            tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
+            tableView.endUpdates()
+            
         } else { // section 2
             
             println(indexPath.row)
@@ -536,21 +595,41 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             if !contains(myFriends, nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String) {
                 
+                var tempDict = nonFriendsDictionaryFiltered[indexPath.row]
+                tempDict["isSelected"] = true
+                self.friendsDictionary.append(tempDict)
                 myFriends.append(nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String)
+                isGroupieName.append(nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String)
+                
+                for var i = 0; i < nonFriendsDictionary.count; i++ {
+                    if nonFriendsDictionary[i]["name"] as! String == nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String {
+                        nonFriendsDictionary.removeAtIndex(i)
+                        break
+                    }
+                }
+                for var i = 0; i < nonFriendsDictionaryFiltered.count; i++ {
+                    if nonFriendsDictionaryFiltered[i]["name"] as! String == nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String {
+                        nonFriendsDictionaryFiltered.removeAtIndex(i)
+                        buildUserStrings("")
+                        break
+                    }
+                }
             }
-            
-            tableView.reloadData()
-            
         }
+    }
+    
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
-        selectedUsers = ", ".join(isGroupieName)
-        
-        // refresh applicable rows
-        let sectionZeroIndex = NSIndexPath(forRow: 0, inSection: 0)
-        tableView.beginUpdates()
-        tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
-        //tableView.reloadRowsAtIndexPaths([sectionZeroIndex], withRowAnimation: UITableViewRowAnimation.Automatic)
-        tableView.endUpdates()
+        if indexPath.section == 0 {
+            if isGroupieName.count < 1 {
+                return 0
+            } else {
+                return 44
+            }
+        } else {
+            return 44
+        }
     }
     
     
@@ -585,6 +664,18 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     
     
+    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        
+        searchBar.resignFirstResponder()
+        
+        //
+        //
+        // Update table inset here
+        //
+        //
+    }
+    
+    
     // POPOVER SETTINGS FUNCTIONS
     func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
         return UIModalPresentationStyle.None
@@ -594,6 +685,16 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             let popoverViewController = segue.destinationViewController as! UIViewController
             popoverViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
             popoverViewController.popoverPresentationController!.delegate = self
+            popoverViewController.popoverPresentationController?.backgroundColor = UIColor.darkGrayColor()
+            
+            if groupiesGroups.count < 8 {
+                
+            popoverViewController.preferredContentSize.height = CGFloat((groupiesGroups.count + 1) * 44)
+                
+            } else {
+                
+                popoverViewController.preferredContentSize.height = CGFloat(8 * 44)
+            }
         }
     }
     // POPOVER SETTINGS FUNCTIONS
