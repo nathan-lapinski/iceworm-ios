@@ -166,6 +166,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         topOffset = 64
         
         NSUserDefaults.standardUserDefaults().setObject(myFriends, forKey: myFriendsStorageKey)
+        
+        println(">>>>>>>>>>>>>>>>>>")
+        println(username)
+        println(name)
+        println(uId)
+        println(">>>>>>>>>>>>>>>>>>")
     }
     
     
@@ -548,7 +554,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             if error == nil {
                 
                 isGroupieName.removeAll(keepCapacity: true)
-                isGroupieQId.removeAll(keepCapacity: true)
+                //isGroupieQId.removeAll(keepCapacity: true)
                 
                 //println("Directed push notification sent!")
                 //println("-----")
@@ -742,20 +748,20 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         if whichCell == 0 {
             
-            chosenImageHighRes[0] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
-            chosenImageThumbnail[0] = RBResizeImage(chosenImageHighRes[0]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
+            chosenImageHighRes[0] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[0] = resizeImage(chosenImageHighRes[0]!, CGSize(width: thumbnailMax, height: thumbnailMax))
             
         } else if whichCell == 1 {
             
             imageCount = imageCount + 1
             
-            chosenImageHighRes[(imageCount % 2) + 1] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
-            chosenImageThumbnail[(imageCount % 2) + 1] = RBResizeImage(self.chosenImageHighRes[(imageCount % 2) + 1]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
+            chosenImageHighRes[(imageCount % 2) + 1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(self.chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
             
         } else if whichCell == -1 {
             
-            chosenImageHighRes[(imageCount % 2) + 1] = RBResizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
-            chosenImageThumbnail[(imageCount % 2) + 1] = RBResizeImage(chosenImageHighRes[(imageCount % 2) + 1]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
+            chosenImageHighRes[(imageCount % 2) + 1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
         }
         
         askTable.reloadData()
@@ -795,7 +801,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = source
         presentViewController(imagePicker, animated: true, completion: nil)
-        
     }
     
     
@@ -804,31 +809,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     
-    func RBResizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
-        let size = image.size
-        
-        let widthRatio  = targetSize.width  / image.size.width
-        let heightRatio = targetSize.height / image.size.height
-        
-        // Figure out what our orientation is, and use that to form the rectangle
-        var newSize: CGSize
-        if(widthRatio > heightRatio) {
-            newSize = CGSizeMake(size.width * heightRatio, size.height * heightRatio)
-        } else {
-            newSize = CGSizeMake(size.width * widthRatio,  size.height * widthRatio)
-        }
-        
-        // This is the rect that we've calculated out and this is what is actually used below
-        let rect = CGRectMake(0, 0, newSize.width, newSize.height)
-        
-        // Actually do the resizing to the rect using the ImageContext stuff
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
-        image.drawInRect(rect)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return newImage
-    }
+
     
     
 }

@@ -15,5 +15,6 @@ class GroupiesCell: UITableViewCell {
     @IBOutlet var usernameLabel: UILabel!
     @IBOutlet var profilePictureImageView: UIImageView!
     @IBOutlet var accountTypeImageView: UIImageView!
+    @IBOutlet var inviteButton: UIButton!
 
 }

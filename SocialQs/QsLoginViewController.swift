@@ -45,28 +45,69 @@ class QsLoginViewController: UIViewController {
                     
                     println("User signed up and logged in through Facebook!")
                     
+                    getPersonalInfoFromFacebook() { (isFinished) -> Void in
+                        
+                        if isFinished {
+                            
+                            //Store user information locally
+                            storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
+                                
+                                self.performSegueWithIdentifier("signedIn", sender: self)
+                                
+                                blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                            })
+                            
+                            
+                        } else {
+                            
+                            println("Could not gather FB info - logInViewController")
+                        }
+                    }
+                    
                 } else {
                     
                     println("User logged in through Facebook!")
-                }
-            
-                getPersonalInfoFromFacebook() { (isFinished) -> Void in
                     
-                    if isFinished {
-                        
-                        //Store user information locally
-                        storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in })
-                        
-                        self.performSegueWithIdentifier("signedIn", sender: self)
-                        
-                        blockUI(false, self.loginSpinner, self.loginBlurView, self)
-                        
-                    } else {
-                        
-                        println("Could not gather FB info - logInViewController")
-                    }
+                    self.signInCurrentUser()
+                    
+//                    ////////////////////////////////////////////////////////////////////////////
+//                    //// GLOBAL FUNCTION - need to know how to use error handling before making
+//                    // - Repeats in welcomeViewController
+//                    // Get photo from parse
+//                    if let pic = PFUser.currentUser()!["profilePicture"] as? PFFile {
+//                        
+//                        pic.getDataInBackgroundWithBlock({ (data, error) -> Void in
+//                            
+//                            if error != nil {
+//                                
+//                                println("There was an error retrieving the users profile picture - loginController")
+//                                println(error)
+//                                
+//                                profilePicture = UIImage(named: "profile.png")
+//                                
+//                            } else {
+//                                
+//                                if let downloadedImage = UIImage(data: data!) {
+//                                    
+//                                    profilePicture = downloadedImage
+//                                    
+//                                } else {
+//                                    
+//                                    profilePicture = UIImage(named: "profile.png")
+//                                }
+//                            }
+//                            
+//                            //Store user information locally
+//                            storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in })
+//                            
+//                            self.performSegueWithIdentifier("signedIn", sender: self)
+//                            
+//                            blockUI(false, self.loginSpinner, self.loginBlurView, self)
+//                        })
+//                    }
+//                    ////////////////////////////////////////////////////////////////////////////
                 }
-                
+             
             } else {
                 
                 println("Uh oh. The user cancelled the Facebook login.")
@@ -101,10 +142,7 @@ class QsLoginViewController: UIViewController {
                 
                 if user != nil { // standard login successful
                     
-                    self.performSegueWithIdentifier("signedIn", sender: self)
-                    
-                    //Store user information locally
-                    storeUserInfo(self.usernameTextField.text, false, { (isFinished) -> Void in })
+                    self.signInCurrentUser()
                     
                 } else {
                     
@@ -114,12 +152,102 @@ class QsLoginViewController: UIViewController {
                     }
                     
                     displayAlert("Failed Login", errorMessage, self)
+                    
+                    blockUI(false, self.loginSpinner, self.loginBlurView, self)
                 }
+            })
+        }
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    // MAKE GLOBAL - repeats in welcomeController with DIFFERENT SEGUE
+    func signInCurrentUser() { // gets photo and stores username, uId, uQId, etc...
+        
+        // Check if profilePicture exists on Parse: if not, get from FB and upload to parse
+        if let tempPic = PFUser.currentUser()!["profilePicture"] as? PFFile {
+            
+            println("1")
+            
+            tempPic.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                
+                if error == nil {
+                    
+                    println("NO ERROR")
+                    
+                    if let downloadedImage = UIImage(data: data!) {
+                        println("got it!")
+                        
+                        profilePicture = downloadedImage
+                        
+                    } else {
+                        
+                        profilePicture = UIImage(named: "profile.png")
+                    }
+                    
+                } else {
+                    
+                    println("There was an error retrieving the users profile picture - welcomeController")
+                    println(error)
+                    
+                    profilePicture = UIImage(named: "profile.png")
+                }
+                
+                //Store user information locally
+                storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
+                    
+                    self.performSegueWithIdentifier("signedIn", sender: self)
+                    
+                    blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                    
+                })
+            })
+            
+        } else if (PFUser.currentUser()!["profilePicture"] as? PFFile == nil) && PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) == true {
+            
+            println("2")
+            
+            getPersonalInfoFromFacebook() { (isFinished) -> Void in
+                
+                if isFinished {
+                    
+                    storeUserInfo(PFUser.currentUser()!.username!, false) {
+                        
+                        (isFinished) -> Void in
+                        
+                        //Store user information locally
+                        storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
+                            
+                            self.performSegueWithIdentifier("signedIn", sender: self)
+                            
+                            blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                            
+                        })
+                    }
+                    
+                } else {
+                    
+                    println("Could not gather FB info - logInViewController")
+                }
+            }
+            
+        } else { // no image to be loaded
+            println("3")
+            
+            profilePicture = UIImage(named: "profile.png")
+            
+            //Store user information locally
+            storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
+                
+                self.performSegueWithIdentifier("signedIn", sender: self)
                 
                 blockUI(false, self.loginSpinner, self.loginBlurView, self)
             })
         }
     }
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
     
     
     override func viewDidLoad() {
@@ -138,50 +266,44 @@ class QsLoginViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        // Recall myName if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey(usernameStorageKey) != nil {
-            
-            username = NSUserDefaults.standardUserDefaults().objectForKey(usernameStorageKey)! as! String
-        }
-        
-        // Recall name if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey(nameStorageKey) != nil {
-            
-            name = NSUserDefaults.standardUserDefaults().objectForKey(nameStorageKey)! as! String
-        }
-        
-        // Recall uId if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey(uIdStorageKey) != nil {
-            
-            uId = NSUserDefaults.standardUserDefaults().objectForKey(uIdStorageKey)! as! String
-        }
-        
-        // Recall uQId if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey(uQIdStorageKey) != nil {
-            
-            uQId = NSUserDefaults.standardUserDefaults().objectForKey(uQIdStorageKey)! as! String
-        }
-        
-        // Recall votedOnIds if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey) != nil {
-            
-            votedOn1Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey)! as! [String]
-        }
-        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey) != nil {
-            
-            votedOn2Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey)! as! [String]
-        }
-        
-        // Recall myFriends if applicable
-        if NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey) != nil {
-            
-            myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
-        }
-        
-//        // Recall profilePicture if applicable
-//        if NSUserDefaults.standardUserDefaults().objectForKey(profilePictureKey) != nil {
+//        // Recall myName if applicable
+//        if NSUserDefaults.standardUserDefaults().objectForKey(usernameStorageKey) != nil {
 //            
-//            profilePicture = NSUserDefaults.standardUserDefaults().objectForKey(profilePictureKey)! as? UIImage
+//            username = NSUserDefaults.standardUserDefaults().objectForKey(usernameStorageKey)! as! String
+//        }
+//        
+//        // Recall name if applicable
+//        if NSUserDefaults.standardUserDefaults().objectForKey(nameStorageKey) != nil {
+//            println(nameStorageKey)
+//            name = NSUserDefaults.standardUserDefaults().objectForKey(nameStorageKey)! as! String
+//        }
+//        
+//        // Recall uId if applicable
+//        if NSUserDefaults.standardUserDefaults().objectForKey(uIdStorageKey) != nil {
+//            
+//            uId = NSUserDefaults.standardUserDefaults().objectForKey(uIdStorageKey)! as! String
+//        }
+//        
+//        // Recall uQId if applicable
+//        if NSUserDefaults.standardUserDefaults().objectForKey(uQIdStorageKey) != nil {
+//            
+//            uQId = NSUserDefaults.standardUserDefaults().objectForKey(uQIdStorageKey)! as! String
+//        }
+//        
+//        // Recall votedOnIds if applicable
+//        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey) != nil {
+//            
+//            votedOn1Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey)! as! [String]
+//        }
+//        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey) != nil {
+//            
+//            votedOn2Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey)! as! [String]
+//        }
+//        
+//        // Recall myFriends if applicable
+//        if NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey) != nil {
+//            
+//            myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
 //        }
     }
     

@@ -9,9 +9,11 @@
 import UIKit
 import Parse
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     var user = PFUser.currentUser()!
+    
+    let picker = UIImagePickerController()
     
     //var blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
     var settingsSpinner = UIActivityIndicatorView()
@@ -24,6 +26,7 @@ class SettingsViewController: UIViewController {
     @IBOutlet var facebookLogo: UIImageView!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var handleLabel: UILabel!
+    @IBOutlet var changeProfilePictureButton: UIButton!
     
     @IBAction func logoutButton(sender: AnyObject) { launchLogoutPopover() }
     
@@ -78,8 +81,7 @@ class SettingsViewController: UIViewController {
 //                println(pwTest)
 //                println("<><><><><><><><>")
 //            } else {
-//                
-//                
+//
 //                println("<><><><><><><><>")
 //                println("No password")
 //            }
@@ -87,12 +89,6 @@ class SettingsViewController: UIViewController {
             //
             //
             // TEST IF REGULAR PARSE ACCOUNT IS SETUP - REQUIRE SETUP IF NO
-            //
-            //
-            //
-            //
-            //
-            //
             //
             //
             
@@ -112,26 +108,35 @@ class SettingsViewController: UIViewController {
     }
     
     
+    @IBAction func changeProfilePicture(sender: AnyObject) {
+        
+        launchImagePickerPopover()
+    }
+    
+    
     func updateImageAndButton(linked: Bool) -> Void {
+        
+        nameLabel.text = "@\(username)"
         
         if linked {
             
-            nameLabel.text = name
-            handleLabel.text = "@\(username)"
             linkWithFacebook.setTitle("Unlink Facebook Account", forState: UIControlState.Normal)
             facebookLogo.hidden = true
-            linkWithFacebook.hidden = true
+            linkWithFacebook.hidden = false
             
         } else {
             
-            //nameLabel.text = ""
-            //handleLabel.text = "@\(myName)"
-            nameLabel.text = "@\(username)"
-            handleLabel.text = "@\(username)"
-            //profilePictureImageView.image = UIImage(named: "profile.png")
             linkWithFacebook.setTitle("Link Facebook Account", forState: UIControlState.Normal)
-            //facebookLogo.hidden = false
-            //linkWithFacebook.hidden = false
+            facebookLogo.hidden = false
+            linkWithFacebook.hidden = false
+        }
+        
+        if name != "" {
+            
+            handleLabel.text = name
+        } else {
+            
+            handleLabel.text = ""
         }
         
         profilePictureImageView.image = profilePicture
@@ -140,6 +145,8 @@ class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        picker.delegate = self
         
         // Update image and button based on FB link status
         updateImageAndButton(PFFacebookUtils.isLinkedWithUser(user))
@@ -167,31 +174,32 @@ class SettingsViewController: UIViewController {
     func logOut() -> Void {
         
         // Store all data for loading next time
-        storeUserInfo(username, false) { (isFinished) -> Void in
+        //storeUserInfo(username, false) { (isFinished) -> Void in
             
-            //myName = ""
-            //name = ""
-            //uId = ""
-            //uQId = ""
+        username = ""
+        name = ""
+        uId = ""
+        uQId = ""
+        profilePicture = nil
+        
+        // Logout PFUser
+        PFUser.logOutInBackgroundWithBlock { (error) -> Void in
             
-            // Logout PFUser
-            PFUser.logOutInBackgroundWithBlock { (error) -> Void in
+            if error == nil {
                 
-                if error == nil {
-                    
-                    //                // Clear username, uId and uQId locally
-                    //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "myName")
-                    //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "name")
-                    //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uId")
-                    //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uQId")
-                    
-                    
-                    // Switch back to welcome screen
-                    println("Logout complete, performing segue to welcome view")
-                    self.performSegueWithIdentifier("logout", sender: self)
-                }
+                //                // Clear username, uId and uQId locally
+                //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "myName")
+                //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "name")
+                //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uId")
+                //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uQId")
+                
+                
+                // Switch back to welcome screen
+                println("Logout complete, performing segue to welcome view")
+                self.performSegueWithIdentifier("logout", sender: self)
             }
         }
+        //}
     }
     
     
@@ -201,6 +209,7 @@ class SettingsViewController: UIViewController {
             .ActionSheet) // Can also set to .Alert if you prefer
         
         let logOutAction = UIAlertAction(title: "Log Out", style: .Destructive) { (action) -> Void in
+            
             self.logOut()
         }
         alert.addAction(logOutAction)
@@ -209,6 +218,68 @@ class SettingsViewController: UIViewController {
         alert.addAction(cancelAction)
         
         presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    
+    //MARK: Image Picker Shits
+    func launchImagePickerPopover() -> Void {
+        
+        var titleMessage = "Please choose image source"
+        
+        let alert = UIAlertController(title: titleMessage, message: nil, preferredStyle:
+            .ActionSheet) // Can also set to .Alert if you prefer
+        
+        let cameraAction = UIAlertAction(title: "Take Picture", style: .Default) { (action) -> Void in
+            self.picker.allowsEditing = false
+            self.picker.sourceType = UIImagePickerControllerSourceType.Camera
+            self.picker.cameraCaptureMode = .Photo
+            self.presentViewController(self.picker, animated: true, completion: nil)
+        }
+        alert.addAction(cameraAction)
+        
+        let libraryAction = UIAlertAction(title: "Choose From Camera Roll", style: .Default) { (action) -> Void in
+            self.picker.allowsEditing = false
+            self.picker.sourceType = .PhotoLibrary
+            self.presentViewController(self.picker, animated: true, completion: nil)
+        }
+        alert.addAction(libraryAction)
+        
+        let facebookAction = UIAlertAction(title: "Facebook Photos", style: .Default) { (action) -> Void in
+            //
+            // LOAD FACEBOOK PHOTOS HERE
+            //
+        }
+        alert.addAction(facebookAction)
+        
+        //let cancelAction = UIAlertAction(title: "Cancel", style: .Destructive) { (action) -> Void in
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) -> Void in
+        }
+        alert.addAction(cancelAction)
+        
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
+        
+        profilePicture = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: 200, height: 200))
+        profilePictureImageView.image = profilePicture
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        println("cancel")
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    func showPhotoPicker(source: UIImagePickerControllerSourceType) {
+        
+        let imagePicker = UIImagePickerController()
+        imagePicker.sourceType = source
+        presentViewController(imagePicker, animated: true, completion: nil)
     }
     
     

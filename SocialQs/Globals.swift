@@ -17,7 +17,7 @@ var uQId = ""
 var name = ""
 
 // Profile Picture variables
-var profilePicture = UIImage(named: "profile.png")
+var profilePicture = UIImage?()
 
 // Set constants for formatting buttons - universal settings
 let bgAlpha: CGFloat = 0.7
@@ -86,9 +86,9 @@ var theirViewReturnedOnce = false
 
 // Groupies variable
 var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
-var isGroupieQId = [String]()
+//var isGroupieQId = [String]()
 var groupiesDictionary = [Dictionary<String, AnyObject>]()
-var myFriendsDictionary = [Dictionary<String, AnyObject>]()
+//var myFriendsDictionary = [Dictionary<String, AnyObject>]()
 var myFriends = [String]()
 // Array to store non-FB friends
 //var mySocialQsFriends = [String]()

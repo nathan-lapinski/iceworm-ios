@@ -56,6 +56,51 @@ func displayAlert(title: String, message: String, sender: UIViewController) {
         sender.presentViewController(alert, animated: true, completion: nil)
 }
 
+
+//func downloadParseImage(pic: PFFile) -> (UIImage?, NSError?) {
+//    
+//    if let picData = pic.getData() {
+//        
+//        if let downloadedImage = UIImage(data: data!) {
+//            
+//            return (downloadedImage, nil)
+//            
+//        } else {
+//            
+//            return (nil, NSError(domain: <#String#>, code: <#Int#>, userInfo: <#[NSObject : AnyObject]?#>))
+//        }
+//        
+//    } else {
+//        
+//        println("There was an error loading image from PFFile")
+//        
+//        return
+//    }
+//    
+//    pic.getDataInBackgroundWithBlock({ (data, error) -> Void in
+//        
+//        if error != nil {
+//            
+//            println("There was an error retrieving the users profile picture")
+//            println(error)
+//            
+//            return UIImage(named: "profile.png")
+//            
+//        } else {
+//            
+//            if let downloadedImage = UIImage(data: data!) {
+//                
+//                return downloadedImage
+//                
+//            } else {
+//                
+//                return UIImage(named: "profile.png")
+//            }
+//        }
+//    })
+//}
+
+
 func formatButton(_button: UIButton) {
     
     _button.layer.cornerRadius = cornerRadius
@@ -64,6 +109,7 @@ func formatButton(_button: UIButton) {
 }
 
 
+// Gets facebook profile picture and saves it to Parse
 func getPersonalInfoFromFacebook(completion: (Bool) -> Void) {
     
     // Get profile pic from FB and store it locally (var) and on Parse
@@ -110,11 +156,12 @@ func getPersonalInfoFromFacebook(completion: (Bool) -> Void) {
                     if error == nil {
                         
                         name = result["name"]!! as! String
+                        user!.setObject(name, forKey: "name")
                         println("\(name) has signed in")
                         
                     } else {
                         
-                        println("Error Getting Friends \(error)")
+                        println("Error Getting User's FB infomation \(error)")
                     }
                     
                     println("Setting completion")
@@ -132,22 +179,52 @@ func globalBlurView() -> (UIVisualEffectView) {
 }
 
 
+func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+    let size = image.size
+    
+    let widthRatio  = targetSize.width  / image.size.width
+    let heightRatio = targetSize.height / image.size.height
+    
+    // Figure out what our orientation is, and use that to form the rectangle
+    var newSize: CGSize
+    if(widthRatio > heightRatio) {
+        newSize = CGSizeMake(size.width * heightRatio, size.height * heightRatio)
+    } else {
+        newSize = CGSizeMake(size.width * widthRatio,  size.height * widthRatio)
+    }
+    
+    // This is the rect that we've calculated out and this is what is actually used below
+    let rect = CGRectMake(0, 0, newSize.width, newSize.height)
+    
+    // Actually do the resizing to the rect using the ImageContext stuff
+    UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+    image.drawInRect(rect)
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    
+    return newImage
+}
+
+
 func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> Void) {
     
     // Store login information in globals
     username = usernameToStore.lowercaseString
     uId = PFUser.currentUser()!.objectId!
     uQId = PFUser.currentUser()?["uQId"]! as! String
+    if let temp = PFUser.currentUser()!["name"] as? String {
+        name = temp
+    }
     
     // Set NSUserDefault storage keys
-    usernameStorageKey  = username + "myName"
+    usernameStorageKey  = username + "username"
     nameStorageKey      = username + "name"
     uIdStorageKey       = username + "uId"
     uQIdStorageKey      = username + "uQId"
     myVoted1StorageKey  = username + "votedOn1Ids"
     myVoted2StorageKey  = username + "votedOn2Ids"
     //myVotesStorageKey  = username + "votes"
-    profilePictureKey   = username + "profilePicture"
+    //profilePictureKey   = username + "profilePicture"
     myFriendsStorageKey = username + "myFriends"
     //deletedTheirStorageKey = username + "deletedTheirPermanent"
     

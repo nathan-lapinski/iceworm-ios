@@ -51,13 +51,24 @@
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eP0-e9-mWc">
                                             <rect key="frame" x="8" y="2" width="40" height="40"/>
                                         </imageView>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="542-qn-ZcL">
+                                        <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="542-qn-ZcL">
                                             <rect key="frame" x="327" y="2" width="40" height="40"/>
                                         </imageView>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8TY-Zz-W6T">
+                                            <rect key="frame" x="286" y="7" width="81" height="30"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <state key="normal" title="Invite to sQs">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="inviteButtonAction:" destination="vsF-Lg-w3g" eventType="touchUpInside" id="HAN-5k-Qh1"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="accountTypeImageView" destination="542-qn-ZcL" id="ZBe-dw-kns"/>
+                                    <outlet property="inviteButton" destination="8TY-Zz-W6T" id="odx-8T-aHC"/>
                                     <outlet property="profilePictureImageView" destination="eP0-e9-mWc" id="6i2-q8-BO0"/>
                                     <outlet property="usernameLabel" destination="8jO-lR-Zhb" id="hH4-k2-1hf"/>
                                 </connections>
@@ -195,12 +206,23 @@
                                     <constraint firstAttribute="width" constant="30" id="WM7-DA-fay"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="@handkle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HhJ-Gm-5Tv">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="@handle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HhJ-Gm-5Tv">
                                 <rect key="frame" x="124" y="103" width="215" height="21"/>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="14"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EFp-eC-nVS">
+                                <rect key="frame" x="16" y="174" width="100" height="30"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
+                                <state key="normal" title="Change Photo">
+                                    <color key="titleColor" red="0.10980392156862745" green="0.37647058823529411" blue="0.9882352941176471" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="changeProfilePicture:" destination="OY2-PK-A5I" eventType="touchUpInside" id="4UG-Hn-ded"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -252,6 +274,7 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="appInfo" destination="zPt-sG-ZeG" id="7R5-md-1qT"/>
+                        <outlet property="changeProfilePictureButton" destination="EFp-eC-nVS" id="U3Z-YW-8Ye"/>
                         <outlet property="facebookLogo" destination="WgT-Jk-ISL" id="9B9-V7-MwY"/>
                         <outlet property="handleLabel" destination="HhJ-Gm-5Tv" id="S2R-lj-cGZ"/>
                         <outlet property="linkWithFacebook" destination="Q3H-JC-wMC" id="tFR-6K-VnY"/>

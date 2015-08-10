@@ -26,13 +26,11 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     var keyboardSize = CGFloat()
     let section1: String = ""
     let objs1: [String] = ["All Users"]
-    let section2: String = "Facebook and sQs Friends"
+    let section2: String = ""//"sQs Friends"//Facebook and sQs Friends"
     var objs2: [String] = [String]()
     let section3: String = "sQs Users"
     //var allSelected = Bool()
     var searchCancelled = false
-    
-    var friendEntry: UITextField!
     
     var facebookNames = [""]
     var facebookIds = [friendStruct]()
@@ -40,15 +38,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     var socialQsIds = [""]
     var users = [String]()
     var objectsArray = [Objects]()
-    //    var allFriendsDictionary = Dictionary<String, friendStruct>()
-    //    var allFriendsDictionarySorted = Dictionary<String, String>()
-//    var allFriendsDictionary2 = [Dictionary<String, AnyObject>]()
-//    var allFriendsDictionary2Filtered = [Dictionary<String, AnyObject>]()
     var filteredFriends = [String]()
-//    var filteredFriendsIds = [friendStruct]()
     var fbAndSQNames = [String]()
     var sqOnlyNames = [String]()
-//    var tempIds = [friendStruct]()
     var selectedUsers = String() // matches isGroupieName but is not sorted
     
     var friendsDictionary = [Dictionary<String, AnyObject>]()
@@ -56,40 +48,17 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     var nonFriendsDictionary = [Dictionary<String, AnyObject>]()
     var nonFriendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
     
-    
     @IBOutlet var searchBar: UISearchBar!
+    @IBOutlet var doneButton: UIBarButtonItem!
+    
     @IBAction func optionsPressed(sender: AnyObject) {
         
-//        func configurationTextField(textField: UITextField!) {
-//            
-//            textField.placeholder = ""
-//            friendEntry = textField
-//        }
-//        
-//        func handleCancel(alertView: UIAlertAction!) {
-//            
-//            println("Cancelled !!")
-//        }
-//        
-//        var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-//        
-//        alert.addTextFieldWithConfigurationHandler(configurationTextField)
-//        
-//        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
-//        
-//        alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
-//            
-//            self.addUser(self.friendEntry.text)
-//            
-//        }))
-//        
-//        self.presentViewController(alert, animated: true, completion: {
-//            
-//            println("completion block")
-//        })
     }
     
-    @IBOutlet var doneButton: UIBarButtonItem!
+    @IBAction func inviteButtonAction(sender: AnyObject) {
+        
+    }
+    
     @IBAction func dismissPressed(sender: AnyObject) {
         
         // ---------------------------------------------------------------------------------
@@ -127,8 +96,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBarStyle.Default
         searchBar.showsCancelButton = true
-        
-        println(searchBar.frame.size.height)
         
         // Title table controller
         self.title = "Select Groupies"
@@ -178,16 +145,55 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     override func viewWillAppear(animated: Bool) {
         
+        println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        println(PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!))
+        println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        
         topOffset = 64
         
         friendsDictionary.removeAll(keepCapacity: true)
         
-        // Get List Of All Friends
-        //var friendsRequest = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id&limit=1000", parameters: nil);
-        // Get List Of Friends who have SOCIALQS
-        var friendsRequest = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
+        struct userInfo {
+            var id: String!
+            var name: String!
+        }
+        var friendsWithApp = Dictionary<String, userInfo>()
         
-        friendsRequest.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+        // Get List Of Friends who have SOCIALQS
+        var friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
+        
+        friendsRequest1.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+            
+            if error == nil {
+                
+                friendsWithApp.removeAll(keepCapacity: true)
+                
+                var results: AnyObject = result["data"]!!
+                
+                for var i = 0; i < results.count; i++ {
+                    
+                    friendsWithApp[results[i]!["picture"]!!["data"]!!["url"]!! as! String] = userInfo(id: results[i]["id"]!! as! String, name: results[i]["name"]!! as! String)
+                }
+                
+            } else {
+                
+                println("Error retrieving Facebook Users")
+                println(error)
+                
+//                if self.viewWillAppearCount > 3 {
+//                    self.viewWillAppearCount = 0
+//                    displayAlert("Sorry", "There was an error retrieving your friends. Please try again shortly!", self)
+//                } else {
+//                    self.viewWillAppearCount++
+//                    self.viewWillAppear(true)
+//                }
+            }
+        }
+        
+        // Get List Of All Friends
+        var friendsRequest2 = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id,picture&limit=1000", parameters: nil);
+        
+        friendsRequest2.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
             
             if error == nil {
                 
@@ -199,11 +205,22 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     
                     tempDict.removeAll(keepCapacity: true)
                     
-                    tempDict["name"] = temp[i]["name"]!! as! String
-                    tempDict["type"] = "facebookWithApp"
-                    tempDict["id"] = temp[i]["id"]!! as! String
-                    tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
-                    tempDict["isSelected"] = false
+                    if let tempURL = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String] {
+                        
+                        tempDict["name"] = temp[i]["name"]!! as! String
+                        tempDict["type"] = "facebookWithApp"
+                        tempDict["id"] = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String]!.id
+                        tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
+                        tempDict["isSelected"] = false
+                        
+                    } else {
+                        
+                        tempDict["name"] = temp[i]["name"]!! as! String
+                        tempDict["type"] = "facebookWithoutApp"
+                        tempDict["id"] = temp[i]["id"]!! as! String
+                        tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
+                        tempDict["isSelected"] = false
+                    }
                     
                     if contains(isGroupieName, temp[i]["name"]!! as! String) {
                         
@@ -213,6 +230,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     self.friendsDictionary.append(tempDict)
                 }
                 
+                                
                 // get myFriends and add to dictionary
                 var socialQsUsersQuery = PFQuery(className: "_User")
                 socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
@@ -247,6 +265,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 
                 println("Error retrieving Facebook and sQs Users")
                 println(error)
+                
                 if self.viewWillAppearCount > 3 {
                     self.viewWillAppearCount = 0
                     displayAlert("Sorry", "There was an error retrieving your friends. Please try again shortly!", self)
@@ -260,6 +279,21 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     
     func loadUsers(name: String) {
+        
+        
+//        PFCloud.callFunctionInBackground("searchForUser", withParameters: ["userString": name, "currentUser": username]) { (objects, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                println(objects!)
+//            } else {
+//                
+//                println("Error filtering usernames in cloud")
+//                println(error)
+//            }
+//        }
+        
+        
         // GET sQs users for search purposes
         // must load each time for search functionality to work
         //// Pull SocialQs Users (omit anyone who is FB linked) and include in additional section under FB/myFriends
@@ -378,7 +412,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             sectionTwoItems = self.fbAndSQNames
             sectionThreeItems = self.sqOnlyNames
-            
         }
         
         // Fill object to populate table
@@ -467,6 +500,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             if let image: UIImage = self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage {
                 
                 cell.profilePictureImageView.image = image
+                
             } else {
                 
                 if let url = (friendsDictionaryFiltered[indexPath.row]["picURL"]) as? String {
@@ -475,18 +509,19 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     
                     NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
                         
-                        self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(data: data)!
-                        self.friendsDictionary[indexPath.row]["profilePicture"] = UIImage(data: data)!
-                        cell.profilePictureImageView.image = self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage
+//                        self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(data: data)!
+//                        self.friendsDictionary[indexPath.row]["profilePicture"] = UIImage(data: data)!
+//                        cell.profilePictureImageView.image = self.friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage
+                        cell.profilePictureImageView.image = UIImage(data: data)!
                     }
                     
                 } else {
                     
-                    friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(named: "profile.png")!
-                    friendsDictionary[indexPath.row]["profilePicture"] = UIImage(named: "profile.png")!
+//                    friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(named: "profile.png")!
+//                    friendsDictionary[indexPath.row]["profilePicture"] = UIImage(named: "profile.png")!
                     cell.profilePictureImageView.image = friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage
+                    cell.profilePictureImageView.image = UIImage(named: "profile.png")!
                 }
-                
             }
             
             cell.profilePictureImageView.contentMode = UIViewContentMode.ScaleAspectFill
@@ -516,6 +551,20 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 cell.accountTypeImageView.alpha = 1.0
             }
             
+            // Tag and format invite button
+            if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithoutApp" {
+                cell.inviteButton.tag = indexPath.row
+                cell.inviteButton.layer.cornerRadius = CGFloat(4)
+                cell.inviteButton.backgroundColor = UIColor.clearColor()
+                cell.inviteButton.layer.borderWidth = 1
+                cell.inviteButton.layer.borderColor = mainColorBlue.CGColor!
+                cell.inviteButton.titleLabel?.textColor = mainColorBlue
+                cell.inviteButton.hidden = false
+            } else {
+                
+                cell.inviteButton.hidden = true
+            }
+            
         } else { // section 2
             
             cell = tableView.dequeueReusableCellWithIdentifier("groupiesCell", forIndexPath: indexPath) as! GroupiesCell
@@ -539,6 +588,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             cell.accountTypeImageView.contentMode = UIViewContentMode.ScaleAspectFill
             cell.accountTypeImageView.clipsToBounds = true
             cell.accountTypeImageView.backgroundColor = mainColorBlue
+            
+            // Hide invite button
+            cell.inviteButton.hidden = true
         }
     
         return cell
@@ -554,6 +606,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         if indexPath.section == 0 {
             
         } else if indexPath.section == 1 {
+            
+            println(friendsDictionary[indexPath.row]["name"])
+            println(friendsDictionary[indexPath.row]["id"])
             
             friendsDictionary[indexPath.row]["isSelected"] = !(friendsDictionary[indexPath.row]["isSelected"] as! Bool)
             friendsDictionaryFiltered[indexPath.row]["isSelected"] = !(friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool)
@@ -593,6 +648,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             println(indexPath.row)
             println(nonFriendsDictionaryFiltered)
             
+            // Move this user from non-friends to friends dictionary
+            // - add to myFriends for whereKey usage in update query
+            // - add to isGroupieName to ensure it is selected when moving to section 1
             if !contains(myFriends, nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String) {
                 
                 var tempDict = nonFriendsDictionaryFiltered[indexPath.row]
@@ -610,7 +668,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 for var i = 0; i < nonFriendsDictionaryFiltered.count; i++ {
                     if nonFriendsDictionaryFiltered[i]["name"] as! String == nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String {
                         nonFriendsDictionaryFiltered.removeAtIndex(i)
-                        buildUserStrings("")
+                        buildUserStrings("") // update strings for table display and reload sections
                         break
                     }
                 }
@@ -623,9 +681,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         if indexPath.section == 0 {
             if isGroupieName.count < 1 {
-                return 0
+                return 0 // no users in isSelected display string
             } else {
-                return 44
+                return 44 // users present in isSelected display string
             }
         } else {
             return 44
@@ -651,17 +709,17 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     
     
-    // Set section header heights
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section != 0 {
-            
-            return CGFloat(18)
-            
-        } else {
-            
-            return CGFloat(0)
-        }
-    }
+//    // Set section header heights
+//    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        if section != 0 {
+//            
+//            return CGFloat(18)
+//            
+//        } else {
+//            
+//            return CGFloat(0)
+//        }
+//    }
     
     
     override func scrollViewWillBeginDragging(scrollView: UIScrollView) {

@@ -17,7 +17,7 @@ class GroupiesSettingsTableViewController: UITableViewController {
     
     var objectsArray = [Objects]()
     let tableFontSize = CGFloat(14)
-    
+    var friendEntry: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +53,7 @@ class GroupiesSettingsTableViewController: UITableViewController {
         }
         
         // Fill object to populate table
-        self.objectsArray = [Objects(sectionName: "", sectionObjects: ["+ Create Group"]), Objects(sectionName: "", sectionObjects: groupNames)]
+        self.objectsArray = [Objects(sectionName: "", sectionObjects: ["+ Find User"]), Objects(sectionName: "", sectionObjects: ["+ Create Group"]), Objects(sectionName: "", sectionObjects: groupNames)]
     }
 
     override func didReceiveMemoryWarning() {
@@ -76,6 +76,7 @@ class GroupiesSettingsTableViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("groupiesSettingsCell", forIndexPath: indexPath) as! GroupiesSettingsCell
 
+        cell.selectionStyle = UITableViewCellSelectionStyle.None
         cell.textLabel?.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
         
         if indexPath.section == 0 {
@@ -86,6 +87,12 @@ class GroupiesSettingsTableViewController: UITableViewController {
             
         } else if indexPath.section == 1 {
             
+            cell.backgroundColor = UIColor.darkGrayColor()//mainColorBlue//
+            cell.textLabel?.font = UIFont(name: "HelveticaNeue", size: tableFontSize)!
+            cell.textLabel?.textColor = UIColor.whiteColor()
+            
+        } else if indexPath.section == 2 {
+            
             cell.backgroundColor = UIColor.groupTableViewBackgroundColor()
             cell.textLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
             cell.textLabel?.textColor = UIColor.darkTextColor()
@@ -93,7 +100,42 @@ class GroupiesSettingsTableViewController: UITableViewController {
         
         return cell
     }
-
+    
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if indexPath.section == 0 {
+            
+            func configurationTextField(textField: UITextField!) {
+                
+                textField.placeholder = ""
+                friendEntry = textField
+            }
+            
+            func handleCancel(alertView: UIAlertAction!) {
+                
+                println("Cancelled !!")
+            }
+            
+            var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alert.addTextFieldWithConfigurationHandler(configurationTextField)
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+            
+            alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+                
+                //self.addUser(self.friendEntry.text)
+                
+            }))
+            
+            self.presentViewController(alert, animated: true, completion: {
+                
+                println("completion block")
+            })
+        }
+    }
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
