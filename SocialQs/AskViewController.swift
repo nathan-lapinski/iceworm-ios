@@ -131,6 +131,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Download FB data in background
+        // - backgrounding built into FBSDK methods
+        downloadFacebookFriends({ (isFinished) -> Void in
+            
+            if isFinished { println("FB Download completion handler executed") }
+        })
+        
         picker.delegate = self
         
         askTable.delegate = self
@@ -168,9 +175,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         NSUserDefaults.standardUserDefaults().setObject(myFriends, forKey: myFriendsStorageKey)
         
         println(">>>>>>>>>>>>>>>>>>")
-        println(username)
-        println(name)
-        println(uId)
+        println(isGroupieName)
         println(">>>>>>>>>>>>>>>>>>")
     }
     

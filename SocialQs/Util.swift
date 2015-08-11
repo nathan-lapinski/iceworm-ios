@@ -9,6 +9,46 @@
 import Foundation
 import UIKit
 
+
+func backgroundThread(delay: Double = 0.0, background: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
+    
+    println("!!!!!!!")
+    
+    dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0)) {
+        
+        if(background != nil){ background!(); }
+        
+        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC)))
+        
+        dispatch_after(popTime, dispatch_get_main_queue()) {
+            
+            if(completion != nil){ completion!(); }
+        }
+    }
+}
+/*
+A. To run a process in the background with a delay of 3 seconds:
+
+backgroundThread(delay: 3.0, background: {
+// Your background function here
+});
+
+B. To run a process in the background then run a completion in the foreground:
+
+backgroundThread(background: {
+// Your function here to run in the background
+},
+completion: {
+// A function to run in the foreground when the background thread is complete
+});
+
+C. To delay by 3 seconds - note use of completion parameter without background parameter:
+
+backgroundThread(delay: 3.0, completion: {
+// Your delayed function here to be run in the foreground
+});
+*/
+
 func blockUI(block: Bool, _activityIndicator: UIActivityIndicatorView, _blurView: UIVisualEffectView, sender: UIViewController) {
     
     if block == true {
@@ -57,55 +97,147 @@ func displayAlert(title: String, message: String, sender: UIViewController) {
 }
 
 
-//func downloadParseImage(pic: PFFile) -> (UIImage?, NSError?) {
-//    
-//    if let picData = pic.getData() {
-//        
-//        if let downloadedImage = UIImage(data: data!) {
-//            
-//            return (downloadedImage, nil)
-//            
-//        } else {
-//            
-//            return (nil, NSError(domain: <#String#>, code: <#Int#>, userInfo: <#[NSObject : AnyObject]?#>))
-//        }
-//        
-//    } else {
-//        
-//        println("There was an error loading image from PFFile")
-//        
-//        return
-//    }
-//    
-//    pic.getDataInBackgroundWithBlock({ (data, error) -> Void in
-//        
-//        if error != nil {
-//            
-//            println("There was an error retrieving the users profile picture")
-//            println(error)
-//            
-//            return UIImage(named: "profile.png")
-//            
-//        } else {
-//            
-//            if let downloadedImage = UIImage(data: data!) {
-//                
-//                return downloadedImage
-//                
-//            } else {
-//                
-//                return UIImage(named: "profile.png")
-//            }
-//        }
-//    })
-//}
-
-
 func formatButton(_button: UIButton) {
     
     _button.layer.cornerRadius = cornerRadius
     _button.backgroundColor = buttonBackgroundColor
     _button.titleLabel?.textColor = buttonTextColor
+}
+
+
+func downloadFacebookFriends(completion: (Bool) -> Void) {
+    
+    friendsDictionary.removeAll(keepCapacity: true)
+    
+    struct userInfo {
+        var id: String!
+        var name: String!
+    }
+    var friendsWithApp = Dictionary<String, userInfo>()
+    
+    // Get list of facebook friends who have SOCIALQS
+    var friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
+    
+    friendsRequest1.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+        
+        println("Downloading FB friends WITH sQs")
+        
+        if error == nil {
+            
+            friendsWithApp.removeAll(keepCapacity: true)
+            
+            var results: AnyObject = result["data"]!!
+            
+            for var i = 0; i < results.count; i++ {
+                
+                friendsWithApp[results[i]!["picture"]!!["data"]!!["url"]!! as! String] = userInfo(id: results[i]["id"]!! as! String, name: results[i]["name"]!! as! String)
+            }
+            
+        } else {
+            
+            println("Error retrieving Facebook Users")
+            println(error)
+        }
+        
+        // Get list of all facebook friends
+        // - Nest in previous because we need the complete list of users who have SOCIALQS to filter "all" facebook friends properly
+        var friendsRequest2 = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id,picture&limit=1000", parameters: nil);
+        
+        friendsRequest2.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+            
+            println("Downloading ALL FB friends and sorting")
+            
+            if error == nil {
+                
+                var temp: AnyObject = result["data"]!!
+                
+                var tempDict = Dictionary<String, AnyObject>()
+                
+                for var i = 0; i < temp.count; i++ {
+                    
+                    tempDict.removeAll(keepCapacity: true)
+                    
+                    tempDict["name"] = temp[i]["name"]!! as! String
+                    tempDict["isSelected"] = false
+                    tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
+                    
+                    if let tempURL = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String] {
+                        
+                        tempDict["type"] = "facebookWithApp"
+                        tempDict["id"] = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String]!.id
+                        
+                    } else {
+                        
+                        tempDict["type"] = "facebookWithoutApp"
+                        tempDict["id"] = temp[i]["id"]!! as! String
+                    }
+                    
+                    // Pull profile image synchornously and store in tempDict
+                    if let url = (tempDict["picURL"]) as? String {
+                        
+                        let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
+                        
+                        var response: NSURLResponse?
+                        var error: NSErrorPointer = nil
+                        var data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: &response, error: error)!
+                        
+                        if let httpResponse = response as? NSHTTPURLResponse {
+                            //println(httpResponse.statusCode)
+                            if httpResponse.statusCode > 199 && httpResponse.statusCode < 300 {
+                                
+                                if let image = UIImage(data: data) {
+                                    tempDict["profilePicture"] = image
+                                }
+                            }
+                        }
+                    }
+                    
+                    if contains(isGroupieName, temp[i]["name"]!! as! String) {
+                        
+                        tempDict["isSelected"] = true
+                    }
+                    
+                    friendsDictionary.append(tempDict)
+                }
+                
+                println("Facebook friend retrieval complete")
+                
+                // Set completion OR set global variable to TRUE
+                completion(true)
+            }
+        }
+    }
+    
+    
+    //    // get myFriends and add to dictionary
+    //    var socialQsUsersQuery = PFQuery(className: "_User")
+    //    socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
+    //    socialQsUsersQuery.whereKey("username", containedIn: myFriends) // No users that are already myFriends
+    //    socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
+    //
+    //    socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+    //
+    //        if error == nil {
+    //
+    //            if let temp = objects {
+    //
+    //                for object in temp {
+    //
+    //                    var tempDict = Dictionary<String, AnyObject>()
+    //
+    //                    tempDict["name"] = object.username!!
+    //                    tempDict["type"] = "socialQs"
+    //                    tempDict["id"] = object.objectId!!
+    //                    tempDict["isSelected"] = false
+    //                    //tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
+    //
+    //                    self.friendsDictionary.append(tempDict)
+    //                }
+    //            }
+    //
+    //            self.loadUsers("")
+    //        }
+    //    })
 }
 
 
@@ -223,16 +355,12 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     uQIdStorageKey      = username + "uQId"
     myVoted1StorageKey  = username + "votedOn1Ids"
     myVoted2StorageKey  = username + "votedOn2Ids"
-    //myVotesStorageKey  = username + "votes"
-    //profilePictureKey   = username + "profilePicture"
     myFriendsStorageKey = username + "myFriends"
-    //deletedTheirStorageKey = username + "deletedTheirPermanent"
     
     // Store user info on the phone
     NSUserDefaults.standardUserDefaults().setObject(username, forKey: usernameStorageKey)
     NSUserDefaults.standardUserDefaults().setObject(uId, forKey: uIdStorageKey)
     NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: uQIdStorageKey)
-    //NSUserDefaults.standardUserDefaults().setObject(profilePicture, forKey: profilePictureKey)
     
     if isNew {
         

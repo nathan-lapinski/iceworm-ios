@@ -62,9 +62,19 @@ var votedOn2Ids = [String]() // questions VOTED-UPON by current user
 var viewQ = Dictionary<String, Any>()
 var isUploading = [String]()
 
-
+// Friends and Groupies variables
 var groupiesGroups = [Dictionary<String,AnyObject>]()
-
+var friendsDictionary = [Dictionary<String, AnyObject>]()
+var friendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
+var nonFriendsDictionary = [Dictionary<String, AnyObject>]()
+var nonFriendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
+var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
+//var isGroupieQId = [String]()
+var groupiesDictionary = [Dictionary<String, AnyObject>]()
+//var myFriendsDictionary = [Dictionary<String, AnyObject>]()
+var myFriends = [String]()
+// Array to store non-FB friends
+//var mySocialQsFriends = [String]()
 
 // Variable to track how user voted - store to NSUserDefaults //
 //var myVotes = Dictionary<String, Int>()
@@ -85,13 +95,6 @@ var myViewReturnedOnce = false
 var theirViewReturnedOnce = false
 
 // Groupies variable
-var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
-//var isGroupieQId = [String]()
-var groupiesDictionary = [Dictionary<String, AnyObject>]()
-//var myFriendsDictionary = [Dictionary<String, AnyObject>]()
-var myFriends = [String]()
-// Array to store non-FB friends
-//var mySocialQsFriends = [String]()
 
 var logoutAttempt = false
 var warningSeen = false

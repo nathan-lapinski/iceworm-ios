@@ -11,6 +11,7 @@ import UIKit
 class GroupiesCell: UITableViewCell {
     
     @IBOutlet var groupiesLabel: UITextView!
+    @IBOutlet var clearButton: UIButton!
     
     @IBOutlet var usernameLabel: UILabel!
     @IBOutlet var profilePictureImageView: UIImageView!
