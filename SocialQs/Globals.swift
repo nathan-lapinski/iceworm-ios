@@ -47,7 +47,7 @@ var uQIdStorageKey      = "uQId"
 var myVoted1StorageKey  = "votedOn1Ids"
 var myVoted2StorageKey  = "votedOn2Ids"
 //var myVotesStorageKey  = "votes"
-var profilePictureKey   = "profilePicture"
+//var profilePictureKey   = "profilePicture"
 var myFriendsStorageKey = "myFriends"
 //var deletedTheirStorageKey = "deletedTheirPermanent"
 

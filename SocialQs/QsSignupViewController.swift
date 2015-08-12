@@ -37,31 +37,39 @@ class QsSignupViewController: UIViewController {
                     
                     println("User signed up and logged in through Facebook!")
                     
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    getUserPhoto({ (isFinished) -> Void in })
                     
-                    dispatch_async(backgroundQueue, {
+                    // Create entry in UserQs table
+                    createUserQs(PFUser.currentUser()!.username!, { (isFinished) -> Void in // desired to complete before storing info
                         
-                        // This is run on the background queue //
-                        // Create entry in UserQs table
-                        self.createUserQs(self.username.text)
-                        
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            // This is run on the main queue, after the previous code in outer block //
+                        if isFinished {
                             
-                            self.performSegueWithIdentifier("signedUp", sender: self)
+                            getUsersFacebookInfo({ (isFinished) -> Void in // desired to complete before storing info
+                                
+                                self.performSegueWithIdentifier("signedUp", sender: self)
+                                
+                                blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                                
+                                storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                            })
                             
-                            blockUI(false, self.signupSpinner, self.signupBlurView, self)
-                        })
+                        } else {
+                            
+                            displayAlert("Unable to create account", "Please check your internet connection and try again!", self)
+                        }
                     })
                     
                 } else {
                     
                     println("User logged in through Facebook!")
                     
-                    self.performSegueWithIdentifier("signedUpWithoutFacebook", sender: self)
+                    getUserPhoto({ (isFinished) -> Void in })
+                    
+                    self.performSegueWithIdentifier("signedUp", sender: self)
                     
                     blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                    
+                    storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
                 }
                 
             } else {
@@ -110,21 +118,23 @@ class QsSignupViewController: UIViewController {
                 
                 if error == nil { // Signup successful!
                     
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                    
-                    dispatch_async(backgroundQueue, {
+                    // This is run on the background queue //
+                    // Create entry in UserQs table
+                createUserQs(self.username.text, { (isFinished) -> Void in
                         
-                        // This is run on the background queue //
-                        // Create entry in UserQs table
-                        self.createUserQs(self.username.text)
-                        
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            // This is run on the main queue, after the previous code in outer block //
+                        if isFinished {
                             
-                            // Segue "ask" tab
-                            self.performSegueWithIdentifier("signedUpWithoutFacebook", sender: self)
-                        })
+                            storeUserInfo(self.username.text.lowercaseString, true, { (isFinished) -> Void in
+                                
+                                self.performSegueWithIdentifier("signedUpWithoutFacebook", sender: self)
+                                
+                                blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                            })
+                            
+                        } else {
+                            
+                            displayAlert("Unable to create account", "Please check your internet connection and try again!", self)
+                        }
                     })
                     
                 } else { // Signup failed
@@ -143,72 +153,6 @@ class QsSignupViewController: UIViewController {
     }
     
     
-    func createUserQs(username: String) {
-        
-        // Create UsersQs entry
-        var userQ = PFObject(className: "UserQs")
-        userQ.saveInBackgroundWithBlock({ (success, error) -> Void in
-            
-            if error == nil {
-                
-                var userQId = userQ.objectId!
-                
-                // Store userQ enrty identifier back in Users table
-                var user = PFUser.currentUser()
-                user!.setObject(userQId, forKey: "uQId")
-                user!.saveInBackgroundWithBlock({ (success, error) -> Void in
-                    
-                    if error == nil {
-                        
-//                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-//                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-//                        myName = username.lowercaseString
-//                        uId = user!.objectId!
-//                        uQId = userQ.objectId!
-//                        
-//                        // Store username locally
-//                        NSUserDefaults.standardUserDefaults().setObject(myName, forKey: "myName")
-//                        NSUserDefaults.standardUserDefaults().setObject(uId, forKey: "uId")
-//                        NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: "uQId")
-//                        
-//                        let installation = PFInstallation.currentInstallation()
-//                        installation["user"] = PFUser.currentUser()
-//                        installation.saveInBackground()
-//                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-//                        // MAKE GLOBAL FUNCTION (repeats in QsLoginViewController ------------
-                        
-                        storeUserInfo(username.lowercaseString, true, { (isFinished) -> Void in
-                            
-                            blockUI(false, self.signupSpinner, self.signupBlurView, self)
-                        })
-                        
-                        
-                    } else {
-                        
-                        println("Error storing uQId to UserQs table")
-                        println(error)
-                    }
-                })
-                
-            } else {
-                
-                println("Error creating UserQs entry for new user")
-                println(error)
-            }
-        })
-    }
-    
-    
-    func isValidEmail(testStr:String) -> Bool {
-        // println("validate calendar: \(testStr)")
-        let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
-        
-        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-        
-        return emailTest.evaluateWithObject(testStr)
-    }
-    
-    
     @IBAction func cancelButtonPressed(sender: AnyObject) {
         
         username.text = ""
@@ -222,6 +166,16 @@ class QsSignupViewController: UIViewController {
         emailAddress.resignFirstResponder()
         
         performSegueWithIdentifier("cancelSignUp", sender: self)
+    }
+    
+    
+    func isValidEmail(testStr:String) -> Bool {
+        // println("validate calendar: \(testStr)")
+        let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+        
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        
+        return emailTest.evaluateWithObject(testStr)
     }
     
     

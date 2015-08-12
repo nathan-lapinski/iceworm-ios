@@ -54,13 +54,7 @@ class WelcomeViewController: UIViewController {
         //createAccountButton.hidden = true
         
         // Skip login procedure if user is already logged in
-        if PFUser.currentUser() != nil {
-            
-            blockUI(true, self.welcomeSpinner, self.welcomeBlurView, self)
-            
-            signInCurrentUser()
-            
-        } else {
+        if PFUser.currentUser() == nil {
             
             signInButton.hidden = false
             createAccountButton.hidden = false
@@ -100,92 +94,104 @@ class WelcomeViewController: UIViewController {
         }
     }
     
-    //////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////
-    // MAKE GLOBAL - repeats in loginController with DIFFERENT SEGUE
-    func signInCurrentUser() { // gets photo and stores username, uId, uQId, etc...
+    
+    override func viewDidAppear(animated: Bool) {
         
-        // Check if profilePicture exists on Parse: if not, get from FB and upload to parse
-        if let tempPic = PFUser.currentUser()!["profilePicture"] as? PFFile {
+        // Skip login procedure if user is already logged in
+        if PFUser.currentUser() != nil {
             
-            println("1")
-            
-            tempPic.getDataInBackgroundWithBlock({ (data, error) -> Void in
-                
-                if error == nil {
-                    
-                    println("NO ERROR")
-                    
-                    if let downloadedImage = UIImage(data: data!) {
-                        println("got it!")
-                        
-                        profilePicture = downloadedImage
-                        
-                    } else {
-                        
-                        profilePicture = UIImage(named: "profile.png")
-                    }
-                    
-                } else {
-                    
-                    println("There was an error retrieving the users profile picture - welcomeController")
-                    println(error)
-                    
-                    profilePicture = UIImage(named: "profile.png")
-                }
-                
-                //Store user information locally
-                storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
-                    
-                    self.performSegueWithIdentifier("alreadySignedIn", sender: self)
-                    
-                    blockUI(false, self.welcomeSpinner, self.welcomeBlurView, self)
-                
-                })
-            })
-            
-        } else if (PFUser.currentUser()!["profilePicture"] as? PFFile == nil) && PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) == true {
-            
-            println("2")
-            
-            getPersonalInfoFromFacebook() { (isFinished) -> Void in
-                
-                if isFinished {
-                    
-                    storeUserInfo(PFUser.currentUser()!.username!, false) {
-                        
-                        (isFinished) -> Void in
-                        
-                        //Store user information locally
-                        storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
-                            
-                            self.performSegueWithIdentifier("alreadySignedIn", sender: self)
-                            
-                            blockUI(false, self.welcomeSpinner, self.welcomeBlurView, self)
-                        
-                        })
-                    }
-                    
-                } else {
-                    
-                    println("Could not gather FB info - logInViewController")
-                }
-            }
-            
-        } else { // no image to be loaded
-            println("3")
-            
-            profilePicture = UIImage(named: "profile.png")
-            
-            //Store user information locally
-            storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
-                
-                self.performSegueWithIdentifier("alreadySignedIn", sender: self)
-                
-                blockUI(false, self.welcomeSpinner, self.welcomeBlurView, self)
-            })
+            // No need to store data, pull photo etc... because user is
+            // already logged in and data exists in proper locations
+            performSegueWithIdentifier("alreadySignedIn", sender: self)
         }
     }
+    
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+//     MAKE GLOBAL - repeats in loginController with DIFFERENT SEGUE
+//    func signInCurrentUser() { // gets photo and stores username, uId, uQId, etc...
+//
+//        // Check if profilePicture exists on Parse: if not, get from FB and upload to parse
+//        if let tempPic = PFUser.currentUser()!["profilePicture"] as? PFFile {
+//            
+//            println("1")
+//            
+//            tempPic.getDataInBackgroundWithBlock({ (data, error) -> Void in
+//                
+//                if error == nil {
+//                    
+//                    println("NO ERROR")
+//                    
+//                    if let downloadedImage = UIImage(data: data!) {
+//                        println("got it!")
+//                        
+//                        profilePicture = downloadedImage
+//                        
+//                    } else {
+//                        
+//                        profilePicture = UIImage(named: "profile.png")
+//                    }
+//                    
+//                } else {
+//                    
+//                    println("There was an error retrieving the users profile picture - welcomeController")
+//                    println(error)
+//                    
+//                    profilePicture = UIImage(named: "profile.png")
+//                }
+//                
+//                //Store user information locally
+//                storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
+//                    
+//                    self.performSegueWithIdentifier("alreadySignedIn", sender: self)
+//                    
+//                    blockUI(false, self.welcomeSpinner, self.welcomeBlurView, self)
+//                
+//                })
+//            })
+//            
+//        } else if (PFUser.currentUser()!["profilePicture"] as? PFFile == nil) && PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) == true {
+//            
+//            println("2")
+//            
+//            getUserPhoto() { (isFinished) -> Void in
+//                
+//                if isFinished {
+//                    
+//                    storeUserInfo(PFUser.currentUser()!.username!, false) {
+//                        
+//                        (isFinished) -> Void in
+//                        
+//                        //Store user information locally
+//                        storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
+//                            
+//                            self.performSegueWithIdentifier("alreadySignedIn", sender: self)
+//                            
+//                            blockUI(false, self.welcomeSpinner, self.welcomeBlurView, self)
+//                        
+//                        })
+//                    }
+//                    
+//                } else {
+//                    
+//                    println("Could not gather FB info - logInViewController")
+//                }
+//            }
+//            
+//        } else { // no image to be loaded
+//            println("3")
+//            
+//            profilePicture = UIImage(named: "profile.png")
+//            
+//            //Store user information locally
+//            storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
+//                
+//                self.performSegueWithIdentifier("alreadySignedIn", sender: self)
+//
+//                blockUI(false, self.welcomeSpinner, self.welcomeBlurView, self)
+//            })
+//        }
+//    }
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
     

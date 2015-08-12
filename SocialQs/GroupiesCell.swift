@@ -12,6 +12,7 @@ class GroupiesCell: UITableViewCell {
     
     @IBOutlet var groupiesLabel: UITextView!
     @IBOutlet var clearButton: UIButton!
+    @IBOutlet var addGroupButton: UIButton!
     
     @IBOutlet var usernameLabel: UILabel!
     @IBOutlet var profilePictureImageView: UIImageView!

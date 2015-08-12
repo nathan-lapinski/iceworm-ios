@@ -15,7 +15,6 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     let picker = UIImagePickerController()
     
-    //var blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
     var settingsSpinner = UIActivityIndicatorView()
     var settingsBlurView = globalBlurView()
     
@@ -44,7 +43,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
                     
                     println("User is linked with Facebook")
                     
-                    getPersonalInfoFromFacebook() { (isFinished) -> Void in
+                    getUserPhoto() { (isFinished) -> Void in
                         
                         if isFinished {
                             
@@ -74,17 +73,6 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
             })
             
         } else { // UNLINK FACEBOOK
-            
-//            if let pwTest = PFUser.currentUser()!["password"] as? String {
-//                
-//                println("<><><><><><><><>")
-//                println(pwTest)
-//                println("<><><><><><><><>")
-//            } else {
-//
-//                println("<><><><><><><><>")
-//                println("No password")
-//            }
             
             //
             //
@@ -122,7 +110,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
             
             linkWithFacebook.setTitle("Unlink Facebook Account", forState: UIControlState.Normal)
             facebookLogo.hidden = true
-            linkWithFacebook.hidden = false
+            linkWithFacebook.hidden = true
             
         } else {
             
@@ -172,9 +160,6 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     
     func logOut() -> Void {
-        
-        // Store all data for loading next time
-        //storeUserInfo(username, false) { (isFinished) -> Void in
             
         username = ""
         name = ""
@@ -187,19 +172,11 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
             
             if error == nil {
                 
-                //                // Clear username, uId and uQId locally
-                //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "myName")
-                //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "name")
-                //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uId")
-                //                NSUserDefaults.standardUserDefaults().setObject("", forKey: "uQId")
-                
-                
                 // Switch back to welcome screen
                 println("Logout complete, performing segue to welcome view")
                 self.performSegueWithIdentifier("logout", sender: self)
             }
         }
-        //}
     }
     
     

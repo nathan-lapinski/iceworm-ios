@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class AskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, FBSDKAppInviteDialogDelegate {
     
     let thumbnailMax = CGFloat(120)
     let photoMax = CGFloat(800)
@@ -36,6 +36,32 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     var askBlurView = globalBlurView()
     
     @IBOutlet var askTable: UITableView!
+    
+    
+    @IBAction func test(sender: AnyObject) {
+        var inviteDialog:FBSDKAppInviteDialog = FBSDKAppInviteDialog()
+        if(inviteDialog.canShow()){
+            let appLinkUrl:NSURL = NSURL(string: "https://fb.me/1482092405439439")!
+//            let previewImageUrl:NSURL = NSURL(string: "http://mylink.com/image.png")!
+            
+            var inviteContent:FBSDKAppInviteContent = FBSDKAppInviteContent()
+            inviteContent.appLinkURL = appLinkUrl
+//            inviteContent.appInvitePreviewImageURL = previewImageUrl
+            
+            inviteDialog.content = inviteContent
+            inviteDialog.delegate = self
+            inviteDialog.show()
+        }
+    }
+    func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didCompleteWithResults results: [NSObject : AnyObject]!) {
+        println("Complete invite without error")
+    }
+    func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didFailWithError error: NSError!) {
+        println("Error in invite \(error)")
+    }
+    
+    
+    
     @IBAction func groupiesButtonAction(sender: AnyObject) { }
     @IBAction func privacyButtonAction(sender: AnyObject) { }
     
@@ -131,12 +157,14 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //// IF IS LINKED WITH FACEBOOK ------------------------------------------------
         // Download FB data in background
         // - backgrounding built into FBSDK methods
         downloadFacebookFriends({ (isFinished) -> Void in
             
             if isFinished { println("FB Download completion handler executed") }
         })
+        //// IF IS LINKED WITH FACEBOOK ------------------------------------------------
         
         picker.delegate = self
         
@@ -168,6 +196,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     override func viewWillAppear(animated: Bool) {
         
+        
         returningFromPopover = false
         returningFromSettings = false
         topOffset = 64
@@ -177,6 +206,29 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         println(">>>>>>>>>>>>>>>>>>")
         println(isGroupieName)
         println(">>>>>>>>>>>>>>>>>>")
+        
+        /////////////////////////////////////////////
+        // Sort groupies
+        var socialQsGroupie = [String]()
+        var facebookWithAppGroupie = [String]()
+        var facebookWithoutAppGroupie = [String]()
+        
+        for groupie in friendsDictionary {
+            if groupie["isSelected"] as! Bool == true {
+                
+                if groupie["type"] as! String == "socialQs" {
+                    socialQsGroupie.append(groupie["name"] as! String)
+                } else if groupie["type"] as! String == "facebookWithApp" {
+                    facebookWithAppGroupie.append(groupie["id"] as! String)
+                } else if groupie["type"] as! String == "facebookWithoutApp" {
+                    facebookWithoutAppGroupie.append(groupie["id"] as! String)
+                }
+            }
+        }
+        println(socialQsGroupie)
+        println(facebookWithAppGroupie)
+        println(facebookWithoutAppGroupie)
+        /////////////////////////////////////////////
     }
     
     
@@ -473,11 +525,38 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         println("Assigning Q to users")
         
+        // Split groupies by account type
+        // - sQs can be assigned by unique username
+        // - facebookWithApp must be queried by FB Id to get unique username
+        // - facebookWithoutApp must get a message or invite
+        //      - CLOUD CODE: provide a way to cache Q and send FB users once they get the app?
+        
+        /////////////////////////////////////////////
+        // Sort groupies
+        var socialQsGroupies = [String]()
+        var facebookWithAppGroupie = [String]()
+        var facebookWithoutAppGroupie = [String]()
+        
+        for groupie in friendsDictionary {
+            if groupie["isSelected"] as! Bool == true {
+                
+                if groupie["type"] as! String == "socialQs" {
+                    socialQsGroupies.append(groupie["name"] as! String)
+                } else if groupie["type"] as! String == "facebookWithApp" {
+                    facebookWithAppGroupie.append(groupie["id"] as! String)
+                } else if groupie["type"] as! String == "facebookWithoutApp" {
+                    facebookWithoutAppGroupie.append(groupie["id"] as! String)
+                }
+            }
+        }
+        println(socialQsGroupies)
+        /////////////////////////////////////////////
+        
         // Add qId to "UserQs" table ------
         var userQsQuery = PFQuery(className: "UserQs")
         
         if isGroupieName.count > 0 {
-            userQsQuery.whereKey("username", containedIn: isGroupieName)
+            userQsQuery.whereKey("username", containedIn: socialQsGroupies)
         }
         
         // Execute query
@@ -504,6 +583,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             }
         })
     }
+    
+    
+    
     
     
     func sendPushes() {

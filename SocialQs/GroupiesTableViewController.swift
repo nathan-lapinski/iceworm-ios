@@ -31,13 +31,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     let section3: String = "sQs Users"
     var searchCancelled = false
     
-    var facebookNames = [""]
-    var facebookIds = [friendStruct]()
-    var socialQsNames = [""]
-    var socialQsIds = [""]
-    var users = [String]()
     var objectsArray = [Objects]()
-    var filteredFriends = [String]()
     var fbAndSQNames = [String]()
     var sqOnlyNames = [String]()
     var selectedUsers = String() // matches isGroupieName but is not sorted
@@ -50,6 +44,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     @IBOutlet var searchBar: UISearchBar!
     @IBOutlet var doneButton: UIBarButtonItem!
+    
+    @IBAction func addGroupButtonAction(sender: AnyObject) {
+        
+    }
     
     @IBAction func clearButtonAction(sender: AnyObject) {
         
@@ -105,12 +103,56 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: { (action) -> Void in }))
             
-            alert.addAction(UIAlertAction(title: "Settings", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            alert.addAction(UIAlertAction(title: "Link With Facebook", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
                 self.performSegueWithIdentifier("toSettingsFromGroupies", sender: self)
             }))
             
             presentViewController(alert, animated: true, completion: nil)
         }
+        
+        
+        // get myFriends and add to dictionary
+        
+        var alreadyAdded = [String]()
+        
+        for friend in friendsDictionary {
+            if friend["type"] as! String == "socialQs" {
+                alreadyAdded.append(friend["name"] as! String)
+            }
+        }
+        
+        var toAdd = Set(myFriends).subtract(Set(alreadyAdded))
+        
+        var socialQsUsersQuery = PFQuery(className: "_User")
+        socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
+        socialQsUsersQuery.whereKey("username", containedIn: Array(toAdd)) // No users that are already myFriends
+        socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
+        
+        socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+            
+            if error == nil {
+                
+                if let temp = objects {
+                    
+                    for object in temp {
+                        
+                        var tempDict = Dictionary<String, AnyObject>()
+                        
+                        tempDict["name"] = object.username!!
+                        //tempDict["username"] = object.username!!
+                        tempDict["type"] = "socialQs"
+                        tempDict["id"] = object.objectId!!
+                        tempDict["isSelected"] = false
+                        
+                        friendsDictionary.append(tempDict)
+                    }
+                }
+                
+                self.loadUsers("")
+            }
+        })
+        
+        
         
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBarStyle.Default
@@ -243,35 +285,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
 //                }
 //                
 //                                
-                // get myFriends and add to dictionary
-                var socialQsUsersQuery = PFQuery(className: "_User")
-                socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
-                socialQsUsersQuery.whereKey("username", containedIn: myFriends) // No users that are already myFriends
-                socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
-                
-                socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-                    
-                    if error == nil {
-                        
-                        if let temp = objects {
-                            
-                            for object in temp {
-                                
-                                var tempDict = Dictionary<String, AnyObject>()
-                                
-                                tempDict["name"] = object.username!!
-                                tempDict["type"] = "socialQs"
-                                tempDict["id"] = object.objectId!!
-                                tempDict["isSelected"] = false
-                                //tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
-                                
-                                friendsDictionary.append(tempDict)
-                            }
-                        }
-                        
-                        self.loadUsers("")
-                    }
-                })
+        
 //
 //            } else {
 //                
@@ -291,7 +305,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     
     
-    func loadUsers(name: String) {
+    func loadUsers(searchName: String) {
         
         
         
@@ -317,7 +331,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         // must load each time for search functionality to work
         //// Pull SocialQs Users (omit anyone who is FB linked) and include in additional section under FB/myFriends
         var socialQsUsersQuery = PFQuery(className: "_User")
-        socialQsUsersQuery.whereKey("username", containsString: name) // all users with search string in username
+        socialQsUsersQuery.whereKey("username", containsString: searchName) // all users with search string in username
         socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
         socialQsUsersQuery.whereKey("username", notContainedIn: myFriends) // No users that are already myFriends
         socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
@@ -335,10 +349,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                         var tempDict = Dictionary<String, AnyObject>()
                         
                         tempDict["name"] = object.username!!
+                        //tempDict["username"] = object.username!!
                         tempDict["type"] = "socialQs"
                         tempDict["id"] = object.objectId!!
                         tempDict["isSelected"] = false
-                        //tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
                         
                         nonFriendsDictionary.append(tempDict)
                     }
@@ -346,7 +360,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 
                 
                 
-                self.buildUserStrings(name)
+                self.buildUserStrings(searchName)
                 
                 
                 
@@ -497,10 +511,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 cell.groupiesLabel.text = selectedUsers
                 cell.groupiesLabel.textColor = UIColor.darkTextColor()
                 cell.clearButton.hidden = false
+                cell.addGroupButton.hidden = false
             } else {
                 cell.groupiesLabel.text = ""//"Selected Groupies"
                 cell.groupiesLabel.textColor = UIColor.grayColor()
                 cell.clearButton.hidden = true
+                cell.addGroupButton.hidden = true
             }
             
             cell.backgroundColor = UIColor.clearColor()
@@ -744,12 +760,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         
         searchBar.resignFirstResponder()
-        
-        //
-        //
-        // Update table inset here
-        //
-        //
     }
     
     

@@ -12,8 +12,6 @@ import UIKit
 
 func backgroundThread(delay: Double = 0.0, background: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
     
-    println("!!!!!!!")
-    
     dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0)) {
         
         if(background != nil){ background!(); }
@@ -85,6 +83,48 @@ func blockUI(block: Bool, _activityIndicator: UIActivityIndicatorView, _blurView
 }
 
 
+//*******************************************************************************
+// Move back to login/signup if/when it becomes a single controller
+//*******************************************************************************
+func createUserQs(username: String, completion: (Bool) -> Void) {
+    
+    // Create UsersQs entry
+    var userQ = PFObject(className: "UserQs")
+    userQ.saveInBackgroundWithBlock({ (success, error) -> Void in
+        
+        if error == nil {
+            
+            var userQId = userQ.objectId!
+            
+            // Store userQ enrty identifier back in Users table
+            var user = PFUser.currentUser()
+            user!.setObject(userQId, forKey: "uQId")
+            user!.saveInBackgroundWithBlock({ (success, error) -> Void in
+                
+                if error == nil {
+                    
+                    completion(true)
+                    
+                } else {
+                    
+                    println("Error storing uQId to UserQs table")
+                    println(error)
+                    
+                    completion(false)
+                }
+            })
+            
+        } else {
+            
+            println("Error creating UserQs entry for new user")
+            println(error)
+            
+            completion(false)
+        }
+    })
+}
+
+
 func displayAlert(title: String, message: String, sender: UIViewController) {
     
     var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
@@ -97,14 +137,9 @@ func displayAlert(title: String, message: String, sender: UIViewController) {
 }
 
 
-func formatButton(_button: UIButton) {
-    
-    _button.layer.cornerRadius = cornerRadius
-    _button.backgroundColor = buttonBackgroundColor
-    _button.titleLabel?.textColor = buttonTextColor
-}
-
-
+//*******************************************************************************
+// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
+//*******************************************************************************
 func downloadFacebookFriends(completion: (Bool) -> Void) {
     
     friendsDictionary.removeAll(keepCapacity: true)
@@ -113,6 +148,7 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
         var id: String!
         var name: String!
     }
+    
     var friendsWithApp = Dictionary<String, userInfo>()
     
     // Get list of facebook friends who have SOCIALQS
@@ -161,6 +197,7 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                     tempDict["isSelected"] = false
                     tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
                     
+                    // if this URL exists in "friendsWithApp" then we use "friendsWithApp" id because it is not just a token
                     if let tempURL = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String] {
                         
                         tempDict["type"] = "facebookWithApp"
@@ -172,20 +209,20 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                         tempDict["id"] = temp[i]["id"]!! as! String
                     }
                     
-                    // Pull profile image synchornously and store in tempDict
+                    // Pull profile image synchronously and store in tempDict
                     if let url = (tempDict["picURL"]) as? String {
                         
                         let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
                         
                         var response: NSURLResponse?
                         var error: NSErrorPointer = nil
-                        var data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: &response, error: error)!
+                        var data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: &response, error: error)
                         
                         if let httpResponse = response as? NSHTTPURLResponse {
-                            //println(httpResponse.statusCode)
+                            
                             if httpResponse.statusCode > 199 && httpResponse.statusCode < 300 {
                                 
-                                if let image = UIImage(data: data) {
+                                if let image = UIImage(data: data!) {
                                     tempDict["profilePicture"] = image
                                 }
                             }
@@ -202,107 +239,149 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                 
                 println("Facebook friend retrieval complete")
                 
-                // Set completion OR set global variable to TRUE
+                // Set completion
                 completion(true)
             }
         }
     }
+}
+//*******************************************************************************
+// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
+//*******************************************************************************
+
+
+func formatButton(_button: UIButton) {
     
-    
-    //    // get myFriends and add to dictionary
-    //    var socialQsUsersQuery = PFQuery(className: "_User")
-    //    socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
-    //    socialQsUsersQuery.whereKey("username", containedIn: myFriends) // No users that are already myFriends
-    //    socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
-    //
-    //    socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-    //
-    //        if error == nil {
-    //
-    //            if let temp = objects {
-    //
-    //                for object in temp {
-    //
-    //                    var tempDict = Dictionary<String, AnyObject>()
-    //
-    //                    tempDict["name"] = object.username!!
-    //                    tempDict["type"] = "socialQs"
-    //                    tempDict["id"] = object.objectId!!
-    //                    tempDict["isSelected"] = false
-    //                    //tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
-    //
-    //                    self.friendsDictionary.append(tempDict)
-    //                }
-    //            }
-    //
-    //            self.loadUsers("")
-    //        }
-    //    })
+    _button.layer.cornerRadius = cornerRadius
+    _button.backgroundColor = buttonBackgroundColor
+    _button.titleLabel?.textColor = buttonTextColor
 }
 
 
-// Gets facebook profile picture and saves it to Parse
-func getPersonalInfoFromFacebook(completion: (Bool) -> Void) {
+func getUserPhoto(completion: (Bool) -> Void) {
     
-    // Get profile pic from FB and store it locally (var) and on Parse
-    var accessToken = FBSDKAccessToken.currentAccessToken().tokenString
-    var url = NSURL(string: "https://graph.facebook.com/me/picture?type=large&return_ssl_resources=1&access_token=" + accessToken)
-    let urlRequest = NSURLRequest(URL: url!)
-    
-    NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+    // Check if profilePicture exists on Parse: if not, get from FB and upload to parse
+    if let tempPic = PFUser.currentUser()!["profilePicture"] as? PFFile {
         
-        // Set app image
-        if data != nil {
-            let image = UIImage(data: data)
-            profilePicture = image
-        } else {
-            profilePicture = UIImage(named: "profile.png")
+        tempPic.getDataInBackgroundWithBlock({ (data, error) -> Void in
+            
+            if error == nil {
+                
+                println("NO ERROR")
+                
+                if let downloadedImage = UIImage(data: data!) {
+                    println("got it!")
+                    
+                    profilePicture = downloadedImage
+                    
+                } else {
+                    
+                    profilePicture = UIImage(named: "profile.png")
+                }
+                
+            } else {
+                
+                println("There was an error retrieving the users profile picture - welcomeController")
+                println(error)
+                
+                profilePicture = UIImage(named: "profile.png")
+            }
+            
+            completion(true)
+        })
+        
+    } else if (PFUser.currentUser()!["profilePicture"] as? PFFile == nil) && PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) == true {
+        
+        // Get profile pic from FB and store it locally (var) and on Parse
+        var accessToken = FBSDKAccessToken.currentAccessToken().tokenString
+        var url = NSURL(string: "https://graph.facebook.com/me/picture?type=large&return_ssl_resources=1&access_token=" + accessToken)
+        let urlRequest = NSURLRequest(URL: url!)
+        
+        NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+            
+            // Set app image
+            if data != nil {
+                let image = UIImage(data: data)
+                profilePicture = image
+            } else {
+                profilePicture = UIImage(named: "profile.png")
+            }
+            
+            // Download data in background queue
+            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+            dispatch_async(backgroundQueue, {
+                
+                var user = PFUser.currentUser()
+                let imageData = UIImagePNGRepresentation(profilePicture)
+                let picture = PFFile(name:"profilePicture.png", data: imageData)
+                user!.setObject(picture, forKey: "profilePicture")
+                
+                user!.saveInBackgroundWithBlock({ (success, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        println("image saved successfully")
+                        
+                    } else {
+                        
+                        println("image not saved")
+                    }
+                })
+            })
         }
         
-        // Download data in background queue
-        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
+    } else { // no image to be loaded - use default
+        
+        profilePicture = UIImage(named: "profile.png")
+        
+        completion(true)
+    }
+}
+
+//*******************************************************************************
+// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
+//*******************************************************************************
+func getUsersFacebookInfo(completion: (Bool) -> Void) { // ONLY USER FOR "ISNEW"
+    // Gets facebook user info (name, firstname, email, id) and saves to Parse
+    
+    let request = FBSDKGraphRequest(graphPath:"me", parameters:nil)
+    
+    request.startWithCompletionHandler { (connection, result, error) in
+        
+        if error != nil {
+            
+            println("Error Getting User's FB infomation \(error)")
+            
+        } else if let userData = result as? [String:AnyObject] {
             
             var user = PFUser.currentUser()
-            let imageData = UIImagePNGRepresentation(profilePicture)
-            let picture = PFFile(name:"profilePicture.png", data: imageData)
-            user!.setObject(picture, forKey: "profilePicture")
+        
+            user!.setObject((userData["name"]! as? String)!, forKey: "name")
+            user!.setObject((userData["email"]! as? String)!, forKey: "email")
+            user!.setObject((userData["id"]! as? String)!, forKey: "facebookId")
+            user!.setObject((userData["first_name"]! as? String)!, forKey: "firstName")
+            user!.setObject((userData["last_name"]! as? String)!, forKey: "lastName")
             
             user!.saveInBackgroundWithBlock({ (success, error) -> Void in
                 
                 if error == nil {
                     
-                    println("image saved successfully")
+                    println("User's data successfully stored to Parse")
                     
                 } else {
                     
-                    println("image not saved")
-                }
-                
-                // Get My Info facebook info and set my name
-                var meRequest = FBSDKGraphRequest(graphPath:"/me", parameters: nil);
-                
-                meRequest.startWithCompletionHandler { (connection : FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
-                    
-                    if error == nil {
-                        
-                        name = result["name"]!! as! String
-                        user!.setObject(name, forKey: "name")
-                        println("\(name) has signed in")
-                        
-                    } else {
-                        
-                        println("Error Getting User's FB infomation \(error)")
-                    }
-                    
-                    println("Setting completion")
-                    completion(true)
+                    println("There was an error storing user's data to Parse")
                 }
             })
-        })
+            
+            completion(true)
+        }
     }
 }
+//*******************************************************************************
+// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
+//*******************************************************************************
 
 
 func globalBlurView() -> (UIVisualEffectView) {
@@ -338,6 +417,8 @@ func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
 }
 
 
+// Sets globals, changes to custom NSUserDefault keys and fills that data in
+// - Creates installation if user isNew (notifications)
 func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> Void) {
     
     // Store login information in globals
