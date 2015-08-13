@@ -51,6 +51,8 @@ class QsSignupViewController: UIViewController {
                                 blockUI(false, self.signupSpinner, self.signupBlurView, self)
                                 
                                 storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                                
+                                getUsersFacebookInfo({ (isFinished) -> Void in })
                             })
                             
                         } else {
@@ -70,6 +72,8 @@ class QsSignupViewController: UIViewController {
                     blockUI(false, self.signupSpinner, self.signupBlurView, self)
                     
                     storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                    
+                    getUsersFacebookInfo({ (isFinished) -> Void in })
                 }
                 
             } else {

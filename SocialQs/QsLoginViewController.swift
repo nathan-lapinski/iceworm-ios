@@ -59,6 +59,12 @@ class QsLoginViewController: UIViewController {
                                 blockUI(false, self.loginSpinner, self.loginBlurView, self)
                                 
                                 storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                                
+                                // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                                // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                                getUsersFacebookInfo({ (isFinished) -> Void in })
+                                // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                                // USE IN SIGNUP ONLY FOR PRODUCTION APP
                             })
                             
                         } else {
@@ -78,6 +84,12 @@ class QsLoginViewController: UIViewController {
                     blockUI(false, self.loginSpinner, self.loginBlurView, self)
                     
                     storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                    
+                    // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                    // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                    getUsersFacebookInfo({ (isFinished) -> Void in })
+                    // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                    // USE IN SIGNUP ONLY FOR PRODUCTION APP
                 }
                 
             } else {

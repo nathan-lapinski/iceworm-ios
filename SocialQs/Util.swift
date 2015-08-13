@@ -339,6 +339,7 @@ func getUserPhoto(completion: (Bool) -> Void) {
     }
 }
 
+
 //*******************************************************************************
 // NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
 //*******************************************************************************
