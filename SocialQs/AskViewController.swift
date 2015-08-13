@@ -20,7 +20,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     var imageCount = -1
     
     var chosenImageHighRes: [UIImage?] = [nil, nil, nil]
-    var chosenImageThumbnail: [UIImage?] = [nil, nil, nil]
+    //var chosenImageThumbnail: [UIImage?] = [nil, nil, nil]
     
     let tableBackgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.3))
     
@@ -71,7 +71,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         askTable.reloadData()
         
         chosenImageHighRes = [nil, nil, nil]
-        chosenImageThumbnail = [nil, nil, nil]
+        //chosenImageThumbnail = [nil, nil, nil]
         
         qPhoto = false
         oPhoto = false
@@ -136,9 +136,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             dispatch_async(dispatch_get_main_queue()) { () -> Void in
                 
-                if (self.chosenImageThumbnail[0] != nil || self.question != "")
-                    && (self.chosenImageThumbnail[0] != nil || self.option1 != "")
-                    && (self.chosenImageThumbnail[0] != nil || self.option2 != "") {
+                if (self.chosenImageHighRes[0] != nil || self.question != "")
+                    && (self.chosenImageHighRes[0] != nil || self.option1 != "")
+                    && (self.chosenImageHighRes[0] != nil || self.option2 != "") {
                     
                     // Submit Q
                     self.submitQ(sender)
@@ -196,7 +196,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     override func viewWillAppear(animated: Bool) {
         
-        
         returningFromPopover = false
         returningFromSettings = false
         topOffset = 64
@@ -232,61 +231,43 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     
-    func createPNG(image: UIImage, name: String) -> (PFFile) {
-        
-        let imageData = UIImagePNGRepresentation(image)
-        var imageFile: PFFile = PFFile(name: name, data: imageData)
-        return imageFile
-    }
-    
-    
     func submitQ(sender: AnyObject) -> Void {
         
         blockUI(true, askSpinner, askBlurView, self)
         
-        // Create PFObject
+        func createPNG(image: UIImage, name: String) -> (PFFile) {
+            
+            let imageData = UIImagePNGRepresentation(image)
+            var imageFile: PFFile = PFFile(name: name, data: imageData)
+            return imageFile
+        }
+        
+        // Store images to a temp var so the view can be cleared 
+        // to submit another Q while images upload
+        var tempImages: [PFFile?] = [nil, nil, nil]
+        if self.chosenImageHighRes[0] != nil { tempImages[0] = createPNG(self.chosenImageHighRes[0]!, "questionImage.png") }
+        if self.chosenImageHighRes[1] != nil { tempImages[1] = createPNG(self.chosenImageHighRes[1]!, "option1Image.png")  }
+        if self.chosenImageHighRes[2] != nil { tempImages[2] = createPNG(self.chosenImageHighRes[2]!, "option2Image.png")  }
+        
+        
+        // Create PFObject (without images for 'saveEventually'
         var socialQ = PFObject(className: "SocialQs")
         socialQ["asker"] = PFUser.currentUser()
+        
+        // Add text to PFObject
         if question != nil { socialQ["questionText"] = question }
         if option1  != nil { socialQ["option1Text"]  = option1  }
         if option2  != nil { socialQ["option2Text"]  = option2  }
-
+        
+        // Initialize vote counters in PFObject
         socialQ["option1Stats"] = Int(0)
         socialQ["option2Stats"] = Int(0)
         
-        // Perform saveEventually (for network checking) with upload of images in callback
-        socialQ.saveEventually({ (success, error) -> Void in
-            
-            if error == nil {
-                
-                println("SUCCSEX saving eventually!")
-                
-                socialQ.setObject(self.createPNG(self.chosenImageHighRes[0]!, name: "questionImage.png"), forKey: "questionPhoto")
-                socialQ.setObject(self.createPNG(self.chosenImageHighRes[1]!, name: "option1Image.png"),  forKey: "option1Photo" )
-                socialQ.setObject(self.createPNG(self.chosenImageHighRes[2]!, name: "option2Image.png"),  forKey: "option2Photo" )
-                
-                socialQ.saveInBackgroundWithBlock({ (success, errer) -> Void in
-                    
-                    if error == nil {
-                        
-                        println("Success saving images in background!")
-                        
-                        // Assign to groupies in QJoinTable
-                        //
-                        // CLOUD CODE!
-                        //
-                        // Include an entry for self (ie: user will be "to", "from" AND "asker"
-                        //  - This is for MyQs delete tracking
-                        
-                    }
-                })
-            }
-        })
+        // Add images to PFObject
+        if tempImages[0] != nil { socialQ["questionPhoto"] = tempImages[0]! }
+        if tempImages[1] != nil { socialQ["option1Photo"]  = tempImages[1]! }
+        if tempImages[2] != nil { socialQ["option2Photo"]  = tempImages[2]! }
         
-        // Add images to PFObjet
-        if chosenImageHighRes[0] != nil { socialQ["questionPhoto"] = createPNG(chosenImageHighRes[0]!, name: "questionImage.png") }
-        if chosenImageHighRes[1] != nil { socialQ["option1Photo"]  = createPNG(chosenImageHighRes[1]!, name: "option1Image.png")  }
-        if chosenImageHighRes[2] != nil { socialQ["option2Photo"]  = createPNG(chosenImageHighRes[2]!, name: "option2Image.png")  }
         
         // Pin completed object to local data store
         socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
@@ -296,7 +277,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 println("Successfully pinned new Q object")
                 
                 // Switch to results tab when question is submitted
-                // - Had to make storyboard ID for the tabBarController = "tabBarController"
+                // - storyboard ID for tabBarController = "tabBarController"
                 self.tabBarController?.selectedIndex = 1
                 
                 // clear text and photo entries
@@ -306,6 +287,45 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             }
         }
         
+        // ************** NETWORK CHECK **********************************
+        // Save PFObject to Parse
+        socialQ.saveInBackgroundWithBlock({ (success, error) -> Void in
+            
+            if error == nil {
+                
+                println("Success saving images in background!")
+                
+                // Assign to groupies in QJoinTable
+                //
+                // CLOUD CODE!
+                //
+                // Include an entry for self (ie: user will be "to", "from" AND "asker"
+                //  - This is for MyQs delete tracking
+                var qJoin = PFObject(className: "QJoin")
+                qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
+                qJoin.setObject(PFUser.currentUser()!, forKey: "to")
+                qJoin.setObject(PFUser.currentUser()!, forKey: "from")
+                //qJoin.setObject([GROUPIE], forKey: "to")
+                qJoin.setObject(socialQ, forKey: "question")
+                qJoin.saveEventually({ (success, error) -> Void in
+                    
+                    println("QJoin entry successfully created")
+                })
+            }
+        })
+        
+//        // Perform saveEventually (for network checking) with upload of images in callback
+//        socialQ.saveEventually({ (success, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                println("Success saving eventually!")
+//                
+//                if tempImages[0] != nil { socialQ.setObject(tempImages[0]!, forKey: "questionPhoto") }
+//                if tempImages[1] != nil { socialQ.setObject(tempImages[1]!, forKey: "option1Photo")  }
+//                if tempImages[2] != nil { socialQ.setObject(tempImages[2]!, forKey: "option2Photo")  }
+//            }
+//        })
         
         
         
@@ -479,7 +499,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //            })
 //        }
     }
-    
     
 //    func uploadFullResPhotos(currentPId: String, currentQId: String, expectedCount: Int, var downloadedCount: Int) {
 //        
@@ -753,10 +772,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 
                 // Fill question text
                 if cell.questionTextField.text != "" { question = cell.questionTextField.text }
-                if chosenImageThumbnail[0] == nil {
+                if chosenImageHighRes[0] == nil {
                     cell.questionImageView.image = UIImage(named: "camera.png")
                 } else {
-                    cell.questionImageView.image = chosenImageThumbnail[indexPath.row]
+                    cell.questionImageView.image = chosenImageHighRes[0]//indexPath.row]
                 }
                 
             } else {
@@ -783,16 +802,16 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     option2 = cell.option2TextField.text
                 }
                 
-                if chosenImageThumbnail[1] == nil {
+                if chosenImageHighRes[1] == nil {
                     cell.option1ImageView.image = UIImage(named: "camera.png")
                 } else {
-                    cell.option1ImageView.image = chosenImageThumbnail[1]
+                    cell.option1ImageView.image = chosenImageHighRes[1]
                 }
                 
-                if chosenImageThumbnail[2] == nil {
+                if chosenImageHighRes[2] == nil {
                     cell.option2ImageView.image = UIImage(named: "camera.png")
                 } else {
-                    cell.option2ImageView.image = chosenImageThumbnail[2]
+                    cell.option2ImageView.image = chosenImageHighRes[2]
                 }
                 
             } else {
@@ -889,11 +908,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         //let cancelAction = UIAlertAction(title: "Cancel", style: .Destructive) { (action) -> Void in
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) -> Void in
             
-            if self.whichCell == 0 && self.chosenImageThumbnail[0] == nil {
+            if self.whichCell == 0 && self.chosenImageHighRes[0] == nil {
                 self.qPhoto = false//!self.qPhoto
-            } else if self.whichCell == 1 && self.chosenImageThumbnail[2] == nil {
-                self.chosenImageThumbnail[1] = nil//UIImage(named: "camera.png")
-                self.chosenImageThumbnail[2] = nil//UIImage(named: "camera.png")
+            } else if self.whichCell == 1 && self.chosenImageHighRes[2] == nil {
+                //self.chosenImageHighRes[1] = nil//UIImage(named: "camera.png")
+                //self.chosenImageHighRes[2] = nil//UIImage(named: "camera.png")
                 self.chosenImageHighRes[1] = nil
                 self.chosenImageHighRes[2] = nil
                 self.askTable.reloadData() // Could just reload row...
@@ -935,10 +954,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         dismissViewControllerAnimated(true, completion: nil)
         
-        if (imageCount) % 2 == 0 && chosenImageThumbnail[2] == UIImage(named: "camera.png") {
-            
-            launchImagePickerPopover()
-        }
+//        if (imageCount) % 2 == 0 && chosenImageHighRes[2] == nil { // UIImage(named: "camera.png") {
+//            
+//            launchImagePickerPopover()
+//        }
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
@@ -946,8 +965,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         if whichCell == 0 {
             qPhoto = !qPhoto
         } else {
-            chosenImageThumbnail[1] = UIImage(named: "camera.png")
-            chosenImageThumbnail[2] = UIImage(named: "camera.png")
+            //chosenImageHighRes[1] = UIImage(named: "camera.png")
+            //chosenImageHighRes[2] = UIImage(named: "camera.png")
             chosenImageHighRes[1] = nil
             chosenImageHighRes[2] = nil
             askTable.reloadData() // Could just reload row...

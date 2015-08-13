@@ -506,12 +506,14 @@ class QsMyTableVC: UITableViewController {
                 
                 self.questionObjects = objects!
                 
-//                for var i = 0; i < self.questionObjects.count; i++ {
-//                    
-//                    println("<<<<<<<<<<<<<<")
-//                    println(self.questionObjects[i])
-//                    println(">>>>>>>>>>>>>>")
-//                }
+                for var i = 0; i < self.questionObjects.count; i++ {
+                    
+                    println("<<<<<<<<<<<<<<")
+                    println(self.questionObjects[i])
+                    println(">>>>>>>>>>>>>>")
+                }
+                
+                self.tableView.reloadData()
             }
         }
         
@@ -698,233 +700,386 @@ class QsMyTableVC: UITableViewController {
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int { return 1 }
     
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return questions.count }
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return questionObjects.count }
 
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = QsMyCell()
-        
-        var option1String = ""
-        var option2String = ""
-        
         // Compute number of reponses and option stats
-        var totalResponses = option1Stats[indexPath.row] + option2Stats[indexPath.row]
+        var totalResponses = 0//(self.questionObjects[indexPath.row]["option1Stats"] as! Int) + (self.questionObjects[indexPath.row]["option2Stats"] as! Int)
         var option1Percent = Float(0.0)
         var option2Percent = Float(0.0)
         
         if totalResponses != 0 {
-            option1Percent = Float(option1Stats[indexPath.row])/Float(totalResponses)*100
-            option2Percent = Float(option2Stats[indexPath.row])/Float(totalResponses)*100
+            option1Percent = Float((self.questionObjects[indexPath.row]["option1Stats"] as! Int))/Float(totalResponses)*100
+            option2Percent = Float((self.questionObjects[indexPath.row]["option2Stats"] as! Int))/Float(totalResponses)*100
         }
         
         // Build "repsonse" string to account for singular/plural
         var resp = "responses"
         if totalResponses == 1 { resp = "response" }
         
-        // ---- TEXT ONLY OPTIONS -------------------------------------------------
-        if contains(["1c", "2c", "3c"], configuration[indexPath.row]) {
+        var cell = QsMyCell()
+        cell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! QsMyCell
+        
+        if option1Percent > option2Percent {
             
-            option1String = option1s[indexPath.row] + " "
-            option2String = option2s[indexPath.row] + " "
+            //width1 = maxBarWidth
+            //width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
+            cell.option1BackgroundImage.backgroundColor = winColor
+            cell.option2BackgroundImage.backgroundColor = loseColor
             
-            cell = tableView.dequeueReusableCellWithIdentifier("myCell1", forIndexPath: indexPath) as! QsMyCell
+        } else if option2Percent > option1Percent {
             
-            // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
-            //var width1 = maxBarWidth //cell.option1ImageView.bounds.width
-            //var width2 = maxBarWidth //cell.option2ImageView.bounds.width
+            //width2 = maxBarWidth
+            //width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
+            cell.option1BackgroundImage.backgroundColor = loseColor
+            cell.option2BackgroundImage.backgroundColor = winColor
             
-            cell.numberOfResponses.text = "\(totalResponses) \(resp)"
-            
-            if option1Percent > option2Percent {
-                
-                //width1 = maxBarWidth
-                //width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-                cell.option1BackgroundImage.backgroundColor = winColor
-                cell.option2BackgroundImage.backgroundColor = loseColor
-                
-            } else if option2Percent > option1Percent {
-                
-                //width2 = maxBarWidth
-                //width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-                cell.option1BackgroundImage.backgroundColor = loseColor
-                cell.option2BackgroundImage.backgroundColor = winColor
-                
-            } else {
-                
-                //width1 = maxBarWidth
-                //width2 = maxBarWidth
-                cell.option1BackgroundImage.backgroundColor = winColor
-                cell.option2BackgroundImage.backgroundColor = winColor
-            }
-            
-            // Set Vote button text
-            //cell.vote1Button.setTitle("", forState: UIControlState.Normal)
-            //cell.vote2Button.setTitle("", forState: UIControlState.Normal)
-            
-            cell.question.text = questions[indexPath.row]
-            
-            if questionsPhoto[indexPath.row] != nil {
-                questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
-                    
-                    if errorq != nil {
-                        
-                        println(errorq)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: dataq!) {
-                            
-                            cell.questionImage.image = downloadedImage
-                        }
-                    }
-                })
-            }
-            
-            // ---- OTHER OPTIONS ----------------------------------------------------
         } else {
             
-            cell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! QsMyCell
+            //width1 = maxBarWidth
+            //width2 = maxBarWidth
+            cell.option1BackgroundImage.backgroundColor = winColor
+            cell.option2BackgroundImage.backgroundColor = winColor
+        }
+        
+        // Display photos
+        if let questionPhoto = self.questionObjects[indexPath.row]["questionPhoto"] as? PFFile {
             
-            if option1s[indexPath.row] != "" {
-                option1String = option1s[indexPath.row] + " "
-            }
-            if option2s[indexPath.row] != "" {
-                option2String = option2s[indexPath.row] + " "
-            }
+            questionPhoto.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                
+                if error == nil {
+                    
+                    if let downloadedImage = UIImage(data: data!) {
+                        
+                        cell.questionImage.image = downloadedImage
+                    }
+                    
+                } else {
+                    
+                    println("There was an error downloading a questionPhoto")
+                }
+            })
             
-            cell.option1Zoom.backgroundColor = UIColor.clearColor()
-            cell.option2Zoom.backgroundColor = UIColor.clearColor()
+            // Format thumbnail views - aspect fill without breaching imageView bounds
+            cell.question.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.question.clipsToBounds = true
+            cell.question.layer.cornerRadius = cornerRadius
             
+            // Set question text width
+            cell.questionTextRightSpace.constant = cell.questionImage.frame.size.width + 16
+            cell.question.layoutIfNeeded()
+        } else {
+            // Set question text width
+            cell.questionImage.hidden = true
+            cell.questionZoom.hidden = false
+            cell.questionTextRightSpace.constant = 8
+            cell.question.layoutIfNeeded()
+        }
+        if let option1Photo = self.questionObjects[indexPath.row]["option1Photo"] as? PFFile {
+            
+            option1Photo.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                
+                if error == nil {
+                    
+                    if let downloadedImage = UIImage(data: data!) {
+                        
+                        cell.option1Image.image = downloadedImage
+                    }
+                    
+                } else {
+                    
+                    println("There was an error downloading an option1Photo")
+                }
+            })
             
             // Format thumbnail views - aspect fill without breaching imageView bounds
             cell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
-            cell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
             cell.option1Image.clipsToBounds = true
-            cell.option2Image.clipsToBounds = true
-            
-            // Format options imageViews
             cell.option1Image.layer.cornerRadius = cornerRadius
-            cell.option2Image.layer.cornerRadius = cornerRadius
-            cell.option1Image.clipsToBounds = true
+            
+            // Set option1 text width
+            cell.option1LeftSpace.constant = cell.option1Image.frame.size.width + 16
+            cell.option1BackgroundImage.layoutIfNeeded()
+        } else {
+            // Set option1 text width
+            cell.option1LeftSpace.constant = 8
+            cell.option1BackgroundImage.layoutIfNeeded()
+        }
+        
+        if let option2Photo = self.questionObjects[indexPath.row]["option2Photo"] as? PFFile {
+            
+            option2Photo.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                
+                if error == nil {
+                    
+                    if let downloadedImage = UIImage(data: data!) {
+                        
+                        cell.option2Image.image = downloadedImage
+                    }
+                    
+                } else {
+                    
+                    println("There was an error downloading an option2Photo")
+                }
+            })
+            
+            // Format thumbnail views - aspect fill without breaching imageView bounds
+            cell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
             cell.option2Image.clipsToBounds = true
+            cell.option2Image.layer.cornerRadius = cornerRadius
             
-            // Set thumbnail images
-            //if option1sPhoto[indexPath.row] != nil {
-                option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
-                    
-                    if error1 != nil {
-                        
-                        println(error1)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data1!) {
-                            
-                            cell.option1Image.image = downloadedImage
-                        }
-                    }
-                })
+            // Set option2 text width
+            cell.option2LeftSpace.constant = cell.option2Image.frame.size.width + 16
+            cell.option2BackgroundImage.layoutIfNeeded()
+        } else {
+            // Set option2 text width
+            cell.option2LeftSpace.constant = 8
+            cell.option2BackgroundImage.layoutIfNeeded()
+        }
+        
+        // **** NEEDS STATS APPENDED!
+        // Display text
+        if let questionText = self.questionObjects[indexPath.row]["questionText"] as? String {
+            cell.question.text = questionText
+        }
+        if let option1Text = self.questionObjects[indexPath.row]["option1Text"] as? String {
             
-                option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
-                    
-                    if error2 != nil {
-                        
-                        println(error2)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: data2!) {
-                            
-                            cell.option2Image.image = downloadedImage
-                        }
-                    }
-                })
+            cell.option1Label.text = option1Text
+        }
+        if let option2Text = self.questionObjects[indexPath.row]["option2Text"] as? String {
             
-            // Blur screen while Q upload is processing
-            //let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
-            //var blurView1 = UIVisualEffectView(effect: blurEffect)
-            //var blurView2 = UIVisualEffectView(effect: blurEffect)
-            //blurView1.frame = cell.option1Image.frame
-            //cell.option1Image.addSubview(blurView1)
-            //blurView2.frame = cell.option2Image.frame
-            //cell.option2Image.addSubview(blurView2)
+            cell.option2Label.text = option2Text
+        }
+        
+        // Display number of results
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//        var option1String = ""
+//        var option2String = ""
+//        
+//        // ---- TEXT ONLY OPTIONS -------------------------------------------------
+//        if contains(["1c", "2c", "3c"], configuration[indexPath.row]) {
+//            
+//            option1String = option1s[indexPath.row] + " "
+//            option2String = option2s[indexPath.row] + " "
+//            
+//            cell = tableView.dequeueReusableCellWithIdentifier("myCell1", forIndexPath: indexPath) as! QsMyCell
+//            
+//            // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
+//            //var width1 = maxBarWidth //cell.option1ImageView.bounds.width
+//            //var width2 = maxBarWidth //cell.option2ImageView.bounds.width
+//            
+//            cell.numberOfResponses.text = "\(totalResponses) \(resp)"
+//            
+//            if option1Percent > option2Percent {
+//                
+//                //width1 = maxBarWidth
+//                //width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
+//                cell.option1BackgroundImage.backgroundColor = winColor
+//                cell.option2BackgroundImage.backgroundColor = loseColor
+//                
+//            } else if option2Percent > option1Percent {
+//                
+//                //width2 = maxBarWidth
+//                //width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
+//                cell.option1BackgroundImage.backgroundColor = loseColor
+//                cell.option2BackgroundImage.backgroundColor = winColor
+//                
+//            } else {
+//                
+//                //width1 = maxBarWidth
+//                //width2 = maxBarWidth
+//                cell.option1BackgroundImage.backgroundColor = winColor
+//                cell.option2BackgroundImage.backgroundColor = winColor
+//            }
+//            
+//            // Set Vote button text
+//            //cell.vote1Button.setTitle("", forState: UIControlState.Normal)
+//            //cell.vote2Button.setTitle("", forState: UIControlState.Normal)
+//            
+//            cell.question.text = questions[indexPath.row]
+//            
+//            if questionsPhoto[indexPath.row] != nil {
+//                questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
+//                    
+//                    if errorq != nil {
+//                        
+//                        println(errorq)
+//                        
+//                    } else {
+//                        
+//                        if let downloadedImage = UIImage(data: dataq!) {
+//                            
+//                            cell.questionImage.image = downloadedImage
+//                        }
+//                    }
+//                })
+//            }
+//            
+//            // ---- OTHER OPTIONS ----------------------------------------------------
+//        } else {
+//            
+//            cell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! QsMyCell
+//            
+//            if option1s[indexPath.row] != "" {
+//                option1String = option1s[indexPath.row] + " "
+//            }
+//            if option2s[indexPath.row] != "" {
+//                option2String = option2s[indexPath.row] + " "
+//            }
+//            
+//            cell.option1Zoom.backgroundColor = UIColor.clearColor()
+//            cell.option2Zoom.backgroundColor = UIColor.clearColor()
+//            
+//            
+//            // Format thumbnail views - aspect fill without breaching imageView bounds
+//            cell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
+//            cell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
+//            cell.option1Image.clipsToBounds = true
+//            cell.option2Image.clipsToBounds = true
+//            
+//            // Format options imageViews
+//            cell.option1Image.layer.cornerRadius = cornerRadius
+//            cell.option1Image.clipsToBounds = true
+//            cell.option2Image.layer.cornerRadius = cornerRadius
+//            cell.option2Image.clipsToBounds = true
             
-            if option1Percent > option2Percent {
-                
-                //width1 = maxBarWidth
-                //width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-                cell.option1BackgroundImage.backgroundColor = winColor
-                cell.option2BackgroundImage.backgroundColor = loseColor
-                
-            } else if option2Percent > option1Percent {
-                
-                //width2 = maxBarWidth
-                //width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-                cell.option1BackgroundImage.backgroundColor = loseColor
-                cell.option2BackgroundImage.backgroundColor = winColor
-                
-            } else {
-                
-                //width1 = maxBarWidth
-                //width2 = maxBarWidth
-                cell.option1BackgroundImage.backgroundColor = winColor
-                cell.option2BackgroundImage.backgroundColor = winColor
-            }
-            
+//            // Set thumbnail images
+//            //if option1sPhoto[indexPath.row] != nil {
+//                option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
+//                    
+//                    if error1 != nil {
+//                        
+//                        println(error1)
+//                        
+//                    } else {
+//                        
+//                        if let downloadedImage = UIImage(data: data1!) {
+//                            
+//                            cell.option1Image.image = downloadedImage
+//                        }
+//                    }
+//                })
+//            
+//                option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
+//                    
+//                    if error2 != nil {
+//                        
+//                        println(error2)
+//                        
+//                    } else {
+//                        
+//                        if let downloadedImage = UIImage(data: data2!) {
+//                            
+//                            cell.option2Image.image = downloadedImage
+//                        }
+//                    }
+//                })
+//            
+//            // Blur screen while Q upload is processing
+//            //let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
+//            //var blurView1 = UIVisualEffectView(effect: blurEffect)
+//            //var blurView2 = UIVisualEffectView(effect: blurEffect)
+//            //blurView1.frame = cell.option1Image.frame
+//            //cell.option1Image.addSubview(blurView1)
+//            //blurView2.frame = cell.option2Image.frame
+//            //cell.option2Image.addSubview(blurView2)
+//            
+//            if option1Percent > option2Percent {
+//                
+//                //width1 = maxBarWidth
+//                //width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
+//                cell.option1BackgroundImage.backgroundColor = winColor
+//                cell.option2BackgroundImage.backgroundColor = loseColor
+//                
+//            } else if option2Percent > option1Percent {
+//                
+//                //width2 = maxBarWidth
+//                //width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
+//                cell.option1BackgroundImage.backgroundColor = loseColor
+//                cell.option2BackgroundImage.backgroundColor = winColor
+//                
+//            } else {
+//                
+//                //width1 = maxBarWidth
+//                //width2 = maxBarWidth
+//                cell.option1BackgroundImage.backgroundColor = winColor
+//                cell.option2BackgroundImage.backgroundColor = winColor
+//            }
+//            
             // Tag zoom buttons
             cell.option1Zoom.tag = indexPath.row
             cell.option2Zoom.tag = indexPath.row
-        }
+//        }
+//        
+//        
+//        // Q image stuff in here
+//        if contains(["1a", "2a", "1b", "2b"], configuration[indexPath.row]) {
+//            
+//            // set Q image and set narrow Q text
+//            cell.questionImage.hidden = false// Set thumbnail images
+//            cell.questionZoom.enabled = true
+//            
+//            //if questionsPhoto[indexPath.row] != nil {
+//                questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
+//                    
+//                    if errorq != nil {
+//                        
+//                        println(errorq)
+//                        
+//                    } else {
+//                        
+//                        if let downloadedImage = UIImage(data: dataq!) {
+//                            
+//                            cell.questionImage.image = downloadedImage
+//                        }
+//                    }
+//                })
+//            
+//            cell.questionImage.contentMode = UIViewContentMode.ScaleAspectFill
+//            cell.questionImage.clipsToBounds = true
+//            
+//            cell.questionNarrow.text = questions[indexPath.row]
+//            cell.questionNarrow.hidden = false
+//            cell.question.hidden = true
+//            
+//        } else {
+//            
+//            // Q image is blank, set wide Q text
+//            cell.questionImage.hidden = true
+//            cell.questionZoom.enabled = false
+//            
+//            cell.question.text = questions[indexPath.row]
+//            cell.question.hidden = false
+//            cell.questionNarrow.hidden = true
+//        }
+//        
+//        
+//        ////
+//        if questionsPhoto[indexPath.row] != nil {
+//            cell.questionImage.hidden = false
+//            cell.questionZoom.enabled = true
+//        }
         
         
-        // Q image stuff in here
-        if contains(["1a", "2a", "1b", "2b"], configuration[indexPath.row]) {
-            
-            // set Q image and set narrow Q text
-            cell.questionImage.hidden = false// Set thumbnail images
-            cell.questionZoom.enabled = true
-            
-            //if questionsPhoto[indexPath.row] != nil {
-                questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (dataq, errorq) -> Void in
-                    
-                    if errorq != nil {
-                        
-                        println(errorq)
-                        
-                    } else {
-                        
-                        if let downloadedImage = UIImage(data: dataq!) {
-                            
-                            cell.questionImage.image = downloadedImage
-                        }
-                    }
-                })
-            
-            cell.questionImage.contentMode = UIViewContentMode.ScaleAspectFill
-            cell.questionImage.clipsToBounds = true
-            
-            cell.questionNarrow.text = questions[indexPath.row]
-            cell.questionNarrow.hidden = false
-            cell.question.hidden = true
-            
-        } else {
-            
-            // Q image is blank, set wide Q text
-            cell.questionImage.hidden = true
-            cell.questionZoom.enabled = false
-            
-            cell.question.text = questions[indexPath.row]
-            cell.question.hidden = false
-            cell.questionNarrow.hidden = true
-        }
         
         
-        ////
-        if questionsPhoto[indexPath.row] != nil {
-            cell.questionImage.hidden = false
-            cell.questionZoom.enabled = true
-        }
+        
+        
+        
+        
+        
         
         cell.questionZoom.tag = indexPath.row
         
@@ -943,8 +1098,8 @@ class QsMyTableVC: UITableViewController {
         cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
         
         cell.numberOfResponses.text = "\(totalResponses) \(resp)"
-        cell.option1Label.text = option1String + "\(Int(option1Percent))%"
-        cell.option2Label.text = option2String + "\(Int(option2Percent))%"
+//        cell.option1Label.text = option1String + "\(Int(option1Percent))%"
+//        cell.option2Label.text = option2String + "\(Int(option2Percent))%"
         
         // Why can't I set a corner radius on text field? -------
         // Format myVote and stats background
