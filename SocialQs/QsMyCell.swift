@@ -1,5 +1,5 @@
 //
-//  NEWMyQsCell.swift
+//  QsMyCell.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 7/15/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NEWMyQsCell: UITableViewCell {
+class QsMyCell: UITableViewCell {
     
     // Both Cells
     @IBOutlet var question: UILabel!

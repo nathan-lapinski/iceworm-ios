@@ -1,5 +1,5 @@
 //
-//  NEWMyQsTableViewController.swift
+//  QsMyTableVC.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 7/15/15.
@@ -9,7 +9,9 @@
 import UIKit
 import Parse
 
-class NEWMyQsTableViewController: UITableViewController {
+class QsMyTableVC: UITableViewController {
+    
+    var questionObjects: NSArray = []
     
     var questionIds = [String]()
     var questions = [String]()
@@ -20,9 +22,10 @@ class NEWMyQsTableViewController: UITableViewController {
     var questionsPhoto: [PFFile?]  = [PFFile]()
     var option1Stats = [Int]()
     var option2Stats = [Int]()
-    var configuration = [String]()
     var votesId = [String]()
     var photosId = [String]()
+    
+    var configuration = [String]()
     
     var refresher: UIRefreshControl!
     var myQsSpinner = UIActivityIndicatorView()
@@ -98,8 +101,8 @@ class NEWMyQsTableViewController: UITableViewController {
         var downloadedCount = 0
         
         if questionsPhoto[sender.tag] != nil { expectedCount++ }
-        if option1sPhoto[sender.tag] != nil { expectedCount++ }
-        if option2sPhoto[sender.tag] != nil { expectedCount++ }
+        if option1sPhoto[sender.tag]  != nil { expectedCount++ }
+        if option2sPhoto[sender.tag]  != nil { expectedCount++ }
         
         // GLOBAL FUNCTION -------------------------------------------------------
         // GLOBAL FUNCTION -------------------------------------------------------
@@ -490,172 +493,198 @@ class NEWMyQsTableViewController: UITableViewController {
     // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
-        // Get list of Qs to pull from UserQs
-        var getMyQsQuery = PFQuery(className: "UserQs")
+        var myQsQuery = PFQuery(className: "SocialQs")
         
-        getMyQsQuery.getObjectInBackgroundWithId(uQId, block: { (myQsObjects, error) -> Void in
+        myQsQuery.fromLocalDatastore()
+        myQsQuery.whereKey("asker", equalTo: PFUser.currentUser()!)
+        myQsQuery.orderByDescending("createdAt")
+        myQsQuery.limit = 1000
+        
+        myQsQuery.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
-            if error != nil {
+            if error == nil {
                 
-                println("Error accessing UserQs/theirQsId")
-                println(error)
+                self.questionObjects = objects!
                 
-            } else {
-                
-                if let myQs = myQsObjects!["myQsId"] as? [String] {
-                    
-                    // Get Qs from SocialsQs based on myQsId
-                    var getSocialQsQuery = PFQuery(className: "SocialQs")
-                    
-                    // Sort by newest created-date first
-                    getSocialQsQuery.orderByDescending("createdAt")
-                    
-                    // Filter off Qs I've deleted from my view
-                    getSocialQsQuery.whereKey("objectId", containedIn: myQs)
-                    
-                    // Set query limit to max
-                    getSocialQsQuery.limit = 1000
-                    
-                    // Pull objects
-                    getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
-                        
-                        if let questionTemp = questionObjects {
-                            
-                            self.questions.removeAll(keepCapacity: true)
-                            self.questionIds.removeAll(keepCapacity: true)
-                            self.option1s.removeAll(keepCapacity: true)
-                            self.option2s.removeAll(keepCapacity: true)
-                            self.option1sPhoto.removeAll(keepCapacity: true)
-                            self.option2sPhoto.removeAll(keepCapacity: true)
-                            self.questionsPhoto.removeAll(keepCapacity: true)
-                            self.option1Stats.removeAll(keepCapacity: true)
-                            self.option2Stats.removeAll(keepCapacity: true)
-                            self.configuration.removeAll(keepCapacity: true)
-                            self.votesId.removeAll(keepCapacity: true)
-                            self.photosId.removeAll(keepCapacity: true)
-                            
-                            for questionObject in questionTemp {
-                                
-                                var tempConfig = ""
-                                
-                                self.questionIds.append(questionObject.objectId!!)
-                                
-                                // ---- DOWNLOAD AND STORE QUESTION DATA -------------------------------
-                                // Check for photo AND text Q
-                                if (questionObject["question"] as? String != nil) && (questionObject["questionPhoto"] as? PFFile != nil) {
-                                    
-                                    self.questions.append(questionObject["question"] as! String)
-                                    self.questionsPhoto.append(questionObject["questionPhoto"] as? PFFile)
-                                    tempConfig = "1"
-                                    
-                                    // Check for photo and NO text
-                                } else if (questionObject["questionPhoto"] as? PFFile != nil)  && (questionObject["question"] as? String == nil){
-                                    
-                                    self.questions.append("")
-                                    self.questionsPhoto.append(questionObject["questionPhoto"] as? PFFile)
-                                    tempConfig = "2"
-                                    
-                                    // Text and NO photo
-                                } else {
-                                    
-                                    self.questions.append(questionObject["question"] as! String)
-                                    self.questionsPhoto.append(nil)
-                                    tempConfig = "3"
-                                }
-                                // ---------------------------------------------------------------------
-                                
-                                
-                                // ---- DOWNLOAD AND STORE OPTION 1 DATA -------------------------------
-                                // Check for photo AND text Q
-                                if (questionObject["option1"] as? String != nil) && (questionObject["option1Photo"] as? PFFile != nil) {
-                                    
-                                    self.option1s.append(questionObject["option1"] as! String)
-                                    self.option1sPhoto.append(questionObject["option1Photo"] as? PFFile)
-                                    tempConfig = tempConfig + "a"
-                                    
-                                    // Check for photo and NO text
-                                } else if (questionObject["option1Photo"] as? PFFile != nil)  && (questionObject["option1"] as? String == nil){
-                                    
-                                    self.option1s.append("")
-                                    self.option1sPhoto.append(questionObject["option1Photo"] as? PFFile)
-                                    tempConfig = tempConfig + "b"
-                                    
-                                } else { // Text and NO photo
-                                    
-                                    self.option1s.append(questionObject["option1"] as! String)
-                                    self.option1sPhoto.append(nil)
-                                    tempConfig = tempConfig + "c"
-                                    
-                                }
-                                // ---------------------------------------------------------------------
-                                
-                                
-                                // ---- DOWNLOAD AND STORE OPTION 2 DATA -------------------------------
-                                // Check for photo AND text Q
-                                if (questionObject["option2"] as? String != nil) && (questionObject["option2Photo"] as? PFFile != nil) {
-                                    
-                                    self.option2s.append(questionObject["option2"] as! String)
-                                    self.option2sPhoto.append(questionObject["option2Photo"] as? PFFile)
-                                    //                                    tempConfig = tempConfig + "x"
-                                    
-                                    // Check for photo and NO text
-                                } else if (questionObject["option2Photo"] as? PFFile != nil)  && (questionObject["option2"] as? String == nil){
-                                    
-                                    self.option2s.append("")
-                                    self.option2sPhoto.append(questionObject["option2Photo"] as? PFFile)
-                                    //                                    tempConfig = tempConfig + "y"
-                                    
-                                } else { // Text and NO photo
-                                    
-                                    self.option2s.append(questionObject["option2"] as! String)
-                                    self.option2sPhoto.append(nil
-                                    )
-                                    //                                    tempConfig = tempConfig + "z"
-                                    
-                                }
-                                // ---------------------------------------------------------------------
-                                
-                                self.configuration.append(tempConfig)
-                                
-                                // ---- DOWNLOAD AND STORE STATS DATA ----------------------------------
-                                self.option1Stats.append(questionObject["stats1"] as! Int)
-                                self.option2Stats.append(questionObject["stats2"] as! Int)
-                                
-                                // ---- DOWNLOAD AND STORE VOTESID DATA ----------------------------------
-                                self.votesId.append(questionObject["votesId"] as! String)
-                                
-                                // ---- DOWNLOAD AND STORE PHOTOSID DATA ----------------------------------
-                                if let test = questionObject["photosId"] as? String {
-                                    self.photosId.append(questionObject["photosId"] as! String)
-                                } else {
-                                    self.photosId.append("")
-                                }
-                                
-                                // Ensure all queries have completed THEN refresh the table!
-                                if self.questionsPhoto.count == self.option2sPhoto.count {
-                                    
-                                    self.tableView.reloadData()
-                                    //self.tableView.reloadInputViews()
-                                    
-                                    // Kill refresher when query finished
-                                    self.refresher.endRefreshing()
-                                    
-                                    // Stop animation - hides when stopped (above) hides spinner automatically
-                                    //self.activityIndicator.stopAnimating()
-                                    
-                                    // Release app input
-                                    //UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    
-                    // NO Qs
-                    
-                }
+//                for var i = 0; i < self.questionObjects.count; i++ {
+//                    
+//                    println("<<<<<<<<<<<<<<")
+//                    println(self.questionObjects[i])
+//                    println(">>>>>>>>>>>>>>")
+//                }
             }
-        })
+        }
+        
+        
+        
+        
+        
+//        // Get list of Qs to pull from UserQs
+//        var getMyQsQuery = PFQuery(className: "UserQs")
+//        
+//        getMyQsQuery.getObjectInBackgroundWithId(uQId, block: { (myQsObjects, error) -> Void in
+//            
+//            if error != nil {
+//                
+//                println("Error accessing UserQs/theirQsId")
+//                println(error)
+//                
+//            } else {
+//                
+//                if let myQs = myQsObjects!["myQsId"] as? [String] {
+//                    
+//                    // Get Qs from SocialsQs based on myQsId
+//                    var getSocialQsQuery = PFQuery(className: "SocialQs")
+//                    
+//                    // Sort by newest created-date first
+//                    getSocialQsQuery.orderByDescending("createdAt")
+//                    
+//                    // Filter off Qs I've deleted from my view
+//                    getSocialQsQuery.whereKey("objectId", containedIn: myQs)
+//                    
+//                    // Set query limit to max
+//                    getSocialQsQuery.limit = 1000
+//                    
+//                    // Pull objects
+//                    getSocialQsQuery.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
+//                        
+//                        if let questionTemp = questionObjects {
+//                            
+//                            self.questions.removeAll(keepCapacity: true)
+//                            self.questionIds.removeAll(keepCapacity: true)
+//                            self.option1s.removeAll(keepCapacity: true)
+//                            self.option2s.removeAll(keepCapacity: true)
+//                            self.option1sPhoto.removeAll(keepCapacity: true)
+//                            self.option2sPhoto.removeAll(keepCapacity: true)
+//                            self.questionsPhoto.removeAll(keepCapacity: true)
+//                            self.option1Stats.removeAll(keepCapacity: true)
+//                            self.option2Stats.removeAll(keepCapacity: true)
+//                            self.configuration.removeAll(keepCapacity: true)
+//                            self.votesId.removeAll(keepCapacity: true)
+//                            self.photosId.removeAll(keepCapacity: true)
+//                            
+//                            for questionObject in questionTemp {
+//                                
+//                                var tempConfig = ""
+//                                
+//                                self.questionIds.append(questionObject.objectId!!)
+//                                
+//                                // ---- DOWNLOAD AND STORE QUESTION DATA -------------------------------
+//                                // Check for photo AND text Q
+//                                if (questionObject["question"] as? String != nil) && (questionObject["questionPhoto"] as? PFFile != nil) {
+//                                    
+//                                    self.questions.append(questionObject["question"] as! String)
+//                                    self.questionsPhoto.append(questionObject["questionPhoto"] as? PFFile)
+//                                    tempConfig = "1"
+//                                    
+//                                    // Check for photo and NO text
+//                                } else if (questionObject["questionPhoto"] as? PFFile != nil)  && (questionObject["question"] as? String == nil){
+//                                    
+//                                    self.questions.append("")
+//                                    self.questionsPhoto.append(questionObject["questionPhoto"] as? PFFile)
+//                                    tempConfig = "2"
+//                                    
+//                                    // Text and NO photo
+//                                } else {
+//                                    
+//                                    self.questions.append(questionObject["question"] as! String)
+//                                    self.questionsPhoto.append(nil)
+//                                    tempConfig = "3"
+//                                }
+//                                // ---------------------------------------------------------------------
+//                                
+//                                
+//                                // ---- DOWNLOAD AND STORE OPTION 1 DATA -------------------------------
+//                                // Check for photo AND text Q
+//                                if (questionObject["option1"] as? String != nil) && (questionObject["option1Photo"] as? PFFile != nil) {
+//                                    
+//                                    self.option1s.append(questionObject["option1"] as! String)
+//                                    self.option1sPhoto.append(questionObject["option1Photo"] as? PFFile)
+//                                    tempConfig = tempConfig + "a"
+//                                    
+//                                    // Check for photo and NO text
+//                                } else if (questionObject["option1Photo"] as? PFFile != nil)  && (questionObject["option1"] as? String == nil){
+//                                    
+//                                    self.option1s.append("")
+//                                    self.option1sPhoto.append(questionObject["option1Photo"] as? PFFile)
+//                                    tempConfig = tempConfig + "b"
+//                                    
+//                                } else { // Text and NO photo
+//                                    
+//                                    self.option1s.append(questionObject["option1"] as! String)
+//                                    self.option1sPhoto.append(nil)
+//                                    tempConfig = tempConfig + "c"
+//                                    
+//                                }
+//                                // ---------------------------------------------------------------------
+//                                
+//                                
+//                                // ---- DOWNLOAD AND STORE OPTION 2 DATA -------------------------------
+//                                // Check for photo AND text Q
+//                                if (questionObject["option2"] as? String != nil) && (questionObject["option2Photo"] as? PFFile != nil) {
+//                                    
+//                                    self.option2s.append(questionObject["option2"] as! String)
+//                                    self.option2sPhoto.append(questionObject["option2Photo"] as? PFFile)
+//                                    //                                    tempConfig = tempConfig + "x"
+//                                    
+//                                    // Check for photo and NO text
+//                                } else if (questionObject["option2Photo"] as? PFFile != nil)  && (questionObject["option2"] as? String == nil){
+//                                    
+//                                    self.option2s.append("")
+//                                    self.option2sPhoto.append(questionObject["option2Photo"] as? PFFile)
+//                                    //                                    tempConfig = tempConfig + "y"
+//                                    
+//                                } else { // Text and NO photo
+//                                    
+//                                    self.option2s.append(questionObject["option2"] as! String)
+//                                    self.option2sPhoto.append(nil
+//                                    )
+//                                    //                                    tempConfig = tempConfig + "z"
+//                                    
+//                                }
+//                                // ---------------------------------------------------------------------
+//                                
+//                                self.configuration.append(tempConfig)
+//                                
+//                                // ---- DOWNLOAD AND STORE STATS DATA ----------------------------------
+//                                self.option1Stats.append(questionObject["stats1"] as! Int)
+//                                self.option2Stats.append(questionObject["stats2"] as! Int)
+//                                
+//                                // ---- DOWNLOAD AND STORE VOTESID DATA ----------------------------------
+//                                self.votesId.append(questionObject["votesId"] as! String)
+//                                
+//                                // ---- DOWNLOAD AND STORE PHOTOSID DATA ----------------------------------
+//                                if let test = questionObject["photosId"] as? String {
+//                                    self.photosId.append(questionObject["photosId"] as! String)
+//                                } else {
+//                                    self.photosId.append("")
+//                                }
+//                                
+//                                // Ensure all queries have completed THEN refresh the table!
+//                                if self.questionsPhoto.count == self.option2sPhoto.count {
+//                                    
+//                                    self.tableView.reloadData()
+//                                    //self.tableView.reloadInputViews()
+//                                    
+//                                    // Kill refresher when query finished
+//                                    self.refresher.endRefreshing()
+//                                    
+//                                    // Stop animation - hides when stopped (above) hides spinner automatically
+//                                    //self.activityIndicator.stopAnimating()
+//                                    
+//                                    // Release app input
+//                                    //UIApplication.sharedApplication().endIgnoringInteractionEvents()
+//                                }
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    
+//                    // NO Qs
+//                    
+//                }
+//            }
+//        })
     }
     
     
@@ -674,7 +703,7 @@ class NEWMyQsTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = NEWMyQsCell()
+        var cell = QsMyCell()
         
         var option1String = ""
         var option2String = ""
@@ -699,7 +728,7 @@ class NEWMyQsTableViewController: UITableViewController {
             option1String = option1s[indexPath.row] + " "
             option2String = option2s[indexPath.row] + " "
             
-            cell = tableView.dequeueReusableCellWithIdentifier("myCell1", forIndexPath: indexPath) as! NEWMyQsCell
+            cell = tableView.dequeueReusableCellWithIdentifier("myCell1", forIndexPath: indexPath) as! QsMyCell
             
             // Compute and set results image view widths - MAKE GLOBAL CLASS w/ METHOD
             //var width1 = maxBarWidth //cell.option1ImageView.bounds.width
@@ -755,7 +784,7 @@ class NEWMyQsTableViewController: UITableViewController {
             // ---- OTHER OPTIONS ----------------------------------------------------
         } else {
             
-            cell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! NEWMyQsCell
+            cell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! QsMyCell
             
             if option1s[indexPath.row] != "" {
                 option1String = option1s[indexPath.row] + " "

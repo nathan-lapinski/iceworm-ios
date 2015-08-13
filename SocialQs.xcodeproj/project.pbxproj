@@ -24,8 +24,8 @@
 		902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D41B3EA21300B67ACE /* TabBarController.swift */; };
 		902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */; };
 		902D871F1B5747A9001F9954 /* ScrollViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */; };
-		902D87211B577862001F9954 /* NEWMyQsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D87201B577862001F9954 /* NEWMyQsCell.swift */; };
-		902D87231B57793C001F9954 /* NEWMyQsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D87221B57793C001F9954 /* NEWMyQsTableViewController.swift */; };
+		902D87211B577862001F9954 /* QsMyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D87201B577862001F9954 /* QsMyCell.swift */; };
+		902D87231B57793C001F9954 /* QsMyTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D87221B57793C001F9954 /* QsMyTableVC.swift */; };
 		903CF0F41B7A8283002BF72D /* SocialQs.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 903CF0F21B7A8283002BF72D /* SocialQs.xcdatamodeld */; };
 		904123021B26A67C00397132 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123011B26A67C00397132 /* AppDelegate.swift */; };
 		904123091B26A67C00397132 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 904123071B26A67C00397132 /* Main.storyboard */; };
@@ -86,8 +86,8 @@
 		902B34D41B3EA21300B67ACE /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeekPagedScrollViewController.swift; sourceTree = "<group>"; };
 		902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollViewContainer.swift; sourceTree = "<group>"; };
-		902D87201B577862001F9954 /* NEWMyQsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWMyQsCell.swift; sourceTree = "<group>"; };
-		902D87221B57793C001F9954 /* NEWMyQsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWMyQsTableViewController.swift; sourceTree = "<group>"; };
+		902D87201B577862001F9954 /* QsMyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsMyCell.swift; sourceTree = "<group>"; };
+		902D87221B57793C001F9954 /* QsMyTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsMyTableVC.swift; sourceTree = "<group>"; };
 		903CF0F31B7A8283002BF72D /* SocialQs.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SocialQs.xcdatamodel; sourceTree = "<group>"; };
 		904122FC1B26A67B00397132 /* SocialQs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocialQs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		904123001B26A67C00397132 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -196,8 +196,8 @@
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
-				902D87201B577862001F9954 /* NEWMyQsCell.swift */,
-				902D87221B57793C001F9954 /* NEWMyQsTableViewController.swift */,
+				902D87201B577862001F9954 /* QsMyCell.swift */,
+				902D87221B57793C001F9954 /* QsMyTableVC.swift */,
 				901DAA191B55C84D00A20689 /* NEWTheirQsCell.swift */,
 				901DAA171B55C81300A20689 /* NEWTheirQsTableViewController.swift */,
 				902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */,
@@ -375,7 +375,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				902D87231B57793C001F9954 /* NEWMyQsTableViewController.swift in Sources */,
+				902D87231B57793C001F9954 /* QsMyTableVC.swift in Sources */,
 				903CF0F41B7A8283002BF72D /* SocialQs.xcdatamodeld in Sources */,
 				904E29C91B58CC4E007E17D2 /* SettingsPopoverViewController.swift in Sources */,
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
@@ -393,7 +393,7 @@
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
 				902B34CD1B3E4FB800B67ACE /* QsSignupViewController.swift in Sources */,
 				900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */,
-				902D87211B577862001F9954 /* NEWMyQsCell.swift in Sources */,
+				902D87211B577862001F9954 /* QsMyCell.swift in Sources */,
 				900ED8821B75279D005FED93 /* GroupiesSettingsTableViewController.swift in Sources */,
 				90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */,
 				904E29CB1B59DC10007E17D2 /* Util.swift in Sources */,
