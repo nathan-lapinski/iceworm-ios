@@ -1,5 +1,5 @@
 //
-//  NEWTheirQsCell.swift
+//  QsTheirCell.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 7/14/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NEWTheirQsCell: UITableViewCell {
+class QsTheirCell: UITableViewCell {
     
     // Both Cells
     @IBOutlet var profilePicture: UIImageView!

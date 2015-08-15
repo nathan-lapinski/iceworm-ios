@@ -34,5 +34,8 @@ class QsMyCell: UITableViewCell {
     @IBOutlet var questionTextRightSpace: NSLayoutConstraint!
     @IBOutlet var option1LeftSpace: NSLayoutConstraint!
     @IBOutlet var option2LeftSpace: NSLayoutConstraint!
+    @IBOutlet var option1TextLeftSpace: NSLayoutConstraint!
+    @IBOutlet var option2TextLeftSpace: NSLayoutConstraint!
+    
     
 }

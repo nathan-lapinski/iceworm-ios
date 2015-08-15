@@ -1,5 +1,5 @@
 //
-//  QsLoginViewController.swift
+//  LoginViewController.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 6/16/15.
@@ -9,7 +9,7 @@
 import UIKit
 import Parse
 
-class QsLoginViewController: UIViewController {
+class LoginViewController: UIViewController {
     
     var loginSpinner = UIActivityIndicatorView()
     var loginBlurView = globalBlurView()

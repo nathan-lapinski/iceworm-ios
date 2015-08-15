@@ -20,7 +20,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     var imageCount = -1
     
     var chosenImageHighRes: [UIImage?] = [nil, nil, nil]
-    //var chosenImageThumbnail: [UIImage?] = [nil, nil, nil]
+    var chosenImageThumbnail: [UIImage?] = [nil, nil, nil]
     
     let tableBackgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: CGFloat(0.3))
     
@@ -71,7 +71,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         askTable.reloadData()
         
         chosenImageHighRes = [nil, nil, nil]
-        //chosenImageThumbnail = [nil, nil, nil]
+        chosenImageThumbnail = [nil, nil, nil]
         
         qPhoto = false
         oPhoto = false
@@ -244,10 +244,15 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         // Store images to a temp var so the view can be cleared 
         // to submit another Q while images upload
-        var tempImages: [PFFile?] = [nil, nil, nil]
-        if self.chosenImageHighRes[0] != nil { tempImages[0] = createPNG(self.chosenImageHighRes[0]!, "questionImage.png") }
-        if self.chosenImageHighRes[1] != nil { tempImages[1] = createPNG(self.chosenImageHighRes[1]!, "option1Image.png")  }
-        if self.chosenImageHighRes[2] != nil { tempImages[2] = createPNG(self.chosenImageHighRes[2]!, "option2Image.png")  }
+        var thumbnailImages: [PFFile?] = [nil, nil, nil]
+        if self.chosenImageThumbnail[0] != nil { thumbnailImages[0] = createPNG(self.chosenImageThumbnail[0]!, "questionImage.png") }
+        if self.chosenImageThumbnail[1] != nil { thumbnailImages[1] = createPNG(self.chosenImageThumbnail[1]!, "option1Image.png")  }
+        if self.chosenImageThumbnail[2] != nil { thumbnailImages[2] = createPNG(self.chosenImageThumbnail[2]!, "option2Image.png")  }
+        
+        var highResImages: [PFFile?] = [nil, nil, nil]
+        if self.chosenImageHighRes[0] != nil { highResImages[0] = createPNG(self.chosenImageHighRes[0]!, "questionImage.png") }
+        if self.chosenImageHighRes[1] != nil { highResImages[1] = createPNG(self.chosenImageHighRes[1]!, "option1Image.png")  }
+        if self.chosenImageHighRes[2] != nil { highResImages[2] = createPNG(self.chosenImageHighRes[2]!, "option2Image.png")  }
         
         
         // Create PFObject (without images for 'saveEventually'
@@ -263,13 +268,21 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         socialQ["option1Stats"] = Int(0)
         socialQ["option2Stats"] = Int(0)
         
+        // Mark as undelted by asker
+        socialQ["askerDeleted"] = false
+        
         // Add images to PFObject
-        if tempImages[0] != nil { socialQ["questionPhoto"] = tempImages[0]! }
-        if tempImages[1] != nil { socialQ["option1Photo"]  = tempImages[1]! }
-        if tempImages[2] != nil { socialQ["option2Photo"]  = tempImages[2]! }
+        if thumbnailImages[0] != nil { socialQ["questionPhotoThumb"] = thumbnailImages[0]! }
+        if thumbnailImages[1] != nil { socialQ["option1PhotoThumb"]  = thumbnailImages[1]! }
+        if thumbnailImages[2] != nil { socialQ["option2PhotoThumb"]  = thumbnailImages[2]! }
+        
+        if highResImages[0] != nil { socialQ["questionPhoto"] = highResImages[0]! }
+        if highResImages[1] != nil { socialQ["option1Photo"]  = highResImages[1]! }
+        if highResImages[2] != nil { socialQ["option2Photo"]  = highResImages[2]! }
         
         
         // Pin completed object to local data store
+        
         socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
             
             if error == nil {
@@ -310,6 +323,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 qJoin.saveEventually({ (success, error) -> Void in
                     
                     println("QJoin entry successfully created")
+                    
+                    // *******************
+                    //
+                    // sendPushes()
+                    //
+                    // *******************
                 })
             }
         })
@@ -326,298 +345,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //                if tempImages[2] != nil { socialQ.setObject(tempImages[2]!, forKey: "option2Photo")  }
 //            }
 //        })
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-//        // CREATE ENTRY FOR FULL RES IMAGES (upload later) -------------------------------------------------------------
-//        var photos = PFObject(className: "PhotoFullMetalBlacket")
-//        
-//        var currentPId = ""
-//        
-//        photos.saveInBackgroundWithBlock { (success, error) -> Void in
-//            
-//            if error == nil {
-//                currentPId = photos.objectId!
-//            } else {
-//                println("Error creating high res photos table entry!")
-//            }
-//            
-//            // Add entry to "Votes Table" ----------------
-//            var votes = PFObject(className: "Votes")
-//            
-//            votes.saveInBackgroundWithBlock({ (success, error) -> Void in
-//                
-//                if error == nil {
-//                    
-//                    var socialQ = PFObject(className: "SocialQs")
-//                    
-//                    // Q text
-//                    if self.question != "" {
-//                        socialQ["question"] = self.question
-//                    }
-//                    
-//                    // Q photo
-//                    //if self.isPhoto[0] == true {
-//                    if self.chosenImageThumbnail[0] != nil {
-//                        
-//                        // Resize to THUMBNAIL and upload to SocialQs table
-//                        let imageQ = self.chosenImageThumbnail[0]
-//                        let imageQData = UIImagePNGRepresentation(imageQ)
-//                        
-//                        var imageQFile: PFFile = PFFile(name: "questionImage.png", data: imageQData)
-//                        
-//                        socialQ["questionPhoto"] = imageQFile
-//                    }
-//                    
-//                    // Options text
-//                    if self.option1 != ""  || self.option2 != "" {
-//                        socialQ["option1"] = self.option1
-//                        socialQ["option2"] = self.option2
-//                    }
-//                    
-//                    // Check if O1 is photo or text and upload
-//                    if self.chosenImageThumbnail[1] != nil {
-//                        
-//                        // Resize to THUMBNAIL and upload to SocialQs table
-//                        let imageO1 = self.chosenImageThumbnail[1]
-//                        let imageO1Data = UIImagePNGRepresentation(imageO1)
-//                        
-//                        var imageO1File: PFFile = PFFile(name: "option1Image.png", data: imageO1Data)
-//                        
-//                        socialQ["option1Photo"] = imageO1File
-//                    }
-//                    
-//                    // Check if O2 is photo or text and upload
-//                    if self.chosenImageThumbnail[2] != nil {
-//                        
-//                        // Resize to THUMBNAIL and upload to SocialQs table
-//                        let imageO2 = self.chosenImageThumbnail[2]
-//                        let imageO2Data = UIImagePNGRepresentation(imageO2)
-//                        
-//                        let imageO2File = PFFile(name: "option2Image.png", data: imageO2Data)
-//                        
-//                        socialQ["option2Photo"] = imageO2File
-//                    }
-//                    
-//                    socialQ["stats1"] = 0
-//                    socialQ["stats2"] = 0
-//                    socialQ["privacyOptions"] = -1
-//                    socialQ["askerId"] = PFUser.currentUser()!.objectId!
-//                    socialQ["askername"] = PFUser.currentUser()!["username"]
-//                    socialQ["votesId"] = votes.objectId!
-//                    socialQ["photosId"] = currentPId
-//                    
-//                    socialQ.saveInBackgroundWithBlock { (success, error) -> Void in
-//                        
-//                        if error == nil {
-//                            
-//                            var currentQId = socialQ.objectId!
-//                            isUploading.append(currentQId)
-//                            
-//                            // Reset all fields after submitting
-//                            self.question = ""
-//                            self.option1  = ""
-//                            self.option2  = ""
-//                            
-//                            // Add qId to "UserQs" table - MyQs -------------------------------
-//                            var userQsQuery = PFQuery(className: "UserQs")
-//                            userQsQuery.whereKey("objectId", equalTo: uQId)
-//                            
-//                            // Execute query
-//                            userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
-//                                
-//                                if error == nil {
-//                                    
-//                                    if let temp = userQsObjects {
-//                                        
-//                                        for userQsObject in temp {
-//                                            
-//                                            if userQsObject.objectId!! == uQId { // Append qId to myQs within UserQs table
-//                                                
-//                                                userQsObject.addUniqueObject(currentQId, forKey: "myQsId")
-//                                                userQsObject.saveInBackground()
-//                                            }
-//                                        }
-//                                        
-//                                        // ---- Switch to results tab when question is submitted ----
-//                                        // - Had to make storyboard ID for the tabBarController = "tabBarController"
-//                                        self.tabBarController?.selectedIndex = 1
-//                                        
-//                                        // clear text and photo entries
-//                                        self.cancelButtonAction(sender)
-//                                        
-//                                        // Unblock UI and remove spinner
-//                                        blockUI(false, self.askSpinner, self.askBlurView, self)
-//                                        
-//                                        // ---- Upload full res images if necessary ---------------------------------------------
-//                                        var expectedCount = 0
-//                                        var downloadedCount = 0
-//                                        
-//                                        if self.chosenImageThumbnail[0] != nil { expectedCount++ }
-//                                        if self.chosenImageThumbnail[1] != nil { expectedCount++ }
-//                                        if self.chosenImageThumbnail[2] != nil { expectedCount++ }
-//                                        
-//                                        if expectedCount > 0 {
-//                                            
-//                                            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-//                                            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-//                                            
-//                                            dispatch_async(backgroundQueue, {
-//                                                
-//                                                //println("This is run on the background queue")//
-//                                                self.uploadFullResPhotos(currentPId, currentQId: currentQId, expectedCount: expectedCount, downloadedCount: downloadedCount)
-//                                                
-//                                                //dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                                                //    println("This is run on the main queue, after the previous code in outer block")
-//                                                //})
-//                                            })
-//                                        }
-//                                    }
-//                                    
-//                                } else {
-//                                    
-//                                    println("Error updating UserQs Table - myQs")
-//                                    println(error)
-//                                }
-//                            })
-//                            // --------------------------------------------------------------------------------------
-//                            
-//                        } else {
-//                            
-//                            println("Write to SocialQs Table error:")
-//                            println(error)
-//                        }
-//                    }
-//                }
-//            })
-//        }
     }
-    
-//    func uploadFullResPhotos(currentPId: String, currentQId: String, expectedCount: Int, var downloadedCount: Int) {
-//        
-//        var photoQuery = PFQuery(className: "PhotoFullMetalBlacket")
-//        photoQuery.whereKey("objectId", equalTo: currentPId)
-//        photoQuery.findObjectsInBackgroundWithBlock { (photoObjects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                let uploadComplete = { () -> () in
-//                    
-//                    let index = find(isUploading, currentQId)
-//                    isUploading.removeAtIndex(index!)
-//                    
-//                    // Send push notifications of new Q and assign Q to appropriate users
-//                    self.sendPushes()
-//                    self.assignQsToUsers(currentQId)
-//                }
-//                
-//                if let temp = photoObjects {
-//                    
-//                    for photoObject in temp {
-//                        
-//                        // Q photo
-//                        if self.chosenImageHighRes[0] != nil {
-//                            
-//                            // Upload  FULL RES to SocialQs table
-//                            let imageQDataFull = UIImagePNGRepresentation(self.chosenImageHighRes[0]!)
-//                            
-//                            var imageQFileFull = PFFile(name: "questionImage.png", data: imageQDataFull)
-//                            
-//                            photoObject.setObject(imageQFileFull, forKey: "questionPhoto")
-//                            photoObject.saveInBackgroundWithBlock({ (success, error) -> Void in
-//                                
-//                                if error == nil {
-//                                    println("Full Res Q Photo Uploaded!")
-//                                    
-//                                    self.chosenImageHighRes[0] = nil
-//                                    downloadedCount++
-//                                    
-//                                    if downloadedCount == expectedCount {
-//                                        
-//                                        uploadComplete()
-//                                    }
-//                                    
-//                                } else {
-//                                    println("Full res Q upload failed")
-//                                    println(error)
-//                                }
-//                            })
-//                        }
-//                        
-//                        // O1 photo
-//                        if self.chosenImageHighRes[1] != nil {
-//                            
-//                            // Upload  FULL RES to SocialQs table
-//                            let imageO1DataFull = UIImagePNGRepresentation(self.chosenImageHighRes[1]!)
-//                            
-//                            var imageO1FileFull = PFFile(name: "option1Image.png", data: imageO1DataFull)
-//                            
-//                            photoObject.setObject(imageO1FileFull, forKey: "option1Photo")
-//                            photoObject.saveInBackgroundWithBlock({ (success, error) -> Void in
-//                                
-//                                if error == nil {
-//                                    println("Full Res O1 Photo Uploaded!")
-//                                    
-//                                    self.chosenImageHighRes[1] = nil
-//                                    downloadedCount++
-//                                    
-//                                    if downloadedCount == expectedCount {
-//                                        
-//                                        uploadComplete()
-//                                    }
-//                                    
-//                                } else {
-//                                    println("Full res O1 upload failed")
-//                                    println(error)
-//                                }
-//                            })
-//                        }
-//                        
-//                        // O2 photo
-//                        if self.chosenImageHighRes[2] != nil {
-//                            
-//                            // Upload  FULL RES to SocialQs table
-//                            let imageO2DataFull = UIImagePNGRepresentation(self.chosenImageHighRes[2]!)
-//                            
-//                            var imageO2FileFull = PFFile(name: "option2Image.png", data: imageO2DataFull)
-//                            
-//                            photoObject.setObject(imageO2FileFull, forKey: "option2Photo")
-//                            photoObject.saveInBackgroundWithBlock({ (success, error) -> Void in
-//                                
-//                                if error == nil {
-//                                    println("Full Res O2 Photo Uploaded!")
-//                                    
-//                                    self.chosenImageHighRes[2] = nil
-//                                    downloadedCount++
-//                                    
-//                                    if downloadedCount == expectedCount {
-//                                        
-//                                        uploadComplete()
-//                                    }
-//                                    
-//                                } else {
-//                                    println("Full res O2 upload failed")
-//                                    println(error)
-//                                }
-//                            })
-//                        }
-//                    }
-//                }
-//                
-//            } else {
-//                
-//                println("Error loading full res images")
-//                println(error)
-//            }
-//        }
-//    }
     
     
     func assignQsToUsers(currentQId: String) {
@@ -682,9 +410,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             }
         })
     }
-    
-    
-    
     
     
     func sendPushes() {
@@ -935,19 +660,19 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         if whichCell == 0 {
             
             chosenImageHighRes[0] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
-            //chosenImageThumbnail[0] = resizeImage(chosenImageHighRes[0]!, CGSize(width: thumbnailMax, height: thumbnailMax))
+            chosenImageThumbnail[0] = resizeImage(chosenImageHighRes[0]!, CGSize(width: thumbnailMax, height: thumbnailMax))
             
         } else if whichCell == 1 {
             
             imageCount = imageCount + 1
             
             chosenImageHighRes[(imageCount % 2) + 1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
-            //chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(self.chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
+            chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(self.chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
             
         } else if whichCell == -1 {
             
             chosenImageHighRes[(imageCount % 2) + 1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
-            //chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
+            chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
         }
         
         askTable.reloadData()
@@ -965,8 +690,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         if whichCell == 0 {
             qPhoto = !qPhoto
         } else {
-            //chosenImageHighRes[1] = UIImage(named: "camera.png")
-            //chosenImageHighRes[2] = UIImage(named: "camera.png")
+            chosenImageHighRes[1] = UIImage(named: "camera.png")
+            chosenImageHighRes[2] = UIImage(named: "camera.png")
             chosenImageHighRes[1] = nil
             chosenImageHighRes[2] = nil
             askTable.reloadData() // Could just reload row...

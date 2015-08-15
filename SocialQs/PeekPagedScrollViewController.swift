@@ -12,26 +12,129 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet var pageControl: UIPageControl!
     @IBOutlet var questionLabel: UILabel!
     
+    var imageZoom: [UIImage?] = [nil, nil, nil]
     var pageImages: [UIImage] = []
     var pageViews: [UIImageView?] = []
     
     @IBAction func dismissPressed(sender: AnyObject) {
         
-        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+        questionToView = nil
         
+        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
     
     override func viewWillAppear(animated: Bool) {
         
         returningFromPopover = true
         topOffset = 64
+        
+        var expectedCount = 0
+        var downloadedCount = 0
+        
+        if let qtemp = questionToView!["questionPhoto"] as? PFFile { expectedCount++ }
+        if let o1Temp = questionToView!["option1Photo"] as? PFFile { expectedCount++ }
+        if let o2temp = questionToView!["option2Photo"] as? PFFile { expectedCount++ }
+        
+        if let questionPhoto = questionToView!["questionPhoto"] as? PFFile {
+            
+            questionPhoto.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                
+                if error == nil {
+                    
+                    if let downloadedImage = UIImage(data: data!) {
+                        
+                        self.imageZoom[0] = downloadedImage
+                        
+                        downloadedCount++
+                        
+                        if downloadedCount == expectedCount {
+                            
+                            // Set page counts and page numbers
+                            self.preparePages()
+                            
+                            // Load the initial set of pages that are on screen
+                            self.loadVisiblePages()
+                        }
+                    }
+                    
+                } else {
+                    
+                    println("There was an error downloading an option2Photo")
+                }
+            })
+        }
+        
+        if let option1Photo = questionToView!["option1Photo"] as? PFFile {
+            
+            option1Photo.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                
+                if error == nil {
+                    
+                    if let downloadedImage = UIImage(data: data!) {
+                        
+                        self.imageZoom[1] = downloadedImage
+                        
+                        downloadedCount++
+                        
+                        if downloadedCount == expectedCount {
+                            
+                            // Set page counts and page numbers
+                            self.preparePages()
+                            
+                            // Load the initial set of pages that are on screen
+                            self.loadVisiblePages()
+                        }
+                    }
+                    
+                } else {
+                    
+                    println("There was an error downloading an option2Photo")
+                }
+            })
+        }
+        
+        if let option2Photo = questionToView!["option2Photo"] as? PFFile {
+            
+            option2Photo.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                
+                if error == nil {
+                    
+                    if let downloadedImage = UIImage(data: data!) {
+                        
+                        self.imageZoom[2] = downloadedImage
+                        
+                        downloadedCount++
+                        
+                        if downloadedCount == expectedCount {
+                            
+                            // Set page counts and page numbers
+                            self.preparePages()
+                            
+                            // Load the initial set of pages that are on screen
+                            self.loadVisiblePages()
+                        }
+                    }
+                    
+                } else {
+                    
+                    println("There was an error downloading an option2Photo")
+                }
+            })
+        }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    
+    func preparePages() {
         
-        if questionZoom != "" {
-            questionLabel.text = questionZoom
+        // Set question text
+        if let questionText = questionToView!["questionText"] as? String {
+            questionLabel.text = questionText
             questionLabel.alpha = CGFloat(0.75)
             questionLabel.hidden = false
         } else {
@@ -45,7 +148,6 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
-        //pageImages = [imageZoom[0]!, imageZoom[1]!, imageZoom[2]!]
         let pageCount = pageImages.count
         
         // Set up the page control
@@ -61,16 +163,9 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         let pagesScrollViewSize = scrollView.frame.size
         scrollView.contentSize = CGSizeMake(pagesScrollViewSize.width * CGFloat(pageImages.count), 1.0)//pagesScrollViewSize.height)
         
-        //
-        //
         // Set offset to show clicked image (1st or 2nd option)
         var offset = CGPointMake(scrollView.frame.size.width*CGFloat(zoomPage), 0)
-        scrollView.setContentOffset(offset, animated: true)
-        //
-        //
-        
-        // Load the initial set of pages that are on screen
-        loadVisiblePages()
+        scrollView.setContentOffset(offset, animated: false) // changed to false as to not see page selection during page load
     }
     
     func loadPage(page: Int) {
@@ -98,7 +193,6 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func purgePage(page: Int) {
-        
         
         if page < 0 || page >= pageImages.count {
             // If it's outside the range of what you have to display, then do nothing

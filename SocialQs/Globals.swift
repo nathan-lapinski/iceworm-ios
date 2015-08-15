@@ -80,11 +80,14 @@ var myFriends = [String]()
 //var myVotes = Dictionary<String, Int>()
 
 // Value for passing qId to results ("votes") display
-var requestedQId = ""
+//var requestedQId = ""
+
+
+//var myImages = Dictionary<String, UIImage>()
 
 // Variable for passing image to zoom and on which image to start (1 or 2)
-var imageZoom: [UIImage?] = [nil, nil, nil]//[UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
-var questionZoom = ""
+//var imageZoom: [UIImage?] = [nil, nil, nil]//[UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
+var questionToView: PFObject? = nil
 var zoomPage = Int()
 
 // Variable to tell if returning from a popover (ie: don't refresh table)

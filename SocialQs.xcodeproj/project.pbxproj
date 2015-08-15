@@ -15,9 +15,9 @@
 		90135AC31B3AD4F400C9716F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABE1B3AD4F400C9716F /* Parse.framework */; };
 		90135AC41B3AD4F400C9716F /* ParseFacebookUtilsV4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */; };
 		901B23D91B7AA7FA003538BE /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 901B23D81B7AA7FA003538BE /* FBSDKShareKit.framework */; };
-		901DAA181B55C81300A20689 /* NEWTheirQsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901DAA171B55C81300A20689 /* NEWTheirQsTableViewController.swift */; };
-		901DAA1A1B55C84D00A20689 /* NEWTheirQsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901DAA191B55C84D00A20689 /* NEWTheirQsCell.swift */; };
-		902B34CD1B3E4FB800B67ACE /* QsSignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */; };
+		901DAA181B55C81300A20689 /* QsTheirTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901DAA171B55C81300A20689 /* QsTheirTableVC.swift */; };
+		901DAA1A1B55C84D00A20689 /* QsTheirCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901DAA191B55C84D00A20689 /* QsTheirCell.swift */; };
+		902B34CD1B3E4FB800B67ACE /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CC1B3E4FB800B67ACE /* SignupViewController.swift */; };
 		902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */; };
 		902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */; };
 		902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */; };
@@ -51,11 +51,11 @@
 		90A147531B2E4D0600947B33 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A147521B2E4D0600947B33 /* Accounts.framework */; };
 		90A147551B2E4D0D00947B33 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A147541B2E4D0D00947B33 /* Social.framework */; };
 		90D7F3F81B62216B001284FA /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D7F3F71B62216B001284FA /* UsernameViewController.swift */; };
-		90DE6C211B30E9CC004F3BA0 /* QsLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DE6C201B30E9CC004F3BA0 /* QsLoginViewController.swift */; };
+		90DE6C211B30E9CC004F3BA0 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */; };
 		90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */; };
 		90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */; };
 		90FE1F1F1B43A89F005F2D68 /* VotesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */; };
-		90FE1F231B43A941005F2D68 /* VotesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F221B43A941005F2D68 /* VotesTableViewController.swift */; };
+		90FE1F231B43A941005F2D68 /* VotesTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F221B43A941005F2D68 /* VotesTableVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,9 +77,9 @@
 		90135ABE1B3AD4F400C9716F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = SocialQs/Parse.framework; sourceTree = "<group>"; };
 		90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtilsV4.framework; path = SocialQs/ParseFacebookUtilsV4.framework; sourceTree = "<group>"; };
 		901B23D81B7AA7FA003538BE /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
-		901DAA171B55C81300A20689 /* NEWTheirQsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWTheirQsTableViewController.swift; sourceTree = "<group>"; };
-		901DAA191B55C84D00A20689 /* NEWTheirQsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEWTheirQsCell.swift; sourceTree = "<group>"; };
-		902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsSignupViewController.swift; sourceTree = "<group>"; };
+		901DAA171B55C81300A20689 /* QsTheirTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsTheirTableVC.swift; sourceTree = "<group>"; };
+		901DAA191B55C84D00A20689 /* QsTheirCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsTheirCell.swift; sourceTree = "<group>"; };
+		902B34CC1B3E4FB800B67ACE /* SignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesTableViewController.swift; sourceTree = "<group>"; };
 		902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesCell.swift; sourceTree = "<group>"; };
@@ -118,11 +118,11 @@
 		90A147541B2E4D0D00947B33 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		90A575711B3852DF0009CE37 /* SocialQs-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SocialQs-Bridging-Header.h"; sourceTree = "<group>"; };
 		90D7F3F71B62216B001284FA /* UsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsernameViewController.swift; sourceTree = "<group>"; };
-		90DE6C201B30E9CC004F3BA0 /* QsLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsLoginViewController.swift; sourceTree = "<group>"; };
+		90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = socialQuestionModel.swift; sourceTree = "<group>"; };
 		90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesCell.swift; sourceTree = "<group>"; };
-		90FE1F221B43A941005F2D68 /* VotesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesTableViewController.swift; sourceTree = "<group>"; };
+		90FE1F221B43A941005F2D68 /* VotesTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesTableVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,13 +196,13 @@
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
+				902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */,
+				90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */,
 				902D87201B577862001F9954 /* QsMyCell.swift */,
 				902D87221B57793C001F9954 /* QsMyTableVC.swift */,
-				901DAA191B55C84D00A20689 /* NEWTheirQsCell.swift */,
-				901DAA171B55C81300A20689 /* NEWTheirQsTableViewController.swift */,
-				902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */,
-				90DE6C201B30E9CC004F3BA0 /* QsLoginViewController.swift */,
-				902B34CC1B3E4FB800B67ACE /* QsSignupViewController.swift */,
+				902B34CC1B3E4FB800B67ACE /* SignupViewController.swift */,
+				901DAA191B55C84D00A20689 /* QsTheirCell.swift */,
+				901DAA171B55C81300A20689 /* QsTheirTableVC.swift */,
 				902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */,
 				904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */,
 				904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */,
@@ -212,7 +212,7 @@
 				90D7F3F71B62216B001284FA /* UsernameViewController.swift */,
 				904E29CA1B59DC10007E17D2 /* Util.swift */,
 				90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */,
-				90FE1F221B43A941005F2D68 /* VotesTableViewController.swift */,
+				90FE1F221B43A941005F2D68 /* VotesTableVC.swift */,
 				902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */,
 			);
 			path = SocialQs;
@@ -381,17 +381,17 @@
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
 				908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */,
 				902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */,
-				901DAA181B55C81300A20689 /* NEWTheirQsTableViewController.swift in Sources */,
+				901DAA181B55C81300A20689 /* QsTheirTableVC.swift in Sources */,
 				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,
 				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
-				901DAA1A1B55C84D00A20689 /* NEWTheirQsCell.swift in Sources */,
+				901DAA1A1B55C84D00A20689 /* QsTheirCell.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
-				90DE6C211B30E9CC004F3BA0 /* QsLoginViewController.swift in Sources */,
+				90DE6C211B30E9CC004F3BA0 /* LoginViewController.swift in Sources */,
 				90FE1F1F1B43A89F005F2D68 /* VotesCell.swift in Sources */,
-				90FE1F231B43A941005F2D68 /* VotesTableViewController.swift in Sources */,
+				90FE1F231B43A941005F2D68 /* VotesTableVC.swift in Sources */,
 				902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */,
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
-				902B34CD1B3E4FB800B67ACE /* QsSignupViewController.swift in Sources */,
+				902B34CD1B3E4FB800B67ACE /* SignupViewController.swift in Sources */,
 				900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */,
 				902D87211B577862001F9954 /* QsMyCell.swift in Sources */,
 				900ED8821B75279D005FED93 /* GroupiesSettingsTableViewController.swift in Sources */,

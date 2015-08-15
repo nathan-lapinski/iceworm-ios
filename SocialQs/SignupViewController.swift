@@ -1,5 +1,5 @@
 //
-//  QsSignupViewController.swift
+//  SignupViewController.swift
 //  SocialQs
 //
 //  Created by Brett Wiesman on 6/18/15.
@@ -9,7 +9,7 @@
 import UIKit
 import Parse
 
-class QsSignupViewController: UIViewController {
+class SignupViewController: UIViewController {
     
     var newUsername = ""
     

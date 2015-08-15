@@ -258,6 +258,26 @@ func formatButton(_button: UIButton) {
 }
 
 
+func getImageFromPFFile(object: PFFile, completion: (image: UIImage?, error: String?) -> ()) {
+    
+    
+    object.getDataInBackgroundWithBlock({ (data, error) -> Void in
+        
+        if error == nil {
+            
+            if let downloadedImage = UIImage(data: data!) {
+                
+                completion(image: downloadedImage, error: nil)
+            }
+            
+        } else {
+            
+            completion(image: nil, error: "Error retrieving image")
+        }
+    })
+}
+
+
 func getUserPhoto(completion: (Bool) -> Void) {
     
     // Check if profilePicture exists on Parse: if not, get from FB and upload to parse
