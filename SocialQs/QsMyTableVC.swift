@@ -7,7 +7,6 @@
 //
 
 import UIKit
-//import Parse
 
 class QsMyTableVC: UITableViewController {
     
@@ -256,7 +255,7 @@ class QsMyTableVC: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         // Compute number of reponses and option stats
-        var totalResponses = 0//(self.questionObjects[indexPath.row]["option1Stats"] as! Int) + (self.questionObjects[indexPath.row]["option2Stats"] as! Int)
+        var totalResponses = (self.questionObjects[indexPath.row]["option1Stats"] as! Int) + (self.questionObjects[indexPath.row]["option2Stats"] as! Int)
         var option1Percent = Float(0.0)
         var option2Percent = Float(0.0)
         
@@ -272,27 +271,57 @@ class QsMyTableVC: UITableViewController {
         var cell = QsMyCell()
         cell = tableView.dequeueReusableCellWithIdentifier("myCell2", forIndexPath: indexPath) as! QsMyCell
         
+        let maxBarWidth = cell.option1BackgroundImage.frame.size.width
+        var width1: CGFloat = 0
+        var width2: CGFloat = 0
+        
         if option1Percent > option2Percent {
             
-            //width1 = maxBarWidth
-            //width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-            cell.option1BackgroundImage.backgroundColor = winColor
-            cell.option2BackgroundImage.backgroundColor = loseColor
+            width1 = maxBarWidth
+            width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
+            cell.progress1.backgroundColor = winColor
+            cell.progress2.backgroundColor = loseColor
             
         } else if option2Percent > option1Percent {
             
-            //width2 = maxBarWidth
-            //width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-            cell.option1BackgroundImage.backgroundColor = loseColor
-            cell.option2BackgroundImage.backgroundColor = winColor
+            width2 = maxBarWidth
+            width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
+            cell.progress1.backgroundColor = loseColor
+            cell.progress2.backgroundColor = winColor
             
         } else {
             
-            //width1 = maxBarWidth
-            //width2 = maxBarWidth
-            cell.option1BackgroundImage.backgroundColor = winColor
-            cell.option2BackgroundImage.backgroundColor = winColor
+            width1 = maxBarWidth
+            width2 = maxBarWidth
+            cell.progress1.backgroundColor = winColor
+            cell.progress2.backgroundColor = winColor
         }
+        
+        // Animate stats bars
+        cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - 8
+        cell.progress1.alpha = 0.0
+        cell.progress1.layoutIfNeeded()
+        cell.progress2RightSpace.constant = cell.option1BackgroundImage.frame.size.width - 8
+        cell.progress2.alpha = 0.0
+        cell.progress2.layoutIfNeeded()
+        
+        UIView.animateWithDuration(0.75, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+            
+            cell.progress1.alpha = 1.0
+            cell.progress1.layoutIfNeeded()
+            cell.progress2.alpha = 1.0
+            cell.progress2.layoutIfNeeded()
+            
+            }) { (isFinished) -> Void in }
+        
+        UIView.animateWithDuration(1.5, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+            
+            cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - width1 + 8
+            cell.progress1.layoutIfNeeded()
+            cell.progress2RightSpace.constant = cell.option2BackgroundImage.frame.size.width - width2 + 8
+            cell.progress2.layoutIfNeeded()
+            
+            }) { (isFinished) -> Void in }
         
         // Display question photo
         if let questionPhotoThumb = self.questionObjects[indexPath.row]["questionPhotoThumb"] as? PFFile {
@@ -331,7 +360,6 @@ class QsMyTableVC: UITableViewController {
             cell.questionZoom.enabled = false
         }
         
-        
         // Display option1 photo
         if let option1PhotoThumb = self.questionObjects[indexPath.row]["option1PhotoThumb"] as? PFFile {
             
@@ -368,7 +396,6 @@ class QsMyTableVC: UITableViewController {
             cell.option1Image.hidden = true
             cell.option1Zoom.enabled = false
         }
-        
         
         // Display option2 photo
         if let option2PhotoThumb = self.questionObjects[indexPath.row]["option2PhotoThumb"] as? PFFile {
@@ -407,6 +434,7 @@ class QsMyTableVC: UITableViewController {
             cell.option2Zoom.enabled = false
         }
         
+        
         // **** NEEDS STATS APPENDED!
         // Display text
         if let questionText = self.questionObjects[indexPath.row]["questionText"] as? String {
@@ -420,11 +448,6 @@ class QsMyTableVC: UITableViewController {
             
             cell.option2Label.text = option2Text
         }
-        
-        // Display number of results
-        
-        
-        
         
         
         // Make cells non-selectable
@@ -445,25 +468,13 @@ class QsMyTableVC: UITableViewController {
 //        cell.option1Label.text = option1String + "\(Int(option1Percent))%"
 //        cell.option2Label.text = option2String + "\(Int(option2Percent))%"
         
-        // Why can't I set a corner radius on text field? -------
-        // Format myVote and stats background
-        //cell.stats1.layer.cornerRadius = cornerRadius
-        //cell.stats2.layer.cornerRadius = cornerRadius
-        //cell.myVote1.layer.cornerRadius = cornerRadius
-        //cell.myVote2.layer.cornerRadius = cornerRadius
-        // Why can't I set a corner radius on text field? -------
-        
         // Tag buttons
         cell.option1Zoom.tag  = indexPath.row
         cell.option2Zoom.tag  = indexPath.row
         cell.questionZoom.tag = indexPath.row
         
         // Format cell backgrounds
-        //if indexPath.row % 2 == 0 {
         cell.backgroundColor = UIColor.clearColor()
-        //} else {
-        //    cell.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-        //}
         
         return cell
     }

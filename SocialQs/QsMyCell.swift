@@ -37,5 +37,14 @@ class QsMyCell: UITableViewCell {
     @IBOutlet var option1TextLeftSpace: NSLayoutConstraint!
     @IBOutlet var option2TextLeftSpace: NSLayoutConstraint!
     
+    @IBOutlet var progress1: UIImageView!
+    @IBOutlet var progress1RightSpace: NSLayoutConstraint!
+    
+    @IBOutlet var progress2: UIImageView!
+    @IBOutlet var progress2RightSpace: NSLayoutConstraint!
     
 }
+
+
+
+
