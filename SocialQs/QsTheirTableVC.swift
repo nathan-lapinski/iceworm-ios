@@ -70,35 +70,120 @@ class QsTheirTableVC: UITableViewController {
     // Function to process the casting of votes
     func castVote(questionId: Int, optionId: Int) {
         
-//        blockUI(true, theirQsSpinner, theirQsBlurView, self)
-        
+        // ********************************************************************************
+        // CLOUD CODE
+        // 1. Pull entry from QJoin Table
+        // 2. Set vote entry to 1 or 2
+        // 3. Pull entry from SocialQs Table
+        // 4. Increment vote1 or vote2
+        //
         var getQJoin = PFQuery(className: "QJoin")
         getQJoin.whereKey("question", equalTo: questionObjects[questionId] as! PFObject)
+        getQJoin.includeKey("question")
         
         getQJoin.getFirstObjectInBackgroundWithBlock { (object, error) -> Void in
             
             if error == nil {
+                
+                object!["question"]!.incrementKey("option\(optionId)Stats")
+                object!["question"]!.saveEventually({ (success, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        println("Successful vote cast in SocialQs!")
+                    }
+                    
+                    
+                })
                 
                 object?.setObject(optionId, forKey: "vote")
                 object?.saveEventually({ (success, error) -> Void in
                     
                     if error == nil {
                         
-                        println("Successful vote cast!")
+                        println("Successful vote cast in QJoin!")
                     }
                 })
-                
-//                blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
-                
-                // Update table row
-                //
-                //
-                //
             }
         }
         
+//        var socialQQuery = PFQuery(className: "SocialQs")
+//        socialQQuery.whereKey("question", equalTo: questionObjects[questionId] as! PFObject)
+//        
+//        socialQQuery.getFirstObjectInBackgroundWithBlock { (object, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                object?.incrementKey("option\(optionId)stats")
+//                object?.saveEventually({ (success, error) -> Void in
+//                    
+//                    if error == nil {
+//                        
+//                        println("Increment to SocialQs table complete")
+//                        
+//                    } else {
+//                        
+//                        println("There was an error incrementing vote in SocialQs table")
+//                        println(error)
+//                    }
+//                })
+//                
+//            } else {
+//                
+//                println("There was an error pulling SocialQs table for voting:")
+//                println(error)
+//            }
+//        }
+        //
+        //
+        // end CLOUD CODE
+        //
+        //
+        // ********************************************************************************
         
         
+        
+        
+        // ********************************************************************************
+        // NON-CLOUD CODE
+        // 1. Perform increment on SocialQ object in LDS
+        //
+        
+        //(questionObjects[questionId] as! PFObject).incrementKey("option\(optionId)stats")
+        //(questionObjects[questionId] as! PFObject).sav
+        
+//        var socialQQueryLocal = PFQuery(className: "SocialQs")
+//        socialQQueryLocal.fromLocalDatastore()
+//        socialQQueryLocal.whereKey("question", equalTo: questionObjects[questionId] as! PFObject)
+//        
+//        socialQQueryLocal.getFirstObjectInBackgroundWithBlock { (object, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                object?.incrementKey("option\(optionId)stats")
+//                object?.saveEventually({ (success, error) -> Void in
+//                    
+//                    if error == nil {
+//                        
+//                        println("Increment to SocialQs LOCAL table complete")
+//                        
+//                    } else {
+//                        
+//                        println("There was an error incrementing vote in SocialQs LOCAL table")
+//                        println(error)
+//                    }
+//                })
+//                
+//            } else {
+//                
+//                println("There was an error pulling SocialQs LOCAL table for voting:")
+//                println(error)
+//            }
+//        }
+
+        tableView.reloadData()
+        
+        // ********************************************************************************
         
         
         
@@ -471,7 +556,7 @@ class QsTheirTableVC: UITableViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
         
         // Reload data upon first entry to view - NOW HANDLED IN VIEWWILLAPPEAR
-        refresh()
+        //refresh()
         
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
@@ -778,7 +863,7 @@ class QsTheirTableVC: UITableViewController {
         cell.profilePicture.layer.borderColor = UIColor.whiteColor().CGColor
         cell.profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
         cell.profilePicture.layer.masksToBounds = false
-        cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
+        //cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
         cell.profilePicture.clipsToBounds = true
         
         // Set askername
@@ -903,6 +988,8 @@ class QsTheirTableVC: UITableViewController {
                         
                         self.questionObjects.append(object["question"]!!)
                     }
+                    
+                    println(self.questionObjects.count)
                     
                     println("questionObjects stored")
                     
