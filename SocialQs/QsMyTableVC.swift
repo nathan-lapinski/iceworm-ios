@@ -298,10 +298,10 @@ class QsMyTableVC: UITableViewController {
         }
         
         // Animate stats bars
-        cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - 8
+        cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
         cell.progress1.alpha = 0.0
         cell.progress1.layoutIfNeeded()
-        cell.progress2RightSpace.constant = cell.option1BackgroundImage.frame.size.width - 8
+        cell.progress2RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
         cell.progress2.alpha = 0.0
         cell.progress2.layoutIfNeeded()
         
@@ -439,14 +439,21 @@ class QsMyTableVC: UITableViewController {
         // Display text
         if let questionText = self.questionObjects[indexPath.row]["questionText"] as? String {
             cell.question.text = questionText
+            cell.question.numberOfLines = 0 // Dynamic number of lines
+            cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            cell.question.sizeToFit()
         }
         if let option1Text = self.questionObjects[indexPath.row]["option1Text"] as? String {
             
             cell.option1Label.text = option1Text
+            cell.option1Label.numberOfLines = 0 // Dynamic number of lines
+            cell.option1Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
         }
         if let option2Text = self.questionObjects[indexPath.row]["option2Text"] as? String {
             
             cell.option2Label.text = option2Text
+            cell.option2Label.numberOfLines = 0 // Dynamic number of lines
+            cell.option2Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
         }
         
         
@@ -459,10 +466,6 @@ class QsMyTableVC: UITableViewController {
         // Format option backgrounds
         cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
         cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
-        
-        // Set all text
-        cell.question.numberOfLines = 0 // Dynamic number of lines
-        cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
         
         cell.numberOfResponses.text = "\(totalResponses) \(resp)"
 //        cell.option1Label.text = option1String + "\(Int(option1Percent))%"

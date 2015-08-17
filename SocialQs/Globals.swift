@@ -33,7 +33,7 @@ let cornerRadius: CGFloat = 2.0
 // Colors to match SQ background images
 let mainColorBlue = UIColor(red: 58/256, green: 154/256, blue: 188/256, alpha: 1.0)
 //let mainColorOrange = UIColor(red: 239/256, green: 94/256, blue: 31/256, alpha: 1.0)
-//let mainColorPink = UIColor(red: 194/256, green: 55/256, blue: 109/256, alpha: 1.0)
+let mainColorPink = UIColor(red: 194/256, green: 55/256, blue: 109/256, alpha: 1.0)
 
 // Tab bar colors
 let activeTabColor = UIColor.whiteColor()

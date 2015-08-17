@@ -10,7 +10,10 @@ import UIKit
 
 class QsTheirTableVC: UITableViewController {
     
-    var questionObjects: [AnyObject] = []
+    var blockCheck = false // Value to decide if cell should be blocked (vote updating)
+    
+    //var questionObjects: [AnyObject] = []
+    var QJoinObjects: [AnyObject] = []
     
     var refresher: UIRefreshControl!
     var theirQsSpinner = UIActivityIndicatorView()
@@ -30,7 +33,7 @@ class QsTheirTableVC: UITableViewController {
         
         zoomPage = 0
         
-        if (questionObjects[sender.tag]["questionPhoto"] as? PFFile != nil) { zoomPage++ }
+        if (QJoinObjects[sender.tag]["question"]!!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
         
         setPhotosToZoom(sender)
     }
@@ -39,8 +42,8 @@ class QsTheirTableVC: UITableViewController {
         
         zoomPage = 0
         
-        if (questionObjects[sender.tag]["questionPhoto"] as? PFFile != nil) { zoomPage++ }
-        if (questionObjects[sender.tag]["option1Photo"]  as? PFFile != nil) { zoomPage++ }
+        if (QJoinObjects[sender.tag]["question"]!!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
+        if (QJoinObjects[sender.tag]["question"]!!["option1Photo"]  as? PFFile != nil) { zoomPage++ }
         
         setPhotosToZoom(sender)
     }
@@ -48,17 +51,17 @@ class QsTheirTableVC: UITableViewController {
     
     func setPhotosToZoom(sender: AnyObject) {
         
-        println(questionObjects[sender.tag])
+        //println(QJoinObjects[sender.tag]["question"]!!)
         
         blockUI(true, theirQsSpinner, theirQsBlurView, self)
         
-        if contains(isUploading, questionObjects[sender.tag].objectId!!) {
+        if contains(isUploading, QJoinObjects[sender.tag]["question"]!!.objectId!!) {
             
             displayAlert("Error", "These images are still uploading. Please try again shortly!", self)
             
         } else {
             
-            questionToView = questionObjects[sender.tag] as? PFObject //self.questions[sender.tag]
+            questionToView = QJoinObjects[sender.tag]["question"]!! as? PFObject //self.questions[sender.tag]
             
             blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
             
@@ -70,6 +73,14 @@ class QsTheirTableVC: UITableViewController {
     // Function to process the casting of votes
     func castVote(questionId: Int, optionId: Int) {
         
+        blockCheck = true
+
+        var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+        self.tableView.beginUpdates()
+        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+        self.tableView.endUpdates()
+        
+        
         // ********************************************************************************
         // CLOUD CODE
         // 1. Pull entry from QJoin Table
@@ -78,7 +89,7 @@ class QsTheirTableVC: UITableViewController {
         // 4. Increment vote1 or vote2
         //
         var getQJoin = PFQuery(className: "QJoin")
-        getQJoin.whereKey("question", equalTo: questionObjects[questionId] as! PFObject)
+        getQJoin.whereKey("question", equalTo: QJoinObjects[questionId]["question"]!! as! PFObject)
         getQJoin.includeKey("question")
         
         getQJoin.getFirstObjectInBackgroundWithBlock { (object, error) -> Void in
@@ -104,6 +115,12 @@ class QsTheirTableVC: UITableViewController {
                         println("Successful vote cast in QJoin!")
                     }
                 })
+                
+                
+                //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                self.tableView.beginUpdates()
+                self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                self.tableView.endUpdates()
             }
         }
         
@@ -180,8 +197,7 @@ class QsTheirTableVC: UITableViewController {
 //                println(error)
 //            }
 //        }
-
-        tableView.reloadData()
+        
         
         // ********************************************************************************
         
@@ -275,7 +291,7 @@ class QsTheirTableVC: UITableViewController {
 //                                                    self.tableView.beginUpdates()
 //                                                    self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
 //                                                    self.tableView.endUpdates()
-//                                                    
+//
 ////                                                    self.activityIndicator.stopAnimating()
 ////                                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
 //                                                    blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
@@ -605,29 +621,42 @@ class QsTheirTableVC: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return questionObjects.count
+        return QJoinObjects.count
     }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        //
-        // println(object["question"]!!["questionText"]! as! String)
-        //
-        
         var cell = QsTheirCell()
         cell = tableView.dequeueReusableCellWithIdentifier("theirCell2", forIndexPath: indexPath) as! QsTheirCell
         
-        
+        if blockCheck == true {
+            
+            var cellSpinner = UIActivityIndicatorView()
+            
+            // Setup and start spinner
+            cellSpinner.center = cell.center
+            cellSpinner.hidesWhenStopped = true
+            cellSpinner.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+            cell.addSubview(cellSpinner)
+            cellSpinner.startAnimating()
+            
+            // Deactivate buttons
+            cell.vote1Button.enabled = false
+            cell.vote2Button.enabled = false
+            
+            blockCheck = false
+            
+        }
         
         // Compute number of reponses and option stats
-        var totalResponses = (self.questionObjects[indexPath.row]["option1Stats"] as! Int) + (self.questionObjects[indexPath.row]["option2Stats"] as! Int)
+        var totalResponses = (self.QJoinObjects[indexPath.row]["question"]!!["option1Stats"] as! Int) + (QJoinObjects[indexPath.row]["question"]!!["option2Stats"] as! Int)
         var option1Percent = Float(0.0)
         var option2Percent = Float(0.0)
         
         if totalResponses != 0 {
-            option1Percent = Float((self.questionObjects[indexPath.row]["option1Stats"] as! Int))/Float(totalResponses)*100
-            option2Percent = Float((self.questionObjects[indexPath.row]["option2Stats"] as! Int))/Float(totalResponses)*100
+            option1Percent = Float((self.QJoinObjects[indexPath.row]["question"]!!["option1Stats"] as! Int))/Float(totalResponses)*100
+            option2Percent = Float((self.QJoinObjects[indexPath.row]["question"]!!["option2Stats"] as! Int))/Float(totalResponses)*100
         }
         
         // Build "repsonse" string to account for singular/plural
@@ -642,29 +671,35 @@ class QsTheirTableVC: UITableViewController {
             
             width1 = maxBarWidth
             width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-            cell.progress1.backgroundColor = winColor
+            cell.progress1.backgroundColor = mainColorPink//winColor
             cell.progress2.backgroundColor = loseColor
+//            cell.option1BackgroundImage.backgroundColor = winColor
+//            cell.option2BackgroundImage.backgroundColor = winColor
             
         } else if option2Percent > option1Percent {
             
             width2 = maxBarWidth
             width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
             cell.progress1.backgroundColor = loseColor
-            cell.progress2.backgroundColor = winColor
+            cell.progress2.backgroundColor = mainColorPink//winColor
+//            cell.option1BackgroundImage.backgroundColor = winColor
+//            cell.option2BackgroundImage.backgroundColor = winColor
             
         } else {
             
             width1 = maxBarWidth
             width2 = maxBarWidth
-            cell.progress1.backgroundColor = winColor
-            cell.progress2.backgroundColor = winColor
+            cell.progress1.backgroundColor = mainColorPink//winColor
+            cell.progress2.backgroundColor = mainColorPink//winColor
+//            cell.option1BackgroundImage.backgroundColor = winColor
+//            cell.option2BackgroundImage.backgroundColor = winColor
         }
         
         // Animate stats bars
-        cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - 8
+        cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
         cell.progress1.alpha = 0.0
         cell.progress1.layoutIfNeeded()
-        cell.progress2RightSpace.constant = cell.option1BackgroundImage.frame.size.width - 8
+        cell.progress2RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
         cell.progress2.alpha = 0.0
         cell.progress2.layoutIfNeeded()
         
@@ -687,7 +722,7 @@ class QsTheirTableVC: UITableViewController {
             }) { (isFinished) -> Void in }
         
         // Display question photo
-        if let questionPhotoThumb = self.questionObjects[indexPath.row]["questionPhotoThumb"] as? PFFile {
+        if let questionPhotoThumb = self.QJoinObjects[indexPath.row]["question"]!!["questionPhotoThumb"] as? PFFile {
             
             getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
                 
@@ -724,7 +759,7 @@ class QsTheirTableVC: UITableViewController {
         }
         
         // Display option1 photo
-        if let option1PhotoThumb = self.questionObjects[indexPath.row]["option1PhotoThumb"] as? PFFile {
+        if let option1PhotoThumb = self.QJoinObjects[indexPath.row]["question"]!!["option1PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
                 
@@ -761,7 +796,7 @@ class QsTheirTableVC: UITableViewController {
         }
         
         // Display option2 photo
-        if let option2PhotoThumb = self.questionObjects[indexPath.row]["option2PhotoThumb"] as? PFFile {
+        if let option2PhotoThumb = self.QJoinObjects[indexPath.row]["question"]!!["option2PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
                 
@@ -800,26 +835,26 @@ class QsTheirTableVC: UITableViewController {
         
         // **** NEEDS STATS APPENDED!
         // Display text
-        if let questionText = self.questionObjects[indexPath.row]["questionText"] as? String {
+        if let questionText = self.QJoinObjects[indexPath.row]["question"]!!["questionText"] as? String {
             
             cell.question.text = questionText
             cell.question.numberOfLines = 0 // Dynamic number of lines
             cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            cell.question.sizeToFit()
         }
-        if let option1Text = self.questionObjects[indexPath.row]["option1Text"] as? String {
+        if let option1Text = self.QJoinObjects[indexPath.row]["question"]!!["option1Text"] as? String {
             
             cell.option1Label.text = option1Text
             cell.option1Label.numberOfLines = 0 // Dynamic number of lines
             cell.option1Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
         }
-        if let option2Text = self.questionObjects[indexPath.row]["option2Text"] as? String {
+        if let option2Text = self.QJoinObjects[indexPath.row]["question"]!!["option2Text"] as? String {
             
             cell.option2Label.text = option2Text
             cell.option2Label.numberOfLines = 0 // Dynamic number of lines
             cell.option2Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
             
         }
-        
         
         // Make cells non-selectable
         cell.selectionStyle = UITableViewCellSelectionStyle.None
@@ -843,15 +878,17 @@ class QsTheirTableVC: UITableViewController {
         cell.option1Zoom.tag  = indexPath.row
         cell.option2Zoom.tag  = indexPath.row
         cell.questionZoom.tag = indexPath.row
+        cell.vote1Button.tag  = indexPath.row
+        cell.vote2Button.tag  = indexPath.row
         
         // Format cell backgrounds
         cell.backgroundColor = UIColor.clearColor()
         
         
         // Profile Pic
-        if (questionObjects[indexPath.row]["asker"]!!["profilePicture"] as? PFFile != nil) {
+        if (QJoinObjects[indexPath.row]["question"]!!["asker"]!!["profilePicture"] as? PFFile != nil) {
             
-            getImageFromPFFile(questionObjects[indexPath.row]["asker"]!!["profilePicture"]!! as! PFFile, { (image, error) -> () in
+            getImageFromPFFile(QJoinObjects[indexPath.row]["question"]!!["asker"]!!["profilePicture"]!! as! PFFile, { (image, error) -> () in
                 
                 if error == nil {
                     
@@ -859,16 +896,15 @@ class QsTheirTableVC: UITableViewController {
                 }
             })
         }
-        cell.profilePicture.layer.borderWidth = 1.0
-        cell.profilePicture.layer.borderColor = UIColor.whiteColor().CGColor
+        //cell.profilePicture.layer.borderWidth = 1.0
+        //cell.profilePicture.layer.borderColor = UIColor.whiteColor().CGColor
         cell.profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
         cell.profilePicture.layer.masksToBounds = false
         //cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
         cell.profilePicture.clipsToBounds = true
         
         // Set askername
-        cell.username.text = questionObjects[indexPath.row]["asker"]!!["username"] as? String
-        
+        cell.username.text = QJoinObjects[indexPath.row]["question"]!!["asker"]!!["username"] as? String
         
         // Format option backgrounds
         cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
@@ -880,6 +916,13 @@ class QsTheirTableVC: UITableViewController {
 
         cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
+        
+        // Disable appropriate vote buttons
+        if (QJoinObjects[indexPath.row]["vote"] != nil) {
+            
+            cell.vote1Button.enabled = false
+            cell.vote2Button.enabled = false
+        }
         
         return cell
     }
@@ -959,7 +1002,7 @@ class QsTheirTableVC: UITableViewController {
     // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
-        questionObjects.removeAll(keepCapacity: true)
+        QJoinObjects.removeAll(keepCapacity: true)
         
         //
         //
@@ -982,16 +1025,20 @@ class QsTheirTableVC: UITableViewController {
             
             if error == nil {
                 
+                
+                self.QJoinObjects = objects!
+                
+                
                 if let temp = objects {
                     
-                    for object in temp {
-                        
-                        self.questionObjects.append(object["question"]!!)
-                    }
+//                    for object in temp {
+//                        
+//                        self.questionObjects.append(object["question"]!!)
+//                    }
                     
-                    println(self.questionObjects.count)
+//                    println(self.questionObjects.count)
                     
-                    println("questionObjects stored")
+                    println("qJoinObjects stored")
                     
 //                    for object in self.questionObjects {
 //                        

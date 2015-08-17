@@ -103,6 +103,10 @@ class WelcomeViewController: UIViewController {
             // No need to store data, pull photo etc... because user is
             // already logged in and data exists in proper locations
             performSegueWithIdentifier("alreadySignedIn", sender: self)
+            
+            getUserPhoto({ (isFinished) -> Void in })
+            
+            storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
         }
     }
     

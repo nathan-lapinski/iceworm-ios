@@ -202,9 +202,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         NSUserDefaults.standardUserDefaults().setObject(myFriends, forKey: myFriendsStorageKey)
         
-        println(">>>>>>>>>>>>>>>>>>")
-        println(isGroupieName)
-        println(">>>>>>>>>>>>>>>>>>")
+//        println(">>>>>>>>>>>>>>>>>>")
+//        println(isGroupieName)
+//        println(groupiesDictionary)
+//        println(">>>>>>>>>>>>>>>>>>")
         
         /////////////////////////////////////////////
         // Sort groupies

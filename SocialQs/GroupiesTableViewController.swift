@@ -22,6 +22,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     var viewWillAppearCount = 0
     
+    var textView = UITextView()
+    
     let tableFontSize = CGFloat(16)
     var keyboardSize = CGFloat()
     let section1: String = ""
@@ -46,26 +48,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     @IBOutlet var doneButton: UIBarButtonItem!
     
     @IBAction func addGroupButtonAction(sender: AnyObject) {
-        
     }
     
     @IBAction func clearButtonAction(sender: AnyObject) {
-        
-        isGroupieName.removeAll(keepCapacity: true)
-        
-        for var i = 0; i < friendsDictionary.count; i++ {
-            friendsDictionary[i]["isSelected"] = false
-            friendsDictionaryFiltered[i]["isSelected"] = false
-        }
-        
-        // Update separately for smooth animation
-        tableView.beginUpdates()
-        tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: UITableViewRowAnimation.Automatic)
-        tableView.endUpdates()
-        
-        tableView.beginUpdates()
-        tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
-        tableView.endUpdates()
     }
     
     @IBAction func optionsPressed(sender: AnyObject) {
@@ -305,6 +290,31 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     
     
+    func createGroup() {
+        
+    }
+    
+    
+    func clearSelectedGroupies() {
+        
+        isGroupieName.removeAll(keepCapacity: true)
+        
+        for var i = 0; i < friendsDictionary.count; i++ {
+            friendsDictionary[i]["isSelected"] = false
+            friendsDictionaryFiltered[i]["isSelected"] = false
+        }
+        
+        // Update separately for smooth animation
+        tableView.beginUpdates()
+        tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: UITableViewRowAnimation.Automatic)
+        tableView.endUpdates()
+        
+        tableView.beginUpdates()
+        tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
+        tableView.endUpdates()
+    }
+    
+    
     func loadUsers(searchName: String) {
         
         
@@ -452,8 +462,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         // Fill object to populate table
         self.objectsArray = [
             Objects(sectionName: self.section1, sectionObjects: [""]),
-            Objects(sectionName: self.section2, sectionObjects: sectionTwoItems),
-            Objects(sectionName: self.section3, sectionObjects: sectionThreeItems)
+            Objects(sectionName: self.section2, sectionObjects: sectionTwoItems)
+            ,Objects(sectionName: self.section3, sectionObjects: sectionThreeItems)
         ]
         
         self.tableView.reloadData()
@@ -499,28 +509,31 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             cell = tableView.dequeueReusableCellWithIdentifier("groupiesHeaderCell", forIndexPath: indexPath) as! GroupiesCell
             
-            // Configure the cell...
-            cell.selectionStyle = UITableViewCellSelectionStyle.None
-            
-            cell.groupiesLabel.textColor = UIColor.darkTextColor() //UIColor.whiteColor()
-            cell.groupiesLabel.backgroundColor = UIColor.clearColor()
-            
-            if isGroupieName.count > 0 {
-                // Build display string
-                selectedUsers = ", ".join(isGroupieName)
-                cell.groupiesLabel.text = selectedUsers
-                cell.groupiesLabel.textColor = UIColor.darkTextColor()
-                cell.clearButton.hidden = false
-                cell.addGroupButton.hidden = false
-            } else {
-                cell.groupiesLabel.text = ""//"Selected Groupies"
-                cell.groupiesLabel.textColor = UIColor.grayColor()
-                cell.clearButton.hidden = true
-                cell.addGroupButton.hidden = true
-            }
-            
-            cell.backgroundColor = UIColor.clearColor()
-            cell.groupiesLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
+//            // Configure the cell...
+//            cell.selectionStyle = UITableViewCellSelectionStyle.None
+//            
+//            cell.groupiesLabel.textColor = UIColor.darkTextColor() //UIColor.whiteColor()
+//            cell.groupiesLabel.backgroundColor = UIColor.clearColor()
+//            
+//            if isGroupieName.count > 0 {
+//                // Build display string
+//                selectedUsers = ", ".join(isGroupieName)
+//                cell.groupiesLabel.text = selectedUsers
+//                cell.groupiesLabel.textColor = UIColor.darkTextColor()
+//                cell.clearButton.hidden = false
+//                cell.addGroupButton.hidden = false
+//                cell.addGroupButton.layer.borderWidth = 1
+//                cell.addGroupButton.layer.borderColor = mainColorBlue.CGColor!
+//                cell.addGroupButton.layer.cornerRadius = CGFloat(4)
+//            } else {
+//                cell.groupiesLabel.text = ""//"Selected Groupies"
+//                cell.groupiesLabel.textColor = UIColor.grayColor()
+//                cell.clearButton.hidden = true
+//                cell.addGroupButton.hidden = true
+//            }
+//            
+//            cell.backgroundColor = UIColor.clearColor()
+//            cell.groupiesLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
             
         } else if indexPath.section == 1 {
             
@@ -588,13 +601,21 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             // Tag and format invite button
             cell.inviteButton.tag = indexPath.row
-            cell.inviteButton.layer.cornerRadius = CGFloat(4)
             cell.inviteButton.backgroundColor = UIColor.clearColor()
-            cell.inviteButton.layer.borderWidth = 1
-            cell.inviteButton.layer.borderColor = mainColorBlue.CGColor!
-            cell.inviteButton.titleLabel?.textColor = mainColorBlue
-            if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithoutApp" {
+            //cell.inviteButton.layer.cornerRadius = CGFloat(4)
+            //cell.inviteButton.layer.borderWidth = 1
+            //cell.inviteButton.layer.borderColor = mainColorBlue.CGColor!
+            //cell.inviteButton.titleLabel?.textColor = mainColorBlue
+//            if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithoutApp" {
+//                cell.inviteButton.hidden = false
+//            } else {
+//                
+//                cell.inviteButton.hidden = true
+//            }
+            if friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool && friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithoutApp" {
+                
                 cell.inviteButton.hidden = false
+                
             } else {
                 
                 cell.inviteButton.hidden = true
@@ -642,8 +663,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
         } else if indexPath.section == 1 {
             
-            println(friendsDictionary[indexPath.row]["name"])
-            println(friendsDictionary[indexPath.row]["id"])
+//            println(friendsDictionary[indexPath.row]["name"])
+//            println(friendsDictionary[indexPath.row]["id"])
             
             friendsDictionary[indexPath.row]["isSelected"] = !(friendsDictionary[indexPath.row]["isSelected"] as! Bool)
             friendsDictionaryFiltered[indexPath.row]["isSelected"] = !(friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool)
@@ -672,12 +693,41 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 }
             }
             
-            // refresh applicable rows (do not put this in section 2 - will crash!)
+            
+            
+            
+            // Collapse header if no groupies selectionized
             tableView.beginUpdates()
-            tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
-            tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
+            if isGroupieName.count < 2 {
+                
+                tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: UITableViewRowAnimation.None)
+            }
+            tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
             tableView.endUpdates()
             
+            
+            
+            
+            
+            
+            
+            // Fill in selected users - must be after section header refreshing (above)
+            textView.text = ", ".join(isGroupieName)
+            
+            if isGroupieName.count > 0 {
+                let text = textView.text
+                let textRange = text.startIndex..<text.endIndex
+                let attributedString = NSMutableAttributedString(string: text)
+                var range: NSRange? = nil
+                
+                text.enumerateSubstringsInRange(textRange, options: NSStringEnumerationOptions.ByWords, { (substring, substringRange, enclosingRange, stop) -> () in
+                    let start = distance(text.startIndex, substringRange.startIndex)
+                    let length = distance(substringRange.startIndex, substringRange.endIndex)
+                    range = NSMakeRange(start, length)
+                })
+                textView.scrollRangeToVisible(range!)
+            }
+                
         } else { // section 2
             
             println(indexPath.row)
@@ -715,11 +765,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
         if indexPath.section == 0 {
-            if isGroupieName.count < 1 {
-                return 0 // no users in isSelected display string
-            } else {
-                return 44 // users present in isSelected display string
-            }
+//            if isGroupieName.count < 1 {
+//                return 0 // no users in isSelected display string
+//            } else {
+//                return 44 // users present in isSelected display string
+//            }
+            return 0
         } else {
             return 44
         }
@@ -729,26 +780,58 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     // Format section header
     override func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         
-        if section != 0 {
+        if section == 1 {
             
             let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
+            header.contentView.backgroundColor = UIColor.lightGrayColor()
             
-            header.contentView.backgroundColor = UIColor.whiteColor() // mainColorBlue
-            header.contentView.alpha = 0.6
+            textView = UITextView(frame: CGRectMake(0, -5, self.view.frame.size.width - 92, 60))
+            //textView.text = ", ".join(isGroupieName)
+            textView.backgroundColor = UIColor.clearColor() // mainColorBlue
+            textView.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
+            textView.textAlignment = NSTextAlignment.Left
+            textView.textColor = UIColor.darkTextColor()
             
-            header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-            header.textLabel.textAlignment = NSTextAlignment.Right
-            header.textLabel.textColor = UIColor.darkTextColor()
-            header.textLabel.text = objectsArray[section].sectionName
+            var clearButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 28, 20, 20, 20))
+            clearButton.setImage(UIImage(named: "clear.png"), forState: UIControlState.Normal)
+            clearButton.addTarget(self, action: "clearSelectedGroupies", forControlEvents: .TouchUpInside)
+            
+            var groupButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 88, 15, 52, 30))
+            groupButton.layer.borderWidth = 1
+            groupButton.layer.borderColor = mainColorBlue.CGColor
+            groupButton.layer.cornerRadius = 4
+            groupButton.setTitle("+Group", forState: UIControlState.Normal)
+            groupButton.setTitleColor(mainColorBlue, forState: UIControlState.Normal)
+            groupButton.titleLabel?.font = UIFont(name: "HelveticaNeue", size: CGFloat(12))!
+            groupButton.addTarget(self, action: "createGroup", forControlEvents: .TouchUpInside)
+            
+            // Add the shits to the view
+            header.addSubview(textView)
+            header.addSubview(clearButton)
+            header.addSubview(groupButton)
         }
     }
     
     
+    
+    
     // Set section header heights
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        
         if section != 0 {
             
-            return CGFloat(18)
+            var ret: CGFloat = 0
+                
+                if isGroupieName.count < 1 {
+                    
+                    ret = CGFloat(0)
+                    
+                } else {
+                    
+                    ret = CGFloat(60)
+                }
+            
+            return ret
             
         } else {
             
