@@ -38,6 +38,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     @IBOutlet var askTable: UITableView!
     
     
+    
     @IBAction func test(sender: AnyObject) {
         var inviteDialog:FBSDKAppInviteDialog = FBSDKAppInviteDialog()
         if(inviteDialog.canShow()){
@@ -62,6 +63,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     
     
+    
     @IBAction func groupiesButtonAction(sender: AnyObject) { }
     @IBAction func privacyButtonAction(sender: AnyObject) { }
     
@@ -76,6 +78,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         qPhoto = false
         oPhoto = false
         askTable.beginUpdates()
+        askTable.reloadData()
         askTable.endUpdates()
     }
     
@@ -158,12 +161,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         super.viewDidLoad()
         
         //// IF IS LINKED WITH FACEBOOK ------------------------------------------------
-        // Download FB data in background
-        // - backgrounding built into FBSDK methods
-        downloadFacebookFriends({ (isFinished) -> Void in
-            
-            if isFinished { println("FB Download completion handler executed") }
-        })
+        // MOVED TO LOGIN/SIGNUP/WELCOME
+//        // Download FB data in background - backgrounding built into FBSDK methods (?)
+//        downloadFacebookFriends({ (isFinished) -> Void in
+//            
+//            if isFinished { println("FB Download completion handler executed") }
+//        })
         //// IF IS LINKED WITH FACEBOOK ------------------------------------------------
         
         picker.delegate = self

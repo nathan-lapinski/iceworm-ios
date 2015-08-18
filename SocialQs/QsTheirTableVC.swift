@@ -650,6 +650,8 @@ class QsTheirTableVC: UITableViewController {
         }
         
         // Compute number of reponses and option stats
+        println("indexPath: \(indexPath)")
+        println("number of objects: \(self.QJoinObjects.count)")
         var totalResponses = (self.QJoinObjects[indexPath.row]["question"]!!["option1Stats"] as! Int) + (QJoinObjects[indexPath.row]["question"]!!["option2Stats"] as! Int)
         var option1Percent = Float(0.0)
         var option2Percent = Float(0.0)
@@ -696,30 +698,40 @@ class QsTheirTableVC: UITableViewController {
         }
         
         // Animate stats bars
-        cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
-        cell.progress1.alpha = 0.0
-        cell.progress1.layoutIfNeeded()
-        cell.progress2RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
-        cell.progress2.alpha = 0.0
-        cell.progress2.layoutIfNeeded()
-        
-        UIView.animateWithDuration(0.75, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+        if totalResponses == 0 {
             
-            cell.progress1.alpha = 1.0
+            cell.progress1.hidden = true
+            cell.progress2.hidden = true
+            
+        } else {
+            
+            cell.progress1.hidden = false
+            cell.progress2.hidden = false
+            cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
+            cell.progress1.alpha = 0.0
             cell.progress1.layoutIfNeeded()
-            cell.progress2.alpha = 1.0
+            cell.progress2RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
+            cell.progress2.alpha = 0.0
             cell.progress2.layoutIfNeeded()
             
-            }) { (isFinished) -> Void in }
-        
-        UIView.animateWithDuration(1.5, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+            UIView.animateWithDuration(0.75, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                cell.progress1.alpha = 1.0
+                cell.progress1.layoutIfNeeded()
+                cell.progress2.alpha = 1.0
+                cell.progress2.layoutIfNeeded()
+                
+                }) { (isFinished) -> Void in }
             
-            cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - width1 + 8
-            cell.progress1.layoutIfNeeded()
-            cell.progress2RightSpace.constant = cell.option2BackgroundImage.frame.size.width - width2 + 8
-            cell.progress2.layoutIfNeeded()
-            
-            }) { (isFinished) -> Void in }
+            UIView.animateWithDuration(1.5, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - width1 + 8
+                cell.progress1.layoutIfNeeded()
+                cell.progress2RightSpace.constant = cell.option2BackgroundImage.frame.size.width - width2 + 8
+                cell.progress2.layoutIfNeeded()
+                
+                }) { (isFinished) -> Void in }
+        }
         
         // Display question photo
         if let questionPhotoThumb = self.QJoinObjects[indexPath.row]["question"]!!["questionPhotoThumb"] as? PFFile {
@@ -844,16 +856,23 @@ class QsTheirTableVC: UITableViewController {
         }
         if let option1Text = self.QJoinObjects[indexPath.row]["question"]!!["option1Text"] as? String {
             
-            cell.option1Label.text = option1Text
+            cell.option1Label.text = option1Text + "  \(Int(option1Percent))%"
             cell.option1Label.numberOfLines = 0 // Dynamic number of lines
             cell.option1Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            
+        } else {
+            
+            cell.option1Label.text = "\(Int(option1Percent))%"
         }
         if let option2Text = self.QJoinObjects[indexPath.row]["question"]!!["option2Text"] as? String {
             
-            cell.option2Label.text = option2Text
+            cell.option2Label.text = option2Text  + "  \(100 - Int(option1Percent))%"
             cell.option2Label.numberOfLines = 0 // Dynamic number of lines
             cell.option2Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
             
+        } else {
+            
+            cell.option2Label.text = "\(100 - Int(option1Percent))%"
         }
         
         // Make cells non-selectable
@@ -914,14 +933,32 @@ class QsTheirTableVC: UITableViewController {
         cell.vote1Button.backgroundColor = UIColor.clearColor()
         cell.vote2Button.backgroundColor = UIColor.clearColor()
 
-        cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
-        cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.6))
         
-        // Disable appropriate vote buttons
-        if (QJoinObjects[indexPath.row]["vote"] != nil) {
+        // Disable appropriate vote buttons and vote checkmarks
+        if let myVote = QJoinObjects[indexPath.row]["vote"] as? Int {
             
             cell.vote1Button.enabled = false
             cell.vote2Button.enabled = false
+            
+            // Set myVote selector
+            if myVote == 1 {
+                
+                cell.myVote1.hidden = false
+                cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
+                cell.myVote2.hidden = true
+            } else {
+                
+                cell.myVote2.hidden = false
+                cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
+                cell.myVote1.hidden = true
+            }
+            
+        } else {
+            
+            cell.vote1Button.enabled = true
+            cell.vote2Button.enabled = true
+            cell.myVote1.hidden = true
+            cell.myVote2.hidden = true
         }
         
         return cell

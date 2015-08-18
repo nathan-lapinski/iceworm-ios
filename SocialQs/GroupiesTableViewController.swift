@@ -15,10 +15,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         var sectionObjects: [String]!
     }
     
-    struct friendStruct {
-        var type: String
-        var id: String
-    }
+//    struct friendStruct {
+//        var type: String
+//        var id: String
+//    }
     
     var viewWillAppearCount = 0
     
@@ -89,11 +89,53 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: { (action) -> Void in }))
             
             alert.addAction(UIAlertAction(title: "Link With Facebook", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                self.performSegueWithIdentifier("toSettingsFromGroupies", sender: self)
+                
+                linkUserWithFacebook({ (success, message) -> Void in
+                    
+                    if success == true {
+                        
+                        println(message)
+                        
+                        downloadFacebookFriends({ (isFinished) -> Void in
+                            
+                            //displayAlert("Downloading your friends!", "The groupies page will reload when this activity is complete.", self)
+                            
+                            println("downloading friends")
+                            
+                            if isFinished {
+                                
+                                println("finished downloading friends")
+                                
+                                self.viewDidLoad()
+                                
+                            } else {
+                                
+                                // ********************************************************************
+                                //
+                                //
+                                // HOW TO HANDLE? Try again? Unlink and have them manually retry?
+                                //
+                                //
+                                // ********************************************************************
+                            }
+                        })
+                        
+                    } else {
+                        
+                        displayAlert("Error", "Please verify that the Facebook user currently logged in on this device is not associated with another SocialQs account and try again later", self)
+                    }
+                })
             }))
             
             presentViewController(alert, animated: true, completion: nil)
+            
+        } else {
+            
+            println("current user:")
+            println(PFUser.currentUser()!)
         }
+        
+        
         
         
         // get myFriends and add to dictionary
@@ -607,7 +649,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             //cell.inviteButton.layer.borderColor = mainColorBlue.CGColor!
             //cell.inviteButton.titleLabel?.textColor = mainColorBlue
 //            if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithoutApp" {
-//                cell.inviteButton.hidden = false
+//                cell.inviteButton.hidden = false  
 //            } else {
 //                
 //                cell.inviteButton.hidden = true
@@ -655,6 +697,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
+        println(friendsDictionaryFiltered[indexPath.row])
+        
         var cell: UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
         
         cell.resignFirstResponder()
@@ -662,9 +706,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         if indexPath.section == 0 {
             
         } else if indexPath.section == 1 {
-            
-//            println(friendsDictionary[indexPath.row]["name"])
-//            println(friendsDictionary[indexPath.row]["id"])
             
             friendsDictionary[indexPath.row]["isSelected"] = !(friendsDictionary[indexPath.row]["isSelected"] as! Bool)
             friendsDictionaryFiltered[indexPath.row]["isSelected"] = !(friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool)
@@ -857,13 +898,15 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             popoverViewController.popoverPresentationController!.delegate = self
             popoverViewController.popoverPresentationController?.backgroundColor = UIColor.darkGrayColor()
             
-            if groupiesGroups.count < 8 {
+            // fix view length if number of items below a threshold...
+            let numberOfOptions = 1 // "find user" (+group to be removed)
+            if (groupiesGroups.count + numberOfOptions) < 10 {
                 
-            popoverViewController.preferredContentSize.height = CGFloat((groupiesGroups.count + 1) * 44)
+            popoverViewController.preferredContentSize.height = CGFloat((groupiesGroups.count + numberOfOptions) * 44)
                 
-            } else {
+            } else { // ... else make it scroll
                 
-                popoverViewController.preferredContentSize.height = CGFloat(8 * 44)
+                popoverViewController.preferredContentSize.height = CGFloat(9.5 * 44)
             }
         }
     }

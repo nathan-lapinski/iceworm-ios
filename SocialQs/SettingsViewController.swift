@@ -31,68 +31,31 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @IBAction func linkWithFacebookAction(sender: AnyObject) {
         
-        if !PFFacebookUtils.isLinkedWithUser(user) {
+        blockUI(true, self.settingsSpinner, self.settingsBlurView, self)
+        
+        linkUserWithFacebook({ (success, message) -> Void in
             
-            blockUI(true, settingsSpinner, settingsBlurView, self)
-            
-            let permissions = ["public_profile", "email", "user_friends"]
-            
-            PFFacebookUtils.linkUserInBackground(user, withReadPermissions: permissions, block: { (succeeded, error) -> Void in
+            if success == true {
                 
-                if succeeded {
-                    
-                    println("User is linked with Facebook")
-                    
-                    getUserPhoto() { (isFinished) -> Void in
-                        
-                        if isFinished {
-                            
-                            blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
-                            
-                            self.updateImageAndButton(true)
-                            
-                        } else {
-                            
-                            println("Could not gather FB info - settingsViewController")
-                            
-                            blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
-                        }
-                    }
-                    
-                } else {
-                    
-                    println("Facebook Link error")
-                    println(error)
-                    
-                    self.updateImageAndButton(false)
-                    
-                    displayAlert("Error", "Please verify that the Facebook user currently logged in on this device is not associated with another SocialQs account and try again later", self)
-                    
-                    blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
-                }
-            })
-            
-        } else { // UNLINK FACEBOOK
-            
-            //
-            //
-            // TEST IF REGULAR PARSE ACCOUNT IS SETUP - REQUIRE SETUP IF NO
-            //
-            //
-            
-            PFFacebookUtils.unlinkUserInBackground(user, block: { (succeeded, error) -> Void in
+                blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
                 
-                if error == nil {
-                    
-                    println("User is no longer associated with their Facebook account.")
-                    self.updateImageAndButton(false)
-                    
-                    let title = "SocialQs has unlinked from Facebook!"
-                    let message = "Please remember that Facebook linking allows you to easily find and Q your friends!"
-                    displayAlert(title, message, self)
-                }
-            })
-        }
+                self.updateImageAndButton(true)
+                
+            } else {
+                
+                blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
+                
+                self.updateImageAndButton(false)
+                
+                displayAlert("Error", "Please verify that the Facebook user currently logged in on this device is not associated with another SocialQs account and try again later", self)
+            }
+        })
+        //                // UNLINK
+        //                self.updateImageAndButton(false)
+        //
+        //                let title = "SocialQs has unlinked from Facebook!"
+        //                let message = "Please remember that Facebook linking allows you to easily find and Q your friends!"
+        //                displayAlert(title, message, self)
     }
     
     
@@ -133,6 +96,8 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        PFFacebookUtils.unlinkUserInBackground(PFUser.currentUser()!)
         
         picker.delegate = self
         

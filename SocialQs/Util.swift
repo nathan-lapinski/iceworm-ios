@@ -438,6 +438,56 @@ func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
 }
 
 
+// Function to link/unlink users with facebook (settings and groupies alertView)
+func linkUserWithFacebook(completion: (success: Bool, message: String?) -> Void) {
+    
+    if !PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
+        
+        let permissions = ["public_profile", "email", "user_friends"]
+        
+        PFFacebookUtils.linkUserInBackground(PFUser.currentUser()!, withReadPermissions: permissions, block: { (succeeded, error) -> Void in
+            
+            if succeeded {
+                
+                getUserPhoto() { (isFinished) -> Void in
+                    
+                    if isFinished {
+                        
+                        completion(success: true, message: "User is linked with Facebook - photo downloaded")
+                        
+                    } else {
+                        
+                        completion(success: true, message: "User is linked with Facebook - photo NOT downloaded")
+                    }
+                }
+                
+            } else {
+                
+                println(error!)
+                
+                completion(success: false, message: "User could not be linked with ")
+            }
+        })
+    }
+//    else { // UNLINK FACEBOOK
+//        
+//        //
+//        //
+//        // TEST IF REGULAR PARSE ACCOUNT IS SETUP - REQUIRE SETUP IF NO
+//        //
+//        //
+//        
+//        PFFacebookUtils.unlinkUserInBackground(PFUser.currentUser()!, block: { (succeeded, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                println("User is no longer associated with their Facebook account.")
+//            }
+//        })
+//    }
+}
+
+
 // Sets globals, changes to custom NSUserDefault keys and fills that data in
 // - Creates installation if user isNew (notifications)
 func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> Void) {
@@ -492,42 +542,44 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
             
             NSUserDefaults.standardUserDefaults().setObject(name, forKey: nameStorageKey)
         }
+        
+        println("Returning user data has been stored")
+        completion(true)
     
-        // Store votedOnIds locally
-        var userQsQuery = PFQuery(className: "UserQs")
-        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
-            
-            if error != nil {
-                
-                println("Error loading UserQs/votedOnId")
-                println(error)
-                
-            } else {
-                
-                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
-                    
-                    votedOn1Ids = votedOn1Id
-                    
-                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
-                }
-                
-                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
-                    
-                    votedOn2Ids = votedOn2Id
-                    
-                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-                }
-                
-                // Recall myFriends if applicable
-                if NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey) != nil {
-                    
-                    myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
-                }
-                
-                println("Returning user data has been stored")
-                completion(true)
-            }
-        })
+        
+        
+//        // Store votedOnIds locally
+//        var userQsQuery = PFQuery(className: "UserQs")
+//        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
+//            
+//            if error != nil {
+//                
+//                println("Error loading UserQs/votedOnId")
+//                println(error)
+//                
+//            } else {
+//                
+//                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
+//                    
+//                    votedOn1Ids = votedOn1Id
+//                    
+//                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
+//                }
+//                
+//                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
+//                    
+//                    votedOn2Ids = votedOn2Id
+//                    
+//                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
+//                }
+//                
+//                // Recall myFriends if applicable
+//                if NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey) != nil {
+//                    
+//                    myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
+//                }
+//            }
+//        })
     }
 }
 

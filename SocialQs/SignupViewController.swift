@@ -33,6 +33,12 @@ class SignupViewController: UIViewController {
                 
                 blockUI(true, self.signupSpinner, self.signupBlurView, self)
                 
+                // Download FB data in background - backgrounding built into FBSDK methods (?)
+                downloadFacebookFriends({ (isFinished) -> Void in
+                    
+                    if isFinished { println("FB Download completion handler executed") }
+                })
+                
                 if user.isNew {
                     
                     println("User signed up and logged in through Facebook!")

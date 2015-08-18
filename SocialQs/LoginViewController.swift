@@ -41,6 +41,12 @@ class LoginViewController: UIViewController {
             
             if let user = user {
                 
+                // Download FB data in background - backgrounding built into FBSDK methods (?)
+                downloadFacebookFriends({ (isFinished) -> Void in
+                    
+                    if isFinished { println("FB Download completion handler executed") }
+                })
+                
                 if user.isNew {
                     
                     println("User signed up and logged in through Facebook!")
@@ -125,6 +131,15 @@ class LoginViewController: UIViewController {
             PFUser.logInWithUsernameInBackground(usernameTextField.text.lowercaseString, password: passwordTextField.text, block: { (user, error) -> Void in
                 
                 if user != nil { // standard login successful
+                    
+                    if PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
+                        
+                        // Download FB data in background - backgrounding built into FBSDK methods (?)
+                        downloadFacebookFriends({ (isFinished) -> Void in
+                            
+                            if isFinished { println("FB Download completion handler executed") }
+                        })
+                    }
                     
                     getUserPhoto({ (isFinished) -> Void in })
                     
