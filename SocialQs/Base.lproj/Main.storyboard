@@ -343,7 +343,7 @@
         <!--Groupies Settings Table View Controller-->
         <scene sceneID="wie-ud-EXN">
             <objects>
-                <tableViewController id="8eo-mR-SkD" customClass="GroupiesSettingsTableViewController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="GroupiesSettings" useStoryboardIdentifierAsRestorationIdentifier="YES" id="8eo-mR-SkD" customClass="GroupiesSettingsTableViewController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="PMf-JT-eG3">
                         <rect key="frame" x="0.0" y="0.0" width="200" height="300"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

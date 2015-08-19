@@ -8,7 +8,15 @@
 
 import UIKit
 
+protocol GroupiesSettingsTableViewControllerDelegate {
+    
+    func saveText(var selectedUser: AnyObject)
+}
+
 class GroupiesSettingsTableViewController: UITableViewController {
+    
+    var delegate: GroupiesSettingsTableViewControllerDelegate?
+    var strSaveText : NSString!
     
     struct Objects {
         var sectionName: String!
@@ -21,6 +29,8 @@ class GroupiesSettingsTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        println("Popover recieved: \(strSaveText)")
         
         tableView.backgroundColor = UIColor.groupTableViewBackgroundColor()
     }
@@ -134,7 +144,9 @@ class GroupiesSettingsTableViewController: UITableViewController {
         
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
         
-        alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+        alert.addAction(UIAlertAction(title: "Add User", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+            
+            self.resignFirstResponder()
             
             let searchString = self.friendEntry.text
             
@@ -146,10 +158,24 @@ class GroupiesSettingsTableViewController: UITableViewController {
                         
                         displayAlert("Sorry!", "No users containing \(searchString) were found. Please verify spelling and try again!", self)
                         
-//                    } else if objects!.count == 1 {
-//                        
-//                        // ONE USER FOUND, add it
-//                        
+                    } else if objects!.count == 1 {
+                        
+                        // ONE USER FOUND, add it
+                        myFriends.append(searchString)
+                        isGroupieName.append(searchString)
+                        
+                        // Post notification to tell calling controller that the popover is being dismissed
+                        // (or simply that the underlying should be reloaded)
+                        NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
+                        
+                        if self.delegate != nil {
+                            
+                            // Return PFUser
+                            self.delegate?.saveText(objects![0])
+                        }
+                        
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                        
                     } else {
                         
                         self.selectUserFromOptionsAlert(objects!)
@@ -187,28 +213,37 @@ class GroupiesSettingsTableViewController: UITableViewController {
         for var i = 0; i < finalCount; i++ {
         //for var i = 0; i < 5; i++ {
             
-            let username = objects[i]["username"]! as! String
+            let userObject: AnyObject! = objects[i]
             
-            if let name = objects[i]["name"]! as? String {
+            let usernameLocal = objects[i]["userObject"]!!["username"]! as! String
+            
+            if let nameLocal = objects[i]["userObject"]!!["name"]! as? String {
                 
-                displayString = "@\(username) (\(name))"
+                displayString = "@\(usernameLocal) (\(nameLocal))"
                 
             } else {
                 
-                displayString = "@\(username)"
+                displayString = "@\(usernameLocal)"
             }
             
             alert.addAction(UIAlertAction(title: displayString, style: .Default, handler: { (UIAlertAction) in
                 
                 println("\(displayString) selected")
                 
-                myFriends.append(username)
+                myFriends.append(usernameLocal)
+                isGroupieName.append(usernameLocal)
                 
                 println(myFriends)
                 
                 // Post notification to tell calling controller that the popover is being dismissed
                 // (or simply that the underlying should be reloaded)
                 NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
+                
+                if self.delegate != nil {
+                    
+                    // Return PFUser
+                    self.delegate?.saveText(userObject)
+                }
                 
                 self.dismissViewControllerAnimated(true, completion: nil)
             }))

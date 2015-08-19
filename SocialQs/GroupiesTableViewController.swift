@@ -8,17 +8,12 @@
 
 import UIKit
 
-class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, UIPopoverPresentationControllerDelegate  {
+class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, UIPopoverPresentationControllerDelegate, GroupiesSettingsTableViewControllerDelegate {
     
     struct Objects {
         var sectionName: String!
         var sectionObjects: [String]!
     }
-    
-//    struct friendStruct {
-//        var type: String
-//        var id: String
-//    }
     
     var viewWillAppearCount = 0
     
@@ -37,12 +32,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     var fbAndSQNames = [String]()
     var sqOnlyNames = [String]()
     var selectedUsers = String() // matches isGroupieName but is not sorted
-
-    // Moved to globals
-//    var friendsDictionary = [Dictionary<String, AnyObject>]()
-//    var friendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
-//    var nonFriendsDictionary = [Dictionary<String, AnyObject>]()
-//    var nonFriendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
     
     @IBOutlet var searchBar: UISearchBar!
     @IBOutlet var doneButton: UIBarButtonItem!
@@ -54,11 +43,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     
     @IBAction func optionsPressed(sender: AnyObject) {
-        
     }
     
     @IBAction func inviteButtonAction(sender: AnyObject) {
-        
     }
     
     @IBAction func dismissPressed(sender: AnyObject) {
@@ -78,6 +65,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()// Do any additional setup after loading the view.
@@ -133,13 +121,50 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
         } else {
             
-            println("current user:")
-            println(PFUser.currentUser()!)
         }
         
         
-        
         // get myFriends and add to dictionary
+        addFriends(nil)
+        
+        
+        searchBar.delegate = self
+        searchBar.searchBarStyle = UISearchBarStyle.Default
+        searchBar.showsCancelButton = true
+        
+        // Title table controller
+        self.title = "Select Groupies"
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
+        
+        // Format Done button
+        navigationItem.leftBarButtonItem = doneButton
+        navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue", size: tableFontSize)!], forState: UIControlState.Normal)
+        
+        // Set table background image
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg4.png"))
+        self.tableView.backgroundView?.alpha = 0.4
+        self.tableView.backgroundColor = UIColor.whiteColor()
+        
+        // Set separator color
+        tableView.separatorColor = UIColor.lightGrayColor()
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
+        
+        // Initialize allSelected var the first time the controller is presented
+        //allSelected = false
+        
+        // Keyboard open/closed notifications
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"keyboardWillAppear:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"keyboardWillDisappear:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    
+    func addFriends(newUser: String?) {
+        
+        var usernameTest = ""
+        
+        if newUser != nil {
+            usernameTest = newUser!
+        }
         
         var alreadyAdded = [String]()
         
@@ -170,7 +195,11 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                         //tempDict["username"] = object.username!!
                         tempDict["type"] = "socialQs"
                         tempDict["id"] = object.objectId!!
-                        tempDict["isSelected"] = false
+                        if tempDict["name"] as! String == usernameTest as String {
+                            tempDict["isSelected"] = true
+                        } else {
+                            tempDict["isSelected"] = false
+                        }
                         
                         friendsDictionary.append(tempDict)
                     }
@@ -179,36 +208,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 self.loadUsers("")
             }
         })
-        
-        
-        
-        searchBar.delegate = self
-        searchBar.searchBarStyle = UISearchBarStyle.Default
-        searchBar.showsCancelButton = true
-        
-        // Title table controller
-        self.title = "Select Groupies"
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
-        
-        // Format Done button
-        navigationItem.leftBarButtonItem = doneButton
-        navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue", size: tableFontSize)!], forState: UIControlState.Normal)
-        
-        // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg4.png"))
-        self.tableView.backgroundView?.alpha = 0.4
-        self.tableView.backgroundColor = UIColor.whiteColor()
-        
-        // Set separator color
-        tableView.separatorColor = UIColor.lightGrayColor()
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
-        
-        // Initialize allSelected var the first time the controller is presented
-        //allSelected = false
-        
-        // Keyboard open/closed notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"keyboardWillAppear:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"keyboardWillDisappear:", name: UIKeyboardWillHideNotification, object: nil)
     }
     
     
@@ -631,11 +630,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             tableView.endUpdates()
             
             
-            
-            
-            
-            
-            
             // Fill in selected users - must be after section header refreshing (above)
             textView.text = ", ".join(isGroupieName)
             
@@ -779,10 +773,37 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         if segue.identifier == "optionsFloat" {
             
-            let popoverViewController = segue.destinationViewController as! UIViewController
+//            let popVC = storyboard?.instantiateViewControllerWithIdentifier("GroupiesSettings") as! GroupiesTableViewController
+//            popVC.delegate = self
+//            popVC.strSaveText = "TEST 123"
+//            
+//            popVC.modalInPopover = UIModalPresentationStyle.Popover
+//            if let popoverController = popVC.popoverPresentationController {
+//                popoverController.sourceView = sender
+//                popoverController.delegate = self
+//            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            let popoverViewController = segue.destinationViewController as! GroupiesSettingsTableViewController
             popoverViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
-            popoverViewController.popoverPresentationController!.delegate = self
+            //popoverViewController.popoverPresentationController!.delegate = self
+            popoverViewController.popoverPresentationController?.delegate = self
+            popoverViewController.delegate = self
+            //
+            //
+            popoverViewController.strSaveText = "TEST ABC" // Pass data TO popover
+            //
+            //
             popoverViewController.popoverPresentationController?.backgroundColor = UIColor.darkGrayColor()
+            //popoverViewController.preferredContentSize = CGSize(width: 320, height: 186)
             
             // fix view length if number of items below a threshold...
             let numberOfOptions = 1 // "find user" (+group to be removed)
@@ -796,6 +817,14 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             }
         }
     }
+    func saveText(selectedUser: AnyObject) {
+        
+        println("<>KNLJKWEFOP A&GFA")
+        println(selectedUser["userObject"]!!["username"])
+        
+        //textView.text = ", ".join(isGroupieName) - didn't fix display problem
+        addFriends(selectedUser["userObject"]!!["username"] as? String)
+    }
 //    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {
 //        
 //        // return from tap off popover
@@ -803,7 +832,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
 //    }
     func didReceiveSettingsSavedNotification(notification: NSNotification) {
         
-        viewDidLoad()
+        //viewDidLoad()
     }
     // POPOVER SETTINGS FUNCTIONS
     
@@ -813,9 +842,5 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
 
 }
-
-
-
-
 
 
