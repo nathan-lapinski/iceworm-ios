@@ -40,7 +40,7 @@ class UsernameViewController: UIViewController {
                         
                         username = self.usernameTextField.text
                         
-                        displayAlert("Welcome to SocialQs", "", self)
+                        //displayAlert("Welcome to SocialQs", "", self)
                         self.performSegueWithIdentifier("signedUp2", sender: self)
                         
                     } else {

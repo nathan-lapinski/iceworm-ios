@@ -97,7 +97,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        PFFacebookUtils.unlinkUserInBackground(PFUser.currentUser()!)
+        //PFFacebookUtils.unlinkUserInBackground(PFUser.currentUser()!)
         
         picker.delegate = self
         

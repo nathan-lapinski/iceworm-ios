@@ -209,24 +209,60 @@ class QsMyTableVC: UITableViewController {
     // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
-        var myQsQuery = PFQuery(className: "SocialQs")
+        var myQsQueryLocal = PFQuery(className: "SocialQs")
         
-        myQsQuery.fromLocalDatastore()
-        myQsQuery.whereKey("asker", equalTo: PFUser.currentUser()!)
-        myQsQuery.whereKey("askerDeleted", equalTo: false)
-        myQsQuery.orderByDescending("createdAt")
-        myQsQuery.limit = 1000
+        myQsQueryLocal.fromLocalDatastore()
+        myQsQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
+        myQsQueryLocal.whereKey("askerDeleted", equalTo: false)
+        myQsQueryLocal.orderByDescending("createdAt")
+        myQsQueryLocal.limit = 1000
         
-        myQsQuery.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+        myQsQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
             if error == nil {
                 
+                var qIds = [String]()
+                
                 self.questionObjects = objects!
                 
-                self.tableView.reloadData()
+                for temp in objects! {
+                    
+                    qIds.append(temp.objectId!!)
+                }
                 
-                // Kill refresher when query finished
-                self.refresher.endRefreshing()
+                println(qIds)
+                
+                var myQsQueryServer = PFQuery(className: "SocialQs")
+                myQsQueryServer.whereKey("asker", equalTo: PFUser.currentUser()!)
+                myQsQueryServer.whereKey("askerDeleted", equalTo: false)
+                myQsQueryServer.whereKey("objectId", notContainedIn: qIds)
+                myQsQueryServer.orderByDescending("createdAt")
+                myQsQueryServer.limit = 1000
+                
+                myQsQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        // Append to local array of PFObjects
+                        self.questionObjects = self.questionObjects + objects!
+                        
+                        if let temp = objects {
+                            
+                            for object in temp {
+                                
+                                (object as! PFObject).pinInBackgroundWithBlock { (success, error) -> Void in
+                                    
+                                    println("Object \(object.objectId) pinned!")
+                                }
+                            }
+                        }
+                        
+                        self.tableView.reloadData()
+                        
+                        // Kill refresher when query finished
+                        self.refresher.endRefreshing()
+                    }
+                })
                 
             } else {
                 

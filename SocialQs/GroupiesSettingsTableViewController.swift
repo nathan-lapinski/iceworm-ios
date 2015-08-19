@@ -106,35 +106,120 @@ class GroupiesSettingsTableViewController: UITableViewController {
         
         if indexPath.section == 0 {
             
-            func configurationTextField(textField: UITextField!) {
+            if indexPath.row == 0 {
                 
-                textField.placeholder = ""
-                friendEntry = textField
+                addUserAlert()
             }
             
-            func handleCancel(alertView: UIAlertAction!) {
-                
-                println("Cancelled !!")
-            }
-            
-            var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-            
-            alert.addTextFieldWithConfigurationHandler(configurationTextField)
-            
-            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
-            
-            alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
-                
-                //self.addUser(self.friendEntry.text)
-                
-            }))
-            
-            self.presentViewController(alert, animated: true, completion: {
-                
-                println("completion block")
-            })
         }
     }
+    
+    
+    func addUserAlert() {
+        
+        func configurationTextField(textField: UITextField!) {
+            
+            textField.placeholder = ""
+            friendEntry = textField
+        }
+        
+        func handleCancel(alertView: UIAlertAction!) {
+            
+            println("Cancelled !!")
+        }
+        
+        var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+        
+        alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+            
+            let searchString = self.friendEntry.text
+            
+            PFCloud.callFunctionInBackground("findNewUser", withParameters: ["userString": searchString, "currentUser": username]) { (objects, error) -> Void in
+                
+                if error == nil {
+                    
+                    if objects!.count == 0 {
+                        
+                        displayAlert("Sorry!", "No users containing \(searchString) were found. Please verify spelling and try again!", self)
+                        
+//                    } else if objects!.count == 1 {
+//                        
+//                        // ONE USER FOUND, add it
+//                        
+                    } else {
+                        
+                        self.selectUserFromOptionsAlert(objects!)
+                    }
+                    
+                } else {
+                    
+                    println("Error filtering usernames in cloud")
+                    println(error)
+                }
+            }
+            
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: {
+            
+            println("completion block")
+        })
+    }
+    
+    
+    func selectUserFromOptionsAlert(objects: AnyObject) {
+        
+        func handleCancel(alertView: UIAlertAction!) {
+            
+            println("Cancelled !!")
+        }
+        
+        var alert = UIAlertController(title: "Did you mean:", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        var displayString: String = ""
+        
+        let finalCount = min(objects.count, 5)
+        
+        for var i = 0; i < finalCount; i++ {
+        //for var i = 0; i < 5; i++ {
+            
+            let username = objects[i]["username"]! as! String
+            
+            if let name = objects[i]["name"]! as? String {
+                
+                displayString = "@\(username) (\(name))"
+                
+            } else {
+                
+                displayString = "@\(username)"
+            }
+            
+            alert.addAction(UIAlertAction(title: displayString, style: .Default, handler: { (UIAlertAction) in
+                
+                println("\(displayString) selected")
+                
+                myFriends.append(username)
+                
+                println(myFriends)
+                
+                // Post notification to tell calling controller that the popover is being dismissed
+                // (or simply that the underlying should be reloaded)
+                NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
+                
+                self.dismissViewControllerAnimated(true, completion: nil)
+            }))
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+        
+        self.presentViewController(alert, animated: true, completion: { })
+    
+    }
+    
     
     /*
     // Override to support conditional editing of the table view.

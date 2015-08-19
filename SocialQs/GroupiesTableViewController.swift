@@ -82,6 +82,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     override func viewDidLoad() {
         super.viewDidLoad()// Do any additional setup after loading the view.
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveSettingsSavedNotification:", name: "SettingsSavedNotification", object: nil)
+        
         if !PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
             
             var alert = UIAlertController(title: "Find Your Friends!", message: "Send this Q to your Facebook friends by linking your account in the SocialQs settings page!", preferredStyle: UIAlertControllerStyle.Alert)
@@ -134,7 +136,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             println("current user:")
             println(PFUser.currentUser()!)
         }
-        
         
         
         
@@ -229,106 +230,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         topOffset = 64
         
-        // LOAD FACEBOOK FRIENDS WITH COMPLETION HANDLER
-        
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-//        friendsDictionary.removeAll(keepCapacity: true)
-//        struct userInfo {
-//            var id: String!
-//            var name: String!
-//        }
-//        var friendsWithApp = Dictionary<String, userInfo>()
-//        
-//        // Get List Of Friends who have SOCIALQS
-//        var friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
-//        
-//        friendsRequest1.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
-//            
-//            if error == nil {
-//                
-//                friendsWithApp.removeAll(keepCapacity: true)
-//                
-//                var results: AnyObject = result["data"]!!
-//                
-//                for var i = 0; i < results.count; i++ {
-//                    
-//                    friendsWithApp[results[i]!["picture"]!!["data"]!!["url"]!! as! String] = userInfo(id: results[i]["id"]!! as! String, name: results[i]["name"]!! as! String)
-//                }
-//                
-//            } else {
-//                
-//                println("Error retrieving Facebook Users")
-//                println(error)
-//                
-////                if self.viewWillAppearCount > 3 {
-////                    self.viewWillAppearCount = 0
-////                    displayAlert("Sorry", "There was an error retrieving your friends. Please try again shortly!", self)
-////                } else {
-////                    self.viewWillAppearCount++
-////                    self.viewWillAppear(true)
-////                }
-//            }
-//        }
-//        
-//        // Get List Of All Friends
-//        var friendsRequest2 = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id,picture&limit=1000", parameters: nil);
-//        
-//        friendsRequest2.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
-//            
-//            if error == nil {
-//                
-//                var temp: AnyObject = result["data"]!!
-//                
-//                var tempDict = Dictionary<String, AnyObject>()
-//                
-//                for var i = 0; i < temp.count; i++ {
-//                    
-//                    tempDict.removeAll(keepCapacity: true)
-//                    
-//                    if let tempURL = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String] {
-//                        
-//                        tempDict["name"] = temp[i]["name"]!! as! String
-//                        tempDict["type"] = "facebookWithApp"
-//                        tempDict["id"] = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String]!.id
-//                        tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
-//                        tempDict["isSelected"] = false
-//                        
-//                    } else {
-//                        
-//                        tempDict["name"] = temp[i]["name"]!! as! String
-//                        tempDict["type"] = "facebookWithoutApp"
-//                        tempDict["id"] = temp[i]["id"]!! as! String
-//                        tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
-//                        tempDict["isSelected"] = false
-//                    }
-//                    
-//                    if contains(isGroupieName, temp[i]["name"]!! as! String) {
-//                        
-//                        tempDict["isSelected"] = true
-//                    }
-//                    
-//                    self.friendsDictionary.append(tempDict)
-//                }
-//                
-//                                
-        
-//
-//            } else {
-//                
-//                println("Error retrieving Facebook and sQs Users")
-//                println(error)
-//                
-//                if self.viewWillAppearCount > 3 {
-//                    self.viewWillAppearCount = 0
-//                    displayAlert("Sorry", "There was an error retrieving your friends. Please try again shortly!", self)
-//                } else {
-//                    self.viewWillAppearCount++
-//                    self.viewWillAppear(true)
-//                }
-//            }
-//        }
-//        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        tableView.reloadData()
     }
     
     
@@ -358,24 +260,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     
     func loadUsers(searchName: String) {
-        
-        
-        
-//        PFCloud.callFunctionInBackground("findNewUser", withParameters: ["userString": name, "currentUser": username]) { (objects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                for var i = 0; i < objects!.count; i++ {
-//                    
-//                    println(objects![i]["username"]!!)
-//                }
-//                
-//            } else {
-//                
-//                println("Error filtering usernames in cloud")
-//                println(error)
-//            }
-//        }
         
         
         
@@ -892,7 +776,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         return UIModalPresentationStyle.None
     }
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
         if segue.identifier == "optionsFloat" {
+            
             let popoverViewController = segue.destinationViewController as! UIViewController
             popoverViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
             popoverViewController.popoverPresentationController!.delegate = self
@@ -902,13 +788,22 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             let numberOfOptions = 1 // "find user" (+group to be removed)
             if (groupiesGroups.count + numberOfOptions) < 10 {
                 
-            popoverViewController.preferredContentSize.height = CGFloat((groupiesGroups.count + numberOfOptions) * 44)
+                popoverViewController.preferredContentSize.height = CGFloat((groupiesGroups.count + numberOfOptions) * 44)
                 
             } else { // ... else make it scroll
                 
                 popoverViewController.preferredContentSize.height = CGFloat(9.5 * 44)
             }
         }
+    }
+//    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {
+//        
+//        // return from tap off popover
+//        println("RETURNED!!")
+//    }
+    func didReceiveSettingsSavedNotification(notification: NSNotification) {
+        
+        viewDidLoad()
     }
     // POPOVER SETTINGS FUNCTIONS
     
