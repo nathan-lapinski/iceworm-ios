@@ -17,6 +17,31 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     var settingsSpinner = UIActivityIndicatorView()
     var settingsBlurView = globalBlurView()
+    var boxView = UIView()
+    var blurView = globalBlurView()
+    
+    
+    
+    
+    
+    @IBAction func spinnerButtonAction(sender: AnyObject) {
+        
+        displaySpinnerView(spinnerActive: true, UIBlock: true, self.boxView, self.blurView, "Testing Spinner", self)
+        
+        backgroundThread(delay: 3.0, completion: {
+            // Your delayed function here to be run in the foreground
+            
+            displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
+        })
+    }
+    
+    
+    @IBAction func endSpin(sender: AnyObject) {
+        
+    }
+    
+    
+    
     
     @IBOutlet var linkWithFacebook: UIButton!
     @IBOutlet var logout: UIButton!
@@ -31,19 +56,25 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @IBAction func linkWithFacebookAction(sender: AnyObject) {
         
-        blockUI(true, self.settingsSpinner, self.settingsBlurView, self)
+        displaySpinnerView(spinnerActive: true, UIBlock: true, boxView, blurView, "Linking with Facebook", self)
+        
+        //blockUI(true, self.settingsSpinner, self.settingsBlurView, self)
         
         linkUserWithFacebook({ (success, message) -> Void in
             
             if success == true {
                 
-                blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
+                displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
+                
+                //blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
                 
                 self.updateImageAndButton(true)
                 
             } else {
                 
-                blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
+                displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
+                
+                //blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
                 
                 self.updateImageAndButton(false)
                 

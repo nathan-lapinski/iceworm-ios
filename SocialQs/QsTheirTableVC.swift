@@ -16,7 +16,9 @@ class QsTheirTableVC: UITableViewController {
     var QJoinObjects: [AnyObject] = []
     
     var refresher: UIRefreshControl!
-    var theirQsSpinner = UIActivityIndicatorView()
+//    var theirQsSpinner = UIActivityIndicatorView()
+//    var theirQsBlurView = globalBlurView()
+    var theirQsSpinner = UIView()
     var theirQsBlurView = globalBlurView()
     
     @IBAction func vote1ButtonAction(sender: AnyObject) { castVote(sender.tag, optionId: 1) }
@@ -53,19 +55,23 @@ class QsTheirTableVC: UITableViewController {
         
         //println(QJoinObjects[sender.tag]["question"]!!)
         
-        blockUI(true, theirQsSpinner, theirQsBlurView, self)
-        
         if contains(isUploading, QJoinObjects[sender.tag]["question"]!!.objectId!!) {
             
             displayAlert("Error", "These images are still uploading. Please try again shortly!", self)
             
         } else {
             
+            displaySpinnerView(spinnerActive: true, UIBlock: true, theirQsSpinner, theirQsBlurView, "Zooming Images", self)
+            
+            //blockUI(true, theirQsSpinner, theirQsBlurView, self)
+            
             questionToView = QJoinObjects[sender.tag]["question"]!! as? PFObject //self.questions[sender.tag]
             
-            blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
-            
             self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: sender)
+            
+            displaySpinnerView(spinnerActive: false, UIBlock: false, theirQsSpinner, theirQsBlurView, nil, self)
+            
+            //blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
         }
     }
     

@@ -11,7 +11,9 @@ import Parse
 
 class LoginViewController: UIViewController {
     
-    var loginSpinner = UIActivityIndicatorView()
+//    var loginSpinner = UIActivityIndicatorView()
+//    var loginBlurView = globalBlurView()
+    var loginSpinner = UIView()
     var loginBlurView = globalBlurView()
     
     @IBOutlet var usernameTextField: UITextField!
@@ -33,7 +35,9 @@ class LoginViewController: UIViewController {
     
     @IBAction func loginFacebookButtonPressed(sender: AnyObject) {
         
-        blockUI(true, self.loginSpinner, self.loginBlurView, self)
+        displaySpinnerView(spinnerActive: true, UIBlock: true, self.loginSpinner, self.loginBlurView, "Loggin In", self)
+        
+        //blockUI(true, self.loginSpinner, self.loginBlurView, self)
         
         let permissions = ["public_profile", "email", "user_friends"]
         
@@ -62,7 +66,9 @@ class LoginViewController: UIViewController {
                                 
                                 self.performSegueWithIdentifier("signedIn", sender: self)
                                 
-                                blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                                displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
+                                
+                                //blockUI(false, self.loginSpinner, self.loginBlurView, self)
                                 
                                 storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
                                 
@@ -87,7 +93,9 @@ class LoginViewController: UIViewController {
                     
                     self.performSegueWithIdentifier("signedIn", sender: self)
                     
-                    blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
+                    
+                    //blockUI(false, self.loginSpinner, self.loginBlurView, self)
                     
                     storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
                     
@@ -102,7 +110,9 @@ class LoginViewController: UIViewController {
                 
                 println("Uh oh. The user cancelled the Facebook login.")
                 
-                blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
+                
+                //blockUI(false, self.loginSpinner, self.loginBlurView, self)
                 
                 self.navigationController?.navigationBarHidden = false
             }
@@ -122,7 +132,9 @@ class LoginViewController: UIViewController {
             
         } else {
             
-            blockUI(true, self.loginSpinner, self.loginBlurView, self)
+            displaySpinnerView(spinnerActive: true, UIBlock: true, self.loginSpinner, self.loginBlurView, "Logging In", self)
+            
+            //blockUI(true, self.loginSpinner, self.loginBlurView, self)
             
             // Generic error - this will be changed below based on error returned from Parse.com
             var errorMessage = "Please try again later"
@@ -148,7 +160,9 @@ class LoginViewController: UIViewController {
                         
                         self.performSegueWithIdentifier("signedIn", sender: self)
                         
-                        blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                        displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
+                        
+                        //blockUI(false, self.loginSpinner, self.loginBlurView, self)
                         
                     })
                     
@@ -161,7 +175,9 @@ class LoginViewController: UIViewController {
                     
                     displayAlert("Failed Login", errorMessage, self)
                     
-                    blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
+                    
+                    //blockUI(false, self.loginSpinner, self.loginBlurView, self)
                 }
             })
         }

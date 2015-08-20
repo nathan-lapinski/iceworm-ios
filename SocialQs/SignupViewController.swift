@@ -13,7 +13,9 @@ class SignupViewController: UIViewController {
     
     var newUsername = ""
     
-    var signupSpinner = UIActivityIndicatorView()
+//    var signupSpinner = UIActivityIndicatorView()
+//    var signupBlurView = globalBlurView()
+    var signupSpinner = UIView()
     var signupBlurView = globalBlurView()
     
     @IBOutlet var username: UITextField!
@@ -31,7 +33,9 @@ class SignupViewController: UIViewController {
             
             if let user = user {
                 
-                blockUI(true, self.signupSpinner, self.signupBlurView, self)
+                displaySpinnerView(spinnerActive: true, UIBlock: true, self.signupSpinner, self.signupBlurView, "Logging In", self)
+                
+                //blockUI(true, self.signupSpinner, self.signupBlurView, self)
                 
                 // Download FB data in background - backgrounding built into FBSDK methods (?)
                 downloadFacebookFriends({ (isFinished) -> Void in
@@ -54,7 +58,9 @@ class SignupViewController: UIViewController {
                                 
                                 self.performSegueWithIdentifier("signedUp", sender: self)
                                 
-                                blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                                displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
+                                
+                                //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                                 
                                 storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
                                 
@@ -75,7 +81,9 @@ class SignupViewController: UIViewController {
                     
                     self.performSegueWithIdentifier("signedUp", sender: self)
                     
-                    blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
+                    
+                    //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                     
                     storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
                     
@@ -86,7 +94,9 @@ class SignupViewController: UIViewController {
                 
                 println("Uh oh. The user cancelled the Facebook login.")
                 
-                blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
+                
+                //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                 
                 self.navigationController?.navigationBarHidden = false
             }
@@ -112,7 +122,9 @@ class SignupViewController: UIViewController {
             
         } else {
             
-            blockUI(true, self.signupSpinner, self.signupBlurView, self)
+            displaySpinnerView(spinnerActive: true, UIBlock: true, self.signupSpinner, self.signupBlurView, "Logging In", self)
+            
+            //blockUI(true, self.signupSpinner, self.signupBlurView, self)
             
             // Generic error - this will be changed below based on error returned from Parse.com
             var errorMessage = "Please try again later"
@@ -138,7 +150,9 @@ class SignupViewController: UIViewController {
                                 
                                 self.performSegueWithIdentifier("signedUpWithoutFacebook", sender: self)
                                 
-                                blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                                displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, "Signing Up", self)
+                                
+                                //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                             })
                             
                         } else {
@@ -154,7 +168,9 @@ class SignupViewController: UIViewController {
                         errorMessage = errorString
                     }
                     
-                    blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
+                    
+                    //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                     
                     displayAlert("Failed Signup", errorMessage, self)
                 }

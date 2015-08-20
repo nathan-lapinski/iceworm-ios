@@ -18,6 +18,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     var viewWillAppearCount = 0
     
     var textView = UITextView()
+    var groupEntry: UITextField!
     
     let tableFontSize = CGFloat(16)
     var keyboardSize = CGFloat()
@@ -36,21 +37,77 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     @IBOutlet var searchBar: UISearchBar!
     @IBOutlet var doneButton: UIBarButtonItem!
     
-    @IBAction func addGroupButtonAction(sender: AnyObject) {
-    }
+    @IBAction func addGroupButtonAction(sender: AnyObject) { }
+    @IBAction func clearButtonAction(sender: AnyObject) { }
     
-    @IBAction func clearButtonAction(sender: AnyObject) {
-    }
+    @IBAction func optionsPressed(sender: AnyObject) { }
     
-    @IBAction func optionsPressed(sender: AnyObject) {
-    }
-    
-    @IBAction func inviteButtonAction(sender: AnyObject) {
-    }
+    @IBAction func inviteButtonAction(sender: AnyObject) { }
     
     @IBAction func dismissPressed(sender: AnyObject) {
         
-        // ---------------------------------------------------------------------------------
+        buildGroupiesDictionary()
+        
+        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    func createGroup () {
+        
+        buildGroupiesDictionary()
+        
+        func configurationTextField(textField: UITextField!) {
+            
+            textField.placeholder = ""
+            groupEntry = textField
+        }
+        
+        func handleCancel(alertView: UIAlertAction!) {
+            
+            println("Cancelled !!")
+        }
+        
+        var alert = UIAlertController(title: "Enter group name", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+        
+        alert.addAction(UIAlertAction(title: "Create Group", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+            
+            self.resignFirstResponder()
+            
+            var groupName = "New Group"
+            
+            if self.groupEntry.text != "" {
+                
+                groupName = self.groupEntry.text
+            }
+            
+            //PFCloud.callFunctionInBackground("findNewUser", withParameters: ["userString": searchString, "currentUser": username]) { (objects, error) -> Void in 
+        
+            println(groupiesDictionary)
+            
+            //}
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: {
+            
+            println("completion block")
+        })
+        
+        //
+        //
+        // CLOUD SHITS
+        //
+        //
+        
+        
+    }
+    
+    
+    func buildGroupiesDictionary() {
+        
         // Trim friendsDictionary to selectedFriendsDictionary2 before switching back
         isGroupieName.removeAll(keepCapacity: true)
         groupiesDictionary.removeAll(keepCapacity: true)
@@ -61,9 +118,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 isGroupieName.append(temp["name"] as! String)
             }
         }
-        // ---------------------------------------------------------------------------------
-        
-        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
     
     
@@ -119,14 +173,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             presentViewController(alert, animated: true, completion: nil)
             
-        } else {
-            
         }
-        
         
         // get myFriends and add to dictionary
         addFriends(nil)
-        
         
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBarStyle.Default
@@ -232,12 +282,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         tableView.reloadData()
     }
     
-    
-    func createGroup() {
-        
-    }
-    
-    
     func clearSelectedGroupies() {
         
         isGroupieName.removeAll(keepCapacity: true)
@@ -260,51 +304,45 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     func loadUsers(searchName: String) {
         
+//        // GET sQs users for search purposes
+//        // must load each time for search functionality to work
+//        //// Pull SocialQs Users (omit anyone who is FB linked) and include in additional section under FB/myFriends
+//        var socialQsUsersQuery = PFQuery(className: "_User")
+//        socialQsUsersQuery.whereKey("username", containsString: searchName) // all users with search string in username
+//        socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
+//        socialQsUsersQuery.whereKey("username", notContainedIn: myFriends) // No users that are already myFriends
+//        socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
+//        
+//        socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                nonFriendsDictionary.removeAll(keepCapacity: true)
+//                
+//                if let temp = objects {
+//                    
+//                    for object in temp {
+//                        
+//                        var tempDict = Dictionary<String, AnyObject>()
+//                        
+//                        tempDict["name"] = object.username!!
+//                        //tempDict["username"] = object.username!!
+//                        tempDict["type"] = "socialQs"
+//                        tempDict["id"] = object.objectId!!
+//                        tempDict["isSelected"] = false
+//                        
+//                        nonFriendsDictionary.append(tempDict)
+//                    }
+//                }
         
-        
-        // GET sQs users for search purposes
-        // must load each time for search functionality to work
-        //// Pull SocialQs Users (omit anyone who is FB linked) and include in additional section under FB/myFriends
-        var socialQsUsersQuery = PFQuery(className: "_User")
-        socialQsUsersQuery.whereKey("username", containsString: searchName) // all users with search string in username
-        socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
-        socialQsUsersQuery.whereKey("username", notContainedIn: myFriends) // No users that are already myFriends
-        socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
-        
-        socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-            
-            if error == nil {
-                
-                nonFriendsDictionary.removeAll(keepCapacity: true)
-                
-                if let temp = objects {
-                    
-                    for object in temp {
-                        
-                        var tempDict = Dictionary<String, AnyObject>()
-                        
-                        tempDict["name"] = object.username!!
-                        //tempDict["username"] = object.username!!
-                        tempDict["type"] = "socialQs"
-                        tempDict["id"] = object.objectId!!
-                        tempDict["isSelected"] = false
-                        
-                        nonFriendsDictionary.append(tempDict)
-                    }
-                }
-                
-                
-                
                 self.buildUserStrings(searchName)
                 
-                
-                
-            } else {
-                
-                println("Error pulling non-friends")
-                println(error)
-            }
-        })
+//            } else {
+//                
+//                println("Error pulling non-friends")
+//                println(error)
+//            }
+//        })
     }
     
     
@@ -527,16 +565,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             // Tag and format invite button
             cell.inviteButton.tag = indexPath.row
             cell.inviteButton.backgroundColor = UIColor.clearColor()
-            //cell.inviteButton.layer.cornerRadius = CGFloat(4)
-            //cell.inviteButton.layer.borderWidth = 1
-            //cell.inviteButton.layer.borderColor = mainColorBlue.CGColor!
-            //cell.inviteButton.titleLabel?.textColor = mainColorBlue
-//            if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithoutApp" {
-//                cell.inviteButton.hidden = false  
-//            } else {
-//                
-//                cell.inviteButton.hidden = true
-//            }
+            
             if friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool && friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithoutApp" {
                 
                 cell.inviteButton.hidden = false
@@ -702,20 +731,21 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         if section == 1 {
             
             let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
-            header.contentView.backgroundColor = UIColor.lightGrayColor()
+            header.contentView.backgroundColor = UIColor.groupTableViewBackgroundColor() // UIColor.whiteColor()
             
-            textView = UITextView(frame: CGRectMake(0, -5, self.view.frame.size.width - 92, 60))
-            //textView.text = ", ".join(isGroupieName)
+            textView = UITextView(frame: CGRectMake(0, -5, self.view.frame.size.width - 92, 68))
+            textView.editable = false
+            textView.text = ", ".join(isGroupieName)
             textView.backgroundColor = UIColor.clearColor() // mainColorBlue
             textView.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
             textView.textAlignment = NSTextAlignment.Left
             textView.textColor = UIColor.darkTextColor()
             
-            var clearButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 28, 20, 20, 20))
+            var clearButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 28, 22, 20, 20))
             clearButton.setImage(UIImage(named: "clear.png"), forState: UIControlState.Normal)
             clearButton.addTarget(self, action: "clearSelectedGroupies", forControlEvents: .TouchUpInside)
             
-            var groupButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 88, 15, 52, 30))
+            var groupButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 88, 17, 52, 30))
             groupButton.layer.borderWidth = 1
             groupButton.layer.borderColor = mainColorBlue.CGColor
             groupButton.layer.cornerRadius = 4
@@ -732,12 +762,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     
     
-    
-    
     // Set section header heights
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        if section != 0 {
+        if section == 1 {
             
             var ret: CGFloat = 0
                 
@@ -747,7 +775,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     
                 } else {
                     
-                    ret = CGFloat(60)
+                    ret = CGFloat(64)
                 }
             
             return ret
@@ -772,25 +800,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == "optionsFloat" {
-            
-//            let popVC = storyboard?.instantiateViewControllerWithIdentifier("GroupiesSettings") as! GroupiesTableViewController
-//            popVC.delegate = self
-//            popVC.strSaveText = "TEST 123"
-//            
-//            popVC.modalInPopover = UIModalPresentationStyle.Popover
-//            if let popoverController = popVC.popoverPresentationController {
-//                popoverController.sourceView = sender
-//                popoverController.delegate = self
-//            }
-            
-            
-            
-            
-            
-            
-            
-            
-            
             
             let popoverViewController = segue.destinationViewController as! GroupiesSettingsTableViewController
             popoverViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
@@ -819,11 +828,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     func saveText(selectedUser: AnyObject) {
         
-        println("<>KNLJKWEFOP A&GFA")
-        println(selectedUser["userObject"]!!["username"])
-        
-        //textView.text = ", ".join(isGroupieName) - didn't fix display problem
         addFriends(selectedUser["userObject"]!!["username"] as? String)
+        
+        println(isGroupieName)
+        //textView.text = ", ".join(isGroupieName)
     }
 //    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {
 //        

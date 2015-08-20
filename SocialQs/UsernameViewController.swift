@@ -10,8 +10,10 @@ import UIKit
 
 class UsernameViewController: UIViewController {
     
-    var usernameSpinner = UIActivityIndicatorView()
-    var usernameBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+//    var usernameSpinner = UIActivityIndicatorView()
+//    var usernameBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+    var usernameSpinner = UIView()
+    var usernameBlurView = globalBlurView()
     
     @IBOutlet var usernameTextField: UITextField!
     
@@ -29,7 +31,9 @@ class UsernameViewController: UIViewController {
                 
             } else {
                 
-                blockUI(true, self.usernameSpinner, self.usernameBlurView, self)
+                displaySpinnerView(spinnerActive: true, UIBlock: true, self.usernameSpinner, self.usernameBlurView, "Setting Username", self)
+                
+                //blockUI(true, self.usernameSpinner, self.usernameBlurView, self)
                 
                 // save username to Parse
                 let query = PFUser.currentUser()
@@ -49,7 +53,9 @@ class UsernameViewController: UIViewController {
                         println(error)
                     }
                     
-                    blockUI(false, self.usernameSpinner, self.usernameBlurView, self)
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.usernameSpinner, self.usernameBlurView, nil, self)
+                    
+                    //blockUI(false, self.usernameSpinner, self.usernameBlurView, self)
                 })
             }
         }

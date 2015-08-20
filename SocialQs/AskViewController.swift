@@ -32,7 +32,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     let picker = UIImagePickerController()
     
-    var askSpinner = UIActivityIndicatorView()
+//    var askSpinner = UIActivityIndicatorView()
+//    var askBlurView = globalBlurView()
+    var askSpinner = UIView()
     var askBlurView = globalBlurView()
     
     @IBOutlet var askTable: UITableView!
@@ -237,7 +239,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     func submitQ(sender: AnyObject) -> Void {
         
-        blockUI(true, askSpinner, askBlurView, self)
+        displaySpinnerView(spinnerActive: true, UIBlock: true, askSpinner, askBlurView, "Submitting Q", self)
+        
+        //blockUI(true, askSpinner, askBlurView, self)
         
         func createPNG(image: UIImage, name: String) -> (PFFile) {
             
@@ -300,7 +304,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 // clear text and photo entries
                 self.cancelButtonAction(sender)
                 
-                blockUI(false, self.askSpinner, self.askBlurView, self)
+                displaySpinnerView(spinnerActive: false, UIBlock: false, self.askSpinner, self.askBlurView, nil, self)
+                
+                //blockUI(false, self.askSpinner, self.askBlurView, self)
             }
         }
         

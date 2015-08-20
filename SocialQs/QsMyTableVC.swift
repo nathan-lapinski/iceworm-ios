@@ -13,7 +13,9 @@ class QsMyTableVC: UITableViewController {
     var questionObjects: [AnyObject] = []
     
     var refresher: UIRefreshControl!
-    var myQsSpinner = UIActivityIndicatorView()
+//    var myQsSpinner = UIActivityIndicatorView()
+//    var myQsBlurView = globalBlurView()
+    var myQsSpinner = UIView()
     var myQsBlurView = globalBlurView()
     
     @IBAction func zoomQButton(sender: AnyObject) {
@@ -44,17 +46,21 @@ class QsMyTableVC: UITableViewController {
 
     func setPhotosToZoom(sender: AnyObject) {
         
-        blockUI(true, myQsSpinner, myQsBlurView, self)
-        
         if contains(isUploading, questionObjects[sender.tag].objectId!!) {
             
             displayAlert("Error", "These images are still uploading. Please try again shortly!", self)
             
         } else {
             
+            displaySpinnerView(spinnerActive: true, UIBlock: true, myQsSpinner, myQsBlurView, "Zooming Image", self)
+            
+            //blockUI(true, myQsSpinner, myQsBlurView, self)
+            
             questionToView = questionObjects[sender.tag] as? PFObject //self.questions[sender.tag]
+            
+            displaySpinnerView(spinnerActive: false, UIBlock: false, myQsSpinner, myQsBlurView, nil, self)
         
-            blockUI(false, self.myQsSpinner, self.myQsBlurView, self)
+            //blockUI(false, self.myQsSpinner, self.myQsBlurView, self)
             
             self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: sender)
         }

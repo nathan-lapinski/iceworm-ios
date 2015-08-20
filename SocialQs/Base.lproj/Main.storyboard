@@ -276,6 +276,24 @@
                                     <action selector="changeProfilePicture:" destination="OY2-PK-A5I" eventType="touchUpInside" id="4UG-Hn-ded"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mz3-Os-CmG">
+                                <rect key="frame" x="26" y="572" width="74" height="30"/>
+                                <state key="normal" title="SPINNER!!">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="spinnerButtonAction:" destination="OY2-PK-A5I" eventType="touchUpInside" id="cYg-Ac-fmu"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m7T-BY-CtD">
+                                <rect key="frame" x="141" y="572" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="endSpin:" destination="OY2-PK-A5I" eventType="touchUpInside" id="xtv-jN-eoo"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>

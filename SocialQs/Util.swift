@@ -47,39 +47,68 @@ backgroundThread(delay: 3.0, completion: {
 });
 */
 
-func blockUI(block: Bool, _activityIndicator: UIActivityIndicatorView, _blurView: UIVisualEffectView, sender: UIViewController) {
+func displaySpinnerView(#spinnerActive: Bool, #UIBlock: Bool, var _boxView: UIView, var _blurView: UIVisualEffectView, progressText: String?, sender: UIViewController) {
     
-    if block == true {
-        
-        println("Blocking UI")
-        
-        // Add blur view
-        _blurView.frame = sender.view.frame
-        sender.view.addSubview(_blurView)
-        
-        // Setup and start spinner
-        _activityIndicator.center = sender.view.center
-        _activityIndicator.hidesWhenStopped = true
-        _activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
-        sender.view.addSubview(_activityIndicator)
-        _activityIndicator.startAnimating()
-        
+    if UIBlock == true {
         // block application input
         UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-        
     } else {
-        
-        println("unBlocking UI")
-        
-        // Stop spinner
-        _activityIndicator.stopAnimating()
-        
-        // Release lock on app input
+        // unblock application input
         UIApplication.sharedApplication().endIgnoringInteractionEvents()
+    }
+    
+    if spinnerActive == true {
+        println("Adding activity indicator from superView")
+        // You only need to adjust this frame to move it anywhere you want
+        _boxView.frame = CGRectMake(sender.view.frame.midX - 90, sender.view.frame.midY - 25, 180, 50)
+        _boxView.backgroundColor = UIColor.darkGrayColor()
+        _boxView.alpha = 0.8
+        _boxView.layer.cornerRadius = 10
         
-        // Un-blur ASK tab
+        // setup blur view
+        _blurView.frame = sender.view.frame
+        
+        //Here the spinnier is initialized
+        var activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+        activityView.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        activityView.startAnimating()
+        
+        var textLabel = UILabel(frame: CGRect(x: 60, y: 0, width: 200, height: 50))
+        textLabel.textColor = UIColor.whiteColor()
+        textLabel.text = progressText
+        textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(16))!
+        
+        _boxView.addSubview(activityView)
+        _boxView.addSubview(textLabel)
+        
+        sender.view.addSubview(_blurView)
+        sender.view.addSubview(_boxView)
+       
+    } else {
+        println("Removing activity indicator from superView")
+        _boxView.removeFromSuperview()
         _blurView.removeFromSuperview()
     }
+    
+        
+//        // Add blur view
+//        _blurView.frame = sender.view.frame
+//        sender.view.addSubview(_blurView)
+//        
+//        // Setup and start spinner
+//        _activityIndicator.center = sender.view.center
+//        _activityIndicator.hidesWhenStopped = true
+//        _activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+//        sender.view.addSubview(_activityIndicator)
+//        _activityIndicator.startAnimating()
+//        
+//    } else {
+//        // Stop spinner
+//        _activityIndicator.stopAnimating()
+//        
+//        // Un-blur ASK tab
+//        _blurView.removeFromSuperview()
+//    }
 }
 
 
@@ -547,7 +576,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
         completion(true)
     
         
-        
 //        // Store votedOnIds locally
 //        var userQsQuery = PFQuery(className: "UserQs")
 //        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
@@ -584,4 +612,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
 }
 
 
+func displaySpinnerWithText(var _boxView: UIView, var _blurView: UIView, progressText: String, sender: UIViewController) {
+}
 
