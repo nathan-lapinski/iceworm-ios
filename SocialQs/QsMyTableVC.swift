@@ -231,6 +231,12 @@ class QsMyTableVC: UITableViewController {
                 
                 self.questionObjects = objects!
                 
+                // Reload table data
+                self.tableView.reloadData()
+                
+                // Kill refresher when query finished
+                self.refresher.endRefreshing()
+                
                 for temp in objects! {
                     
                     qIds.append(temp.objectId!!)
@@ -238,6 +244,7 @@ class QsMyTableVC: UITableViewController {
                 
                 println(qIds)
                 
+                // Get Qs that are not in localdata store
                 var myQsQueryServer = PFQuery(className: "SocialQs")
                 myQsQueryServer.whereKey("asker", equalTo: PFUser.currentUser()!)
                 myQsQueryServer.whereKey("askerDeleted", equalTo: false)
@@ -252,17 +259,30 @@ class QsMyTableVC: UITableViewController {
                         // Append to local array of PFObjects
                         self.questionObjects = self.questionObjects + objects!
                         
-                        if let temp = objects {
+                        // Reload table data
+                        self.tableView.reloadData()
+                        
+                        // Pin new Qs to local datastore
+                        if let temp = objects as? [PFObject] {
                             
                             for object in temp {
                                 
-                                (object as! PFObject).pinInBackgroundWithBlock { (success, error) -> Void in
+                                object.pinInBackgroundWithBlock { (success, error) -> Void in
                                     
-                                    println("Object \(object.objectId) pinned!")
+                                    if error == nil {
+                                        
+                                        println("Object \(object.objectId) pinned!")
+                                    }
                                 }
                             }
                         }
                         
+                    } else {
+                        
+                        println("There was an error retrieving new Qs from the database:")
+                        println(error)
+                        
+                        // Reload table data
                         self.tableView.reloadData()
                         
                         // Kill refresher when query finished
@@ -275,8 +295,6 @@ class QsMyTableVC: UITableViewController {
                 println("There was an error loading Qs from local data store:")
                 println(error)
             }
-            
-            self.tableView.reloadData()
         }
     }
     

@@ -1047,66 +1047,94 @@ class QsTheirTableVC: UITableViewController {
         
         QJoinObjects.removeAll(keepCapacity: true)
         
-        //
-        //
-        //
-        //
-        // Check local datastore for Qs
-        //
-        //
-        //
-        //
+        var qJoinQueryLocal = PFQuery(className: "QJoin")
+        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!)
+        qJoinQueryLocal.orderByDescending("createdAt")
+        qJoinQueryLocal.limit = 1000
+        qJoinQueryLocal.includeKey("question")
+        qJoinQueryLocal.fromLocalDatastore()
         
-        // Get Qs that are not in localdata store
-        var qJoinQuery = PFQuery(className: "QJoin")
-        qJoinQuery.whereKey("to", equalTo: PFUser.currentUser()!)
-        qJoinQuery.orderByDescending("createdAt")
-        qJoinQuery.limit = 1000
-        qJoinQuery.includeKey("question")
-        
-        qJoinQuery.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+        qJoinQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
             if error == nil {
                 
+                var qIds = [String]()
                 
                 self.QJoinObjects = objects!
                 
+                // Reload table data
+                self.tableView.reloadData()
                 
-                if let temp = objects {
+                // Kill refresher when query finished
+                self.refresher.endRefreshing()
+                
+                for temp in objects! {
                     
-//                    for object in temp {
-//                        
-//                        self.questionObjects.append(object["question"]!!)
-//                    }
-                    
-//                    println(self.questionObjects.count)
-                    
-                    println("qJoinObjects stored")
-                    
-//                    for object in self.questionObjects {
-//                        
-//                        println(object["asker"]!!["profilePicture"]!!)
-//                    }
-                    
-                    // Reload table data
-                    self.tableView.reloadData()
-                    
-                    // Kill refresher when query finished
-                    self.refresher.endRefreshing()
+                    qIds.append(temp.objectId!!)
                 }
                 
-                //
-                //
-                //
-                //
-                // Pin new Qs to local datastore
-                //
-                //
-                //
-                //
+                println(qIds)
                 
+                // Get Qs that are not in localdata store
+                var qJoinQueryServer = PFQuery(className: "QJoin")
+                qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!)
+                
+                // ********** THIS IS NOT IN QJOIN YET!!! *********
+                qJoinQueryServer.whereKey("askeeDeleted", equalTo: false)
+                // ************************************************
+                
+                qJoinQueryServer.whereKey("objectId", notContainedIn: qIds)
+                qJoinQueryServer.orderByDescending("createdAt")
+                qJoinQueryServer.limit = 1000
+                qJoinQueryServer.includeKey("question")
+                
+                qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        // Append to local array of PFObjects
+                        self.QJoinObjects = self.QJoinObjects + objects!
+                        
+                        // Reload table data
+                        self.tableView.reloadData()
+                        
+                        // Pin new Qs to local datastore
+                        if let temp = objects as? [PFObject] {
+                            
+                            for object in temp {
+                                
+                                object.pinInBackgroundWithBlock { (success, error) -> Void in
+                                    
+                                    if error == nil {
+                                        
+                                        println("Their Qs: \(object.objectId) pinned")
+                                    }
+                                }
+                            }
+                        }
+                        
+                    } else {
+                        
+                        println("There was an error retrieving new Qs from the database:")
+                        println(error)
+                        
+                        // Reload table data
+                        self.tableView.reloadData()
+                        
+                        // Kill refresher when query finished
+                        self.refresher.endRefreshing()
+                    }
+                })
+                
+            } else {
+                
+                println("There was an error loading Qs from local data store:")
+                println(error)
             }
         }
+        
+        
+        
         
         
         
