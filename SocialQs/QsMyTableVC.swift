@@ -70,9 +70,6 @@ class QsMyTableVC: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Refresh upon first load of controller
-        refresh()
-        
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
         refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -90,6 +87,11 @@ class QsMyTableVC: UITableViewController {
     
     
     override func viewWillAppear(animated: Bool) {
+        
+        println(">>>>>>>>>>>>>>>>>>")
+        println(questionObjects.count)
+        println(">>>>>>>>>>>>>>>>>>")
+        
         
         if returningFromSettings == false && returningFromPopover == false {
             
@@ -112,6 +114,8 @@ class QsMyTableVC: UITableViewController {
             } else {
                 topOffset = 64
             }
+            
+            tableView.reloadData()
         }
         
         if returningFromSettings {
@@ -121,6 +125,8 @@ class QsMyTableVC: UITableViewController {
             returningFromSettings = false
             
             topOffset = 0
+            
+            tableView.reloadData()
         }
         
         self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
@@ -215,11 +221,17 @@ class QsMyTableVC: UITableViewController {
     // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
+        // Build array of objectIds for Qs already retrieved 
+        // - prevent duplicates when refresh() is called again
+        var alreadyRetrieved = [String]()
+        for object in questionObjects { alreadyRetrieved.append(object.objectId!!) }
+        
         var myQsQueryLocal = PFQuery(className: "SocialQs")
         
         myQsQueryLocal.fromLocalDatastore()
         myQsQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
         myQsQueryLocal.whereKey("askerDeleted", equalTo: false)
+        myQsQueryLocal.whereKey("objectId", notContainedIn: alreadyRetrieved)
         myQsQueryLocal.orderByDescending("createdAt")
         myQsQueryLocal.limit = 1000
         
@@ -227,9 +239,7 @@ class QsMyTableVC: UITableViewController {
             
             if error == nil {
                 
-                var qIds = [String]()
-                
-                self.questionObjects = objects!
+                self.questionObjects = self.questionObjects + objects!
                 
                 // Reload table data
                 self.tableView.reloadData()
@@ -237,18 +247,21 @@ class QsMyTableVC: UITableViewController {
                 // Kill refresher when query finished
                 self.refresher.endRefreshing()
                 
-                for temp in objects! {
+                if let temp = objects as? [PFObject] {
                     
-                    qIds.append(temp.objectId!!)
+                    for object in temp {
+                        // If Q is new and only pinned (no network) there will be no objectId
+                        // - In this case, it won't be on the server so it won't get pulled in
+                        //   the next step anyway so we can skip it for the qIds array:
+                        if object.objectId != nil { alreadyRetrieved.append(object.objectId! as String) }
+                    }
                 }
-                
-                println(qIds)
                 
                 // Get Qs that are not in localdata store
                 var myQsQueryServer = PFQuery(className: "SocialQs")
                 myQsQueryServer.whereKey("asker", equalTo: PFUser.currentUser()!)
                 myQsQueryServer.whereKey("askerDeleted", equalTo: false)
-                myQsQueryServer.whereKey("objectId", notContainedIn: qIds)
+                myQsQueryServer.whereKey("objectId", notContainedIn: alreadyRetrieved)
                 myQsQueryServer.orderByDescending("createdAt")
                 myQsQueryServer.limit = 1000
                 
@@ -267,11 +280,16 @@ class QsMyTableVC: UITableViewController {
                             
                             for object in temp {
                                 
+                                if object.objectId != nil { //as? String {
+                                    
+                                    alreadyRetrieved.append(object.objectId! as String)
+                                }
+                                
                                 object.pinInBackgroundWithBlock { (success, error) -> Void in
                                     
                                     if error == nil {
                                         
-                                        println("Object \(object.objectId) pinned!")
+                                        println("Object \(object.objectId!) pinned!")
                                     }
                                 }
                             }

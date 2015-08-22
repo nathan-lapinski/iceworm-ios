@@ -36,11 +36,6 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     
-    @IBAction func endSpin(sender: AnyObject) {
-        
-    }
-    
-    
     
     
     @IBOutlet var linkWithFacebook: UIButton!

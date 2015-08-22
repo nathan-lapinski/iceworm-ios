@@ -35,7 +35,7 @@ class LoginViewController: UIViewController {
     
     @IBAction func loginFacebookButtonPressed(sender: AnyObject) {
         
-        displaySpinnerView(spinnerActive: true, UIBlock: true, self.loginSpinner, self.loginBlurView, "Loggin In", self)
+        displaySpinnerView(spinnerActive: true, UIBlock: true, self.loginSpinner, self.loginBlurView, "Logging In", self)
         
         //blockUI(true, self.loginSpinner, self.loginBlurView, self)
         

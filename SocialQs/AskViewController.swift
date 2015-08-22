@@ -328,6 +328,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
                 qJoin.setObject(PFUser.currentUser()!, forKey: "to")
                 qJoin.setObject(PFUser.currentUser()!, forKey: "from")
+                qJoin.setObject(false, forKey: "askeeDeleted")
                 //qJoin.setObject([GROUPIE], forKey: "to")
                 qJoin.setObject(socialQ, forKey: "question")
                 qJoin.saveEventually({ (success, error) -> Void in
@@ -358,68 +359,68 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     
-    func assignQsToUsers(currentQId: String) {
-        
-        println("Assigning Q to users")
-        
-        // Split groupies by account type
-        // - sQs can be assigned by unique username
-        // - facebookWithApp must be queried by FB Id to get unique username
-        // - facebookWithoutApp must get a message or invite
-        //      - CLOUD CODE: provide a way to cache Q and send FB users once they get the app?
-        
-        /////////////////////////////////////////////
-        // Sort groupies
-        var socialQsGroupies = [String]()
-        var facebookWithAppGroupie = [String]()
-        var facebookWithoutAppGroupie = [String]()
-        
-        for groupie in friendsDictionary {
-            if groupie["isSelected"] as! Bool == true {
-                
-                if groupie["type"] as! String == "socialQs" {
-                    socialQsGroupies.append(groupie["name"] as! String)
-                } else if groupie["type"] as! String == "facebookWithApp" {
-                    facebookWithAppGroupie.append(groupie["id"] as! String)
-                } else if groupie["type"] as! String == "facebookWithoutApp" {
-                    facebookWithoutAppGroupie.append(groupie["id"] as! String)
-                }
-            }
-        }
-        println(socialQsGroupies)
-        /////////////////////////////////////////////
-        
-        // Add qId to "UserQs" table ------
-        var userQsQuery = PFQuery(className: "UserQs")
-        
-        if isGroupieName.count > 0 {
-            userQsQuery.whereKey("username", containedIn: socialQsGroupies)
-        }
-        
-        // Execute query
-        userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
-            
-            if error == nil {
-                
-                if let temp = userQsObjects {
-                    
-                    for userQsObject in temp {
-                        
-                        if userQsObject.objectId!! != uQId { // Append qId to theirQs within UserQs table
-                            
-                            userQsObject.addUniqueObject(currentQId, forKey: "theirQsId")
-                            userQsObject.saveInBackground()
-                        }
-                    }
-                }
-                
-            } else {
-                
-                println("Error updating UserQs Table - Their Qs")
-                println(error)
-            }
-        })
-    }
+//    func assignQsToUsers(currentQId: String) {
+//        
+//        println("Assigning Q to users")
+//        
+//        // Split groupies by account type
+//        // - sQs can be assigned by unique username
+//        // - facebookWithApp must be queried by FB Id to get unique username
+//        // - facebookWithoutApp must get a message or invite
+//        //      - CLOUD CODE: provide a way to cache Q and send FB users once they get the app?
+//        
+//        /////////////////////////////////////////////
+//        // Sort groupies
+//        var socialQsGroupies = [String]()
+//        var facebookWithAppGroupie = [String]()
+//        var facebookWithoutAppGroupie = [String]()
+//        
+//        for groupie in friendsDictionary {
+//            if groupie["isSelected"] as! Bool == true {
+//                
+//                if groupie["type"] as! String == "socialQs" {
+//                    socialQsGroupies.append(groupie["name"] as! String)
+//                } else if groupie["type"] as! String == "facebookWithApp" {
+//                    facebookWithAppGroupie.append(groupie["id"] as! String)
+//                } else if groupie["type"] as! String == "facebookWithoutApp" {
+//                    facebookWithoutAppGroupie.append(groupie["id"] as! String)
+//                }
+//            }
+//        }
+//        println(socialQsGroupies)
+//        /////////////////////////////////////////////
+//        
+//        // Add qId to "UserQs" table ------
+//        var userQsQuery = PFQuery(className: "UserQs")
+//        
+//        if isGroupieName.count > 0 {
+//            userQsQuery.whereKey("username", containedIn: socialQsGroupies)
+//        }
+//        
+//        // Execute query
+//        userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                if let temp = userQsObjects {
+//                    
+//                    for userQsObject in temp {
+//                        
+//                        if userQsObject.objectId!! != uQId { // Append qId to theirQs within UserQs table
+//                            
+//                            userQsObject.addUniqueObject(currentQId, forKey: "theirQsId")
+//                            userQsObject.saveInBackground()
+//                        }
+//                    }
+//                }
+//                
+//            } else {
+//                
+//                println("Error updating UserQs Table - Their Qs")
+//                println(error)
+//            }
+//        })
+//    }
     
     
     func sendPushes() {

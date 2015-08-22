@@ -86,14 +86,6 @@ class QsTheirTableVC: UITableViewController {
         self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
         self.tableView.endUpdates()
         
-        
-        // ********************************************************************************
-        // CLOUD CODE
-        // 1. Pull entry from QJoin Table
-        // 2. Set vote entry to 1 or 2
-        // 3. Pull entry from SocialQs Table
-        // 4. Increment vote1 or vote2
-        //
         var getQJoin = PFQuery(className: "QJoin")
         getQJoin.whereKey("question", equalTo: QJoinObjects[questionId]["question"]!! as! PFObject)
         getQJoin.includeKey("question")
@@ -109,8 +101,6 @@ class QsTheirTableVC: UITableViewController {
                         
                         println("Successful vote cast in SocialQs!")
                     }
-                    
-                    
                 })
                 
                 object?.setObject(optionId, forKey: "vote")
@@ -122,250 +112,15 @@ class QsTheirTableVC: UITableViewController {
                     }
                 })
                 
-                
-                //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
-                self.tableView.beginUpdates()
-                self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
-                self.tableView.endUpdates()
+                // Delay for one second to make vote process look smoother
+                backgroundThread(delay: 1.0, completion: {
+                    //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+                    self.tableView.beginUpdates()
+                    self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                    self.tableView.endUpdates()
+                });
             }
         }
-        
-//        var socialQQuery = PFQuery(className: "SocialQs")
-//        socialQQuery.whereKey("question", equalTo: questionObjects[questionId] as! PFObject)
-//        
-//        socialQQuery.getFirstObjectInBackgroundWithBlock { (object, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                object?.incrementKey("option\(optionId)stats")
-//                object?.saveEventually({ (success, error) -> Void in
-//                    
-//                    if error == nil {
-//                        
-//                        println("Increment to SocialQs table complete")
-//                        
-//                    } else {
-//                        
-//                        println("There was an error incrementing vote in SocialQs table")
-//                        println(error)
-//                    }
-//                })
-//                
-//            } else {
-//                
-//                println("There was an error pulling SocialQs table for voting:")
-//                println(error)
-//            }
-//        }
-        //
-        //
-        // end CLOUD CODE
-        //
-        //
-        // ********************************************************************************
-        
-        
-        
-        
-        // ********************************************************************************
-        // NON-CLOUD CODE
-        // 1. Perform increment on SocialQ object in LDS
-        //
-        
-        //(questionObjects[questionId] as! PFObject).incrementKey("option\(optionId)stats")
-        //(questionObjects[questionId] as! PFObject).sav
-        
-//        var socialQQueryLocal = PFQuery(className: "SocialQs")
-//        socialQQueryLocal.fromLocalDatastore()
-//        socialQQueryLocal.whereKey("question", equalTo: questionObjects[questionId] as! PFObject)
-//        
-//        socialQQueryLocal.getFirstObjectInBackgroundWithBlock { (object, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                object?.incrementKey("option\(optionId)stats")
-//                object?.saveEventually({ (success, error) -> Void in
-//                    
-//                    if error == nil {
-//                        
-//                        println("Increment to SocialQs LOCAL table complete")
-//                        
-//                    } else {
-//                        
-//                        println("There was an error incrementing vote in SocialQs LOCAL table")
-//                        println(error)
-//                    }
-//                })
-//                
-//            } else {
-//                
-//                println("There was an error pulling SocialQs LOCAL table for voting:")
-//                println(error)
-//            }
-//        }
-        
-        
-        // ********************************************************************************
-        
-        
-        
-        
-        
-        
-        
-        
-////        // Setup spinner and black application input
-////        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 100, 100))
-////        activityIndicator.center = self.view.center
-////        activityIndicator.hidesWhenStopped = true
-////        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-////        view.addSubview(activityIndicator)
-////        activityIndicator.startAnimating()
-////        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-//        
-//        var voteId = "stats\(optionId)" // remove??
-//        
-//        // Update internal and local storage of "myVotes"
-////        myVotes[questionIds[questionId]] = optionId
-////        NSUserDefaults.standardUserDefaults().setObject(myVotes, forKey: myVotesStorageKey)
-//        
-//        // Query Q table to get vote table Id
-//        // Then access Vote table and do stuffs
-//        var query = PFQuery(className: "SocialQs")
-//        query.whereKey("objectId", equalTo: questionIds[questionId])
-//        query.findObjectsInBackgroundWithBlock { (questionObjects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                // ------------------------------------------------------------------------------------
-//                // All this logic is not necessary - need to figure out how to unwrap "questionObjects"
-//                // Only one item should exist when pulled with this whereKey, so no for loop needed.
-//                // ------------------------------------------------------------------------------------
-//                if let temp = questionObjects {
-//                    
-//                    for questionObject in temp {
-//                        
-//                        // Update vote data in Votes table (store what user voted)
-//                        var vId = questionObject["votesId"]!! as! String
-//                        var votesQuery = PFQuery(className: "Votes")
-//                        //votesQuery.whereKey("objectId", equalTo: vId)
-//                        votesQuery.getObjectInBackgroundWithId(vId, block: { (voteObjects, error) -> Void in
-//                            
-//                            if error == nil {
-//                                
-//                                // NEW VOTES TABLE
-//                                if optionId == 1 {
-//                                    voteObjects!.addObject(username, forKey: "option1VoterName")
-//                                    voteObjects!.saveInBackground()
-//                                } else {
-//                                    voteObjects!.addObject(username, forKey: "option2VoterName")
-//                                    voteObjects!.saveInBackground()
-//                                }
-//                                
-//                                // Increment vote counter ---------------------------------
-//                                // Should this be nested in the above so all query/writes to DBare completed before switching views?
-//                                var statsQuery = PFQuery(className: "SocialQs")
-//                                
-//                                statsQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (object, error) -> Void in
-//                                    
-//                                    object!.incrementKey(voteId)
-//                                    object!.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
-//                                        
-//                                        if (success) { // The score key has been incremented
-//                                            
-//                                            //
-//                                            //
-//                                            // ---------------------------------------------------------------------------------------------------------------
-//                                            // Database vote values haven't come down by the time the increment occurs so we repoll this row and update
-//                                            // *** Instead of repolling, increment the local value and display it, then let it update from the server the next time it is refreshed!
-//                                            // ***
-//                                            //
-//                                            //
-//                                            var singleQuery = PFQuery(className: "SocialQs")
-//                                            
-//                                            singleQuery.getObjectInBackgroundWithId(questionObject.objectId!!, block: { (singleObjects, singleError) -> Void in
-//                                                
-//                                                // if singleError... // *********
-//                                                
-//                                                if let singleIndex = find(self.questionIds, questionObject.objectId!!) {
-//                                                    
-//                                                    self.option1Stats[singleIndex] = singleObjects!["stats1"]! as! Int
-//                                                    self.option2Stats[singleIndex] = singleObjects!["stats2"]! as! Int
-//                                                    
-//                                                    // Update table row
-//                                                    var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
-//                                                    self.tableView.beginUpdates()
-//                                                    self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
-//                                                    self.tableView.endUpdates()
-//
-////                                                    self.activityIndicator.stopAnimating()
-////                                                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-//                                                    blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
-//                                                }
-//                                            })
-//                                            // ---------------------------------------------------------------------------------------------------------------
-//                                            
-//                                        } else { // There was a problem, check error.description
-//                                            
-//                                            println("Increment error:")
-//                                            println(error)
-//                                            
-//                                            // self.activityIndicator.stopAnimating()
-//                                            // UIApplication.sharedApplication().endIgnoringInteractionEvents()
-//                                            blockUI(false, self.theirQsSpinner, self.theirQsBlurView, self)
-//                                        }
-//                                    }
-//                                })
-//                                
-//                            } else {
-//                                
-//                                println("Votes Table query error")
-//                                println(error)
-//                            }
-//                        })
-//                        
-//                        //
-//                        //
-//                        // Move this into the DB nesting above AFTER above changes have been made!
-//                        //
-//                        //
-//                        // Update data in UserQs table (store on what Qs user already voted )
-//                        var userQsQuery = PFQuery(className: "UserQs")
-//                        //userQsQuery.whereKey("objectId", equalTo: uQId)
-//                        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
-//                            
-//                            if error == nil {
-//                                
-//                                // Store questionId into "votedOnId" array
-//                                if optionId == 1 {
-//                                    
-//                                    userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOn1Id")
-//                                    userQsObjects!.saveInBackground()
-//                                    
-//                                    votedOn1Ids.append(self.questionIds[questionId])
-//                                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
-//                                    
-//                                } else {
-//                                    
-//                                    userQsObjects!.addObject(self.questionIds[questionId], forKey: "votedOn2Id")
-//                                    userQsObjects!.saveInBackground()
-//                                    
-//                                    votedOn2Ids.append(self.questionIds[questionId])
-//                                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-//                                }
-//                            }
-//                        })
-//                    }
-//                }
-//                
-//            } else {
-//                
-//                // Maybe insert a "this quetion has been flagged for removal" alert
-//                // - may need this if/when admins have to delete Qs?
-//                println("SocialQs Table query error:")
-//                println(error)
-//            }
-//        }
     }
     
     
@@ -576,9 +331,6 @@ class QsTheirTableVC: UITableViewController {
         
         // PUSH - Set up the reload to trigger off the push for "reloadTable"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
-        
-        // Reload data upon first entry to view - NOW HANDLED IN VIEWWILLAPPEAR
-        //refresh()
         
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
@@ -797,7 +549,7 @@ class QsTheirTableVC: UITableViewController {
             cell.option1Image.layer.cornerRadius = cornerRadius
             
             // Set option1 text width
-            cell.option1TextLeftSpace.constant = cell.option1Image.frame.size.width + 12
+            cell.option1TextLeftSpace.constant = cell.option1Image.frame.size.width + 20
             cell.option1Label.layoutIfNeeded()
             
             cell.option1Image.hidden = false
@@ -834,7 +586,7 @@ class QsTheirTableVC: UITableViewController {
             cell.option2Image.layer.cornerRadius = cornerRadius
             
             // Set option2 text width
-            cell.option2TextLeftSpace.constant = cell.option2Image.frame.size.width + 12
+            cell.option2TextLeftSpace.constant = cell.option2Image.frame.size.width + 20
             cell.option2Label.layoutIfNeeded()
             
             cell.option2Image.hidden = false
@@ -850,8 +602,6 @@ class QsTheirTableVC: UITableViewController {
             cell.option2Zoom.enabled = false
         }
         
-        
-        // **** NEEDS STATS APPENDED!
         // Display text
         if let questionText = self.QJoinObjects[indexPath.row]["question"]!!["questionText"] as? String {
             
@@ -896,8 +646,6 @@ class QsTheirTableVC: UITableViewController {
         cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
         
         cell.numberOfResponses.text = "\(totalResponses) \(resp)"
-        //        cell.option1Label.text = option1String + "\(Int(option1Percent))%"
-        //        cell.option2Label.text = option2String + "\(Int(option2Percent))%"
         
         // Tag buttons
         cell.option1Zoom.tag  = indexPath.row
@@ -1107,7 +855,7 @@ class QsTheirTableVC: UITableViewController {
                                     
                                     if error == nil {
                                         
-                                        println("Their Qs: \(object.objectId) pinned")
+                                        println("Their Qs: \(object.objectId!) pinned!")
                                     }
                                 }
                             }
