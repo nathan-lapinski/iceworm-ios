@@ -49,28 +49,28 @@ class SignupViewController: UIViewController {
                     
                     getUserPhoto({ (isFinished) -> Void in })
                     
-                    // Create entry in UserQs table
-                    createUserQs(PFUser.currentUser()!.username!, { (isFinished) -> Void in // desired to complete before storing info
+//                    // Create entry in UserQs table
+//                    createUserQs(PFUser.currentUser()!.username!, { (isFinished) -> Void in // desired to complete before storing info
+//                        
+//                        if isFinished {
+//                            
+//                        } else {
+//                            
+//                            displayAlert("Unable to create account", "Please check your internet connection and try again!", self)
+//                        }
+//                    })
+                    
+                    getUsersFacebookInfo({ (isFinished) -> Void in // desired to complete before storing info
                         
-                        if isFinished {
-                            
-                            getUsersFacebookInfo({ (isFinished) -> Void in // desired to complete before storing info
-                                
-                                self.performSegueWithIdentifier("signedUp", sender: self)
-                                
-                                displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
-                                
-                                //blockUI(false, self.signupSpinner, self.signupBlurView, self)
-                                
-                                storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
-                                
-                                getUsersFacebookInfo({ (isFinished) -> Void in })
-                            })
-                            
-                        } else {
-                            
-                            displayAlert("Unable to create account", "Please check your internet connection and try again!", self)
-                        }
+                        self.performSegueWithIdentifier("signedUp", sender: self)
+                        
+                        displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
+                        
+                        //blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                        
+                        storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                        
+                        getUsersFacebookInfo({ (isFinished) -> Void in })
                     })
                     
                 } else {
@@ -140,25 +140,25 @@ class SignupViewController: UIViewController {
                 
                 if error == nil { // Signup successful!
                     
-                    // This is run on the background queue //
-                    // Create entry in UserQs table
-                createUserQs(self.username.text, { (isFinished) -> Void in
+//                    // This is run on the background queue //
+//                    // Create entry in UserQs table
+//                    createUserQs(self.username.text, { (isFinished) -> Void in
+//                        
+//                        if isFinished {
+//                            
+//                        } else {
+//                            
+//                            displayAlert("Unable to create account", "Please check your internet connection and try again!", self)
+//                        }
+//                    })
+                    
+                    storeUserInfo(self.username.text.lowercaseString, true, { (isFinished) -> Void in
                         
-                        if isFinished {
-                            
-                            storeUserInfo(self.username.text.lowercaseString, true, { (isFinished) -> Void in
-                                
-                                self.performSegueWithIdentifier("signedUpWithoutFacebook", sender: self)
-                                
-                                displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, "Signing Up", self)
-                                
-                                //blockUI(false, self.signupSpinner, self.signupBlurView, self)
-                            })
-                            
-                        } else {
-                            
-                            displayAlert("Unable to create account", "Please check your internet connection and try again!", self)
-                        }
+                        self.performSegueWithIdentifier("signedUpWithoutFacebook", sender: self)
+                        
+                        displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, "Signing Up", self)
+                        
+                        //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                     })
                     
                 } else { // Signup failed

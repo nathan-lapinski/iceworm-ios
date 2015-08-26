@@ -82,76 +82,125 @@ func displaySpinnerView(#spinnerActive: Bool, #UIBlock: Bool, var _boxView: UIVi
         _boxView.addSubview(activityView)
         _boxView.addSubview(textLabel)
         
+        _blurView.alpha = 0.0
+        _blurView.layoutIfNeeded()
+        _boxView.alpha = 0.0
+        _boxView.layoutIfNeeded()
+        
         sender.view.addSubview(_blurView)
         sender.view.addSubview(_boxView)
+        
+        UIView.animateWithDuration(0.2, animations: { () -> Void in
+            
+            _blurView.alpha = 1.0
+            _blurView.layoutIfNeeded()
+            
+            }, completion: { (isFinished) -> Void in })
+        
+        UIView.animateWithDuration(0.4, animations: { () -> Void in
+            
+            _boxView.alpha = 1.0
+            _boxView.layoutIfNeeded()
+            
+            }, completion: { (isFinished) -> Void in })
        
     } else {
-        println("Removing activity indicator from superView")
-        _boxView.removeFromSuperview()
-        _blurView.removeFromSuperview()
-    }
-    
         
-//        // Add blur view
-//        _blurView.frame = sender.view.frame
-//        sender.view.addSubview(_blurView)
-//        
-//        // Setup and start spinner
-//        _activityIndicator.center = sender.view.center
-//        _activityIndicator.hidesWhenStopped = true
-//        _activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
-//        sender.view.addSubview(_activityIndicator)
-//        _activityIndicator.startAnimating()
-//        
-//    } else {
-//        // Stop spinner
-//        _activityIndicator.stopAnimating()
-//        
-//        // Un-blur ASK tab
-//        _blurView.removeFromSuperview()
-//    }
+        sender.view.addSubview(_blurView)
+        sender.view.addSubview(_boxView)
+        
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            
+            _blurView.alpha = 0.0
+            _blurView.layoutIfNeeded()
+            _boxView.alpha = 0.0
+            _boxView.layoutIfNeeded()
+            
+            }, completion: { (isFinished) -> Void in
+                
+                _boxView.removeFromSuperview()
+                _blurView.removeFromSuperview()
+        })
+    }
 }
 
 
-//*******************************************************************************
-// Move back to login/signup if/when it becomes a single controller
-//*******************************************************************************
-func createUserQs(username: String, completion: (Bool) -> Void) {
+func displayCellSpinnerView(var _boxView: UIView, var _blurView: UIVisualEffectView, progressText: String?, sender: UITableViewCell) {
     
-    // Create UsersQs entry
-    var userQ = PFObject(className: "UserQs")
-    userQ.saveInBackgroundWithBlock({ (success, error) -> Void in
+//    if UIBlock == true {
+//        // block application input
+//        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+//    } else {
+//        // unblock application input
+//        UIApplication.sharedApplication().endIgnoringInteractionEvents()
+//    }
+//    
+//    if spinnerActive == true {
+        println("Adding activity indicator from superView")
+        // You only need to adjust this frame to move it anywhere you want
+        _boxView.frame = CGRectMake(sender.frame.midX - 90, sender.frame.midY - 25, 180, 50)
+        _boxView.backgroundColor = UIColor.darkGrayColor()
+        _boxView.alpha = 0.8
+        _boxView.layer.cornerRadius = 10
         
-        if error == nil {
+        // setup blur view
+        _blurView.frame = CGRectMake(8, 8, sender.frame.width - 16, sender.frame.height - 16)
+        _blurView.layer.cornerRadius = cornerRadius
+        
+        //Here the spinnier is initialized
+        var activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+        activityView.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        activityView.startAnimating()
+        
+        var textLabel = UILabel(frame: CGRect(x: 30, y: 0, width: 150, height: 50))
+        textLabel.textColor = UIColor.whiteColor()
+        textLabel.textAlignment = .Center
+        textLabel.text = progressText
+        textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(16))!
+        
+        _boxView.addSubview(activityView)
+        _boxView.addSubview(textLabel)
+        
+        _blurView.alpha = 0.0
+        _blurView.layoutIfNeeded()
+        _boxView.alpha = 0.0
+        _boxView.layoutIfNeeded()
+        
+        sender.addSubview(_blurView)
+        sender.addSubview(_boxView)
+        
+        UIView.animateWithDuration(0.2, animations: { () -> Void in
             
-            var userQId = userQ.objectId!
+            _blurView.alpha = 1.0
+            _blurView.layoutIfNeeded()
             
-            // Store userQ enrty identifier back in Users table
-            var user = PFUser.currentUser()
-            user!.setObject(userQId, forKey: "uQId")
-            user!.saveInBackgroundWithBlock({ (success, error) -> Void in
-                
-                if error == nil {
-                    
-                    completion(true)
-                    
-                } else {
-                    
-                    println("Error storing uQId to UserQs table")
-                    println(error)
-                    
-                    completion(false)
-                }
-            })
+            }, completion: { (isFinished) -> Void in })
+        
+        UIView.animateWithDuration(0.4, animations: { () -> Void in
             
-        } else {
+            _boxView.alpha = 1.0
+            _boxView.layoutIfNeeded()
             
-            println("Error creating UserQs entry for new user")
-            println(error)
-            
-            completion(false)
-        }
-    })
+            }, completion: { (isFinished) -> Void in })
+        
+//    } else {
+//        
+//        sender.addSubview(_blurView)
+//        sender.addSubview(_boxView)
+//        
+//        UIView.animateWithDuration(0.3, animations: { () -> Void in
+//            
+//            _blurView.alpha = 0.0
+//            _blurView.layoutIfNeeded()
+//            _boxView.alpha = 0.0
+//            _boxView.layoutIfNeeded()
+//            
+//            }, completion: { (isFinished) -> Void in
+//                
+//                _boxView.removeFromSuperview()
+//                _blurView.removeFromSuperview()
+//        })
+//    }
 }
 
 
@@ -181,10 +230,7 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
         // and if they have recently downloaded and linked SocialQs
         var friendCheck = Dictionary<String, String>()
         
-        //
         // Check currently DLd facebook friends and only log the ones that DNE yet (new friends)
-        //
-        
         var facebookFriendsQuery = PFQuery(className: "Friends")
         facebookFriendsQuery.fromLocalDatastore()
         facebookFriendsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
@@ -197,8 +243,6 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                     
                     for object in temp {
                         
-                        println(object["id"])
-                        
                         var tempDict = Dictionary<String, AnyObject>()
                         
                         // Build an array of dictionaries to use for comparison to FB DL
@@ -209,30 +253,10 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                         tempDict["type"] = object["type"]
                         tempDict["id"] = object["id"]
                         
-                        // ********************************************************
-                        // Make a separate, async func to do profilePic DL
-                        //
-                        //
-                        //
-                        // Pull profile image synchronously and store in tempDict
-                        // ********************************************************
+                        // Pull profile image and store in separate dict
                         if let url = (tempDict["picURL"]) as? String {
                             
-                            let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
-                            
-                            var response: NSURLResponse?
-                            var error: NSErrorPointer = nil
-                            var data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: &response, error: error)
-                            
-                            if let httpResponse = response as? NSHTTPURLResponse {
-                                
-                                if httpResponse.statusCode > 199 && httpResponse.statusCode < 300 {
-                                    
-                                    if let image = UIImage(data: data!) {
-                                        tempDict["profilePicture"] = image
-                                    }
-                                }
-                            }
+                            downloadFacebookFriendsPhotos(url, { (success) -> Void in })
                         }
                         
                         if contains(isGroupieName, object["name"]! as! String) {
@@ -248,11 +272,6 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                     }
                 }
              
-                
-                
-                
-                
-                
                 // Download from facebook -----------------------------------------------------------
                 struct userInfo {
                     var id: String!
@@ -284,7 +303,7 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                         println("Error retrieving Facebook Users: \n\(error)")
                     }
                     
-                    // Get list of all facebook friends
+                    // Get list of ALL facebook friends
                     // - Nest in previous because we need the complete list of users who have SOCIALQS to filter "all" facebook friends properly
                     var friendsRequest2 = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id,picture&limit=1000", parameters: nil);
                     
@@ -318,24 +337,10 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                                     tempDict["id"] = temp[i]["id"]!! as! String
                                 }
                                 
-                                // Pull profile image synchronously and store in tempDict
+                                // Pull profile image and store in separate dict
                                 if let url = (tempDict["picURL"]) as? String {
-                                    
-                                    let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
-                                    
-                                    var response: NSURLResponse?
-                                    var error: NSErrorPointer = nil
-                                    var data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: &response, error: error)
-                                    
-                                    if let httpResponse = response as? NSHTTPURLResponse {
-                                        
-                                        if httpResponse.statusCode > 199 && httpResponse.statusCode < 300 {
-                                            
-                                            if let image = UIImage(data: data!) {
-                                                tempDict["profilePicture"] = image
-                                            }
-                                        }
-                                    }
+                                
+                                    downloadFacebookFriendsPhotos(url, { (success) -> Void in })
                                 }
                                 
                                 if contains(isGroupieName, temp[i]["name"]!! as! String) {
@@ -343,6 +348,9 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                                     tempDict["isSelected"] = true
                                 }
                                 
+                                // ************************************************
+                                // If this is going to run a lot, why bother with the skip?
+                                // - Just update all in LDS since it will be a background process anyway
                                 // ====================================================================
                                 // skip this user if they are NOT NEW and have NOT CHANGED type
                                 // (compare to friends pulled from LDS above
@@ -350,7 +358,7 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                                     
                                     if friendCheck[tempDict["picURL"] as! String] == tempDict["type"] as? String { // user is same type in LDS
                                         
-                                        println("User exists in LDS with same account type. Skipping")
+                                        //println("User exists in LDS with same account type. Skipping")
                                         
                                         // skip end of iteration as to not re-append this user
                                         continue
@@ -368,38 +376,17 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                                             
                                             if error == nil {
                                                 
-                                                //
-                                                //
-                                                // DONT UNPIN!!!!!
-                                                //
-                                                //
-                                                // Unpin user to prep for accoutn type updating
-                                                //object?.unpinInBackgroundWithBlock { (success, error) -> Void in
+                                                // Update account type
+                                                object?.setObject(tempDict["type"] as! String, forKey: "type")
+                                                
+                                                // rePin user to LDS
+                                                object?.pinInBackgroundWithBlock { (success, error) -> Void in
                                                     
-                                                    //if error == nil {
+                                                    if error == nil {
                                                         
-                                                        // Update account type
-                                                        object?.setObject(tempDict["type"] as! String, forKey: "type")
-                                                        
-                                                        // rePin user to LDS
-                                                        object?.pinInBackgroundWithBlock { (success, error) -> Void in
-                                                            
-                                                            if error == nil {
-                                                                
-                                                                //println("Successfully pinned user with updated account type")
-                                                            }
-                                                        }
-                                                        
-    //                                                    // Update that asshole on teh DB
-    //                                                    object?.saveEventually({ (success, error) -> Void in
-    //                                                        
-    //                                                        if error == nil {
-    //                                                            
-    //                                                            println("User type has been updated in LDS")
-    //                                                        }
-    //                                                    })
-                                                    //}
-                                                //}
+                                                        //println("Successfully pinned user with updated account type")
+                                                    }
+                                                }
                                             }
                                         })
                                         
@@ -413,7 +400,7 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                                     
                                     // ===================================================================
                                     //
-                                    // Pin and upload new asshole users
+                                    // Pin new asshole users
                                     //
                                     // ===================================================================
                                     
@@ -436,19 +423,6 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                                             println("There was an error pinning new user: \n\(error)")
                                         }
                                     })
-                                    
-    //                                // Upload new user to DB
-    //                                newFriend.saveEventually({ (success, error) -> Void in
-    //                                    
-    //                                    if error == nil {
-    //                                        
-    //                                        println("Successfully saved new user to DB!")
-    //                                        
-    //                                    } else {
-    //                                        
-    //                                        println("There was an error saving new user to DB: \n\(error)")
-    //                                    }
-    //                                })
                                 }
                             }
                             
@@ -456,7 +430,6 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                             
                             // Set completion
                             completion(true)
-                            
                             
                         } else {
                             
@@ -473,9 +446,29 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
     })
 }
 //*******************************************************************************
-// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
+// ^ NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
 //*******************************************************************************
 
+
+func downloadFacebookFriendsPhotos(picURL: String, completion: (Bool) -> Void) {
+    
+    if friendsPhotoDictionary[picURL] == nil {
+        
+        let urlRequest = NSURLRequest(URL: NSURL(string: picURL)!)
+        
+        NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+            
+            if data != nil {
+                
+                friendsPhotoDictionary[picURL] = UIImage(data: data)
+                
+            } else {
+                
+                println("There was an error downloading a friend's FB photo: \n\(error)")
+            }
+        }
+    }
+}
 
 
 func formatButton(_button: UIButton) {
@@ -514,8 +507,6 @@ func getUserPhoto(completion: (Bool) -> Void) {
         tempPic.getDataInBackgroundWithBlock({ (data, error) -> Void in
             
             if error == nil {
-                
-                println("NO ERROR")
                 
                 if let downloadedImage = UIImage(data: data!) {
                     println("got it!")
@@ -733,8 +724,8 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     nameStorageKey      = username + "name"
     uIdStorageKey       = username + "uId"
     uQIdStorageKey      = username + "uQId"
-    myVoted1StorageKey  = username + "votedOn1Ids"
-    myVoted2StorageKey  = username + "votedOn2Ids"
+//    myVoted1StorageKey  = username + "votedOn1Ids"
+//    myVoted2StorageKey  = username + "votedOn2Ids"
     myFriendsStorageKey = username + "myFriends"
     
     // Store user info on the phone
@@ -811,6 +802,21 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
 }
 
 
-func displaySpinnerWithText(var _boxView: UIView, var _blurView: UIView, progressText: String, sender: UIViewController) {
-}
+
+// SYNCHRONOUS IMAGE DL
+//                                    let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
+//
+//                                    var response: NSURLResponse?
+//                                    var error: NSErrorPointer = nil
+//                                    var data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: &response, error: error)
+//
+//                                    if let httpResponse = response as? NSHTTPURLResponse {
+//
+//                                        if httpResponse.statusCode > 199 && httpResponse.statusCode < 300 {
+//
+//                                            if let image = UIImage(data: data!) {
+//                                                tempDict["profilePicture"] = image
+//                                            }
+//                                        }
+//                                    }
 

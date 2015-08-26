@@ -44,8 +44,8 @@ var usernameStorageKey  = "username"
 var nameStorageKey      = "name"
 var uIdStorageKey       = "uId"
 var uQIdStorageKey      = "uQId"
-var myVoted1StorageKey  = "votedOn1Ids"
-var myVoted2StorageKey  = "votedOn2Ids"
+//var myVoted1StorageKey  = "votedOn1Ids"
+//var myVoted2StorageKey  = "votedOn2Ids"
 //var myVotesStorageKey  = "votes"
 //var profilePictureKey   = "profilePicture"
 var myFriendsStorageKey = "myFriends"
@@ -54,8 +54,8 @@ var myFriendsStorageKey = "myFriends"
 // Arrays for displaying questions
 //var deletedMyQuestions = [String]() // questions DELETED by current user
 //var deletedTheirQuestions = [String]() // questions DELETED by current user
-var votedOn1Ids = [String]() // questions VOTED-UPON by current user
-var votedOn2Ids = [String]() // questions VOTED-UPON by current user
+//var votedOn1Ids = [String]() // questions VOTED-UPON by current user
+//var votedOn2Ids = [String]() // questions VOTED-UPON by current user
 
 
 // Dictionary to pass question value to "view votes" controller
@@ -65,6 +65,7 @@ var isUploading = [String]()
 // Friends and Groupies variables
 var groupiesGroups = [Dictionary<String,AnyObject>]()
 var friendsDictionary = [Dictionary<String, AnyObject>]()
+var friendsPhotoDictionary = Dictionary<String, UIImage>()
 var friendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
 var nonFriendsDictionary = [Dictionary<String, AnyObject>]()
 var nonFriendsDictionaryFiltered = [Dictionary<String, AnyObject>]()

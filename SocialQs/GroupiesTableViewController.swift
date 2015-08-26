@@ -48,6 +48,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         buildGroupiesDictionary()
         
+        //
+        //
+        // Build Friends join table entries
+        //
+        //
+        
         presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -84,11 +90,30 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 groupName = self.groupEntry.text
             }
             
-            //PFCloud.callFunctionInBackground("findNewUser", withParameters: ["userString": searchString, "currentUser": username]) { (objects, error) -> Void in 
         
             println(groupiesDictionary)
             
-            //}
+            var groupObjects: [PFObject] = []
+            
+            for groupie in self. {
+                
+                var qJoin = PFObject(className: "QJoin")
+                qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
+                qJoin.setObject(sQsGroupie, forKey: "to")
+                qJoin.setObject(PFUser.currentUser()!, forKey: "from")
+                qJoin.setObject(false, forKey: "askeeDeleted")
+                qJoin.setObject(socialQ, forKey: "question")
+                
+                sQsGroupieObjects.append(qJoin)
+                
+            }
+            //
+            //
+            // Create Group join table entry
+            //
+            //
+            
+            
         }))
         
         self.presentViewController(alert, animated: true, completion: {
@@ -140,9 +165,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                         
                         println(message)
                         
+                        // User is now linked, download their friends for groupies use
                         downloadFacebookFriends({ (isFinished) -> Void in
-                            
-                            //displayAlert("Downloading your friends!", "The groupies page will reload when this activity is complete.", self)
                             
                             println("downloading friends")
                             
@@ -282,6 +306,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         tableView.reloadData()
     }
     
+    
     func clearSelectedGroupies() {
         
         isGroupieName.removeAll(keepCapacity: true)
@@ -304,51 +329,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     func loadUsers(searchName: String) {
         
-//        // GET sQs users for search purposes
-//        // must load each time for search functionality to work
-//        //// Pull SocialQs Users (omit anyone who is FB linked) and include in additional section under FB/myFriends
-//        var socialQsUsersQuery = PFQuery(className: "_User")
-//        socialQsUsersQuery.whereKey("username", containsString: searchName) // all users with search string in username
-//        socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
-//        socialQsUsersQuery.whereKey("username", notContainedIn: myFriends) // No users that are already myFriends
-//        socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
-//        
-//        socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                nonFriendsDictionary.removeAll(keepCapacity: true)
-//                
-//                if let temp = objects {
-//                    
-//                    for object in temp {
-//                        
-//                        var tempDict = Dictionary<String, AnyObject>()
-//                        
-//                        tempDict["name"] = object.username!!
-//                        //tempDict["username"] = object.username!!
-//                        tempDict["type"] = "socialQs"
-//                        tempDict["id"] = object.objectId!!
-//                        tempDict["isSelected"] = false
-//                        
-//                        nonFriendsDictionary.append(tempDict)
-//                    }
-//                }
-        
-                self.buildUserStrings(searchName)
-                
-//            } else {
-//                
-//                println("Error pulling non-friends")
-//                println(error)
-//            }
-//        })
+        self.buildUserStrings(searchName)
     }
     
     
     func buildUserStrings(name: String) {
         
-        println(friendsDictionary.count)
         //:::::::::::::::::::::::::::::::::::::::::::
         // Sort dictionaries
         friendsDictionary.sort { (item1, item2) -> Bool in
@@ -512,28 +498,45 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             cell.usernameLabel.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
             
             // Add profile pics
-            if let image: UIImage = friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage {
-                
-                cell.profilePictureImageView.image = image
-                
-            } else {
-                
-                if let url = (friendsDictionaryFiltered[indexPath.row]["picURL"]) as? String {
+            
+            if let url = friendsDictionaryFiltered[indexPath.row]["picURL"] as? String {
+            
+                if let image: UIImage = friendsPhotoDictionary[url] {
                     
-                    let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
-                    
-                    NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
-                        
-                        friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(data: data)!
-                        friendsDictionary[indexPath.row]["profilePicture"] = UIImage(data: data)!
-                        cell.profilePictureImageView.image = UIImage(data: data)!
-                    }
+                    cell.profilePictureImageView.image = image
                     
                 } else {
                     
-                    cell.profilePictureImageView.image = UIImage(named: "profile.png")!
+                    cell.profilePictureImageView.image = UIImage(named: "profile.png")
                 }
+                
+            } else {
+                
+                cell.profilePictureImageView.image = UIImage(named: "profile.png")
             }
+            
+//            if let image: UIImage = friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage {
+//                
+//                cell.profilePictureImageView.image = image
+//                
+//            } else {
+//                
+//                if let url = (friendsDictionaryFiltered[indexPath.row]["picURL"]) as? String {
+//                    
+//                    let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
+//                    
+//                    NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+//                        
+//                        friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(data: data)!
+//                        friendsDictionary[indexPath.row]["profilePicture"] = UIImage(data: data)!
+//                        cell.profilePictureImageView.image = UIImage(data: data)!
+//                    }
+//                    
+//                } else {
+//                    
+//                    cell.profilePictureImageView.image = UIImage(named: "profile.png")!
+//                }
+//            }
             
             cell.profilePictureImageView.contentMode = UIViewContentMode.ScaleAspectFill
             cell.profilePictureImageView.clipsToBounds = true

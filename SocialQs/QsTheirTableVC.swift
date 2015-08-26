@@ -118,204 +118,87 @@ class QsTheirTableVC: UITableViewController {
                     self.tableView.beginUpdates()
                     self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
                     self.tableView.endUpdates()
-                });
+                })
             }
         }
     }
     
     
-    
-    
-    
-    
-    
-    
-//    // Swipe to display options functions ----------------------------------------------------------------------------------
-//    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
-//        
-//        // Determine which state (unvote or voted on) the cell is in before deleting from arrays
-//        var votedOn = false
-//        
-//        var votedOnTemp = votedOn1Ids + votedOn2Ids
-//        
-//        if contains(votedOnTemp, self.questionIds[indexPath.row]) {
-//            votedOn = true
-//        } else {
-//            votedOn = false
-//        }
-//        
-//        //"More"
-//        let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
-//            
-//            imageZoom = [nil, nil, nil]
-//            
-//            var expectedCount = 0
-//            var downloadedCount = 0
-//            
-//            if self.questionsPhoto[indexPath.row] != nil { expectedCount++ }
-//            if self.option1sPhoto[indexPath.row] != nil { expectedCount++ }
-//            if self.option2sPhoto[indexPath.row] != nil { expectedCount++ }
-//            
-//            self.setViewQ(indexPath.row)
-//            
-//            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
-//            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
-//            requestedQId = self.questionIds[indexPath.row]
-//            
-//            if expectedCount == 0 {
-//                
-//                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
-//                
-//            } else {
-//            
-//                if self.questionsPhoto[indexPath.row] != nil {
-//                    
-//                    self.questionsPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data, error) -> Void in
-//                        
-//                        if error != nil {
-//                            
-//                            println(error)
-//                            
-//                        } else {
-//                            
-//                            
-//                            if let downloadedImage = UIImage(data: data!) {
-//                                
-//                                imageZoom[0] = downloadedImage
-//                                
-//                                downloadedCount++
-//                            }
-//                            
-//                            if downloadedCount == expectedCount {
-//                                
-//                                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
-//                            }
-//                        }
-//                    })
-//                    
-//                }
-//                
-//                if self.option1sPhoto[indexPath.row] != nil {
-//                    
-//                    self.option1sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data1, error1) -> Void in
-//                        
-//                        if error1 != nil {
-//                            
-//                            println(error1)
-//                            
-//                        } else {
-//                            
-//                            if let downloadedImage = UIImage(data: data1!) {
-//                                
-//                                imageZoom[1] = downloadedImage
-//                                
-//                                downloadedCount++
-//                            }
-//                            
-//                            if downloadedCount == expectedCount {
-//                                
-//                                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
-//                            }
-//                        }
-//                    })
-//                }
-//                
-//                if self.option2sPhoto[indexPath.row] != nil {
-//                    
-//                    self.option2sPhoto[indexPath.row]!.getDataInBackgroundWithBlock({ (data2, error2) -> Void in
-//                        
-//                        if error2 != nil {
-//                            
-//                            println(error2)
-//                            
-//                        } else {
-//                            
-//                            if let downloadedImage = UIImage(data: data2!) {
-//                                
-//                                imageZoom[2] = downloadedImage
-//                                
-//                                downloadedCount++
-//                            }
-//                            
-//                            if downloadedCount == expectedCount {
-//                                
-//                                self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
-//                            }
-//                        }
-//                    })
-//                }
-//            }
-//            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
-//            // FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION
-//        }
-//        view.backgroundColor = UIColor.orangeColor()
-//        
-//        
-//        let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
-//            
-//            println("share button tapped")
-//        }
-//        share.backgroundColor = UIColor.grayColor()
-//        
-//        
-//        let trash = UITableViewRowAction(style: .Normal, title: "Trash") { action, index in
-//            
-//            // Append qId to "deleted" array in database
-//            var deletedQuery = PFQuery(className: "UserQs")
-//            
-//            deletedQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
-//                
-//                if error == nil {
-//                    
-//                    // Add Q to deleted
-//                    userQsObjects!.addUniqueObject(self.questionIds[indexPath.row], forKey: "deletedTheirQsId")
-//                    userQsObjects!.saveInBackground()
-//                    
-//                    // Remove Q from theirQs (their active Qs)
-//                    userQsObjects!.removeObject(self.questionIds[indexPath.row], forKey: "theirQsId")
-//                    userQsObjects!.saveInBackground()
-//                    
-//                    self.questionIds.removeAtIndex(indexPath.row)
-//                    self.questions.removeAtIndex(indexPath.row)
-//                    self.questionsPhoto.removeAtIndex(indexPath.row)
-//                    self.option1s.removeAtIndex(indexPath.row)
-//                    self.option2s.removeAtIndex(indexPath.row)
-//                    self.option1sPhoto.removeAtIndex(indexPath.row)
-//                    self.option2sPhoto.removeAtIndex(indexPath.row)
-//                    self.option1Stats.removeAtIndex(indexPath.row)
-//                    self.option2Stats.removeAtIndex(indexPath.row)
-//                    self.askers.removeAtIndex(indexPath.row)
-//                    //self.askerPhotos.removeAtIndex(indexPath.row)
-//                    self.configuration.removeAtIndex(indexPath.row)
-//                    self.votesId.removeAtIndex(indexPath.row)
-//                    self.photosId.removeAtIndex(indexPath.row)
-//                    
-//                    tableView.beginUpdates()
-//                    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
-//                    tableView.endUpdates()
-//                    
-//                } else {
-//                    
-//                    println("Error adding qId to UserQs/deletedTheirQsId")
-//                }
-//            })
-//        }
-//        trash.backgroundColor = UIColor.redColor()
-//        
-//        
-//        println("Swiped THEIR row: \(indexPath.row)")
-//        
-//        
-//        if votedOn {
-//            
-//            return [trash, view] // Order = appearance order, right to left on screen
-//            
-//        } else {
-//            
-//            return [trash] // Order = appearance order, right to left on screen
-//        }
-//    }
-    
+    // Swipe to display options functions ----------------------------------------------------------------------------------
+    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
+        
+        //"More"
+        let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
+            
+            // Set question for viewing
+            questionToView = self.QJoinObjects[indexPath.row]["question"]!! as? PFObject
+            
+            self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+            
+            self.tableView.setEditing(false, animated: true)
+        }
+        view.backgroundColor = UIColor.orangeColor()
+        
+        
+        let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
+            
+            println("share button tapped")
+        }
+        share.backgroundColor = UIColor.grayColor()
+        
+        
+        let trash = UITableViewRowAction(style: .Normal, title: "Trash") { action, index in
+            
+            let object = self.QJoinObjects[indexPath.row] as! PFObject
+            
+            object["askeeDeleted"] = true
+            
+            object.unpinInBackgroundWithBlock({ (success, error) -> Void in
+                
+                if error == nil {
+                    
+                    println("question unpinned")
+                    
+                    object.saveEventually({ (success, error) -> Void in
+                        
+                        if error == nil {
+                            
+                            println("Question updated to be labeled as deleted")
+                            
+                        } else {
+                            
+                            println("There was an error updating the question as deleted:")
+                            println(error)
+                        }
+                    })
+                    
+                } else {
+                    
+                    println("There was an error unpinning the question:")
+                    println(error)
+                }
+            })
+            
+            self.QJoinObjects.removeAtIndex(indexPath.row)
+            
+            tableView.beginUpdates()
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+            tableView.endUpdates()
+        }
+        trash.backgroundColor = UIColor.redColor()
+        
+        
+        println("Swiped THEIR row: \(indexPath.row)")
+        
+        if self.QJoinObjects[indexPath.row]["vote"] != nil {
+            
+            return [trash, view] // Order = appearance order, right to left on screen
+            
+        } else {
+            
+            return [trash] // Order = appearance order, right to left on screen
+        }
+    }
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // the cells you would like the actions to appear needs to be editable
         return true
@@ -354,25 +237,6 @@ class QsTheirTableVC: UITableViewController {
     }
     
     
-//    // MAKE GLOBAL -------------------------------------
-//    // MAKE GLOBAL -------------------------------------
-//    func setViewQ(index: Int) {
-//        
-//        viewQ = Dictionary<String, Any>()
-//        
-//        viewQ["qId"] = self.questionIds[index]
-//        viewQ["question"] = self.questions[index]
-//        if self.questionsPhoto[index] != nil { viewQ["questionPhoto"] = self.questionsPhoto[index] }
-//        viewQ["option1"] = self.option1s[index]
-//        if self.option1sPhoto[index] != nil { viewQ["option1Photo"]  = self.option1sPhoto[index] }
-//        viewQ["option2"] = self.option2s[index]
-//        if self.option2sPhoto[index] != nil { viewQ["option2Photo"]  = self.option2sPhoto[index] }
-//        viewQ["votesId"] = self.votesId[index]
-//    }
-//    // MAKE GLOBAL -------------------------------------
-//    // MAKE GLOBAL -------------------------------------
-    
-    
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -390,14 +254,18 @@ class QsTheirTableVC: UITableViewController {
         
         if blockCheck == true {
             
-            var cellSpinner = UIActivityIndicatorView()
+            // Overlay spinner/voting message
+            var boxView = UIView()
+            var blurView = globalBlurView()
+            displayCellSpinnerView(boxView, blurView, "Casting Vote", cell)
             
-            // Setup and start spinner
-            cellSpinner.center = cell.center
-            cellSpinner.hidesWhenStopped = true
-            cellSpinner.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-            cell.addSubview(cellSpinner)
-            cellSpinner.startAnimating()
+//            // Setup and start spinner
+//            var cellSpinner = UIActivityIndicatorView()
+//            cellSpinner.center = cell.center
+//            cellSpinner.hidesWhenStopped = true
+//            cellSpinner.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+//            cell.addSubview(cellSpinner)
+//            cellSpinner.startAnimating()
             
             // Deactivate buttons
             cell.vote1Button.enabled = false
@@ -611,24 +479,36 @@ class QsTheirTableVC: UITableViewController {
             cell.question.sizeToFit()
         }
         if let option1Text = self.QJoinObjects[indexPath.row]["question"]!!["option1Text"] as? String {
-            
-            cell.option1Label.text = option1Text + "  \(Int(option1Percent))%"
+            if totalResponses > 0 {
+                cell.option1Label.text = option1Text + "  \(Int(option1Percent))%"
+            } else {
+                cell.option1Label.text = option1Text
+            }
             cell.option1Label.numberOfLines = 0 // Dynamic number of lines
             cell.option1Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
             
         } else {
-            
-            cell.option1Label.text = "\(Int(option1Percent))%"
+            if totalResponses > 0 {
+                cell.option1Label.text = "\(Int(option1Percent))%"
+            } else {
+                cell.option1Label.text = ""
+            }
         }
         if let option2Text = self.QJoinObjects[indexPath.row]["question"]!!["option2Text"] as? String {
-            
-            cell.option2Label.text = option2Text  + "  \(100 - Int(option1Percent))%"
+            if totalResponses > 0 {
+                cell.option2Label.text = option2Text  + "  \(100 - Int(option1Percent))%"
+            } else {
+                cell.option2Label.text = option2Text
+            }
             cell.option2Label.numberOfLines = 0 // Dynamic number of lines
             cell.option2Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
             
         } else {
-            
-            cell.option2Label.text = "\(100 - Int(option1Percent))%"
+            if totalResponses > 0 {
+                cell.option2Label.text = "\(100 - Int(option1Percent))%"
+            } else {
+                cell.option2Label.text = ""
+            }
         }
         
         // Make cells non-selectable
@@ -657,7 +537,6 @@ class QsTheirTableVC: UITableViewController {
         // Format cell backgrounds
         cell.backgroundColor = UIColor.clearColor()
         
-        
         // Profile Pic
         if (QJoinObjects[indexPath.row]["question"]!!["asker"]!!["profilePicture"] as? PFFile != nil) {
             
@@ -669,12 +548,13 @@ class QsTheirTableVC: UITableViewController {
                 }
             })
         }
-        //cell.profilePicture.layer.borderWidth = 1.0
-        //cell.profilePicture.layer.borderColor = UIColor.whiteColor().CGColor
         cell.profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
         cell.profilePicture.layer.masksToBounds = false
-        //cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
         cell.profilePicture.clipsToBounds = true
+        cell.profilePicture.layer.cornerRadius = 8.0
+        //cell.profilePicture.layer.borderWidth = 1.0
+        //cell.profilePicture.layer.borderColor = UIColor.groupTableViewBackgroundColor().CGColor // UIColor.whiteColor().CGColor
+        //cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
         
         // Set askername
         cell.username.text = QJoinObjects[indexPath.row]["question"]!!["asker"]!!["username"] as? String
@@ -686,9 +566,11 @@ class QsTheirTableVC: UITableViewController {
         // Set vote background to clear
         cell.vote1Button.backgroundColor = UIColor.clearColor()
         cell.vote2Button.backgroundColor = UIColor.clearColor()
-
         
         // Disable appropriate vote buttons and vote checkmarks
+        cell.checkmark1.hidden = true
+        cell.checkmark2.hidden = true
+        
         if let myVote = QJoinObjects[indexPath.row]["vote"] as? Int {
             
             cell.vote1Button.enabled = false
@@ -697,22 +579,29 @@ class QsTheirTableVC: UITableViewController {
             // Set myVote selector
             if myVote == 1 {
                 
-                cell.myVote1.hidden = false
-                cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
-                cell.myVote2.hidden = true
-            } else {
+//                cell.myVote1.hidden = false
+//                cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
+//                cell.myVote2.hidden = true
                 
-                cell.myVote2.hidden = false
-                cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
-                cell.myVote1.hidden = true
+                cell.checkmark1.hidden = false
+                cell.checkmark2.hidden = true
+                
+            } else if myVote == 2 {
+                
+//                cell.myVote2.hidden = false
+//                cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
+//                cell.myVote1.hidden = true
+                
+                cell.checkmark1.hidden = true
+                cell.checkmark2.hidden = false
             }
             
         } else {
             
             cell.vote1Button.enabled = true
             cell.vote2Button.enabled = true
-            cell.myVote1.hidden = true
-            cell.myVote2.hidden = true
+//            cell.myVote1.hidden = true
+//            cell.myVote2.hidden = true
         }
         
         return cell
@@ -720,33 +609,11 @@ class QsTheirTableVC: UITableViewController {
     
     
     override func viewWillAppear(animated: Bool) {
-//        self.tableView.reloadData()
-        
-        // MAKE FUNCTION -----------------------------------------------------------
-        // Recall deleted/dismissed data
-//        if NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey) != nil {
-//            deletedTheirQuestions = NSUserDefaults.standardUserDefaults().objectForKey(deletedTheirStorageKey)! as! [(String)]
-//        }
-        
-//        if NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey) != nil {
-//            myVotes = NSUserDefaults.standardUserDefaults().objectForKey(myVotesStorageKey)! as! Dictionary
-//        }
-        
-        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey) != nil {
-            votedOn1Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted1StorageKey)! as! [(String)]
-        }
-        
-        if NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey) != nil {
-            votedOn2Ids = NSUserDefaults.standardUserDefaults().objectForKey(myVoted2StorageKey)! as! [(String)]
-        }
-        // MAKE FUNCTION -----------------------------------------------------------
-        
         
         // **********************************************************************************************
         // Manually call refresh upon loading to get most up to datest datas
         // - this needs to be skipped when push is allowed and used when push has been declined
         //if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
-        
         
         if returningFromSettings == false && returningFromPopover == false {
             
@@ -796,17 +663,19 @@ class QsTheirTableVC: UITableViewController {
         QJoinObjects.removeAll(keepCapacity: true)
         
         var qJoinQueryLocal = PFQuery(className: "QJoin")
-        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!)
+        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!.username!)
         qJoinQueryLocal.orderByDescending("createdAt")
+        qJoinQueryLocal.whereKey("askeeDeleted", equalTo: false)
         qJoinQueryLocal.limit = 1000
         qJoinQueryLocal.includeKey("question")
+        qJoinQueryLocal.includeKey("asker")
         qJoinQueryLocal.fromLocalDatastore()
         
         qJoinQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
+            var alreadyRetrieved = [String]()
+            
             if error == nil {
-                
-                var qIds = [String]()
                 
                 self.QJoinObjects = objects!
                 
@@ -817,68 +686,66 @@ class QsTheirTableVC: UITableViewController {
                 self.refresher.endRefreshing()
                 
                 for temp in objects! {
-                    
-                    qIds.append(temp.objectId!!)
-                }
-                
-                println(qIds)
-                
-                // Get Qs that are not in localdata store
-                var qJoinQueryServer = PFQuery(className: "QJoin")
-                qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!)
-                
-                // ********** THIS IS NOT IN QJOIN YET!!! *********
-                qJoinQueryServer.whereKey("askeeDeleted", equalTo: false)
-                // ************************************************
-                
-                qJoinQueryServer.whereKey("objectId", notContainedIn: qIds)
-                qJoinQueryServer.orderByDescending("createdAt")
-                qJoinQueryServer.limit = 1000
-                qJoinQueryServer.includeKey("question")
-                
-                qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-                    
-                    if error == nil {
-                        
-                        // Append to local array of PFObjects
-                        self.QJoinObjects = self.QJoinObjects + objects!
-                        
-                        // Reload table data
-                        self.tableView.reloadData()
-                        
-                        // Pin new Qs to local datastore
-                        if let temp = objects as? [PFObject] {
-                            
-                            for object in temp {
-                                
-                                object.pinInBackgroundWithBlock { (success, error) -> Void in
-                                    
-                                    if error == nil {
-                                        
-                                        println("Their Qs: \(object.objectId!) pinned!")
-                                    }
-                                }
-                            }
-                        }
-                        
-                    } else {
-                        
-                        println("There was an error retrieving new Qs from the database:")
-                        println(error)
-                        
-                        // Reload table data
-                        self.tableView.reloadData()
-                        
-                        // Kill refresher when query finished
-                        self.refresher.endRefreshing()
+                    if temp.objectId! != nil {
+                        alreadyRetrieved.append(temp.objectId!!)
                     }
-                })
+                }
                 
             } else {
                 
                 println("There was an error loading Qs from local data store:")
                 println(error)
             }
+            
+            // Get Qs that are not in localdata store
+            var qJoinQueryServer = PFQuery(className: "QJoin")
+            qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!.username!)
+            qJoinQueryServer.whereKey("objectId", notContainedIn: alreadyRetrieved)
+            qJoinQueryServer.orderByDescending("createdAt")
+            qJoinQueryServer.limit = 1000
+            qJoinQueryServer.includeKey("question")
+            qJoinQueryServer.includeKey("asker")
+            
+            qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                
+                if error == nil {
+                    
+                    // Append to local array of PFObjects
+                    self.QJoinObjects = self.QJoinObjects + objects!
+                    
+                    // Reload table data
+                    self.tableView.reloadData()
+                    
+                    // Pin new Qs to local datastore
+                    if let temp = objects as? [PFObject] {
+                        
+                        for object in temp {
+                            
+                            object.pinInBackgroundWithBlock { (success, error) -> Void in
+                                
+                                if error == nil {
+                                    
+                                    println("Their Qs QJoin Object \(object.objectId!) pinned!")
+                                }
+                            }
+                        }
+                        
+                        // Reload table data
+                        self.tableView.reloadData()
+                    }
+                    
+                } else {
+                    
+                    println("There was an error retrieving new Qs from the database:")
+                    println(error)
+                    
+                    // Reload table data
+                    self.tableView.reloadData()
+                    
+                    // Kill refresher when query finished
+                    self.refresher.endRefreshing()
+                }
+            })
         }
         
         
@@ -889,7 +756,7 @@ class QsTheirTableVC: UITableViewController {
         
 //        // Get list of Qs to pull from UserQs
 //        var userQsQuery = PFQuery(className: "UserQs")
-//        
+//
 //        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
 //            
 //            if error != nil {

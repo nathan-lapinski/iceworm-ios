@@ -54,35 +54,24 @@ class LoginViewController: UIViewController {
                 if user.isNew {
                     
                     println("User signed up and logged in through Facebook!")
-                    
+                        
                     getUserPhoto({ (isFinished) -> Void in })
                     
-                    // Create entry in UserQs table
-                    createUserQs(PFUser.currentUser()!.username!, { (isFinished) -> Void in // desired to complete before storing info
+                    getUsersFacebookInfo({ (isFinished) -> Void in // desired to complete before storing info
                         
-                        if isFinished {
-                            
-                            getUsersFacebookInfo({ (isFinished) -> Void in // desired to complete before storing info
-                                
-                                self.performSegueWithIdentifier("signedIn", sender: self)
-                                
-                                displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
-                                
-                                //blockUI(false, self.loginSpinner, self.loginBlurView, self)
-                                
-                                storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
-                                
-                                // USE IN SIGNUP ONLY FOR PRODUCTION APP
-                                // USE IN SIGNUP ONLY FOR PRODUCTION APP
-                                getUsersFacebookInfo({ (isFinished) -> Void in })
-                                // USE IN SIGNUP ONLY FOR PRODUCTION APP
-                                // USE IN SIGNUP ONLY FOR PRODUCTION APP
-                            })
-                            
-                        } else {
-                            
-                            displayAlert("Unable to create account", "Please check your internet connection and try again!", self)
-                        }
+                        self.performSegueWithIdentifier("signedIn", sender: self)
+                        
+                        displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
+                        
+                        //blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                        
+                        storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                        
+                        // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                        // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                        getUsersFacebookInfo({ (isFinished) -> Void in })
+                        // USE IN SIGNUP ONLY FOR PRODUCTION APP
+                        // USE IN SIGNUP ONLY FOR PRODUCTION APP
                     })
                     
                 } else {

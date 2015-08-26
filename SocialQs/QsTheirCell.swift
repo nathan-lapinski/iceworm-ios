@@ -31,6 +31,8 @@ class QsTheirCell: UITableViewCell {
     @IBOutlet var option2Image: UIImageView!
     @IBOutlet var option1Zoom: UIButton!
     @IBOutlet var option2Zoom: UIButton!
+    @IBOutlet var checkmark1: UIImageView!
+    @IBOutlet var checkmark2: UIImageView!
     @IBOutlet var questionTextRightSpace: NSLayoutConstraint!
     @IBOutlet var option1TextLeftSpace: NSLayoutConstraint!
     @IBOutlet var option2TextLeftSpace: NSLayoutConstraint!

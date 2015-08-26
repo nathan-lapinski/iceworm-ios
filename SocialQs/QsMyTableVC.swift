@@ -88,11 +88,6 @@ class QsMyTableVC: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        println(">>>>>>>>>>>>>>>>>>")
-        println(questionObjects.count)
-        println(">>>>>>>>>>>>>>>>>>")
-        
-        
         if returningFromSettings == false && returningFromPopover == false {
             
             println("Page loaded from tab bar")
@@ -136,8 +131,6 @@ class QsMyTableVC: UITableViewController {
     // Swipe to display options functions ----------------------------------------------------------------------------------
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         
-        println(questionObjects[indexPath.row])
-        
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
@@ -180,6 +173,7 @@ class QsMyTableVC: UITableViewController {
                         if error == nil {
                             
                             println("Question updated to be labeled as deleted")
+                            
                         } else {
                             
                             println("There was an error updating the question as deleted:")
@@ -221,17 +215,12 @@ class QsMyTableVC: UITableViewController {
     // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
-        // Build array of objectIds for Qs already retrieved 
-        // - prevent duplicates when refresh() is called again
-        var alreadyRetrieved = [String]()
-        for object in questionObjects { alreadyRetrieved.append(object.objectId!!) }
-        
         var myQsQueryLocal = PFQuery(className: "SocialQs")
         
         myQsQueryLocal.fromLocalDatastore()
         myQsQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
         myQsQueryLocal.whereKey("askerDeleted", equalTo: false)
-        myQsQueryLocal.whereKey("objectId", notContainedIn: alreadyRetrieved)
+        //myQsQueryLocal.whereKey("objectId", notContainedIn: alreadyRetrieved)
         myQsQueryLocal.orderByDescending("createdAt")
         myQsQueryLocal.limit = 1000
         
@@ -239,7 +228,18 @@ class QsMyTableVC: UITableViewController {
             
             if error == nil {
                 
-                self.questionObjects = self.questionObjects + objects!
+                self.questionObjects.removeAll(keepCapacity: true)
+                self.questionObjects = objects!
+                //self.questionObjects = self.questionObjects + objects!
+                
+                // Build array of objectIds for Qs already retrieved
+                // - prevent duplicates when refresh() is called again
+                var alreadyRetrieved = [String]()
+                for object in self.questionObjects {
+                    if object.objectId! != nil {
+                        alreadyRetrieved.append(object.objectId!!)
+                    }
+                }
                 
                 // Reload table data
                 self.tableView.reloadData()
@@ -285,11 +285,12 @@ class QsMyTableVC: UITableViewController {
                                     alreadyRetrieved.append(object.objectId! as String)
                                 }
                                 
+                                // This runs multiple times on same Q if refresh is run multiple times (async) -- ???
                                 object.pinInBackgroundWithBlock { (success, error) -> Void in
                                     
                                     if error == nil {
                                         
-                                        println("Object \(object.objectId!) pinned!")
+                                        println("MyQs SocialQs Object \(object.objectId!) pinned!")
                                     }
                                 }
                             }
@@ -533,22 +534,34 @@ class QsMyTableVC: UITableViewController {
             cell.question.sizeToFit()
         }
         if let option1Text = self.questionObjects[indexPath.row]["option1Text"] as? String {
-            
-            cell.option1Label.text = option1Text + "  \(Int(option1Percent))%"
+            if totalResponses > 0 {
+                cell.option1Label.text = option1Text + "  \(Int(option1Percent))%"
+            } else {
+                cell.option1Label.text = option1Text
+            }
             cell.option1Label.numberOfLines = 0 // Dynamic number of lines
             cell.option1Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
         } else {
-            
-            cell.option1Label.text = "\(Int(option1Percent))%"
+            if totalResponses > 0 {
+                cell.option1Label.text = "\(Int(option1Percent))%"
+            } else {
+                cell.option1Label.text = ""
+            }
         }
         if let option2Text = self.questionObjects[indexPath.row]["option2Text"] as? String {
-            
-            cell.option2Label.text = option2Text  + "  \(100 - Int(option1Percent))%"
+            if totalResponses > 0 {
+                cell.option2Label.text = option2Text  + "  \(100 - Int(option1Percent))%"
+            } else {
+                cell.option2Label.text = option2Text
+            }
             cell.option2Label.numberOfLines = 0 // Dynamic number of lines
             cell.option2Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
         } else {
-            
-            cell.option2Label.text = "\(100 - Int(option1Percent))%"
+            if totalResponses > 0 {
+                cell.option2Label.text = "\(100 - Int(option1Percent))%"
+            } else {
+                cell.option2Label.text = ""
+            }
         }
         
         // Make cells non-selectable

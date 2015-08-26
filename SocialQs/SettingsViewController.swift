@@ -28,7 +28,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
         
         displaySpinnerView(spinnerActive: true, UIBlock: true, self.boxView, self.blurView, "Testing Spinner", self)
         
-        backgroundThread(delay: 3.0, completion: {
+        backgroundThread(delay: 4.0, completion: {
             // Your delayed function here to be run in the foreground
             
             displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)

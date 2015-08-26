@@ -15,17 +15,17 @@ class VotesTableVC: UITableViewController {
     var objectsArray = [Objects]()
     let headerHeight = CGFloat(60)
     
-    var votesId       = ""
-    var questionText  = ""
-    var option1Text   = ""
-    var option2Text   = ""
-    var questionPhoto: PFFile? = PFFile()
-    var option1Photo: PFFile?  = PFFile()
-    var option2Photo: PFFile?  = PFFile()
+//    var votesId       = ""
+//    var questionText  = ""
+//    var option1Text   = ""
+//    var option2Text   = ""
+//    var questionPhoto: PFFile? = PFFile()
+//    var option1Photo: PFFile?  = PFFile()
+//    var option2Photo: PFFile?  = PFFile()
     
     struct Objects {
         var sectionName: String!
-        var sectionObjects: [String]!
+        var sectionObjects: [String]?
     }
     
     @IBOutlet var doneButton: UIBarButtonItem!
@@ -52,44 +52,95 @@ class VotesTableVC: UITableViewController {
         returningFromPopover = true
         returningFromSettings = false
         
-        var query = PFQuery(className: "Votes")
-        query.getObjectInBackgroundWithId(viewQ["votesId"] as! String, block: { (objects, error) -> Void in
+        var query = PFQuery(className: "QJoin")
+        query.whereKey("question", equalTo: questionToView!)
+        
+        query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
             if error == nil {
                 
-                var voter1s = [""]
-                var voter2s = [""]
-                voter1s.removeAll(keepCapacity: true)
-                voter2s.removeAll(keepCapacity: true)
-                
-                // Fill voter1 array - use "?" as it may not exist
-                if objects!["option1VoterName"]?.count > 0 {
-                    voter1s = objects!["option1VoterName"] as! [String]
+                if let temp = objects {
+                    
+                    var voter1s:[String] = []
+                    var voter2s:[String] = []
+                    
+                    for object in temp {
+                        
+                        if object["vote"]! != nil {
+                            
+                            if (object["vote"] as! Int) == 1 { voter1s.append(object["to"] as! String) }
+                                
+                            else if (object["vote"] as! Int) == 2 { voter2s.append(object["to"] as! String) }
+                        }
+                    }
+                    
+                    var qText = ""
+                    var o1Text = ""
+                    var o2Text = ""
+                    
+                    if let temp = questionToView!["questionText"] as? String {
+                        
+                        qText = temp
+                        
+                    } else {
+                        
+                        qText = ""
+                    }
+                    
+                    if let temp = questionToView!["option1Text"] as? String {
+                        
+                        o1Text = temp
+                        
+                    } else {
+                        
+                        o1Text = ""
+                    }
+                    
+                    if let temp = questionToView!["option2Text"] as? String {
+                        
+                        o2Text = temp
+                        
+                    } else {
+                        
+                        o2Text = ""
+                    }
+                    
+                    // Build table view objects
+                    if voter1s.count > 0 && voter2s.count > 0 {
+                        
+                        self.objectsArray = [
+                            Objects(sectionName: qText, sectionObjects: nil),
+                            Objects(sectionName: o1Text, sectionObjects: voter1s),
+                            Objects(sectionName: o2Text, sectionObjects: voter2s)
+                        ]
+                        
+                    } else if voter1s.count > 0 && voter2s.count < 1 {
+                        
+                        self.objectsArray = [
+                            Objects(sectionName: qText, sectionObjects: nil),
+                            Objects(sectionName: o1Text, sectionObjects: voter1s)
+                        ]
+                        
+                    } else if voter1s.count < 1 && voter2s.count > 0 {
+                        
+                        self.objectsArray = [
+                            Objects(sectionName: qText, sectionObjects: nil),
+                            Objects(sectionName: o2Text, sectionObjects: voter2s)
+                        ]
+                    }
+                    
+                    println(self.objectsArray.count)
+                    
+                    // Reload table data
+                    self.tableView.reloadData()
+                    //self.tableView.reloadInputViews()
+                    
+                } else {
+                    println("Voter retreival error")
+                    println(error)
                 }
-                
-                // Fill voter2 array - use "?" as it may not exist
-                if objects!["option2VoterName"]?.count > 0 {
-                    voter2s = objects!["option2VoterName"] as! [String]
-                }
-                
-                // Build table view objects
-                if voter1s.count > 0 && voter2s.count > 0 {
-                    self.objectsArray = [Objects(sectionName: viewQ["option1"] as! String, sectionObjects: voter1s), Objects(sectionName: viewQ["option2"] as! String, sectionObjects: voter2s)]
-                } else if voter1s.count > 0 && voter2s.count < 1 {
-                    self.objectsArray = [Objects(sectionName: viewQ["option1"] as! String, sectionObjects: voter1s)]
-                } else if voter1s.count < 1 && voter2s.count > 0 {
-                    self.objectsArray = [Objects(sectionName: viewQ["option2"] as! String, sectionObjects: voter2s)]
-                }
-                
-                // Reload table data
-                self.tableView.reloadData()
-                //self.tableView.reloadInputViews()
-                
-            } else {
-                println("Voter retreival error")
-                println(error)
             }
-        })
+        }
     }
     
     // MARK: - Table view data source
@@ -98,7 +149,14 @@ class VotesTableVC: UITableViewController {
         return objectsArray.count
     }
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return objectsArray[section].sectionObjects.count
+        
+        if objectsArray[section].sectionObjects != nil {
+            
+            return objectsArray[section].sectionObjects!.count
+        } else {
+            
+            return 0
+        }
     }
     
     
@@ -106,7 +164,7 @@ class VotesTableVC: UITableViewController {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("votesCell", forIndexPath: indexPath) as! VotesCell
         
-        cell.textLabel?.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
+        cell.textLabel?.text = objectsArray[indexPath.section].sectionObjects![indexPath.row]
         
         // Make cells non-selectable
         cell.selectionStyle = UITableViewCellSelectionStyle.None
@@ -118,17 +176,26 @@ class VotesTableVC: UITableViewController {
     // Format section header
     override func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         
+        println("\(section) \(objectsArray[section].sectionName)")
+        println(objectsArray[section].sectionObjects)
+        
         let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView //recast your view as a UITableViewHeaderFooterView
-        header.contentView.backgroundColor = mainColorBlue
         
         if section == 0 { // Set Q in table header
+            header.contentView.backgroundColor = mainColorBlue
             
-            if (questionToView!["questionPhoto"] as? PFFile != nil) {
-                var headerTextView = UITextField(frame: CGRectMake(8, 0, self.view.frame.size.width - 60, 60))
-                headerTextView.text = viewQ["question"] as! String //questionText
+            if(questionToView!["questionText"] as? String != nil) {
+                
+                var headerTextView = UITextView(frame: CGRectMake(8, 0, self.view.frame.size.width - 8, 60))
+                headerTextView.text = questionToView!["questionText"] as? String
                 headerTextView.textColor = UIColor.darkTextColor()
                 headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
                 headerTextView.textAlignment = NSTextAlignment.Center
+                headerTextView.editable = false
+                header.addSubview(headerTextView)
+            }
+            
+            if (questionToView!["questionPhoto"] as? PFFile != nil) {
                 
                 var frame = CGRectMake(0, 0, 60, 60)
                 var headerImageView = UIImageView(frame: frame)
@@ -139,9 +206,8 @@ class VotesTableVC: UITableViewController {
                         headerImageView.image = image
                         headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
                         headerImageView.clipsToBounds = true
-                        tableView.tableHeaderView = headerTextView
-                        tableView.tableHeaderView?.addSubview(headerImageView)
-                    
+                        header.addSubview(headerImageView)
+                        
                     } else {
                         
                         println("There was an error downloading questionPhoto - votesTableVC")
@@ -149,17 +215,8 @@ class VotesTableVC: UITableViewController {
                 })
             }
             
-            if(questionToView!["questionText"] as? String != nil) {
-                
-                var headerTextView = UITextField(frame: CGRectMake(8, 0, self.view.frame.size.width - 8, 60))
-                headerTextView.text = questionToView!["questionText"] as? String
-                headerTextView.textColor = UIColor.darkTextColor()
-                headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-                headerTextView.textAlignment = NSTextAlignment.Center
-                tableView.tableHeaderView = headerTextView
-            }
-            
         } else { // Set option text or photo in section header
+            header.contentView.backgroundColor = mainColorPink
             
             if (questionToView!["option\(section)Photo"] as? PFFile != nil) {
                 //var frame = CGRectMake(0, 0, self.view.frame.size.width, 60) // full bar image
@@ -168,6 +225,8 @@ class VotesTableVC: UITableViewController {
                 getImageFromPFFile(questionToView!["option\(section)Photo"]! as! PFFile, { (image, error) -> () in
                     
                     if error == nil {
+                        
+                        println("Adding image to section \(section) header")
                         
                             headerImageView.image = image
                             headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
@@ -183,32 +242,15 @@ class VotesTableVC: UITableViewController {
             
             if (questionToView!["option\(section)Text"] as? String != nil) {
                 
-                var headerTextView = UITextField(frame: CGRectMake(0, 0, self.view.frame.size.width, 60))
+                var headerTextView = UITextView(frame: CGRectMake(0, 0, self.view.frame.size.width, 60))
                 headerTextView.text = questionToView!["option\(section)Text"] as? String
                 headerTextView.textColor = UIColor.whiteColor()
                 headerTextView.backgroundColor = UIColor.clearColor()
                 headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
                 headerTextView.textAlignment = NSTextAlignment.Center
-                //header.textLabel.text = objectsArray[section].sectionName
-                //var linesShown: CGFloat = 3
-                //var maxHeight: CGFloat = headerTextView.font.lineHeight * linesShown
-                //headerTextView.sizeThatFits(CGSizeMake(self.view.frame.size.width, maxHeight))
+                headerTextView.editable = false
                 header.addSubview(headerTextView)
-                
             }
-            //        else {
-            //
-            //            header.textLabel.textColor = UIColor.whiteColor()
-            //            header.textLabel.backgroundColor = UIColor.clearColor()
-            //            //header.alpha = bgAlpha //make the header transparent
-            //
-            //            header.textLabel.textAlignment = NSTextAlignment.Left
-            //            header.textLabel.numberOfLines = 10 // Dynamic number of lines
-            //            header.textLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
-            //            //header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-            //            header.textLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
-            //            header.textLabel.text = objectsArray[section].sectionName
-            //        }
         }
     }
     

@@ -32,9 +32,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     let picker = UIImagePickerController()
     
-//    var askSpinner = UIActivityIndicatorView()
-//    var askBlurView = globalBlurView()
-    var askSpinner = UIView()
+    var socialQsGroupies = [String]()
+    var facebookWithAppGroupies = [String]()
+    var facebookWithoutAppGroupies = [String]()
+    
+    var askBoxView = UIView()
     var askBlurView = globalBlurView()
     
     @IBOutlet var askTable: UITableView!
@@ -141,9 +143,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             dispatch_async(dispatch_get_main_queue()) { () -> Void in
                 
-                if (self.chosenImageHighRes[0] != nil || self.question != "")
-                    && (self.chosenImageHighRes[0] != nil || self.option1 != "")
-                    && (self.chosenImageHighRes[0] != nil || self.option2 != "") {
+                if (self.chosenImageHighRes[0] != nil || self.question != nil)
+                    && (self.chosenImageHighRes[0] != nil || self.option1 != nil)
+                    && (self.chosenImageHighRes[0] != nil || self.option2 != nil) {
                     
                     // Submit Q
                     self.submitQ(sender)
@@ -207,39 +209,31 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         NSUserDefaults.standardUserDefaults().setObject(myFriends, forKey: myFriendsStorageKey)
         
-//        println(">>>>>>>>>>>>>>>>>>")
-//        println(isGroupieName)
-//        println(groupiesDictionary)
-//        println(">>>>>>>>>>>>>>>>>>")
-        
         /////////////////////////////////////////////
         // Sort groupies
-        var socialQsGroupie = [String]()
-        var facebookWithAppGroupie = [String]()
-        var facebookWithoutAppGroupie = [String]()
         
         for groupie in friendsDictionary {
             if groupie["isSelected"] as! Bool == true {
                 
                 if groupie["type"] as! String == "socialQs" {
-                    socialQsGroupie.append(groupie["name"] as! String)
+                    socialQsGroupies.append(groupie["name"] as! String)
                 } else if groupie["type"] as! String == "facebookWithApp" {
-                    facebookWithAppGroupie.append(groupie["id"] as! String)
+                    facebookWithAppGroupies.append(groupie["id"] as! String)
                 } else if groupie["type"] as! String == "facebookWithoutApp" {
-                    facebookWithoutAppGroupie.append(groupie["id"] as! String)
+                    facebookWithoutAppGroupies.append(groupie["id"] as! String)
                 }
             }
         }
-        println(socialQsGroupie)
-        println(facebookWithAppGroupie)
-        println(facebookWithoutAppGroupie)
+        println("sQs: \n\(socialQsGroupies)")
+        println("FacebookWithApp: \n\(facebookWithAppGroupies)")
+        println("FacebookWithoutApp: \n\(facebookWithoutAppGroupies)")
         /////////////////////////////////////////////
     }
     
     
     func submitQ(sender: AnyObject) -> Void {
         
-        displaySpinnerView(spinnerActive: true, UIBlock: true, askSpinner, askBlurView, "Submitting Q", self)
+        displaySpinnerView(spinnerActive: true, UIBlock: true, askBoxView, askBlurView, "Submitting Q", self)
         
         //blockUI(true, askSpinner, askBlurView, self)
         
@@ -288,9 +282,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         if highResImages[1] != nil { socialQ["option1Photo"]  = highResImages[1]! }
         if highResImages[2] != nil { socialQ["option2Photo"]  = highResImages[2]! }
         
-        
         // Pin completed object to local data store
-        
         socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
             
             if error == nil {
@@ -304,7 +296,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 // clear text and photo entries
                 self.cancelButtonAction(sender)
                 
-                displaySpinnerView(spinnerActive: false, UIBlock: false, self.askSpinner, self.askBlurView, nil, self)
+                displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
                 
                 //blockUI(false, self.askSpinner, self.askBlurView, self)
             }
@@ -324,103 +316,62 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 //
                 // Include an entry for self (ie: user will be "to", "from" AND "asker"
                 //  - This is for MyQs delete tracking
-                var qJoin = PFObject(className: "QJoin")
-                qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
-                qJoin.setObject(PFUser.currentUser()!, forKey: "to")
-                qJoin.setObject(PFUser.currentUser()!, forKey: "from")
-                qJoin.setObject(false, forKey: "askeeDeleted")
-                //qJoin.setObject([GROUPIE], forKey: "to")
-                qJoin.setObject(socialQ, forKey: "question")
-                qJoin.saveEventually({ (success, error) -> Void in
+                var sQsGroupieObjects: [PFObject] = []
+                
+                for sQsGroupie in self.socialQsGroupies {
+                    
+                    var qJoin = PFObject(className: "QJoin")
+                    qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
+                    qJoin.setObject(sQsGroupie, forKey: "to")
+                    qJoin.setObject(PFUser.currentUser()!, forKey: "from")
+                    qJoin.setObject(false, forKey: "askeeDeleted")
+                    qJoin.setObject(socialQ, forKey: "question")
+                    
+                    sQsGroupieObjects.append(qJoin)
+                    
+                }
+                
+                // ***************************************************
+                // ***************************************************
+                // **** NEEDS NETWORK CHECK + RETRY FUNCTIONALITY ****
+                // ***************************************************
+                // ***************************************************
+                PFObject.saveAllInBackground(sQsGroupieObjects, block: { (success, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        println("sQs QJoin entries created")
+                        
+                        // *******************
+                        //
+                        // sendPushes()
+                        //
+                        // *******************
+                        
+                    } else {
+                        
+                        println("There was an error creating sQs QJoin entries: \n\(error)")
+                    }
+                })
+                
+                
+                
+                // ***************************************************
+                // DEBUG USE!! **************************
+                // ***************************************************
+                var qJoinCurrentUser = PFObject(className: "QJoin")
+                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
+                qJoinCurrentUser.setObject(PFUser.currentUser()!.username!, forKey: "to")
+                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
+                qJoinCurrentUser.setObject(false, forKey: "askeeDeleted")
+                qJoinCurrentUser.setObject(socialQ, forKey: "question")
+                qJoinCurrentUser.saveEventually({ (success, error) -> Void in
                     
                     println("QJoin entry successfully created")
-                    
-                    // *******************
-                    //
-                    // sendPushes()
-                    //
-                    // *******************
                 })
             }
         })
-        
-//        // Perform saveEventually (for network checking) with upload of images in callback
-//        socialQ.saveEventually({ (success, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                println("Success saving eventually!")
-//                
-//                if tempImages[0] != nil { socialQ.setObject(tempImages[0]!, forKey: "questionPhoto") }
-//                if tempImages[1] != nil { socialQ.setObject(tempImages[1]!, forKey: "option1Photo")  }
-//                if tempImages[2] != nil { socialQ.setObject(tempImages[2]!, forKey: "option2Photo")  }
-//            }
-//        })
     }
-    
-    
-//    func assignQsToUsers(currentQId: String) {
-//        
-//        println("Assigning Q to users")
-//        
-//        // Split groupies by account type
-//        // - sQs can be assigned by unique username
-//        // - facebookWithApp must be queried by FB Id to get unique username
-//        // - facebookWithoutApp must get a message or invite
-//        //      - CLOUD CODE: provide a way to cache Q and send FB users once they get the app?
-//        
-//        /////////////////////////////////////////////
-//        // Sort groupies
-//        var socialQsGroupies = [String]()
-//        var facebookWithAppGroupie = [String]()
-//        var facebookWithoutAppGroupie = [String]()
-//        
-//        for groupie in friendsDictionary {
-//            if groupie["isSelected"] as! Bool == true {
-//                
-//                if groupie["type"] as! String == "socialQs" {
-//                    socialQsGroupies.append(groupie["name"] as! String)
-//                } else if groupie["type"] as! String == "facebookWithApp" {
-//                    facebookWithAppGroupie.append(groupie["id"] as! String)
-//                } else if groupie["type"] as! String == "facebookWithoutApp" {
-//                    facebookWithoutAppGroupie.append(groupie["id"] as! String)
-//                }
-//            }
-//        }
-//        println(socialQsGroupies)
-//        /////////////////////////////////////////////
-//        
-//        // Add qId to "UserQs" table ------
-//        var userQsQuery = PFQuery(className: "UserQs")
-//        
-//        if isGroupieName.count > 0 {
-//            userQsQuery.whereKey("username", containedIn: socialQsGroupies)
-//        }
-//        
-//        // Execute query
-//        userQsQuery.findObjectsInBackgroundWithBlock({ (userQsObjects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                if let temp = userQsObjects {
-//                    
-//                    for userQsObject in temp {
-//                        
-//                        if userQsObject.objectId!! != uQId { // Append qId to theirQs within UserQs table
-//                            
-//                            userQsObject.addUniqueObject(currentQId, forKey: "theirQsId")
-//                            userQsObject.saveInBackground()
-//                        }
-//                    }
-//                }
-//                
-//            } else {
-//                
-//                println("Error updating UserQs Table - Their Qs")
-//                println(error)
-//            }
-//        })
-//    }
     
     
     func sendPushes() {
@@ -731,7 +682,18 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     
-
-    
-    
 }
+
+
+//extension NSDate {
+//    struct Date {
+//        static let formatter = NSDateFormatter()
+//    }
+//    var formatted: String {
+//        Date.formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+//        Date.formatter.timeZone = NSTimeZone(forSecondsFromGMT: 0)
+//        Date.formatter.calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierISO8601)!
+//        Date.formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+//        return Date.formatter.stringFromDate(self)
+//    }
+//}
