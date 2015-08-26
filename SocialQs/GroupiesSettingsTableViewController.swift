@@ -37,33 +37,35 @@ class GroupiesSettingsTableViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        var t1: Dictionary = ["name": "Co-Workers"]
-        var t2: Dictionary = ["name": "Roommates"]
-        var t3: Dictionary = ["name": "Sluts I Nailed"]
-        var t4: Dictionary = ["name": "Nate's Ex-Boyfriends"]
-        groupiesGroups.removeAll(keepCapacity: true)
-        groupiesGroups.append(t1)
-        groupiesGroups.append(t3)
-        groupiesGroups.append(t4)
-        groupiesGroups.append(t2)
-        groupiesGroups.append(t1)
-        groupiesGroups.append(t4)
-        groupiesGroups.append(t1)
-        groupiesGroups.append(t2)
-        groupiesGroups.append(t3)
-        groupiesGroups.append(t4)
-        groupiesGroups.append(t1)
-        groupiesGroups.append(t2)
+//        var t1: Dictionary = ["name": "Co-Workers"]
+//        var t2: Dictionary = ["name": "Roommates"]
+//        var t3: Dictionary = ["name": "Sluts I Nailed"]
+//        var t4: Dictionary = ["name": "Nate's Ex-Boyfriends"]
+//        groupiesGroups.removeAll(keepCapacity: true)
+//        groupiesGroups.append(t1)
+//        groupiesGroups.append(t3)
+//        groupiesGroups.append(t4)
+//        groupiesGroups.append(t2)
+//        groupiesGroups.append(t1)
+//        groupiesGroups.append(t4)
+//        groupiesGroups.append(t1)
+//        groupiesGroups.append(t2)
+//        groupiesGroups.append(t3)
+//        groupiesGroups.append(t4)
+//        groupiesGroups.append(t1)
+//        groupiesGroups.append(t2)
         
-        // BUILD STRING FOR DISPLAY - TEMPORARY!!!
-        var groupNames = [String]()
-        for temp in groupiesGroups {
-            
-            groupNames.append(temp["name"] as! String)
-        }
+        println(myGroups)
+        
+//        // BUILD STRING FOR DISPLAY - TEMPORARY!!!
+//        var groupNames = [String]()
+//        for temp in myGroups {
+//            
+//            groupNames.append(temp)
+//        }
         
         // Fill object to populate table
-        self.objectsArray = [Objects(sectionName: "", sectionObjects: ["+ Find User"]), Objects(sectionName: "", sectionObjects: ["+ Create Group"]), Objects(sectionName: "", sectionObjects: groupNames)]
+        self.objectsArray = [Objects(sectionName: "", sectionObjects: ["+ Find User"]), Objects(sectionName: "", sectionObjects: myGroups)]
     }
 
     override func didReceiveMemoryWarning() {
@@ -97,11 +99,11 @@ class GroupiesSettingsTableViewController: UITableViewController {
             
         } else if indexPath.section == 1 {
             
-            cell.backgroundColor = UIColor.darkGrayColor()//mainColorBlue//
-            cell.textLabel?.font = UIFont(name: "HelveticaNeue", size: tableFontSize)!
-            cell.textLabel?.textColor = UIColor.whiteColor()
-            
-        } else if indexPath.section == 2 {
+//            cell.backgroundColor = UIColor.darkGrayColor()//mainColorBlue//
+//            cell.textLabel?.font = UIFont(name: "HelveticaNeue", size: tableFontSize)!
+//            cell.textLabel?.textColor = UIColor.whiteColor()
+//            
+//        } else if indexPath.section == 2 {
             
             cell.backgroundColor = UIColor.groupTableViewBackgroundColor()
             cell.textLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!

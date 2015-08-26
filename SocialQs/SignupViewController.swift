@@ -81,6 +81,10 @@ class SignupViewController: UIViewController {
                     
                     self.performSegueWithIdentifier("signedUp", sender: self)
                     
+                    if let groups = PFUser.currentUser()!["myGroups"] as? [String] {
+                        myGroups = groups
+                    }
+                    
                     displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
                     
                     //blockUI(false, self.signupSpinner, self.signupBlurView, self)

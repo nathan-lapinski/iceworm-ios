@@ -72,6 +72,7 @@ var nonFriendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
 var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
 //var isGroupieQId = [String]()
 var groupiesDictionary = [Dictionary<String, AnyObject>]()
+var myGroups = [String]()
 //var myFriendsDictionary = [Dictionary<String, AnyObject>]()
 var myFriends = [String]()
 // Array to store non-FB friends

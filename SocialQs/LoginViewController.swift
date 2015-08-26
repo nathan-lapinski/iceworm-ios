@@ -82,9 +82,11 @@ class LoginViewController: UIViewController {
                     
                     self.performSegueWithIdentifier("signedIn", sender: self)
                     
-                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
+                    if let groups = PFUser.currentUser()!["myGroups"] as? [String] {
+                        myGroups = groups
+                    }
                     
-                    //blockUI(false, self.loginSpinner, self.loginBlurView, self)
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
                     
                     storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
                     
@@ -123,8 +125,6 @@ class LoginViewController: UIViewController {
             
             displaySpinnerView(spinnerActive: true, UIBlock: true, self.loginSpinner, self.loginBlurView, "Logging In", self)
             
-            //blockUI(true, self.loginSpinner, self.loginBlurView, self)
-            
             // Generic error - this will be changed below based on error returned from Parse.com
             var errorMessage = "Please try again later"
             
@@ -148,6 +148,10 @@ class LoginViewController: UIViewController {
                     storeUserInfo(PFUser.currentUser()!.username!, false, { (isFinished) -> Void in
                         
                         self.performSegueWithIdentifier("signedIn", sender: self)
+                        
+                        if let groups = PFUser.currentUser()!["myGroups"] as? [String] {
+                            myGroups = groups
+                        }
                         
                         displaySpinnerView(spinnerActive: false, UIBlock: false, self.loginSpinner, self.loginBlurView, nil, self)
                         

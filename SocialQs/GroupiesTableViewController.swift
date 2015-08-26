@@ -15,10 +15,12 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         var sectionObjects: [String]!
     }
     
+    var textView = UITextView()
+    
     var viewWillAppearCount = 0
     
-    var textView = UITextView()
-    var groupEntry: UITextField!
+    var direction = Int()
+    var shakes = Int()
     
     let tableFontSize = CGFloat(16)
     var keyboardSize = CGFloat()
@@ -60,6 +62,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     func createGroup () {
         
+        var groupEntry: UITextField!
+        
         buildGroupiesDictionary()
         
         func configurationTextField(textField: UITextField!) {
@@ -79,41 +83,81 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
         
-        alert.addAction(UIAlertAction(title: "Create Group", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+        alert.addAction(UIAlertAction(title: "Create Group", style: UIAlertActionStyle.Default, handler: { (UIAlertAction) in
             
             self.resignFirstResponder()
             
-            var groupName = "New Group"
-            
-            if self.groupEntry.text != "" {
+            // First, check that a name is entered and it doesn't conflict with pre-existing groups
+            if groupEntry.text == "" {
                 
-                groupName = self.groupEntry.text
+                // MUST ENTER A NAME!!!
+                //
+                //
+                
+            } else if contains(myGroups, groupEntry.text) {
+                
+                // GROUP NAME ALREADY EXISTS! 
+                //
+                // OVERWRITE??
+                
+            } else {
+                
+                var groupName = groupEntry.text
+                
+                // Add group name to array of group names in the phone and on Parse
+                myGroups.append(groupName)
+                PFUser.currentUser()!.addUniqueObject(groupName, forKey: "myGroups")
+                PFUser.currentUser()!.saveEventually({ (success, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        println("Group added to user's account")
+                    
+                    } else {
+                        
+                        println("There was an error adding group to users account: \n\(error)")
+                    }
+                })
+            
+                
+                println(groupiesDictionary)
+                
+                // Create entry in GroupJoin table
+                var groupObjects: [PFObject] = []
+                for groupie in groupiesDictionary {
+                    
+                    println(groupie["name"]!)
+                    
+                    var group = PFObject(className: "GroupJoin")
+                    group.setObject(groupName, forKey: "groupName")
+                    group.setObject(PFUser.currentUser()!, forKey: "owner")
+                    group.setObject(groupie["name"]!, forKey: "name")
+                    group.setObject(groupie["type"]!, forKey: "type")
+                    group.setObject(groupie["id"]!, forKey: "id")
+                    if let url = groupie["picURL"] as? String {
+                        group.setObject(url, forKey: "picURL")
+                    }
+                    
+                    groupObjects.append(group)
+                }
+                
+                // ***************************************************
+                // ***************************************************
+                // **** NEEDS NETWORK CHECK + RETRY FUNCTIONALITY ****
+                // ***************************************************
+                // ***************************************************
+                PFObject.saveAllInBackground(groupObjects, block: { (success, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        println("GroupJoin entries created")
+                        
+                    } else {
+                        
+                        println("There was an error creating GroupJoin entries: \n\(error)")
+                    }
+                })
             }
-            
-        
-            println(groupiesDictionary)
-            
-            var groupObjects: [PFObject] = []
-            
-            for groupie in self. {
-                
-                var qJoin = PFObject(className: "QJoin")
-                qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
-                qJoin.setObject(sQsGroupie, forKey: "to")
-                qJoin.setObject(PFUser.currentUser()!, forKey: "from")
-                qJoin.setObject(false, forKey: "askeeDeleted")
-                qJoin.setObject(socialQ, forKey: "question")
-                
-                sQsGroupieObjects.append(qJoin)
-                
-            }
-            //
-            //
-            // Create Group join table entry
-            //
-            //
-            
-            
         }))
         
         self.presentViewController(alert, animated: true, completion: {
@@ -209,6 +253,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         // Title table controller
         self.title = "Select Groupies"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
+        
+        
+        
+        
         
         // Format Done button
         navigationItem.leftBarButtonItem = doneButton
@@ -819,9 +867,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             // fix view length if number of items below a threshold...
             let numberOfOptions = 1 // "find user" (+group to be removed)
-            if (groupiesGroups.count + numberOfOptions) < 10 {
+            if (myGroups.count + numberOfOptions) < 10 {
                 
-                popoverViewController.preferredContentSize.height = CGFloat((groupiesGroups.count + numberOfOptions) * 44)
+                popoverViewController.preferredContentSize.height = CGFloat((myGroups.count + numberOfOptions) * 44)
                 
             } else { // ... else make it scroll
                 

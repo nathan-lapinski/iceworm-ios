@@ -398,31 +398,31 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                                     
                                     friendsDictionary.append(tempDict)
                                     
-                                    // ===================================================================
-                                    //
-                                    // Pin new asshole users
-                                    //
-                                    // ===================================================================
-                                    
-                                    var newFriend = PFObject(className: "Friends")
-                                    newFriend["name"] = tempDict["name"] as! String
-                                    newFriend["picURL"] = tempDict["picURL"] as! String
-                                    newFriend["type"] = tempDict["type"] as! String
-                                    newFriend["id"] = tempDict["id"] as! String
-                                    newFriend.setObject(PFUser.currentUser()!, forKey: "owner")
-                                    
-                                    // Pin new user
-                                    newFriend.pinInBackgroundWithBlock({ (success, error) -> Void in
-                                        
-                                        if error == nil {
-                                            
-                                            //println("Successfully pinned new user!")
-                                            
-                                        } else {
-                                            
-                                            println("There was an error pinning new user: \n\(error)")
-                                        }
-                                    })
+//                                    // ===================================================================
+//                                    //
+//                                    // Pin new asshole users
+//                                    //
+//                                    // ===================================================================
+//                                    
+//                                    var newFriend = PFObject(className: "Friends")
+//                                    newFriend["name"] = tempDict["name"] as! String
+//                                    newFriend["picURL"] = tempDict["picURL"] as! String
+//                                    newFriend["type"] = tempDict["type"] as! String
+//                                    newFriend["id"] = tempDict["id"] as! String
+//                                    newFriend.setObject(PFUser.currentUser()!, forKey: "owner")
+//                                    
+//                                    // Pin new user
+//                                    newFriend.pinInBackgroundWithBlock({ (success, error) -> Void in
+//                                        
+//                                        if error == nil {
+//                                            
+//                                            //println("Successfully pinned new user!")
+//                                            
+//                                        } else {
+//                                            
+//                                            println("There was an error pinning new user: \n\(error)")
+//                                        }
+//                                    })
                                 }
                             }
                             

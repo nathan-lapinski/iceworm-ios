@@ -94,11 +94,15 @@ class WelcomeViewController: UIViewController {
         }
     }
     
-    
+    // Have to do this is viewDIDappear or the view is not in the hierarchy in time to segue
     override func viewDidAppear(animated: Bool) {
         
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
+            
+            if let groups = PFUser.currentUser()!["myGroups"] as? [String] {
+                myGroups = groups
+            }
             
             // Download FB data in background - backgrounding built into FBSDK methods (?)
             downloadFacebookFriends({ (isFinished) -> Void in
