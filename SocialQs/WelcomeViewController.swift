@@ -104,6 +104,12 @@ class WelcomeViewController: UIViewController {
                 myGroups = groups
             }
             
+            // Download socialQs friends
+            downloadSocialQsFriends({ (isFinished) -> Void in })
+            
+            // Download groups
+            downloadGroups({ (isFinished) -> Void in })
+            
             // Download FB data in background - backgrounding built into FBSDK methods (?)
             downloadFacebookFriends({ (isFinished) -> Void in
                 

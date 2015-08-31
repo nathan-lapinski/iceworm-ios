@@ -37,6 +37,12 @@ class SignupViewController: UIViewController {
                 
                 //blockUI(true, self.signupSpinner, self.signupBlurView, self)
                 
+                // Download socialQs friends
+                downloadSocialQsFriends({ (isFinished) -> Void in })
+                
+                // Download groups
+                downloadGroups({ (isFinished) -> Void in })
+                
                 // Download FB data in background - backgrounding built into FBSDK methods (?)
                 downloadFacebookFriends({ (isFinished) -> Void in
                     

@@ -44,19 +44,7 @@ var usernameStorageKey  = "username"
 var nameStorageKey      = "name"
 var uIdStorageKey       = "uId"
 var uQIdStorageKey      = "uQId"
-//var myVoted1StorageKey  = "votedOn1Ids"
-//var myVoted2StorageKey  = "votedOn2Ids"
-//var myVotesStorageKey  = "votes"
-//var profilePictureKey   = "profilePicture"
 var myFriendsStorageKey = "myFriends"
-//var deletedTheirStorageKey = "deletedTheirPermanent"
-
-// Arrays for displaying questions
-//var deletedMyQuestions = [String]() // questions DELETED by current user
-//var deletedTheirQuestions = [String]() // questions DELETED by current user
-//var votedOn1Ids = [String]() // questions VOTED-UPON by current user
-//var votedOn2Ids = [String]() // questions VOTED-UPON by current user
-
 
 // Dictionary to pass question value to "view votes" controller
 var viewQ = Dictionary<String, Any>()
@@ -69,23 +57,13 @@ var friendsPhotoDictionary = Dictionary<String, UIImage>()
 var friendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
 var nonFriendsDictionary = [Dictionary<String, AnyObject>]()
 var nonFriendsDictionaryFiltered = [Dictionary<String, AnyObject>]()
-var isGroupieName = [String]()//Dictionary<String, Bool>() //["":false]
-//var isGroupieQId = [String]()
+var isGroupieName = [String]()
 var groupiesDictionary = [Dictionary<String, AnyObject>]()
-var myGroups = [String]()
+var myGroups = [String]() // Stores strings of group names
 //var myFriendsDictionary = [Dictionary<String, AnyObject>]()
-var myFriends = [String]()
+var myFriends = [String]() // Stores usernames of socialQs-typed users
 // Array to store non-FB friends
 //var mySocialQsFriends = [String]()
-
-// Variable to track how user voted - store to NSUserDefaults //
-//var myVotes = Dictionary<String, Int>()
-
-// Value for passing qId to results ("votes") display
-//var requestedQId = ""
-
-
-//var myImages = Dictionary<String, UIImage>()
 
 // Variable for passing image to zoom and on which image to start (1 or 2)
 //var imageZoom: [UIImage?] = [nil, nil, nil]//[UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]

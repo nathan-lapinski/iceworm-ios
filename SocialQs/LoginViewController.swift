@@ -45,6 +45,12 @@ class LoginViewController: UIViewController {
             
             if let user = user {
                 
+                // Download socialQs friends
+                downloadSocialQsFriends({ (isFinished) -> Void in })
+                
+                // Download groups
+                downloadGroups({ (isFinished) -> Void in })
+                
                 // Download FB data in background - backgrounding built into FBSDK methods (?)
                 downloadFacebookFriends({ (isFinished) -> Void in
                     
@@ -134,6 +140,12 @@ class LoginViewController: UIViewController {
                 if user != nil { // standard login successful
                     
                     if PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
+                        
+                        // Download socialQs friends
+                        downloadSocialQsFriends({ (isFinished) -> Void in })
+                        
+                        // Download groups
+                        downloadGroups({ (isFinished) -> Void in })
                         
                         // Download FB data in background - backgrounding built into FBSDK methods (?)
                         downloadFacebookFriends({ (isFinished) -> Void in

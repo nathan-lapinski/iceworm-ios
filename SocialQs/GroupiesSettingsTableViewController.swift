@@ -8,9 +8,12 @@
 
 import UIKit
 
+// This protocol allows data to be passed back in forth between this 
+// and the groupies main view controller - must call this protocol
+// when declaring the class for the groupies main view controller
 protocol GroupiesSettingsTableViewControllerDelegate {
     
-    func saveText(var selectedUser: AnyObject)
+    func saveText(var selectedGroup: AnyObject)
 }
 
 class GroupiesSettingsTableViewController: UITableViewController {
@@ -37,35 +40,21 @@ class GroupiesSettingsTableViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-//        var t1: Dictionary = ["name": "Co-Workers"]
-//        var t2: Dictionary = ["name": "Roommates"]
-//        var t3: Dictionary = ["name": "Sluts I Nailed"]
-//        var t4: Dictionary = ["name": "Nate's Ex-Boyfriends"]
-//        groupiesGroups.removeAll(keepCapacity: true)
-//        groupiesGroups.append(t1)
-//        groupiesGroups.append(t3)
-//        groupiesGroups.append(t4)
-//        groupiesGroups.append(t2)
-//        groupiesGroups.append(t1)
-//        groupiesGroups.append(t4)
-//        groupiesGroups.append(t1)
-//        groupiesGroups.append(t2)
-//        groupiesGroups.append(t3)
-//        groupiesGroups.append(t4)
-//        groupiesGroups.append(t1)
-//        groupiesGroups.append(t2)
-        
         println(myGroups)
         
-//        // BUILD STRING FOR DISPLAY - TEMPORARY!!!
-//        var groupNames = [String]()
-//        for temp in myGroups {
-//            
-//            groupNames.append(temp)
-//        }
+        var firstRowText: String = ""
+        if myGroups.count == 0 {
+            
+            firstRowText = "No Groups"
+            displayAlert("Create a group!", "Select groupies from the list below, or use the + tool to add a user by SocialQs username to view and user the \"Create Group\" button.", self)
+            
+        } else {
+            
+            firstRowText = "Select Group"
+        }
         
         // Fill object to populate table
-        self.objectsArray = [Objects(sectionName: "", sectionObjects: ["+ Find User"]), Objects(sectionName: "", sectionObjects: myGroups)]
+        self.objectsArray = [Objects(sectionName: "", sectionObjects: [firstRowText]), Objects(sectionName: "", sectionObjects: myGroups)]
     }
 
     override func didReceiveMemoryWarning() {
@@ -116,146 +105,152 @@ class GroupiesSettingsTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        if indexPath.section == 0 {
+        if indexPath.section == 1 {
             
-            if indexPath.row == 0 {
+            // Check to make sure the delegate is set then call the returning function (saveText) - which
+            // lives in the calling/controlling VC
+            if self.delegate != nil {
                 
-                addUserAlert()
+                // Return PFUser
+                self.delegate?.saveText(myGroups[indexPath.row])
             }
             
+            self.dismissViewControllerAnimated(true, completion: nil)
         }
     }
     
     
-    func addUserAlert() {
-        
-        func configurationTextField(textField: UITextField!) {
-            
-            textField.placeholder = ""
-            friendEntry = textField
-        }
-        
-        func handleCancel(alertView: UIAlertAction!) {
-            
-            println("Cancelled !!")
-        }
-        
-        var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alert.addTextFieldWithConfigurationHandler(configurationTextField)
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
-        
-        alert.addAction(UIAlertAction(title: "Add User", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
-            
-            self.resignFirstResponder()
-            
-            let searchString = self.friendEntry.text
-            
-            PFCloud.callFunctionInBackground("findNewUser", withParameters: ["userString": searchString, "currentUser": username]) { (objects, error) -> Void in
-                
-                if error == nil {
-                    
-                    if objects!.count == 0 {
-                        
-                        displayAlert("Sorry!", "No users containing \(searchString) were found. Please verify spelling and try again!", self)
-                        
-                    } else if objects!.count == 1 {
-                        
-                        // ONE USER FOUND, add it
-                        myFriends.append(searchString)
-                        isGroupieName.append(searchString)
-                        
-                        // Post notification to tell calling controller that the popover is being dismissed
-                        // (or simply that the underlying should be reloaded)
-                        NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
-                        
-                        if self.delegate != nil {
-                            
-                            // Return PFUser
-                            self.delegate?.saveText(objects![0])
-                        }
-                        
-                        self.dismissViewControllerAnimated(true, completion: nil)
-                        
-                    } else {
-                        
-                        self.selectUserFromOptionsAlert(objects!)
-                    }
-                    
-                } else {
-                    
-                    println("Error filtering usernames in cloud")
-                    println(error)
-                }
-            }
-            
-        }))
-        
-        self.presentViewController(alert, animated: true, completion: {
-            
-            println("completion block")
-        })
-    }
+//    func addUserAlert() {
+//        
+//        func configurationTextField(textField: UITextField!) {
+//            
+//            textField.placeholder = ""
+//            friendEntry = textField
+//        }
+//        
+//        func handleCancel(alertView: UIAlertAction!) {
+//            
+//            println("Cancelled !!")
+//        }
+//        
+//        var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+//        
+//        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+//        
+//        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+//        
+//        alert.addAction(UIAlertAction(title: "Add User", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+//            
+//            self.resignFirstResponder()
+//            
+//            let searchString = self.friendEntry.text
+//            
+//            PFCloud.callFunctionInBackground("findNewUser", withParameters: ["userString": searchString, "currentUser": username]) { (objects, error) -> Void in
+//                
+//                if error == nil {
+//                    
+//                    if objects!.count == 0 {
+//                        
+//                        displayAlert("Sorry!", "No users containing \(searchString) were found. Please verify spelling and try again!", self)
+//                        
+//                    } else if objects!.count == 1 {
+//                        
+//                        // ONE USER FOUND, add it
+//                        myFriends.append(searchString)
+//                        isGroupieName.append(searchString)
+//                        
+//                        // Post notification to tell calling controller that the popover is being dismissed
+//                        // (or simply that the underlying should be reloaded)
+//                        NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
+//                        
+//                        // Check to make sure the delegate is set then call the returning function (saveText) - which
+//                        // lives in the calling/controlling VC
+//                        if self.delegate != nil {
+//                            
+//                            // Return PFUser
+//                            self.delegate?.saveText(objects![0])
+//                        }
+//
+//                        self.dismissViewControllerAnimated(true, completion: nil)
+//                        
+//                    } else {
+//                        
+//                        self.selectUserFromOptionsAlert(objects!)
+//                    }
+//                    
+//                } else {
+//                    
+//                    println("Error filtering usernames in cloud")
+//                    println(error)
+//                }
+//            }
+//            
+//        }))
+//        
+//        self.presentViewController(alert, animated: true, completion: {
+//            
+//            println("completion block")
+//        })
+//    }
     
     
-    func selectUserFromOptionsAlert(objects: AnyObject) {
-        
-        func handleCancel(alertView: UIAlertAction!) {
-            
-            println("Cancelled !!")
-        }
-        
-        var alert = UIAlertController(title: "Did you mean:", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-        
-        var displayString: String = ""
-        
-        let finalCount = min(objects.count, 5)
-        
-        for var i = 0; i < finalCount; i++ {
-        //for var i = 0; i < 5; i++ {
-            
-            let userObject: AnyObject! = objects[i]
-            
-            let usernameLocal = objects[i]["userObject"]!!["username"]! as! String
-            
-            if let nameLocal = objects[i]["userObject"]!!["name"]! as? String {
-                
-                displayString = "@\(usernameLocal) (\(nameLocal))"
-                
-            } else {
-                
-                displayString = "@\(usernameLocal)"
-            }
-            
-            alert.addAction(UIAlertAction(title: displayString, style: .Default, handler: { (UIAlertAction) in
-                
-                println("\(displayString) selected")
-                
-                myFriends.append(usernameLocal)
-                isGroupieName.append(usernameLocal)
-                
-                println(myFriends)
-                
-                // Post notification to tell calling controller that the popover is being dismissed
-                // (or simply that the underlying should be reloaded)
-                NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
-                
-                if self.delegate != nil {
-                    
-                    // Return PFUser
-                    self.delegate?.saveText(userObject)
-                }
-                
-                self.dismissViewControllerAnimated(true, completion: nil)
-            }))
-        }
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
-        
-        self.presentViewController(alert, animated: true, completion: { })
-    
-    }
+//    func selectUserFromOptionsAlert(objects: AnyObject) {
+//        
+//        func handleCancel(alertView: UIAlertAction!) {
+//            
+//            println("Cancelled !!")
+//        }
+//        
+//        var alert = UIAlertController(title: "Did you mean:", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+//        
+//        var displayString: String = ""
+//        
+//        let finalCount = min(objects.count, 5)
+//        
+//        for var i = 0; i < finalCount; i++ {
+//        //for var i = 0; i < 5; i++ {
+//            
+//            let userObject: AnyObject! = objects[i]
+//            
+//            let usernameLocal = objects[i]["userObject"]!!["username"]! as! String
+//            
+//            if let nameLocal = objects[i]["userObject"]!!["name"]! as? String {
+//                
+//                displayString = "@\(usernameLocal) (\(nameLocal))"
+//                
+//            } else {
+//                
+//                displayString = "@\(usernameLocal)"
+//            }
+//            
+//            alert.addAction(UIAlertAction(title: displayString, style: .Default, handler: { (UIAlertAction) in
+//                
+//                println("\(displayString) selected")
+//                
+//                myFriends.append(usernameLocal)
+//                isGroupieName.append(usernameLocal)
+//                
+//                println(myFriends)
+//                
+//                // Post notification to tell calling controller that the popover is being dismissed
+//                // (or simply that the underlying should be reloaded)
+//                NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
+//                
+//                if self.delegate != nil {
+//                    
+//                    // Return PFUser
+//                    self.delegate?.saveText(userObject)
+//                }
+////                
+//                self.dismissViewControllerAnimated(true, completion: nil)
+//            }))
+//        }
+//        
+//        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+//        
+//        self.presentViewController(alert, animated: true, completion: { })
+//    
+//    }
     
     
     /*

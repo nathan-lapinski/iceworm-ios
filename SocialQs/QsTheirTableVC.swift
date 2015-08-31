@@ -81,9 +81,9 @@ class QsTheirTableVC: UITableViewController {
         
         blockCheck = true
 
-        var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
+        var indPath = NSIndexPath(forRow: questionId, inSection: 0)
         self.tableView.beginUpdates()
-        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+        self.tableView.reloadRowsAtIndexPaths([indPath], withRowAnimation: UITableViewRowAnimation.None)
         self.tableView.endUpdates()
         
         var getQJoin = PFQuery(className: "QJoin")
@@ -116,7 +116,7 @@ class QsTheirTableVC: UITableViewController {
                 backgroundThread(delay: 1.0, completion: {
                     //var indexPath = NSIndexPath(forRow: questionId, inSection: 0)
                     self.tableView.beginUpdates()
-                    self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Middle)
+                    self.tableView.reloadRowsAtIndexPaths([indPath], withRowAnimation: UITableViewRowAnimation.Middle)
                     self.tableView.endUpdates()
                 })
             }
@@ -276,8 +276,6 @@ class QsTheirTableVC: UITableViewController {
         }
         
         // Compute number of reponses and option stats
-        println("indexPath: \(indexPath)")
-        println("number of objects: \(self.QJoinObjects.count)")
         var totalResponses = (self.QJoinObjects[indexPath.row]["question"]!!["option1Stats"] as! Int) + (QJoinObjects[indexPath.row]["question"]!!["option2Stats"] as! Int)
         var option1Percent = Float(0.0)
         var option2Percent = Float(0.0)
@@ -299,7 +297,7 @@ class QsTheirTableVC: UITableViewController {
             
             width1 = maxBarWidth
             width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-            cell.progress1.backgroundColor = mainColorPink//winColor
+            cell.progress1.backgroundColor = winColor//mainColorPink//
             cell.progress2.backgroundColor = loseColor
 //            cell.option1BackgroundImage.backgroundColor = winColor
 //            cell.option2BackgroundImage.backgroundColor = winColor
@@ -309,7 +307,7 @@ class QsTheirTableVC: UITableViewController {
             width2 = maxBarWidth
             width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
             cell.progress1.backgroundColor = loseColor
-            cell.progress2.backgroundColor = mainColorPink//winColor
+            cell.progress2.backgroundColor = winColor//mainColorPink//
 //            cell.option1BackgroundImage.backgroundColor = winColor
 //            cell.option2BackgroundImage.backgroundColor = winColor
             
@@ -477,7 +475,13 @@ class QsTheirTableVC: UITableViewController {
             cell.question.numberOfLines = 0 // Dynamic number of lines
             cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
             cell.question.sizeToFit()
+            
+        } else {
+            
+            cell.question.text = ""
+            
         }
+        
         if let option1Text = self.QJoinObjects[indexPath.row]["question"]!!["option1Text"] as? String {
             if totalResponses > 0 {
                 cell.option1Label.text = option1Text + "  \(Int(option1Percent))%"
@@ -494,6 +498,7 @@ class QsTheirTableVC: UITableViewController {
                 cell.option1Label.text = ""
             }
         }
+        
         if let option2Text = self.QJoinObjects[indexPath.row]["question"]!!["option2Text"] as? String {
             if totalResponses > 0 {
                 cell.option2Label.text = option2Text  + "  \(100 - Int(option1Percent))%"
@@ -573,24 +578,18 @@ class QsTheirTableVC: UITableViewController {
         
         if let myVote = QJoinObjects[indexPath.row]["vote"] as? Int {
             
-            cell.vote1Button.enabled = false
-            cell.vote2Button.enabled = false
+            // *************************************
+            //            cell.vote1Button.enabled = false
+            //            cell.vote2Button.enabled = false
+            // *************************************
             
             // Set myVote selector
             if myVote == 1 {
-                
-//                cell.myVote1.hidden = false
-//                cell.myVote1.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
-//                cell.myVote2.hidden = true
                 
                 cell.checkmark1.hidden = false
                 cell.checkmark2.hidden = true
                 
             } else if myVote == 2 {
-                
-//                cell.myVote2.hidden = false
-//                cell.myVote2.backgroundColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
-//                cell.myVote1.hidden = true
                 
                 cell.checkmark1.hidden = true
                 cell.checkmark2.hidden = false
@@ -600,8 +599,6 @@ class QsTheirTableVC: UITableViewController {
             
             cell.vote1Button.enabled = true
             cell.vote2Button.enabled = true
-//            cell.myVote1.hidden = true
-//            cell.myVote2.hidden = true
         }
         
         return cell

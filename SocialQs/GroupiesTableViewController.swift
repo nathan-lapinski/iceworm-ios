@@ -31,6 +31,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     let section3: String = "sQs Users"
     var searchCancelled = false
     
+    var friendEntry: UITextField!
+    
     var objectsArray = [Objects]()
     var fbAndSQNames = [String]()
     var sqOnlyNames = [String]()
@@ -119,7 +121,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     }
                 })
             
-                
                 println(groupiesDictionary)
                 
                 // Create entry in GroupJoin table
@@ -137,6 +138,16 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     if let url = groupie["picURL"] as? String {
                         group.setObject(url, forKey: "picURL")
                     }
+                    
+                    // Pin new GroupJoin object to LDS
+                    group.pinInBackgroundWithBlock({ (success, error) -> Void in
+                        
+                        if error == nil {
+                            println("New GroupJoin pinned")
+                        } else {
+                            println("There was an error pinning GroupJoin \n\(error)")
+                        }
+                    })
                     
                     groupObjects.append(group)
                 }
@@ -244,26 +255,37 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         }
         
         // get myFriends and add to dictionary
-        addFriends(nil)
+        addFriends(nil, completion: { (isFinished) -> () in })
         
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBarStyle.Default
         searchBar.showsCancelButton = true
         
+        
+        
+        
         // Title table controller
-        self.title = "Select Groupies"
+        //self.title = "Select Groupies"
+        
+        
+        
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
-        
-        
-        
-        
+        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()
+        var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "findUser")
+        groupsNavigationButton.tintColor = UIColor.whiteColor()
+        if let addNavigationButton = self.navigationItem.rightBarButtonItem {
+            addNavigationButton.tintColor = UIColor.whiteColor()
+            self.navigationItem.setRightBarButtonItems([addNavigationButton, groupsNavigationButton], animated: true)
+        }
         
         // Format Done button
         navigationItem.leftBarButtonItem = doneButton
         navigationItem.leftBarButtonItem!.setTitleTextAttributes([ NSFontAttributeName: UIFont(name: "HelveticaNeue", size: tableFontSize)!], forState: UIControlState.Normal)
         
+        
+        
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg4.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
         self.tableView.backgroundView?.alpha = 0.4
         self.tableView.backgroundColor = UIColor.whiteColor()
         
@@ -280,7 +302,226 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     }
     
     
-    func addFriends(newUser: String?) {
+    func findUser() {
+        
+        func configurationTextField(textField: UITextField!) {
+            
+            textField.placeholder = ""
+            friendEntry = textField
+        }
+        
+        func handleCancel(alertView: UIAlertAction!) {
+            
+            println("Cancelled !!")
+        }
+        
+        var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+        
+        alert.addAction(UIAlertAction(title: "Add User", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
+            
+            self.resignFirstResponder()
+            
+            let searchString = self.friendEntry.text
+            
+            PFCloud.callFunctionInBackground("findNewUser", withParameters: ["userString": searchString, "currentUser": username]) { (objects, error) -> Void in
+                
+                if error == nil {
+                    
+                    if objects!.count == 0 {
+                        
+                        displayAlert("Sorry!", "No users containing \(searchString) were found. Please verify spelling and try again!", self)
+                        
+                    } else if objects!.count == 1 {
+                        
+                        self.saveNewFriend(searchString)
+                        
+//                        // ONE USER FOUND, add it
+//                        myFriends.append(searchString)
+//                        isGroupieName.append(searchString)
+//                        
+//                        // Create "Friend" object, pin and upload
+//                        var newFriend = PFObject(className: "Friends")
+//                        newFriend.setObject(PFUser.currentUser()!, forKey: "owner")
+//                        newFriend.setObject(searchString, forKey: "friend")
+//                        
+//                        newFriend.pinInBackgroundWithBlock({ (success, error) -> Void in
+//                            
+//                            if error == nil {
+//                                
+//                                println("New friend pinned to LDS!")
+//                                
+//                            } else {
+//                                
+//                                println("There was an error pinning new friend: \n\(error)")
+//                            }
+//                        })
+//                        
+//                        newFriend.saveEventually({ (success, error) -> Void in
+//                            
+//                            if error == nil {
+//                                
+//                                println("New friend has been saved to the DB")
+//                                
+//                            } else {
+//                                
+//                                println("There was an error uploading friends to DB: \n\(error)")
+//                                
+//                            }
+//                        })
+                        
+                        
+//                        // Post notification to tell calling controller that the popover is being dismissed
+//                        // (or simply that the underlying should be reloaded)
+//                        NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
+//                        
+//                        // Check to make sure the delegate is set then call the returning function (saveText) - which
+//                        // lives in the calling/controlling VC
+//                        if self.delegate != nil {
+//                            
+//                            // Return PFUser
+//                            self.delegate?.saveText(objects![0])
+//                        }
+                        
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                        
+                    } else {
+                        
+                        self.selectUserFromOptionsAlert(objects!)
+                    }
+                    
+                } else {
+                    
+                    println("Error filtering usernames in cloud")
+                    println(error)
+                }
+            }
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: {
+            
+            println("completion block")
+        })
+    }
+    
+    
+    func selectUserFromOptionsAlert(objects: AnyObject) {
+        
+        func handleCancel(alertView: UIAlertAction!) {
+            
+            println("Cancelled !!")
+        }
+        
+        var alert = UIAlertController(title: "Did you mean:", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        var displayString: String = ""
+        
+        let finalCount = min(objects.count, 5)
+        
+        for var i = 0; i < finalCount; i++ {
+            //for var i = 0; i < 5; i++ {
+            
+            let userObject: AnyObject! = objects[i]
+            
+            let usernameLocal = objects[i]["userObject"]!!["username"]! as! String
+            
+            if let nameLocal = objects[i]["userObject"]!!["name"]! as? String {
+                
+                displayString = "@\(usernameLocal) (\(nameLocal))"
+                
+            } else {
+                
+                displayString = "@\(usernameLocal)"
+            }
+            
+            alert.addAction(UIAlertAction(title: displayString, style: .Default, handler: { (UIAlertAction) in
+                
+                println("\(displayString) selected")
+                
+                self.saveNewFriend(usernameLocal)
+                
+//                myFriends.append(usernameLocal)
+//                isGroupieName.append(usernameLocal)
+                
+//                // Post notification to tell calling controller that the popover is being dismissed
+//                // (or simply that the underlying should be reloaded)
+//                NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
+//                
+//                if self.delegate != nil {
+//                    
+//                    // Return PFUser
+//                    self.delegate?.saveText(userObject)
+//                }
+                
+                self.dismissViewControllerAnimated(true, completion: nil)
+            }))
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
+        
+        self.presentViewController(alert, animated: true, completion: { })
+        
+    }
+    
+    
+    func saveNewFriend(usernameLocal: String) {
+        
+        // ONE USER FOUND, add it
+        myFriends.append(usernameLocal)
+        isGroupieName.append(usernameLocal)
+        
+        // Add newFriends to friendDictionary
+        addFriends(usernameLocal, completion: { (isFinished) -> () in
+            
+            if isFinished {
+                
+                for temp in friendsDictionary {
+                    
+                    if temp["name"] as! String == usernameLocal {
+                        
+                        // Create "Friend" object, pin and upload
+                        var newFriend = PFObject(className: "Friends")
+                        newFriend.setObject(PFUser.currentUser()!, forKey: "owner")
+                        newFriend.setObject(usernameLocal, forKey: "name")
+                        newFriend.setObject(temp["id"] as! String, forKey: "id")
+                        newFriend.setObject(true, forKey: "isSelected")
+                        newFriend.setObject(temp["type"] as! String, forKey: "type")
+                        
+                        newFriend.pinInBackgroundWithBlock({ (success, error) -> Void in
+                            
+                            if error == nil {
+                                
+                                println("New friend pinned to LDS!")
+                                
+                            } else {
+                                
+                                println("There was an error pinning new friend: \n\(error)")
+                            }
+                        })
+                        
+                        newFriend.saveEventually({ (success, error) -> Void in
+                            
+                            if error == nil {
+                                
+                                println("New friend has been saved to the DB")
+                                
+                            } else {
+                                
+                                println("There was an error uploading friends to DB: \n\(error)")
+                                
+                            }
+                        })
+                    }
+                }
+            }
+        })
+    }
+    
+    
+    func addFriends(newUser: String?, completion: (Bool) -> ()) {
         
         var usernameTest = ""
         
@@ -324,6 +565,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                         }
                         
                         friendsDictionary.append(tempDict)
+                        
+                        completion(true)
                     }
                 }
                 
@@ -729,34 +972,34 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 
         } else { // section 2
             
-            println(indexPath.row)
-            println(nonFriendsDictionaryFiltered)
-            
-            // Move this user from non-friends to friends dictionary
-            // - add to myFriends for whereKey usage in update query
-            // - add to isGroupieName to ensure it is selected when moving to section 1
-            if !contains(myFriends, nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String) {
-                
-                var tempDict = nonFriendsDictionaryFiltered[indexPath.row]
-                tempDict["isSelected"] = true
-                friendsDictionary.append(tempDict)
-                myFriends.append(nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String)
-                isGroupieName.append(nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String)
-                
-                for var i = 0; i < nonFriendsDictionary.count; i++ {
-                    if nonFriendsDictionary[i]["name"] as! String == nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String {
-                        nonFriendsDictionary.removeAtIndex(i)
-                        break
-                    }
-                }
-                for var i = 0; i < nonFriendsDictionaryFiltered.count; i++ {
-                    if nonFriendsDictionaryFiltered[i]["name"] as! String == nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String {
-                        nonFriendsDictionaryFiltered.removeAtIndex(i)
-                        buildUserStrings("") // update strings for table display and reload sections
-                        break
-                    }
-                }
-            }
+//            println(indexPath.row)
+//            println(nonFriendsDictionaryFiltered)
+//            
+//            // Move this user from non-friends to friends dictionary
+//            // - add to myFriends for whereKey usage in update query
+//            // - add to isGroupieName to ensure it is selected when moving to section 1
+//            if !contains(myFriends, nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String) {
+//                
+//                var tempDict = nonFriendsDictionaryFiltered[indexPath.row]
+//                tempDict["isSelected"] = true
+//                friendsDictionary.append(tempDict)
+//                myFriends.append(nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String)
+//                isGroupieName.append(nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String)
+//                
+//                for var i = 0; i < nonFriendsDictionary.count; i++ {
+//                    if nonFriendsDictionary[i]["name"] as! String == nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String {
+//                        nonFriendsDictionary.removeAtIndex(i)
+//                        break
+//                    }
+//                }
+//                for var i = 0; i < nonFriendsDictionaryFiltered.count; i++ {
+//                    if nonFriendsDictionaryFiltered[i]["name"] as! String == nonFriendsDictionaryFiltered[indexPath.row]["name"] as! String {
+//                        nonFriendsDictionaryFiltered.removeAtIndex(i)
+//                        buildUserStrings("") // update strings for table display and reload sections
+//                        break
+//                    }
+//                }
+//            }
         }
     }
     
@@ -877,11 +1120,57 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             }
         }
     }
-    func saveText(selectedUser: AnyObject) {
+    // Function which returns data from the Group popover:
+    func saveText(selectedGroup: AnyObject) {
         
-        addFriends(selectedUser["userObject"]!!["username"] as? String)
+        println(selectedGroup)
         
-        println(isGroupieName)
+        var groupQuery = PFQuery(className: "GroupJoin")
+        groupQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
+        groupQuery.whereKey("groupName", equalTo: selectedGroup as! String)
+        groupQuery.fromLocalDatastore()
+        
+        groupQuery.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+            
+            if error == nil {
+                
+                var tempGroupNames: [String] = []
+                
+                if let temp = objects {
+                    
+                    // Add usernames to isGroupieName array
+                    for object in temp {
+                        
+                        isGroupieName.append(object["name"] as! String)
+                        
+                        tempGroupNames.append(object["name"] as! String)
+                    }
+                    
+                    // Change isSelected status on appropriate friends
+                    for var i = 0; i < friendsDictionary.count; i++ {
+                        
+                        if contains(tempGroupNames, friendsDictionary[i]["name"] as! String) {
+                            
+                            friendsDictionary[i]["isSelected"] = true
+                        }
+                    }
+                    
+                    println(tempGroupNames)
+                    
+                    // Refresh to get selectedUsers list
+                    self.loadUsers("")
+                    //self.tableView.reloadData()
+                }
+                
+            } else {
+                
+                println("There was an error loading the selected group: \n\(error)")
+            }
+            
+        }
+        
+        //addFriends(selectedUser["userObject"]!!["username"] as? String, completion: { (isFinished) -> () in })
+        //println(isGroupieName)
         //textView.text = ", ".join(isGroupieName)
     }
 //    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController) {

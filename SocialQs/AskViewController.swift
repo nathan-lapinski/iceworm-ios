@@ -74,6 +74,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     @IBAction func cancelButtonAction(sender: AnyObject) {
         
         clear = true
+        
+        question = nil
+        option1  = nil
+        option2  = nil
+        
         askTable.reloadData()
         
         chosenImageHighRes = [nil, nil, nil]

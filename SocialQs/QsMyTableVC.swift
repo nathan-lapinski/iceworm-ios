@@ -11,10 +11,7 @@ import UIKit
 class QsMyTableVC: UITableViewController {
     
     var questionObjects: [AnyObject] = []
-    
     var refresher: UIRefreshControl!
-//    var myQsSpinner = UIActivityIndicatorView()
-//    var myQsBlurView = globalBlurView()
     var myQsSpinner = UIView()
     var myQsBlurView = globalBlurView()
     
@@ -436,8 +433,8 @@ class QsMyTableVC: UITableViewController {
             cell.questionTextRightSpace.constant = cell.questionImage.frame.size.width + 12
             cell.question.layoutIfNeeded()
             
-            cell.question.hidden = false
-            cell.question.enabled = true
+            cell.questionImage.hidden = false
+            cell.questionZoom.enabled = true
             
         } else {
             
@@ -532,7 +529,12 @@ class QsMyTableVC: UITableViewController {
             cell.question.numberOfLines = 0 // Dynamic number of lines
             cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
             cell.question.sizeToFit()
+            
+        } else {
+            
+            cell.question.text = ""
         }
+        
         if let option1Text = self.questionObjects[indexPath.row]["option1Text"] as? String {
             if totalResponses > 0 {
                 cell.option1Label.text = option1Text + "  \(Int(option1Percent))%"

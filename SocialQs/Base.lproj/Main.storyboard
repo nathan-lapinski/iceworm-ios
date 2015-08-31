@@ -134,12 +134,12 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Groupies" id="byY-cz-3On">
                         <barButtonItem key="leftBarButtonItem" systemItem="done" id="B7P-4T-edn">
-                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="dismissPressed:" destination="vsF-Lg-w3g" id="uRv-5y-3u0"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="sEV-Ih-Jcu">
+                        <barButtonItem key="rightBarButtonItem" systemItem="bookmarks" id="sEV-Ih-Jcu">
                             <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="optionsPressed:" destination="vsF-Lg-w3g" id="VK8-PG-cCf"/>
@@ -160,10 +160,10 @@
             </objects>
             <point key="canvasLocation" x="-567.5" y="-1965.5"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Groupies Navigation Controller-->
         <scene sceneID="dfP-KI-hSr">
             <objects>
-                <navigationController id="hhb-0X-461" sceneMemberID="viewController">
+                <navigationController id="hhb-0X-461" customClass="GroupiesNavigationController" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="H9g-7u-afN">
@@ -176,7 +176,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="czp-Pe-fRX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-685.5" y="-1943.5"/>
+            <point key="canvasLocation" x="-657.5" y="-1905.5"/>
         </scene>
         <!--Settings-->
         <scene sceneID="Zpa-Vj-Jcc">
@@ -2565,7 +2565,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j7R-hD-qfG">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j7R-hD-qfG">
                                 <rect key="frame" x="159" y="528" width="57" height="30"/>
                                 <state key="normal" title="CRASH!">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
