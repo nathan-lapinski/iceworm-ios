@@ -223,10 +223,11 @@ class QsTheirTableVC: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
+//        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
+        self.tableView.backgroundColor = UIColor.whiteColor()
         
         // Set separator color
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        //tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         // Adjust top and bottom bounds of table for nav and tab bars
         //self.tableView.contentInset = UIEdgeInsetsMake(64,0,52,0)  // T, L, B, R
@@ -251,11 +252,7 @@ class QsTheirTableVC: UITableViewController {
         
         var cell = QsTheirCell()
         
-        if indexPath.row % 2 == 0 {
-            cell = tableView.dequeueReusableCellWithIdentifier("theirCell2", forIndexPath: indexPath) as! QsTheirCell
-        } else {
-            cell = tableView.dequeueReusableCellWithIdentifier("theirCell3", forIndexPath: indexPath) as! QsTheirCell
-        }
+        cell = tableView.dequeueReusableCellWithIdentifier("theirCell", forIndexPath: indexPath) as! QsTheirCell
         
         if blockCheck == true {
             
@@ -264,20 +261,11 @@ class QsTheirTableVC: UITableViewController {
             var blurView = globalBlurView()
             displayCellSpinnerView(boxView, blurView, "Casting Vote", cell)
             
-//            // Setup and start spinner
-//            var cellSpinner = UIActivityIndicatorView()
-//            cellSpinner.center = cell.center
-//            cellSpinner.hidesWhenStopped = true
-//            cellSpinner.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-//            cell.addSubview(cellSpinner)
-//            cellSpinner.startAnimating()
-            
             // Deactivate buttons
-            cell.vote1Button.enabled = false
-            cell.vote2Button.enabled = false
+//            cell.vote1Button.enabled = false
+//            cell.vote2Button.enabled = false
             
             blockCheck = false
-            
         }
         
         // Compute number of reponses and option stats
@@ -290,77 +278,7 @@ class QsTheirTableVC: UITableViewController {
             option2Percent = Float((self.QJoinObjects[indexPath.row]["question"]!!["option2Stats"] as! Int))/Float(totalResponses)*100
         }
         
-        // Build "repsonse" string to account for singular/plural
-        var resp = "responses"
-        if totalResponses == 1 { resp = "response" }
         
-        let maxBarWidth = cell.option1BackgroundImage.frame.size.width
-        var width1: CGFloat = 0
-        var width2: CGFloat = 0
-        
-        if option1Percent > option2Percent {
-            
-            width1 = maxBarWidth
-            width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100)))
-            cell.progress1.backgroundColor = winColor//mainColorPink//
-            cell.progress2.backgroundColor = loseColor
-//            cell.option1BackgroundImage.backgroundColor = winColor
-//            cell.option2BackgroundImage.backgroundColor = winColor
-            
-        } else if option2Percent > option1Percent {
-            
-            width2 = maxBarWidth
-            width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100)))
-            cell.progress1.backgroundColor = loseColor
-            cell.progress2.backgroundColor = winColor//mainColorPink//
-//            cell.option1BackgroundImage.backgroundColor = winColor
-//            cell.option2BackgroundImage.backgroundColor = winColor
-            
-        } else {
-            
-            width1 = maxBarWidth
-            width2 = maxBarWidth
-            cell.progress1.backgroundColor = mainColorPink//winColor
-            cell.progress2.backgroundColor = mainColorPink//winColor
-//            cell.option1BackgroundImage.backgroundColor = winColor
-//            cell.option2BackgroundImage.backgroundColor = winColor
-        }
-        
-        // Animate stats bars
-        if totalResponses == 0 {
-            
-            cell.progress1.hidden = true
-            cell.progress2.hidden = true
-            
-        } else {
-            
-            cell.progress1.hidden = false
-            cell.progress2.hidden = false
-            cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
-            cell.progress1.alpha = 0.0
-            cell.progress1.layoutIfNeeded()
-            cell.progress2RightSpace.constant = cell.option1BackgroundImage.frame.size.width - cell.option1BackgroundImage.frame.size.width/2
-            cell.progress2.alpha = 0.0
-            cell.progress2.layoutIfNeeded()
-            
-            UIView.animateWithDuration(0.75, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-                
-                cell.progress1.alpha = 1.0
-                cell.progress1.layoutIfNeeded()
-                cell.progress2.alpha = 1.0
-                cell.progress2.layoutIfNeeded()
-                
-                }) { (isFinished) -> Void in }
-            
-            UIView.animateWithDuration(1.5, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-                
-                cell.progress1RightSpace.constant = cell.option1BackgroundImage.frame.size.width - width1 + 8
-                cell.progress1.layoutIfNeeded()
-                cell.progress2RightSpace.constant = cell.option2BackgroundImage.frame.size.width - width2 + 8
-                cell.progress2.layoutIfNeeded()
-                
-                }) { (isFinished) -> Void in }
-        }
         
         // Display question photo
         if let questionPhotoThumb = self.QJoinObjects[indexPath.row]["question"]!!["questionPhotoThumb"] as? PFFile {
@@ -369,7 +287,7 @@ class QsTheirTableVC: UITableViewController {
                 
                 if error == nil {
                     
-                    cell.questionImage.image = image
+                    cell.questionImage.setImage(image, forState: UIControlState.Normal)
                     
                 } else {
                     
@@ -378,35 +296,36 @@ class QsTheirTableVC: UITableViewController {
             })
             
             // Format thumbnail views - aspect fill without breaching imageView bounds
-            cell.question.contentMode = UIViewContentMode.ScaleAspectFill
-            cell.question.clipsToBounds = true
-            cell.question.layer.cornerRadius = cornerRadius
+            cell.questionImage.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.questionImage.clipsToBounds = true
+            cell.questionImage.layer.cornerRadius = cell.questionImage.frame.size.height/2
             
             // Set question text width
             cell.questionTextRightSpace.constant = cell.questionImage.frame.size.width + 12
-            cell.question.layoutIfNeeded()
+            cell.questionText.layoutIfNeeded()
             
             cell.questionImage.hidden = false
-            cell.questionZoom.enabled = true
+//            cell.questionZoom.enabled = true
             
         } else {
             
             // Set question text width
             cell.questionTextRightSpace.constant = 8
-            cell.question.layoutIfNeeded()
+            cell.questionText.layoutIfNeeded()
             
             cell.questionImage.hidden = true
-            cell.questionZoom.enabled = false
+//            cell.questionZoom.enabled = false
         }
         
         // Display option1 photo
+        var option1Offset: CGFloat = 20.0
         if let option1PhotoThumb = self.QJoinObjects[indexPath.row]["question"]!!["option1PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
                 
                 if error == nil {
                     
-                    cell.option1Image.image = image
+                    cell.option1Image.setImage(image, forState: UIControlState.Normal)
                     
                 } else {
                     
@@ -414,36 +333,39 @@ class QsTheirTableVC: UITableViewController {
                 }
             })
             
-            // Format thumbnail views - aspect fill without breaching imageView bounds
-            cell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
-            cell.option1Image.clipsToBounds = true
-            cell.option1Image.layer.cornerRadius = cornerRadius
-            
             // Set option1 text width
-            cell.option1TextLeftSpace.constant = cell.option1Image.frame.size.width + 20
-            cell.option1Label.layoutIfNeeded()
+            cell.option1TextLeftSpace.constant = cell.option1Image.frame.size.width + 14
+            cell.option1Text.layoutIfNeeded()
             
             cell.option1Image.hidden = false
-            cell.option1Zoom.enabled = true
+//            cell.option1Zoom.enabled = true
+            
+            option1Offset = 80
             
         } else {
             
             // Set question text width
             cell.option1TextLeftSpace.constant = 14
-            cell.option1Label.layoutIfNeeded()
+            cell.option1Text.layoutIfNeeded()
             
             cell.option1Image.hidden = true
-            cell.option1Zoom.enabled = false
+//            cell.option1Zoom.enabled = false
         }
         
+        // Format thumbnail views - aspect fill without breaching imageView bounds
+        cell.option1Image.contentMode = UIViewContentMode.ScaleAspectFill
+        cell.option1Image.clipsToBounds = true
+        cell.option1Image.layer.cornerRadius = 10 // cell.option1Image.frame.size.height/2
+        
         // Display option2 photo
+        var option2Offset: CGFloat = 20.0
         if let option2PhotoThumb = self.QJoinObjects[indexPath.row]["question"]!!["option2PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
                 
                 if error == nil {
                     
-                    cell.option2Image.image = image
+                    cell.option2Image.setImage(image, forState: UIControlState.Normal)
                     
                 } else {
                     
@@ -451,98 +373,180 @@ class QsTheirTableVC: UITableViewController {
                 }
             })
             
-            // Format thumbnail views - aspect fill without breaching imageView bounds
-            cell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
-            cell.option2Image.clipsToBounds = true
-            cell.option2Image.layer.cornerRadius = cornerRadius
-            
             // Set option2 text width
-            cell.option2TextLeftSpace.constant = cell.option2Image.frame.size.width + 20
-            cell.option2Label.layoutIfNeeded()
+            cell.option2TextLeftSpace.constant = cell.option2Image.frame.size.width + 14
+            cell.option2Text.layoutIfNeeded()
             
             cell.option2Image.hidden = false
-            cell.option2Zoom.enabled = true
+//            cell.option2Zoom.enabled = true
+            
+            option2Offset = 80
             
         } else {
             
             // Set question text width
             cell.option2TextLeftSpace.constant = 14
-            cell.option2Label.layoutIfNeeded()
+            cell.option2Text.layoutIfNeeded()
             
             cell.option2Image.hidden = true
-            cell.option2Zoom.enabled = false
+//            cell.option2Zoom.enabled = false
+            
+            
+            
+            
+        }// Build "repsonse" string to account for singular/plural
+        var resp = "responses"
+        if totalResponses == 1 { resp = "response" }
+        
+        let maxBarWidth = cell.questionBackground.frame.size.width
+        var width1: CGFloat = 0
+        var width2: CGFloat = 0
+        
+        if option1Percent > option2Percent {
+            
+            width1 = maxBarWidth
+            width2 = CGFloat(Float(width1)/(option1Percent/100)*(1 - (option1Percent/100))) + option1Offset
+            cell.option1Background.backgroundColor = winColor
+            cell.option2Background.backgroundColor = loseColor
+            
+        } else if option2Percent > option1Percent {
+            
+            width2 = maxBarWidth
+            width1 = CGFloat(Float(width2)/(option2Percent/100)*(1 - (option2Percent/100))) + option2Offset
+            cell.option1Background.backgroundColor = loseColor
+            cell.option2Background.backgroundColor = winColor
+            
+        } else {
+            
+            width1 = maxBarWidth
+            width2 = maxBarWidth
+            cell.option1Background.backgroundColor = UIColor.groupTableViewBackgroundColor()
+            cell.option2Background.backgroundColor = UIColor.groupTableViewBackgroundColor()
         }
+        
+        // Animate stats bars
+        if totalResponses == 0 {
+            
+            //            cell.progress1.hidden = true
+            //            cell.progress2.hidden = true
+            
+        } else {
+            
+            //            cell.progress1.hidden = false
+            //            cell.progress2.hidden = false
+            
+            cell.progress1RightSpace.constant = cell.frame.size.width/2 - 16 // questionBackground.frame.size.width - cell.questionBackground.frame.size.width/2
+            cell.option1Background.alpha = 0.0
+            cell.option1Background.layoutIfNeeded()
+            
+            cell.progress2RightSpace.constant = cell.frame.size.width/2 - 16 // cell.questionBackground.frame.size.width - cell.questionBackground.frame.size.width/2
+            cell.option2Background.alpha = 0.0
+            cell.option2Background.layoutIfNeeded()
+            
+            UIView.animateWithDuration(0.75, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                cell.option1Background.alpha = 0.6
+                cell.option1Background.layoutIfNeeded()
+                
+                cell.option2Background.alpha = 0.6
+                cell.option2Background.layoutIfNeeded()
+                
+                }) { (isFinished) -> Void in }
+            
+            UIView.animateWithDuration(1.5, delay: 0.3, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                cell.progress1RightSpace.constant = cell.questionBackground.frame.size.width - width1 - 8
+                cell.option1Background.layoutIfNeeded()
+                
+                cell.progress2RightSpace.constant = cell.questionBackground.frame.size.width - width2 - 8
+                cell.option2Background.layoutIfNeeded()
+                
+                }) { (isFinished) -> Void in }
+        }
+        
+        //        cell.backgroundImageView.layer.cornerRadius = cell.questionImage.frame.size.height/2
+        //        cell.backgroundImageView.layer.borderWidth = 3.0
+        //        cell.backgroundImageView.layer.borderColor = UIColor.whiteColor().CGColor
+        
+        
+        
+        
+        
+        // Format thumbnail views - aspect fill without breaching imageView bounds
+        cell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
+        cell.option2Image.clipsToBounds = true
+        cell.option2Image.layer.cornerRadius = 10 // cell.option2Image.frame.size.height/2
         
         // Display text
         if let questionText = self.QJoinObjects[indexPath.row]["question"]!!["questionText"] as? String {
             
-            cell.question.text = questionText
-            cell.question.numberOfLines = 0 // Dynamic number of lines
-            cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            cell.question.sizeToFit()
+            cell.questionText.text = questionText
+            cell.questionText.numberOfLines = 0 // Dynamic number of lines
+            cell.questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            cell.questionText.sizeToFit()
             
         } else {
             
-            cell.question.text = ""
-            
+            cell.questionText.text = ""
         }
+        cell.questionBackground.layer.cornerRadius = cell.questionBackground.frame.size.height/2
+        cell.questionBackground.backgroundColor = mainColorBlue
         
         if let option1Text = self.QJoinObjects[indexPath.row]["question"]!!["option1Text"] as? String {
             if totalResponses > 0 {
-                cell.option1Label.text = option1Text + "  \(Int(option1Percent))%"
+                cell.option1Text.text = option1Text + "  \(Int(option1Percent))%"
             } else {
-                cell.option1Label.text = option1Text
+                cell.option1Text.text = option1Text
             }
-            cell.option1Label.numberOfLines = 0 // Dynamic number of lines
-            cell.option1Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            
+//            cell.option1Text.numberOfLines = 0 // Dynamic number of lines
+//            cell.option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
         } else {
             if totalResponses > 0 {
-                cell.option1Label.text = "\(Int(option1Percent))%"
+                cell.option1Text.text = "\(Int(option1Percent))%"
             } else {
-                cell.option1Label.text = ""
+                cell.option1Text.text = ""
             }
         }
+        cell.option1Background.layer.cornerRadius = 10 // cell.option1VoteButton.frame.size.height/2
+        
         
         if let option2Text = self.QJoinObjects[indexPath.row]["question"]!!["option2Text"] as? String {
             if totalResponses > 0 {
-                cell.option2Label.text = option2Text  + "  \(100 - Int(option1Percent))%"
+                cell.option2Text.text = option2Text  + "  \(100 - Int(option1Percent))%"
             } else {
-                cell.option2Label.text = option2Text
+                cell.option2Text.text = option2Text
             }
-            cell.option2Label.numberOfLines = 0 // Dynamic number of lines
-            cell.option2Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
+//            cell.option2Label.numberOfLines = 0 // Dynamic number of lines
+//            cell.option2Label.lineBreakMode = NSLineBreakMode.ByWordWrapping
             
         } else {
             if totalResponses > 0 {
-                cell.option2Label.text = "\(100 - Int(option1Percent))%"
+                cell.option2Text.text = "\(100 - Int(option1Percent))%"
             } else {
-                cell.option2Label.text = ""
+                cell.option2Text.text = ""
             }
         }
+        cell.option2Background.layer.cornerRadius = 10 // cell.option2VoteButton.frame.size.height/2
         
         // Make cells non-selectable
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         
-        // Set background image corners
-        //cell.background.layer.cornerRadius = cornerRadius
-        
         // Format option backgrounds
-        cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
-        cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
+//        cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
+//        cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
         
         // Set all text
-        cell.question.numberOfLines = 0 // Dynamic number of lines
-        cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
+//        cell.question.numberOfLines = 0 // Dynamic number of lines
+//        cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
         
         cell.numberOfResponses.text = "\(totalResponses) \(resp)"
         
         // Tag buttons
-        cell.option1Zoom.tag  = indexPath.row
-        cell.option2Zoom.tag  = indexPath.row
-        cell.questionZoom.tag = indexPath.row
-        cell.vote1Button.tag  = indexPath.row
-        cell.vote2Button.tag  = indexPath.row
+//        cell.option1Zoom.tag  = indexPath.row
+//        cell.option2Zoom.tag  = indexPath.row
+//        cell.questionZoom.tag = indexPath.row
+//        cell.vote1Button.tag  = indexPath.row
+//        cell.vote2Button.tag  = indexPath.row
         
         // Format cell backgrounds
         cell.backgroundColor = UIColor.clearColor()
@@ -561,25 +565,25 @@ class QsTheirTableVC: UITableViewController {
         cell.profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
         cell.profilePicture.layer.masksToBounds = false
         cell.profilePicture.clipsToBounds = true
-        cell.profilePicture.layer.cornerRadius = 8.0
+        //cell.profilePicture.layer.cornerRadius = 10.0
         //cell.profilePicture.layer.borderWidth = 1.0
         //cell.profilePicture.layer.borderColor = UIColor.groupTableViewBackgroundColor().CGColor // UIColor.whiteColor().CGColor
-        //cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
+        cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
         
         // Set askername
         cell.username.text = QJoinObjects[indexPath.row]["question"]!!["asker"]!!["username"] as? String
         
         // Format option backgrounds
-        cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
-        cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
+//        cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
+//        cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
         
         // Set vote background to clear
-        cell.vote1Button.backgroundColor = UIColor.clearColor()
-        cell.vote2Button.backgroundColor = UIColor.clearColor()
+//        cell.vote1Button.backgroundColor = UIColor.clearColor()
+//        cell.vote2Button.backgroundColor = UIColor.clearColor()
         
         // Disable appropriate vote buttons and vote checkmarks
-        cell.checkmark1.hidden = true
-        cell.checkmark2.hidden = true
+//        cell.checkmark1.hidden = true
+//        cell.checkmark2.hidden = true
         
         if let myVote = QJoinObjects[indexPath.row]["vote"] as? Int {
             
@@ -591,23 +595,27 @@ class QsTheirTableVC: UITableViewController {
             // Set myVote selector
             if myVote == 1 {
                 
-                cell.checkmark1.hidden = false
-                cell.checkmark2.hidden = true
+//                cell.checkmark1.hidden = false
+//                cell.checkmark2.hidden = true
                 
             } else if myVote == 2 {
                 
-                cell.checkmark1.hidden = true
-                cell.checkmark2.hidden = false
+//                cell.checkmark1.hidden = true
+//                cell.checkmark2.hidden = false
             }
             
         } else {
             
-            cell.vote1Button.enabled = true
-            cell.vote2Button.enabled = true
+//            cell.vote1Button.enabled = true
+//            cell.vote2Button.enabled = true
         }
         
         return cell
     }
+    
+    
+    
+    
     
     
     override func viewWillAppear(animated: Bool) {
