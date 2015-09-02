@@ -250,7 +250,12 @@ class QsTheirTableVC: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         var cell = QsTheirCell()
-        cell = tableView.dequeueReusableCellWithIdentifier("theirCell2", forIndexPath: indexPath) as! QsTheirCell
+        
+        if indexPath.row % 2 == 0 {
+            cell = tableView.dequeueReusableCellWithIdentifier("theirCell2", forIndexPath: indexPath) as! QsTheirCell
+        } else {
+            cell = tableView.dequeueReusableCellWithIdentifier("theirCell3", forIndexPath: indexPath) as! QsTheirCell
+        }
         
         if blockCheck == true {
             
@@ -520,7 +525,7 @@ class QsTheirTableVC: UITableViewController {
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         
         // Set background image corners
-        cell.background.layer.cornerRadius = cornerRadius
+        //cell.background.layer.cornerRadius = cornerRadius
         
         // Format option backgrounds
         cell.option1BackgroundImage.layer.cornerRadius = cornerRadius

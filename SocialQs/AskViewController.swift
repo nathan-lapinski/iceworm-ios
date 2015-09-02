@@ -316,9 +316,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 println("Success saving images in background!")
                 
                 // Assign to groupies in QJoinTable
-                //
-                // CLOUD CODE!
-                //
                 // Include an entry for self (ie: user will be "to", "from" AND "asker"
                 //  - This is for MyQs delete tracking
                 var sQsGroupieObjects: [PFObject] = []
@@ -521,6 +518,19 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             formatButton(cell.privacy)
             formatButton(cell.clear)
             formatButton(cell.submit)
+            
+            cell.groupies.layer.borderWidth = 1.0
+            cell.groupies.layer.borderColor = UIColor.whiteColor().CGColor
+            cell.groupies.layer.cornerRadius = 4.0
+            cell.privacy.layer.borderWidth = 1.0
+            cell.privacy.layer.borderColor = UIColor.whiteColor().CGColor
+            cell.privacy.layer.cornerRadius = 4.0
+            cell.clear.layer.borderWidth = 1.0
+            cell.clear.layer.borderColor = UIColor.whiteColor().CGColor
+            cell.clear.layer.cornerRadius = 4.0
+            cell.submit.layer.borderWidth = 1.0
+            cell.submit.layer.borderColor = UIColor.whiteColor().CGColor
+            cell.submit.layer.cornerRadius = 4.0
             
             self.clear = false
             

@@ -271,7 +271,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
         self.navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()
-        var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "findUser")
+        var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "addUser.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "findUser")
+        //var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "findUser")
         groupsNavigationButton.tintColor = UIColor.whiteColor()
         if let addNavigationButton = self.navigationItem.rightBarButtonItem {
             addNavigationButton.tintColor = UIColor.whiteColor()
@@ -1027,7 +1028,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
             header.contentView.backgroundColor = UIColor.groupTableViewBackgroundColor() // UIColor.whiteColor()
             
-            textView = UITextView(frame: CGRectMake(0, -5, self.view.frame.size.width - 92, 68))
+            textView = UITextView(frame: CGRectMake(0, -5, self.view.frame.size.width - 70, 68))
             textView.editable = false
             textView.text = ", ".join(isGroupieName)
             textView.backgroundColor = UIColor.clearColor() // mainColorBlue
@@ -1039,13 +1040,14 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             clearButton.setImage(UIImage(named: "clear.png"), forState: UIControlState.Normal)
             clearButton.addTarget(self, action: "clearSelectedGroupies", forControlEvents: .TouchUpInside)
             
-            var groupButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 88, 17, 52, 30))
-            groupButton.layer.borderWidth = 1
-            groupButton.layer.borderColor = mainColorBlue.CGColor
-            groupButton.layer.cornerRadius = 4
-            groupButton.setTitle("+Group", forState: UIControlState.Normal)
-            groupButton.setTitleColor(mainColorBlue, forState: UIControlState.Normal)
-            groupButton.titleLabel?.font = UIFont(name: "HelveticaNeue", size: CGFloat(12))!
+            var groupButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 78, 18, 42, 32))
+//            groupButton.layer.borderWidth = 1
+//            groupButton.layer.borderColor = mainColorBlue.CGColor
+//            groupButton.layer.cornerRadius = 4
+//            groupButton.setTitle("+Group", forState: UIControlState.Normal)
+//            groupButton.setTitleColor(mainColorBlue, forState: UIControlState.Normal)
+//            groupButton.titleLabel?.font = UIFont(name: "HelveticaNeue", size: CGFloat(12))!
+            groupButton.setImage(UIImage(named: "createGroup.png"), forState: UIControlState.Normal)
             groupButton.addTarget(self, action: "createGroup", forControlEvents: .TouchUpInside)
             
             // Add the shits to the view
