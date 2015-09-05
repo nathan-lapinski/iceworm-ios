@@ -10,6 +10,11 @@ import UIKit
 
 class QsTheirTableVC: UITableViewController {
     
+    var option1Offset: CGFloat = 68.0
+    var option2Offset: CGFloat = 68.0
+    
+    var currentCell = 0
+    
     var blockCheck = false // Value to decide if cell should be blocked (vote updating)
     
     //var questionObjects: [AnyObject] = []
@@ -223,7 +228,7 @@ class QsTheirTableVC: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-//        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
         self.tableView.backgroundColor = UIColor.whiteColor()
         
         // Set separator color
@@ -254,16 +259,22 @@ class QsTheirTableVC: UITableViewController {
         
         cell = tableView.dequeueReusableCellWithIdentifier("theirCell", forIndexPath: indexPath) as! QsTheirCell
         
+        cell.option1Container.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+        cell.option1Container.layer.cornerRadius = 10.0 // cell.option1Container.frame.size.height/2
+        cell.option1Container.layer.borderWidth = 2.0
+        cell.option1Container.layer.borderColor = UIColor.whiteColor().CGColor
+        
+        cell.option2Container.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+        cell.option2Container.layer.cornerRadius = 10.0 // cell.option1Container.frame.size.height/2
+        cell.option2Container.layer.borderWidth = 2.0
+        cell.option2Container.layer.borderColor = UIColor.whiteColor().CGColor
+        
         if blockCheck == true {
             
             // Overlay spinner/voting message
             var boxView = UIView()
             var blurView = globalBlurView()
             displayCellSpinnerView(boxView, blurView, "Casting Vote", cell)
-            
-            // Deactivate buttons
-//            cell.vote1Button.enabled = false
-//            cell.vote2Button.enabled = false
             
             blockCheck = false
         }
@@ -277,8 +288,6 @@ class QsTheirTableVC: UITableViewController {
             option1Percent = Float((self.QJoinObjects[indexPath.row]["question"]!!["option1Stats"] as! Int))/Float(totalResponses)*100
             option2Percent = Float((self.QJoinObjects[indexPath.row]["question"]!!["option2Stats"] as! Int))/Float(totalResponses)*100
         }
-        
-        
         
         // Display question photo
         if let questionPhotoThumb = self.QJoinObjects[indexPath.row]["question"]!!["questionPhotoThumb"] as? PFFile {
@@ -391,9 +400,6 @@ class QsTheirTableVC: UITableViewController {
             cell.option2Image.hidden = true
 //            cell.option2Zoom.enabled = false
             
-            
-            
-            
         }// Build "repsonse" string to account for singular/plural
         var resp = "responses"
         if totalResponses == 1 { resp = "response" }
@@ -427,13 +433,15 @@ class QsTheirTableVC: UITableViewController {
         // Animate stats bars
         if totalResponses == 0 {
             
-            //            cell.progress1.hidden = true
-            //            cell.progress2.hidden = true
+            //cell.progress1RightSpace.constant = cell.frame.size.width/2 - 16 // questionBackground.frame.size.width - cell.questionBackground.frame.size.width/2
+            cell.option1Background.alpha = 0.0
+            cell.option1Background.layoutIfNeeded()
+            
+            //cell.progress2RightSpace.constant = cell.frame.size.width/2 - 16 // cell.questionBackground.frame.size.width - cell.questionBackground.frame.size.width/2
+            cell.option2Background.alpha = 0.0
+            cell.option2Background.layoutIfNeeded()
             
         } else {
-            
-            //            cell.progress1.hidden = false
-            //            cell.progress2.hidden = false
             
             cell.progress1RightSpace.constant = cell.frame.size.width/2 - 16 // questionBackground.frame.size.width - cell.questionBackground.frame.size.width/2
             cell.option1Background.alpha = 0.0
@@ -463,14 +471,6 @@ class QsTheirTableVC: UITableViewController {
                 
                 }) { (isFinished) -> Void in }
         }
-        
-        //        cell.backgroundImageView.layer.cornerRadius = cell.questionImage.frame.size.height/2
-        //        cell.backgroundImageView.layer.borderWidth = 3.0
-        //        cell.backgroundImageView.layer.borderColor = UIColor.whiteColor().CGColor
-        
-        
-        
-        
         
         // Format thumbnail views - aspect fill without breaching imageView bounds
         cell.option2Image.contentMode = UIViewContentMode.ScaleAspectFill
@@ -531,10 +531,6 @@ class QsTheirTableVC: UITableViewController {
         // Make cells non-selectable
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         
-        // Format option backgrounds
-//        cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
-//        cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
-        
         // Set all text
 //        cell.question.numberOfLines = 0 // Dynamic number of lines
 //        cell.question.lineBreakMode = NSLineBreakMode.ByWordWrapping
@@ -545,8 +541,6 @@ class QsTheirTableVC: UITableViewController {
 //        cell.option1Zoom.tag  = indexPath.row
 //        cell.option2Zoom.tag  = indexPath.row
 //        cell.questionZoom.tag = indexPath.row
-//        cell.vote1Button.tag  = indexPath.row
-//        cell.vote2Button.tag  = indexPath.row
         
         // Format cell backgrounds
         cell.backgroundColor = UIColor.clearColor()
@@ -565,56 +559,119 @@ class QsTheirTableVC: UITableViewController {
         cell.profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
         cell.profilePicture.layer.masksToBounds = false
         cell.profilePicture.clipsToBounds = true
-        //cell.profilePicture.layer.cornerRadius = 10.0
-        //cell.profilePicture.layer.borderWidth = 1.0
-        //cell.profilePicture.layer.borderColor = UIColor.groupTableViewBackgroundColor().CGColor // UIColor.whiteColor().CGColor
         cell.profilePicture.layer.cornerRadius = cell.profilePicture.frame.size.width/2
         
         // Set askername
         cell.username.text = QJoinObjects[indexPath.row]["question"]!!["asker"]!!["username"] as? String
         
-        // Format option backgrounds
-//        cell.option1BackgroundImage.layer.cornerRadius = cornerRadius
-//        cell.option2BackgroundImage.layer.cornerRadius = cornerRadius
-        
-        // Set vote background to clear
-//        cell.vote1Button.backgroundColor = UIColor.clearColor()
-//        cell.vote2Button.backgroundColor = UIColor.clearColor()
-        
-        // Disable appropriate vote buttons and vote checkmarks
-//        cell.checkmark1.hidden = true
-//        cell.checkmark2.hidden = true
-        
         if let myVote = QJoinObjects[indexPath.row]["vote"] as? Int {
             
-            // *************************************
-            //            cell.vote1Button.enabled = false
-            //            cell.vote2Button.enabled = false
-            // *************************************
-            
-            // Set myVote selector
-            if myVote == 1 {
-                
-//                cell.checkmark1.hidden = false
-//                cell.checkmark2.hidden = true
-                
-            } else if myVote == 2 {
-                
-//                cell.checkmark1.hidden = true
-//                cell.checkmark2.hidden = false
-            }
+//            // Set myVote selector
+//            if myVote == 1 {
+//                
+//            } else if myVote == 2 {
+//                
+//            }
             
         } else {
             
-//            cell.vote1Button.enabled = true
-//            cell.vote2Button.enabled = true
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
+//            let gesture1 = UIPanGestureRecognizer(target: self, action: Selector("wasDragged1:"))
+//            cell.option1Image.addGestureRecognizer(gesture1)
+//            cell.option1Image.userInteractionEnabled = true
+//            
+//            currentCell = indexPath.row
+//            
+//            let gesture2 = UIPanGestureRecognizer(target: self, action: Selector("wasDragged2:"))
+//            cell.option2Image.addGestureRecognizer(gesture2)
+//            cell.option2Image.userInteractionEnabled = true
+            
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
         
         return cell
     }
     
     
-    
+    func wasDragged1(gesture: UIPanGestureRecognizer) {
+        
+        println(currentCell)
+        
+        let translation = gesture.translationInView(self.view)
+        let label = gesture.view!
+        let option1TopSpace: CGFloat = 101.5
+        
+        label.center = CGPoint(x: option1Offset + translation.x, y: option1TopSpace)//self.view.bounds.height / 2)// + translation.y)
+        
+        let xFromCenter = label.center.x - self.view.frame.size.width / 2
+        //        let scale = min(100 / abs(xFromCenter), 1)
+        var rotation = CGAffineTransformMakeRotation(0)
+        var stretch = CGAffineTransformScale(rotation, 1, 1)
+        
+        label.transform = stretch
+        
+        if gesture.state == UIGestureRecognizerState.Ended {
+            
+            var endX: CGFloat = 0.0
+            
+            if xFromCenter <= 0 {
+                endX = label.frame.width/2 + 8
+            } else {
+                endX = self.view.frame.width - label.frame.width/2 - 8
+            }
+            
+            option1Offset = endX
+            
+            //            rotation = CGAffineTransformMakeRotation(0)
+            //            stretch = CGAffineTransformScale(rotation, 1, 1)
+            //            label.transform = stretch
+            
+            UIView.animateWithDuration(0.2, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                label.center = CGPoint(x: endX, y: option1TopSpace)//self.view.bounds.height / 2)
+                
+            }, completion: { (isFinished) -> Void in })
+        }
+    }
+    func wasDragged2(gesture: UIPanGestureRecognizer) {
+        
+        let translation = gesture.translationInView(self.view)
+        let label = gesture.view!
+        let option2TopSpace: CGFloat = 164.0
+        
+        label.center = CGPoint(x: option2Offset + translation.x, y: option2TopSpace)//self.view.bounds.height / 2)// + translation.y)
+        
+        let xFromCenter = label.center.x - self.view.frame.size.width / 2
+        //        let scale = min(100 / abs(xFromCenter), 1)
+        var rotation = CGAffineTransformMakeRotation(0)
+        var stretch = CGAffineTransformScale(rotation, 1, 1)
+        
+        label.transform = stretch
+        
+        if gesture.state == UIGestureRecognizerState.Ended {
+            
+            var endX: CGFloat = 0.0
+            
+            if xFromCenter <= 0 {
+                endX = label.frame.width/2 + 8
+            } else {
+                endX = self.view.frame.width - label.frame.width/2 - 8
+            }
+            
+            option2Offset = endX
+            
+            //            rotation = CGAffineTransformMakeRotation(0)
+            //            stretch = CGAffineTransformScale(rotation, 1, 1)
+            //            label.transform = stretch
+            
+            UIView.animateWithDuration(0.2, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                label.center = CGPoint(x: endX, y: option2TopSpace)//self.view.bounds.height / 2)
+                
+            }, completion: { (isFinished) -> Void in })
+        }
+    }
     
     
     
