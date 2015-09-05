@@ -80,6 +80,8 @@ class QsMyTableVC: UITableViewController {
         
         // Set separator color
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        
+        
     }
     
     

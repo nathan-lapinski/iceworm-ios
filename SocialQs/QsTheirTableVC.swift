@@ -615,12 +615,6 @@ class QsTheirTableVC: UITableViewController {
             
             var endX: CGFloat = 0.0
             
-            if xFromCenter <= 0 {
-                endX = label.frame.width/2 + 8
-            } else {
-                endX = self.view.frame.width - label.frame.width/2 - 8
-            }
-            
             option1Offset = endX
             
             //            rotation = CGAffineTransformMakeRotation(0)
