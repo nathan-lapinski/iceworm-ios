@@ -19,6 +19,7 @@ class QSTheirCellNEW: UITableViewCell {
     var option1Offset: CGFloat = 38.0
     var option2Offset: CGFloat = 38.0
     var horizontalSpace: CGFloat = 8.0
+    var imageBarExtraSpace: CGFloat = 3.0
     
     var questionBackground: UIImageView! = UIImageView()
     var profilePicture: UIImageView! = UIImageView()
@@ -30,9 +31,15 @@ class QSTheirCellNEW: UITableViewCell {
     var option1Image: UIImageView! = UIImageView()
     var option2Image: UIImageView! = UIImageView()
     
+    var option1Vote: UIImageView! = UIImageView()
+    var option2Vote: UIImageView! = UIImageView()
+    
     var questionZoom: UIButton = UIButton()
     var option1Zoom: UIButton = UIButton()
     var option2Zoom: UIButton = UIButton()
+    
+    var option1Bar: UIImageView! = UIImageView()
+    var option2Bar: UIImageView! = UIImageView()
     
     var usernameLabel: UILabel! = UILabel()
     var questionText: UILabel! = UILabel()
@@ -70,8 +77,13 @@ class QSTheirCellNEW: UITableViewCell {
         self.addSubview(option2Text)
         self.addSubview(responsesText)
         
+        self.addSubview(option1Bar)
+        self.addSubview(option2Bar)
         self.addSubview(option1Image)
         self.addSubview(option2Image)
+        
+        self.addSubview(option1Vote)
+        self.addSubview(option2Vote)
         
         self.addSubview(questionZoom)
         self.addSubview(option1Zoom)
@@ -81,8 +93,7 @@ class QSTheirCellNEW: UITableViewCell {
         selectionStyle = .None
         
         // Set background
-        backgroundColor = UIColor.clearColor()
-        
+        backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.9)
         // add a pan recognizers
         var recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
         recognizer1.delegate = self
@@ -101,7 +112,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         questionBackground.frame = CGRectMake(8, 8, bounds.width - 16, 60)
         questionBackground.layer.cornerRadius = questionBackground.frame.height/2
-        questionBackground.backgroundColor = mainColorBlue
+        questionBackground.backgroundColor = mainColorBlue.colorWithAlphaComponent(0.7)//UIColor.whiteColor().colorWithAlphaComponent(1.0)//
         
         profilePicture.frame = CGRectMake(8, 8, 60, 60)
         if (QJoinObject["question"]!["asker"]!!["profilePicture"] as? PFFile != nil) {
@@ -121,8 +132,9 @@ class QSTheirCellNEW: UITableViewCell {
         
         usernameLabel.frame = CGRectMake(68, 6, 150, 20)
         usernameLabel?.font = UIFont(name: "HelveticaNeue", size: CGFloat(12))!
-        usernameLabel?.textColor = UIColor.groupTableViewBackgroundColor()
-        usernameLabel.text = QJoinObject["question"]!["asker"]!!["username"] as? String
+        usernameLabel?.textColor = UIColor.whiteColor()//mainColorBlue
+        let usernameString = QJoinObject["question"]!["asker"]!!["username"] as? String
+        usernameLabel.text = "@\(usernameString!)"
         
         questionText.frame = CGRectMake(76, 24, bounds.width - 120 - 16, 50)
         if let qText = self.QJoinObject["question"]!["questionText"] as? String {
@@ -131,7 +143,7 @@ class QSTheirCellNEW: UITableViewCell {
             questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
             questionText.textAlignment = NSTextAlignment.Center
             questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
-            questionText?.textColor = UIColor.whiteColor()
+            questionText?.textColor = UIColor.darkTextColor()
             questionText.sizeToFit()
         } else {
             questionText.text = ""
@@ -164,16 +176,16 @@ class QSTheirCellNEW: UITableViewCell {
         }
         
         option1Background.frame = CGRectMake(horizontalSpace, 71, bounds.width - 2*horizontalSpace, 60)
-        option1Background.layer.cornerRadius = 10
+//        option1Background.layer.cornerRadius = 10
 //        option1Background.layer.borderWidth = 1.0
 //        option1Background.layer.borderColor = UIColor.whiteColor().CGColor
-        option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+        option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(1.0)
         
         option2Background.frame = CGRectMake(horizontalSpace, 134, bounds.width - 2*horizontalSpace, 60)
-        option2Background.layer.cornerRadius = 10
+//        option2Background.layer.cornerRadius = 10
 //        option2Background.layer.borderWidth = 1.0
 //        option2Background.layer.borderColor = UIColor.whiteColor().CGColor
-        option2Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+        option2Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(1.0)
         
         option1Image.frame = CGRectMake(horizontalSpace, 71, 60, 60)
         if let option1PhotoThumb = self.QJoinObject["question"]!["option1PhotoThumb"] as? PFFile {
@@ -205,7 +217,7 @@ class QSTheirCellNEW: UITableViewCell {
         }
         option1Image.contentMode = UIViewContentMode.ScaleAspectFill
         option1Image.clipsToBounds = true
-        option1Image.layer.cornerRadius = 10
+//        option1Image.layer.cornerRadius = 10
         
         option2Image.frame = CGRectMake(horizontalSpace, 134, 60, 60)
         if let option2PhotoThumb = self.QJoinObject["question"]!["option2PhotoThumb"] as? PFFile {
@@ -236,7 +248,26 @@ class QSTheirCellNEW: UITableViewCell {
         }
         option2Image.contentMode = UIViewContentMode.ScaleAspectFill
         option2Image.clipsToBounds = true
-        option2Image.layer.cornerRadius = 10
+        
+        option1Vote.frame = CGRectMake(0, 0, 25, 25)
+        option1Vote.center = option1Image.center
+        option1Vote.layer.cornerRadius = option1Vote.frame.width/2
+        option1Vote.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option1Vote.image = UIImage(named: "voteCheckmark.png")
+        option1Vote.alpha = 0.0
+        
+        option2Vote.frame = CGRectMake(0, 0, 25, 25)
+        option2Vote.center = option2Image.center
+        option2Vote.layer.cornerRadius = option2Vote.frame.width/2
+        option2Vote.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option2Vote.image = UIImage(named: "voteCheckmark.png")
+        option2Vote.alpha = 0.0
+        
+        option1Bar.frame = CGRectMake(option1Image.frame.origin.x, option1Image.center.y - option1Image.frame.height/2, option1Image.frame.width + imageBarExtraSpace, option1Image.frame.height)
+        option1Bar.backgroundColor = mainColorBlue
+        
+        option2Bar.frame = CGRectMake(option2Image.frame.origin.x, option2Image.center.y - option2Image.frame.height/2, option2Image.frame.width + imageBarExtraSpace, option2Image.frame.height)
+        option2Bar.backgroundColor = mainColorBlue
         
         questionZoom.frame = questionPicture.frame
         questionZoom.addTarget(self, action: "questionZoom:", forControlEvents: UIControlEvents.TouchUpInside)
@@ -324,14 +355,29 @@ class QSTheirCellNEW: UITableViewCell {
         let label = recognizer.view!
         let translation = recognizer.translationInView(self)
         var percentMoved = translation.x/(bounds.width - option1Image.frame.width - 2*horizontalSpace)
+        
+//        var scale: CGFloat = 1.0
+//        if (percentMoved/0.5) <= 1.0 {
+//            scale = abs(percentMoved/0.5) + 1
+//        } else {
+//            scale = abs(1 - (percentMoved/0.5 - 1)) + 1
+//        }
+//        println(scale)
+        
+        // MOVE THESE TO TO MAIN SCOPE SO NOT ALWAYS REDECLARED
         var textCenterStart = CGPoint(); textCenterStart.x = bounds.width - option1Text.frame.width/2 - 2*horizontalSpace
         var imageCenterStart = CGPoint(); imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
-        
+        var imageBarCenterStart = CGPoint(); imageBarCenterStart.x = option1Bar.frame.width/2 + horizontalSpace
+        var voteCenterStart = CGPoint(); voteCenterStart.x = option1Vote.frame.width/2
+            
         // Total amount the image view will move
         let a = bounds.width - option1Image.frame.width - 2*horizontalSpace
         
         // Total amount the text box needs to move
         let b = bounds.width - option1Text.frame.width - 4*horizontalSpace
+        
+        // Total amount the image bar BG will move
+        let c = a - imageBarExtraSpace
         
         if id == 1 {
             
@@ -339,6 +385,9 @@ class QSTheirCellNEW: UITableViewCell {
             option1Image.center = label.center
             let percentMoved = (label.center.x - imageCenterStart.x) / a
             option1Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option1Text.center.y)
+            option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option1Bar.center.y)
+            option1Vote.center = CGPoint(x: option1Offset + translation.x, y: label.center.y)
+            option1Vote.alpha = percentMoved
             
         } else {
             
@@ -346,6 +395,9 @@ class QSTheirCellNEW: UITableViewCell {
             option2Image.center = label.center
             let percentMoved = (label.center.x - imageCenterStart.x) / a
             option2Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option2Text.center.y)
+            option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option2Bar.center.y)
+            option2Vote.center = CGPoint(x: option2Offset + translation.x, y: label.center.y)
+            option2Vote.alpha = percentMoved
         }
         
         let xFromCenter = label.center.x - bounds.width / 2
@@ -375,6 +427,9 @@ class QSTheirCellNEW: UITableViewCell {
                     
                     let percentMoved = (label.center.x - imageCenterStart.x) / a
                     self.option1Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: self.option1Text.center.y)
+                    self.option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: self.option1Bar.center.y)
+                    self.option1Vote.center = CGPoint(x: endX, y: label.center.y)
+                    self.option1Vote.alpha = percentMoved
                     
                     }, completion: { (isFinished) -> Void in
                 })
@@ -390,6 +445,9 @@ class QSTheirCellNEW: UITableViewCell {
                     
                     let percentMoved = (label.center.x - imageCenterStart.x) / a
                     self.option2Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: self.option2Text.center.y)
+                    self.option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: self.option2Bar.center.y)
+                    self.option2Vote.center = CGPoint(x: endX, y: label.center.y)
+                    self.option2Vote.alpha = percentMoved
                     
                     }, completion: { (isFinished) -> Void in
                 })

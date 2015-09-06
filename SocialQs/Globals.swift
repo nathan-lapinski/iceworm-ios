@@ -34,6 +34,7 @@ let cornerRadius: CGFloat = 2.0
 let mainColorBlue = UIColor(red: 82/256, green: 137/256, blue: 159/256, alpha: 1.0)
 //let mainColorOrange = UIColor(red: 239/256, green: 94/256, blue: 31/256, alpha: 1.0)
 let mainColorPink = UIColor(red: 194/256, green: 55/256, blue: 109/256, alpha: 1.0)
+let mainColorRed = UIColor(red: 238/256, green: 76/256, blue: 80/256, alpha: 1.0)
 
 // Tab bar colors
 let activeTabColor = UIColor.whiteColor()

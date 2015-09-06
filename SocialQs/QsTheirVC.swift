@@ -29,6 +29,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         // Pull to refresh --------------------------------------------------------
         
         backgroundImageView.image = UIImage(named: "bg3.png")
+        tableView.backgroundColor = UIColor.clearColor()
+        //tableView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.95)
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -38,43 +40,43 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     override func viewWillAppear(animated: Bool) {
         
-        if returningFromSettings == false && returningFromPopover == false {
-            
-            println("Page loaded from tab bar")
-            
-            topOffset = 64
-            
+//        if returningFromSettings == false && returningFromPopover == false {
+//            
+//            println("Page loaded from tab bar")
+//            
+//            topOffset = 64
+//            
             refresh()
-        }
-        
-        if returningFromPopover {
-            
-            println("Returned from popover")
-            
-            returningFromPopover = false
-            
-            if myViewReturnedOnce == false {
-                myViewReturnedOnce = true
-                topOffset = 0
-            } else {
-                topOffset = 64
-            }
-            
-            tableView.reloadData()
-        }
-        
-        if returningFromSettings {
-            
-            println("Returned from settings")
-            
-            returningFromSettings = false
-            
-            topOffset = 0
-            
-            tableView.reloadData()
-        }
-        
-        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
+//        }
+//        
+//        if returningFromPopover {
+//            
+//            println("Returned from popover")
+//            
+//            returningFromPopover = false
+//            
+//            if myViewReturnedOnce == false {
+//                myViewReturnedOnce = true
+//                topOffset = 0
+//            } else {
+//                topOffset = 64
+//            }
+//            
+//            tableView.reloadData()
+//        }
+//        
+//        if returningFromSettings {
+//            
+//            println("Returned from settings")
+//            
+//            returningFromSettings = false
+//            
+//            topOffset = 0
+//            
+//            tableView.reloadData()
+//        }
+//        
+//        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
     }
     
     
@@ -179,7 +181,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell,
         forRowAtIndexPath indexPath: NSIndexPath) {
-            //cell.backgroundColor = UIColor.clearColor()
+            cell.backgroundColor = UIColor.clearColor()
     }
     
     

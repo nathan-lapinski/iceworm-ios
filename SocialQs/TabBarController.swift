@@ -8,27 +8,27 @@
 
 import UIKit
 
-class TabBarController: UITabBarController, UITabBarControllerDelegate{
+class TabBarController: UITabBarController, UITabBarControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
         
-        // Active text color
-        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: activeTabColor], forState: UIControlState.Selected)
-        
-        // Inactive text color
-        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: inactiveTabColor], forState: UIControlState.Normal)
-        
-        // Active icon color
-        UITabBar.appearance().tintColor = activeTabColor
-        
-        // Inactive icon color
-        for item in self.tabBar.items as! [UITabBarItem] {
-            if let image = item.image {
-                item.image = image.imageWithColor(inactiveTabColor).imageWithRenderingMode(.AlwaysOriginal)
-            }
-        }
+//        // Active text color
+//        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: activeTabColor], forState: UIControlState.Selected)
+//        
+//        // Inactive text color
+//        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: inactiveTabColor], forState: UIControlState.Normal)
+//        
+//        // Active icon color
+//        UITabBar.appearance().tintColor = UIColor.whiteColor()//activeTabColor
+//        
+//        // Inactive icon color
+//        for item in self.tabBar.items as! [UITabBarItem] {
+//            if let image = item.image {
+//                item.image = image.imageWithColor(inactiveTabColor).imageWithRenderingMode(.AlwaysOriginal)
+//            }
+//        }
         
         
         // Set Logo
@@ -40,6 +40,14 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate{
         imageView.image = image
         self.navigationItem.titleView = imageView
 
+    }
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        UITabBar.appearance().barTintColor = UIColor.whiteColor()
+        UITabBar.appearance().translucent = false
+        
     }
     
     

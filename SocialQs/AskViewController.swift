@@ -165,9 +165,15 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         }
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        
+        UITabBar.appearance().translucent = true
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //UITabBar.appearance().barTintColor = UIColor.whiteColor()
         
         //// IF IS LINKED WITH FACEBOOK ------------------------------------------------
         // MOVED TO LOGIN/SIGNUP/WELCOME
@@ -207,6 +213,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     
     override func viewWillAppear(animated: Bool) {
+        
+        
+//        UITabBar.appearance().barTintColor = UIColor.whiteColor()
+//        UITabBar.appearance().translucent = false
+        
+        
         
         returningFromPopover = false
         returningFromSettings = false

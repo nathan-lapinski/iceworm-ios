@@ -17,7 +17,9 @@ class MainNavigationController: UINavigationController {
         // FUNCTION ***************************************************************
         // Navigation bar settings
         //self.navigationItem.title = "SocialQs"
-        self.navigationBar.barTintColor = winColor
+        UITabBar.appearance().barTintColor = UIColor.whiteColor()
+        self.navigationBar.barTintColor = mainColorBlue //winColor
+        UINavigationBar.appearance().translucent = false
         self.navigationBar.tintColor = UIColor.whiteColor()
         //self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         

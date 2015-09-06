@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9004676E1B9CCCBC00083FEE /* TestTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9004676D1B9CCCBC00083FEE /* TestTabBarController.swift */; };
 		900ED8821B75279D005FED93 /* GroupiesSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900ED8811B75279D005FED93 /* GroupiesSettingsTableViewController.swift */; };
 		900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900ED8831B752AB1005FED93 /* GroupiesSettingsCell.swift */; };
 		90135AC01B3AD4F400C9716F /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABB1B3AD4F400C9716F /* Bolts.framework */; };
@@ -73,6 +74,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9004676D1B9CCCBC00083FEE /* TestTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTabBarController.swift; sourceTree = "<group>"; };
 		900ED8811B75279D005FED93 /* GroupiesSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesSettingsTableViewController.swift; sourceTree = "<group>"; };
 		900ED8831B752AB1005FED93 /* GroupiesSettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesSettingsCell.swift; sourceTree = "<group>"; };
 		90135ABB1B3AD4F400C9716F /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = SocialQs/Bolts.framework; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */,
 				904123071B26A67C00397132 /* Main.storyboard */,
+				9004676D1B9CCCBC00083FEE /* TestTabBarController.swift */,
 				90FFFA6F1B9A6958005E9CDD /* QsTheirVC.swift */,
 				90FFFA711B9A6ABA005E9CDD /* QSTheirCellNEW.swift */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
@@ -392,6 +395,7 @@
 				90FFFA701B9A6958005E9CDD /* QsTheirVC.swift in Sources */,
 				904E29C91B58CC4E007E17D2 /* SettingsPopoverViewController.swift in Sources */,
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
+				9004676E1B9CCCBC00083FEE /* TestTabBarController.swift in Sources */,
 				908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */,
 				902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */,
 				901DAA181B55C81300A20689 /* QsTheirTableVC.swift in Sources */,

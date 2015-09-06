@@ -67,6 +67,8 @@ class QsMyTableVC: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        UITabBar.appearance().barTintColor = UIColor.whiteColor()
+        
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
         refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -87,43 +89,43 @@ class QsMyTableVC: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        if returningFromSettings == false && returningFromPopover == false {
-            
-            println("Page loaded from tab bar")
-            
-            topOffset = 64
-            
+//        if returningFromSettings == false && returningFromPopover == false {
+//            
+//            println("Page loaded from tab bar")
+//            
+//            topOffset = 64
+//            
             refresh()
-        }
-        
-        if returningFromPopover {
-            
-            println("Returned from popover")
-            
-            returningFromPopover = false
-            
-            if myViewReturnedOnce == false {
-                myViewReturnedOnce = true
-                topOffset = 0
-            } else {
-                topOffset = 64
-            }
-            
-            tableView.reloadData()
-        }
-        
-        if returningFromSettings {
-            
-            println("Returned from settings")
-            
-            returningFromSettings = false
-            
-            topOffset = 0
-            
-            tableView.reloadData()
-        }
-        
-        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
+//        }
+//        
+//        if returningFromPopover {
+//            
+//            println("Returned from popover")
+//            
+//            returningFromPopover = false
+//            
+//            if myViewReturnedOnce == false {
+//                myViewReturnedOnce = true
+//                topOffset = 0
+//            } else {
+//                topOffset = 64
+//            }
+//            
+//            tableView.reloadData()
+//        }
+//        
+//        if returningFromSettings {
+//            
+//            println("Returned from settings")
+//            
+//            returningFromSettings = false
+//            
+//            topOffset = 0
+//            
+//            tableView.reloadData()
+//        }
+//        
+//        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
     }
     
     

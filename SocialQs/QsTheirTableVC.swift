@@ -217,6 +217,8 @@ class QsTheirTableVC: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        UITabBar.appearance().barTintColor = UIColor.whiteColor()
+        
         // PUSH - Set up the reload to trigger off the push for "reloadTable"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refresh", name: "reloadTheirTable", object: nil)
         
@@ -676,41 +678,41 @@ class QsTheirTableVC: UITableViewController {
         // - this needs to be skipped when push is allowed and used when push has been declined
         //if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
         
-        if returningFromSettings == false && returningFromPopover == false {
-            
-            println("Page loaded from tab bar")
-            
-            topOffset = 64
-            
+//        if returningFromSettings == false && returningFromPopover == false {
+//            
+//            println("Page loaded from tab bar")
+//            
+//            topOffset = 64
+//            
             refresh()
-            
-        }
-        
-        if returningFromPopover {
-            
-            println("Returned from popover")
-            
-            returningFromPopover = false
-            
-            if theirViewReturnedOnce == false {
-                theirViewReturnedOnce = true
-                topOffset = 0
-            } else {
-                topOffset = 64
-            }
-            
-        }
-        
-        if returningFromSettings {
-            
-            println("Returned from settings")
-            
-            returningFromSettings = false
-            
-            topOffset = 0
-        }
-        
-        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
+//
+//        }
+//        
+//        if returningFromPopover {
+//            
+//            println("Returned from popover")
+//            
+//            returningFromPopover = false
+//            
+//            if theirViewReturnedOnce == false {
+//                theirViewReturnedOnce = true
+//                topOffset = 0
+//            } else {
+//                topOffset = 64
+//            }
+//            
+//        }
+//        
+//        if returningFromSettings {
+//            
+//            println("Returned from settings")
+//            
+//            returningFromSettings = false
+//            
+//            topOffset = 0
+//        }
+//        
+//        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
         
         //    println("USER IS NOT SUBSCRIBED TO RELOADTHEIRTABLE")
         //}
