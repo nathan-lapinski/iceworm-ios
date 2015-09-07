@@ -118,11 +118,11 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         view.backgroundColor = UIColor.orangeColor()
         
         
-        let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
-            
-            println("share button tapped")
-        }
-        share.backgroundColor = UIColor.grayColor()
+//        let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
+//            
+//            println("share button tapped")
+//        }
+//        share.backgroundColor = UIColor.grayColor()
         
         
         let trash = UITableViewRowAction(style: .Normal, title: "Trash") { action, index in
@@ -164,7 +164,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
             tableView.endUpdates()
         }
         trash.backgroundColor = UIColor.redColor()
-        
         
         println("Swiped THEIR row: \(indexPath.row)")
         

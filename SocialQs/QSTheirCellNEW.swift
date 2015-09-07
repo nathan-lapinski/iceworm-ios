@@ -23,9 +23,19 @@ class QSTheirCellNEW: UITableViewCell {
     
     // MOVE THESE TO TO MAIN SCOPE SO NOT ALWAYS REDECLARED
     var textCenterStart = CGPoint()
+    var textCenterEnd = CGPoint()
     var imageCenterStart = CGPoint()
+    var imageCenterEnd = CGPoint()
     var imageBarCenterStart = CGPoint()
     var voteCenterStart = CGPoint()
+    
+    var totalResponses: Int = 0
+    var resp = "responses"
+    var option1Percent = Float(0.0)
+    var option2Percent = Float(0.0)
+    
+    var recognizer1 = UIPanGestureRecognizer()
+    var recognizer2 = UIPanGestureRecognizer()
     
     var questionBackground: UIImageView! = UIImageView()
     var profilePicture: UIImageView! = UIImageView()
@@ -101,16 +111,6 @@ class QSTheirCellNEW: UITableViewCell {
         
         // Set background
         backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.9)
-        // add a pan recognizers
-        var recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
-        recognizer1.delegate = self
-        option1Zoom.addGestureRecognizer(recognizer1)
-        option1Zoom.userInteractionEnabled = true
-        
-        var recognizer2 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier2:")
-        recognizer2.delegate = self
-        option2Zoom.addGestureRecognizer(recognizer2)
-        option2Zoom.userInteractionEnabled = true
     }
     
     
@@ -119,7 +119,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         questionBackground.frame = CGRectMake(8, 8, bounds.width - 16, 60)
         questionBackground.layer.cornerRadius = questionBackground.frame.height/2
-        questionBackground.backgroundColor = mainColorBlue.colorWithAlphaComponent(0.7)//UIColor.whiteColor().colorWithAlphaComponent(1.0)//
+        questionBackground.backgroundColor = mainColorBlue//.colorWithAlphaComponent(0.7)
         
         profilePicture.frame = CGRectMake(8, 8, 60, 60)
         if (QJoinObject["question"]!["asker"]!!["profilePicture"] as? PFFile != nil) {
@@ -176,11 +176,14 @@ class QSTheirCellNEW: UITableViewCell {
                 }
             })
             
-            option1Zoom.enabled = true
+            //option1Zoom.enabled = true
+            option1Image.alpha = 1.0
             
         } else {
-            option1Zoom.enabled = false
-            option1Image.image = UIImage(named: "logo_square.png")
+            //option1Zoom.enabled = false  // Must handle another way - disabling makes gesture not work!
+            option1Image.image = UIImage(named: "voteArrow.png")
+            option1Image.alpha = 0.7
+            //option1Image.backgroundColor = mainColorBlue
         }
         option1Image.contentMode = UIViewContentMode.ScaleAspectFill
         option1Image.clipsToBounds = true
@@ -194,13 +197,23 @@ class QSTheirCellNEW: UITableViewCell {
                     println("There was an error downloading an option2Photo")
                 }
             })
-            option2Zoom.enabled = true
+            //option2Zoom.enabled = true
+            option2Image.alpha = 1.0
         } else {
-            option2Zoom.enabled = false
-            option2Image.image = UIImage(named: "logo_square.png")
+            //option2Zoom.enabled = false // Must handle another way - disabling makes gesture not work!
+            option2Image.image = UIImage(named: "voteArrow.png")
+            option2Image.alpha = 0.7
+            //option2Image.backgroundColor = mainColorBlue
         }
         option2Image.contentMode = UIViewContentMode.ScaleAspectFill
         option2Image.clipsToBounds = true
+        
+//        option1Image.layer.borderColor = mainColorBlue.CGColor
+//        option1Image.layer.borderWidth = 4.0
+//        option1Image.layer.cornerRadius = 4.0
+//        option2Image.layer.borderColor = mainColorBlue.CGColor
+//        option2Image.layer.borderWidth = 4.0
+//        option2Image.layer.cornerRadius = 4.0
         
         option1Checkmark.frame = CGRectMake(0, 0, 25, 25)
         option1Checkmark.center = option1Image.center
@@ -233,13 +246,21 @@ class QSTheirCellNEW: UITableViewCell {
         option2Zoom.frame = option2Image.frame
         option2Zoom.addTarget(self, action: "zoomImage2:", forControlEvents: UIControlEvents.TouchUpInside)
         
-        var totalResponses = (self.QJoinObject["question"]!["option1Stats"] as! Int) + (QJoinObject["question"]!["option2Stats"] as! Int)
-        var option1Percent = Float(0.0)
-        var option2Percent = Float(0.0)
+        if QJoinObject["vote"] == nil {
+            // add a pan recognizers
+            recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
+            recognizer1.delegate = self
+            option1Zoom.addGestureRecognizer(recognizer1)
+            
+            recognizer2 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier2:")
+            recognizer2.delegate = self
+            option2Zoom.addGestureRecognizer(recognizer2)
+        }
         
+        totalResponses = (self.QJoinObject["question"]!["option1Stats"] as! Int) + (QJoinObject["question"]!["option2Stats"] as! Int)
         if totalResponses != 0 {
-            option1Percent = Float((self.QJoinObject["question"]!["option1Stats"] as! Int))/Float(totalResponses)*100
-            option2Percent = Float((self.QJoinObject["question"]!["option2Stats"] as! Int))/Float(totalResponses)*100
+            option1Percent = computePercents(1)
+            option2Percent = computePercents(2)
         }
         
         questionText.frame = CGRectMake(76, 24, bounds.width - 120 - 16, 50)
@@ -255,48 +276,10 @@ class QSTheirCellNEW: UITableViewCell {
             questionText.text = ""
         }
         
-        option1Text.frame = CGRectMake(option1Image.frame.width + 2*horizontalSpace, option1Image.frame.origin.y, bounds.width - option1Image.frame.width - 4*horizontalSpace, 60)
-        if let oText = self.QJoinObject["question"]!["option1Text"] as? String {
-            if totalResponses > 0 {
-                option1Text.text = oText + "  \(Int(option1Percent))%"
-            } else {
-                option1Text.text = oText
-            }
-        } else {
-            if totalResponses > 0 {
-                option1Text.text = "\(Int(option1Percent))%"
-            } else {
-                option1Text.text = ""
-            }
-        }
-        option1Text.numberOfLines = 3
-        option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        option1Text.textAlignment = NSTextAlignment.Center
-        option1Text?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
-        option1Text?.textColor = UIColor.darkTextColor()
+        setOptionText(1)
+        setOptionText(2)
         
-        option2Text.frame = CGRectMake(option2Image.frame.width + 2*horizontalSpace, option2Image.frame.origin.y, bounds.width - option2Image.frame.width - 4*horizontalSpace, 60)
-        if let o2Text = self.QJoinObject["question"]!["option2Text"] as? String {
-            if totalResponses > 0 {
-                option2Text.text = o2Text  + "  \(100 - Int(option1Percent))%"
-            } else {
-                option2Text.text = o2Text
-            }
-            
-        } else {
-            if totalResponses > 0 {
-                option2Text.text = "\(100 - Int(option1Percent))%"
-            } else {
-                option2Text.text = ""
-            }
-        }
-        option2Text.numberOfLines = 3
-        option2Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        option2Text.textAlignment = NSTextAlignment.Center
-        option2Text?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
-        option2Text?.textColor = UIColor.darkTextColor()
-        
-        var resp = "responses"
+        resp = "responses"
         if totalResponses == 1 { resp = "response" }
         responsesText.frame = CGRectMake(bounds.width - horizontalSpace - 100, bounds.height - 21, 100, 20)
         responsesText.textAlignment = NSTextAlignment.Right
@@ -305,9 +288,92 @@ class QSTheirCellNEW: UITableViewCell {
         responsesText.text = "\(totalResponses) \(resp)"
         
         textCenterStart.x = bounds.width - option1Text.frame.width/2 - 2*horizontalSpace
-        imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
+        textCenterEnd.x = bounds.width - textCenterStart.x
         imageBarCenterStart.x = option1Bar.frame.width/2 + horizontalSpace
         voteCenterStart.x = option1Checkmark.frame.width/2
+        
+        imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
+        imageCenterEnd.x = bounds.width - option1Image.frame.width/2 - 8
+        if let test = QJoinObject["vote"] as? Int {
+            if test == 1 {
+                option1Zoom.center.x = imageCenterEnd.x
+                option1Image.center.x = imageCenterEnd.x
+                option1Checkmark.center.x = imageCenterEnd.x
+                option1Checkmark.layer.borderWidth = 2.0
+                option1Checkmark.alpha = 1.0
+                option1Text.center.x = textCenterEnd.x
+            } else if test == 2 {
+                option2Zoom.center.x = imageCenterEnd.x
+                option2Image.center.x = imageCenterEnd.x
+                option2Checkmark.center.x = imageCenterEnd.x
+                option2Checkmark.layer.borderWidth = 2.0
+                option2Checkmark.alpha = 1.0
+                option2Text.center.x = textCenterEnd.x
+            }
+        }
+    }
+    
+    
+    func computePercents(id: Int) -> Float {
+        
+        var optionPercent:Float = 0.0
+        
+        if id == 1 {
+            optionPercent = Float((self.QJoinObject["question"]!["option1Stats"] as! Int))/Float(totalResponses)*100
+        } else {
+            optionPercent = Float((self.QJoinObject["question"]!["option2Stats"] as! Int))/Float(totalResponses)*100
+        }
+        
+        return optionPercent
+    }
+    
+    
+    func setOptionText(id: Int) {
+        
+        if id == 1 {
+            option1Text.frame = CGRectMake(option1Image.frame.width + 2*horizontalSpace, option1Image.frame.origin.y, bounds.width - option1Image.frame.width - 4*horizontalSpace, 60)
+            if let oText = self.QJoinObject["question"]!["option1Text"] as? String {
+                if totalResponses > 0 {
+                    option1Text.text = oText + "  \(Int(option1Percent))%"
+                } else {
+                    option1Text.text = oText
+                }
+            } else {
+                if totalResponses > 0 {
+                    option1Text.text = "\(Int(option1Percent))%"
+                } else {
+                    option1Text.text = ""
+                }
+            }
+            option1Text.numberOfLines = 3
+            option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            option1Text.textAlignment = NSTextAlignment.Center
+            option1Text?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
+            option1Text?.textColor = UIColor.darkTextColor()
+            
+        } else {
+        
+            option2Text.frame = CGRectMake(option2Image.frame.width + 2*horizontalSpace, option2Image.frame.origin.y, bounds.width - option2Image.frame.width - 4*horizontalSpace, 60)
+            if let o2Text = self.QJoinObject["question"]!["option2Text"] as? String {
+                if totalResponses > 0 {
+                    option2Text.text = o2Text  + "  \(100 - Int(option1Percent))%"
+                } else {
+                    option2Text.text = o2Text
+                }
+                
+            } else {
+                if totalResponses > 0 {
+                    option2Text.text = "\(100 - Int(option1Percent))%"
+                } else {
+                    option2Text.text = ""
+                }
+            }
+            option2Text.numberOfLines = 3
+            option2Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            option2Text.textAlignment = NSTextAlignment.Center
+            option2Text?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
+            option2Text?.textColor = UIColor.darkTextColor()
+        }
     }
     
     
@@ -391,6 +457,8 @@ class QSTheirCellNEW: UITableViewCell {
                 endX = label.frame.width/2 + 8
             } else {
                 endX = self.bounds.width - label.frame.width/2 - 8
+                
+                castVote(id)
             }
             
             if id == 1 {
@@ -430,6 +498,35 @@ class QSTheirCellNEW: UITableViewCell {
                 })
             }
         }
+    }
+    
+    
+    func castVote(optionId: Int) {
+        
+        QJoinObject.setObject(optionId, forKey: "vote")
+        QJoinObject!["question"]!.incrementKey("option\(optionId)Stats")
+        QJoinObject.pinInBackground()
+        QJoinObject!["question"]!.saveEventually { (success, error) -> Void in
+            if error == nil {
+                println("Successful vote cast in SocialQs!")
+            }
+        }
+        
+        totalResponses++
+        if totalResponses == 1 { resp = "response" }
+        responsesText.text = "\(totalResponses) \(resp)"
+        
+        // Lock Q cell for voting
+        if let recog = option1Zoom.gestureRecognizers {
+            option1Zoom.removeGestureRecognizer(recognizer1)
+        }
+        if let recog = option2Zoom.gestureRecognizers {
+            option2Zoom.removeGestureRecognizer(recognizer2)
+        }
+        
+        // Update percentage stats and option text
+        computePercents(optionId)
+        setOptionText(optionId)
     }
     
     
