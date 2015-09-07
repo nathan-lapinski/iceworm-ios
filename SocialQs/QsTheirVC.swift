@@ -195,7 +195,9 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     
     
-    
+    func segueToZoom() {
+        self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: self)
+    }
     
     
     

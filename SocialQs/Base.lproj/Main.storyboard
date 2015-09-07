@@ -1473,11 +1473,14 @@
                     <connections>
                         <outlet property="backgroundImageView" destination="Mta-TT-dUN" id="KNb-dJ-2tz"/>
                         <outlet property="tableView" destination="SRn-zb-Mh9" id="OP9-Yk-WDb"/>
+                        <segue destination="7qA-0O-cTv" kind="popoverPresentation" identifier="zoomTheirPhotoSegue" popoverAnchorView="fME-Es-phb" id="ipT-kz-A08">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XWj-cA-ltC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-699.5" y="-1093.5"/>
+            <point key="canvasLocation" x="-657.5" y="-1093.5"/>
         </scene>
         <!--Murder-->
         <scene sceneID="pJb-UK-C21">
@@ -1544,12 +1547,6 @@
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg3" translatesAutoresizingMaskIntoConstraints="NO" id="h5q-92-ior">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="91U-9b-BzY">
-                                        <rect key="frame" x="10" y="10" width="42" height="21"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <scrollView multipleTouchEnabled="YES" contentMode="scaleAspectFit" directionalLockEnabled="YES" alwaysBounceHorizontal="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O9m-zk-wiy">
                                         <rect key="frame" x="40" y="142" width="295" height="448"/>
                                         <connections>
@@ -1579,7 +1576,6 @@
                                     <constraint firstItem="O9m-zk-wiy" firstAttribute="top" secondItem="dt5-Ex-c13" secondAttribute="top" constant="142" id="mMV-zR-rlr"/>
                                     <constraint firstItem="UpN-4Q-bN4" firstAttribute="leading" secondItem="dt5-Ex-c13" secondAttribute="leading" constant="40" id="pNr-YH-HbM"/>
                                     <constraint firstItem="O9m-zk-wiy" firstAttribute="top" secondItem="UpN-4Q-bN4" secondAttribute="bottom" constant="13" id="qYA-sH-dcK"/>
-                                    <constraint firstItem="UpN-4Q-bN4" firstAttribute="top" secondItem="91U-9b-BzY" secondAttribute="bottom" constant="46" id="r10-L8-oV0"/>
                                     <constraint firstAttribute="trailing" secondItem="O9m-zk-wiy" secondAttribute="trailing" constant="40" id="uX1-9y-wuO"/>
                                     <constraint firstItem="UpN-4Q-bN4" firstAttribute="width" secondItem="O9m-zk-wiy" secondAttribute="width" id="wVT-5T-CVA"/>
                                 </constraints>
@@ -2841,7 +2837,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="JxC-Xe-7gf"/>
         <segue reference="u0a-cW-CdR"/>
-        <segue reference="Vfu-5X-YNT"/>
-        <segue reference="Nkj-Su-cOz"/>
+        <segue reference="LCI-XU-V8Q"/>
+        <segue reference="ipT-kz-A08"/>
     </inferredMetricsTieBreakers>
 </document>
