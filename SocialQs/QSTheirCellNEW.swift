@@ -10,6 +10,7 @@ import UIKit
 
 protocol TableViewCellDelegate {
     //func toDoItemDeleted()
+    func segueToZoom()
 }
 
 class QSTheirCellNEW: UITableViewCell {
@@ -241,10 +242,10 @@ class QSTheirCellNEW: UITableViewCell {
         questionZoom.addTarget(self, action: "questionZoom:", forControlEvents: UIControlEvents.TouchUpInside)
         
         option1Zoom.frame = option1Image.frame
-        option1Zoom.addTarget(self, action: "zoomImage1:", forControlEvents: UIControlEvents.TouchUpInside)
+        option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
         
         option2Zoom.frame = option2Image.frame
-        option2Zoom.addTarget(self, action: "zoomImage2:", forControlEvents: UIControlEvents.TouchUpInside)
+        option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
         
         if QJoinObject["vote"] == nil {
             // add a pan recognizers
@@ -377,13 +378,26 @@ class QSTheirCellNEW: UITableViewCell {
     }
     
     
-    func zoomImage1(sender: UIButton!) { println("Image1") }
+    func questionZoom(sender: UIButton!) {
+        zoomPage = 0
+        questionToView = QJoinObject["question"] as? PFObject
+        self.delegate?.segueToZoom()
+    }
     
+    func image1Zoom(sender: UIButton!) {
+        zoomPage = 0
+        questionToView = QJoinObject["question"] as? PFObject
+        if (QJoinObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
+        self.delegate?.segueToZoom()
+    }
     
-    func zoomImage2(sender: UIButton!) { println("Image2") }
-    
-    
-    func questionZoom(sender: UIButton!) { println("Question") }
+    func image2Zoom(sender: UIButton!) {
+        zoomPage = 0
+        questionToView = QJoinObject["question"] as? PFObject
+        if (QJoinObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["option1Photo"]  as? PFFile != nil) { zoomPage++ }
+        self.delegate?.segueToZoom()
+    }
     
     
     //MARK: - horizontal pan gesture methods
