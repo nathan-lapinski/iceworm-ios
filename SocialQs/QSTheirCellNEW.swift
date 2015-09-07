@@ -21,6 +21,12 @@ class QSTheirCellNEW: UITableViewCell {
     var horizontalSpace: CGFloat = 8.0
     var imageBarExtraSpace: CGFloat = 3.0
     
+    // MOVE THESE TO TO MAIN SCOPE SO NOT ALWAYS REDECLARED
+    var textCenterStart = CGPoint()
+    var imageCenterStart = CGPoint()
+    var imageBarCenterStart = CGPoint()
+    var voteCenterStart = CGPoint()
+    
     var questionBackground: UIImageView! = UIImageView()
     var profilePicture: UIImageView! = UIImageView()
     var questionPicture: UIImageView! = UIImageView()
@@ -31,8 +37,8 @@ class QSTheirCellNEW: UITableViewCell {
     var option1Image: UIImageView! = UIImageView()
     var option2Image: UIImageView! = UIImageView()
     
-    var option1Vote: UIImageView! = UIImageView()
-    var option2Vote: UIImageView! = UIImageView()
+    var option1Checkmark: UIImageView! = UIImageView()
+    var option2Checkmark: UIImageView! = UIImageView()
     
     var questionZoom: UIButton = UIButton()
     var option1Zoom: UIButton = UIButton()
@@ -77,13 +83,14 @@ class QSTheirCellNEW: UITableViewCell {
         self.addSubview(option2Text)
         self.addSubview(responsesText)
         
-        self.addSubview(option1Bar)
-        self.addSubview(option2Bar)
+        //self.addSubview(option1Bar)
+        //self.addSubview(option2Bar)
+        
         self.addSubview(option1Image)
         self.addSubview(option2Image)
         
-        self.addSubview(option1Vote)
-        self.addSubview(option2Vote)
+        self.addSubview(option1Checkmark)
+        self.addSubview(option2Checkmark)
         
         self.addSubview(questionZoom)
         self.addSubview(option1Zoom)
@@ -116,11 +123,8 @@ class QSTheirCellNEW: UITableViewCell {
         
         profilePicture.frame = CGRectMake(8, 8, 60, 60)
         if (QJoinObject["question"]!["asker"]!!["profilePicture"] as? PFFile != nil) {
-            
             getImageFromPFFile(QJoinObject["question"]!["asker"]!!["profilePicture"]!! as! PFFile, { (image, error) -> () in
-                
                 if error == nil {
-                    
                     self.profilePicture.image = image
                 }
             })
@@ -130,138 +134,89 @@ class QSTheirCellNEW: UITableViewCell {
         profilePicture.clipsToBounds = true
         profilePicture.layer.cornerRadius = profilePicture.frame.width/2
         
-        usernameLabel.frame = CGRectMake(68, 6, 150, 20)
+        usernameLabel.frame = CGRectMake(66, 6, 150, 20)
         usernameLabel?.font = UIFont(name: "HelveticaNeue", size: CGFloat(12))!
         usernameLabel?.textColor = UIColor.whiteColor()//mainColorBlue
         let usernameString = QJoinObject["question"]!["asker"]!!["username"] as? String
         usernameLabel.text = "@\(usernameString!)"
         
-        questionText.frame = CGRectMake(76, 24, bounds.width - 120 - 16, 50)
-        if let qText = self.QJoinObject["question"]!["questionText"] as? String {
-            questionText.text = qText
-            questionText.numberOfLines = 0
-            questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            questionText.textAlignment = NSTextAlignment.Center
-            questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
-            questionText?.textColor = UIColor.darkTextColor()
-            questionText.sizeToFit()
-        } else {
-            questionText.text = ""
-        }
-        
         questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
         if let questionPhotoThumb = self.QJoinObject["question"]!["questionPhotoThumb"] as? PFFile {
-            
             getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
-                
                 if error == nil {
-                    
                     self.questionPicture.image = image
-                    
                 } else {
-                    
                     println("There was an error downloading a questionPhoto")
                 }
             })
             questionPicture.contentMode = UIViewContentMode.ScaleAspectFill
             questionPicture.clipsToBounds = true
             questionPicture.layer.cornerRadius = questionPicture.frame.width/2
-//            questionTextRightSpace.constant = cell.questionImage.frame.size.width + 12
-//            questionText.layoutIfNeeded()
             questionPicture.hidden = false
+            questionZoom.enabled = true
         } else {
-//            questionTextRightSpace.constant = 8
-//            questionText.layoutIfNeeded()
             questionPicture.hidden = true
+            questionZoom.enabled = false
         }
         
         option1Background.frame = CGRectMake(horizontalSpace, 71, bounds.width - 2*horizontalSpace, 60)
-//        option1Background.layer.cornerRadius = 10
-//        option1Background.layer.borderWidth = 1.0
-//        option1Background.layer.borderColor = UIColor.whiteColor().CGColor
         option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(1.0)
         
         option2Background.frame = CGRectMake(horizontalSpace, 134, bounds.width - 2*horizontalSpace, 60)
-//        option2Background.layer.cornerRadius = 10
-//        option2Background.layer.borderWidth = 1.0
-//        option2Background.layer.borderColor = UIColor.whiteColor().CGColor
         option2Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(1.0)
         
         option1Image.frame = CGRectMake(horizontalSpace, 71, 60, 60)
         if let option1PhotoThumb = self.QJoinObject["question"]!["option1PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
-                
                 if error == nil {
-                    
                     self.option1Image.image = image
-                    
                 } else {
-                    
                     println("There was an error downloading an option1Photo")
                 }
             })
             
-            // Set option1 text width
-//            cell.option1TextLeftSpace.constant = cell.option1Image.frame.size.width + 14
-            //            cell.option1Text.layoutIfNeeded()
-            
+            option1Zoom.enabled = true
             
         } else {
-            
-            // Set question text width
-//            cell.option1TextLeftSpace.constant = 14
-//            cell.option1Text.layoutIfNeeded()
-            
+            option1Zoom.enabled = false
             option1Image.image = UIImage(named: "logo_square.png")
         }
         option1Image.contentMode = UIViewContentMode.ScaleAspectFill
         option1Image.clipsToBounds = true
-//        option1Image.layer.cornerRadius = 10
         
         option2Image.frame = CGRectMake(horizontalSpace, 134, 60, 60)
         if let option2PhotoThumb = self.QJoinObject["question"]!["option2PhotoThumb"] as? PFFile {
-            
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
-                
                 if error == nil {
-                    
                     self.option2Image.image = image
-                    
                 } else {
-                    
                     println("There was an error downloading an option2Photo")
                 }
             })
-            
-            // Set option2 text width
-//            cell.option2TextLeftSpace.constant = cell.option2Image.frame.size.width + 14
-            //            cell.option2Text.layoutIfNeeded()
-            
+            option2Zoom.enabled = true
         } else {
-            
-            // Set question text width
-//            option2TextLeftSpace.constant = 14
-            //            option2Text.layoutIfNeeded()
-            
+            option2Zoom.enabled = false
             option2Image.image = UIImage(named: "logo_square.png")
         }
         option2Image.contentMode = UIViewContentMode.ScaleAspectFill
         option2Image.clipsToBounds = true
         
-        option1Vote.frame = CGRectMake(0, 0, 25, 25)
-        option1Vote.center = option1Image.center
-        option1Vote.layer.cornerRadius = option1Vote.frame.width/2
-        option1Vote.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-        option1Vote.image = UIImage(named: "voteCheckmark.png")
-        option1Vote.alpha = 0.0
+        option1Checkmark.frame = CGRectMake(0, 0, 25, 25)
+        option1Checkmark.center = option1Image.center
+        option1Checkmark.layer.cornerRadius = option1Checkmark.frame.width/2
+        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        option1Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option1Checkmark.image = UIImage(named: "voteCheckmark.png")
+        option1Checkmark.alpha = 0.0
         
-        option2Vote.frame = CGRectMake(0, 0, 25, 25)
-        option2Vote.center = option2Image.center
-        option2Vote.layer.cornerRadius = option2Vote.frame.width/2
-        option2Vote.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-        option2Vote.image = UIImage(named: "voteCheckmark.png")
-        option2Vote.alpha = 0.0
+        option2Checkmark.frame = CGRectMake(0, 0, 25, 25)
+        option2Checkmark.center = option2Image.center
+        option2Checkmark.layer.cornerRadius = option2Checkmark.frame.width/2
+        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        option2Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option2Checkmark.image = UIImage(named: "voteCheckmark.png")
+        option2Checkmark.alpha = 0.0
         
         option1Bar.frame = CGRectMake(option1Image.frame.origin.x, option1Image.center.y - option1Image.frame.height/2, option1Image.frame.width + imageBarExtraSpace, option1Image.frame.height)
         option1Bar.backgroundColor = mainColorBlue
@@ -285,6 +240,19 @@ class QSTheirCellNEW: UITableViewCell {
         if totalResponses != 0 {
             option1Percent = Float((self.QJoinObject["question"]!["option1Stats"] as! Int))/Float(totalResponses)*100
             option2Percent = Float((self.QJoinObject["question"]!["option2Stats"] as! Int))/Float(totalResponses)*100
+        }
+        
+        questionText.frame = CGRectMake(76, 24, bounds.width - 120 - 16, 50)
+        if let qText = self.QJoinObject["question"]!["questionText"] as? String {
+            questionText.text = qText
+            questionText.numberOfLines = 0
+            questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            questionText.textAlignment = NSTextAlignment.Center
+            questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
+            questionText?.textColor = UIColor.darkTextColor()
+            questionText.sizeToFit()
+        } else {
+            questionText.text = ""
         }
         
         option1Text.frame = CGRectMake(option1Image.frame.width + 2*horizontalSpace, option1Image.frame.origin.y, bounds.width - option1Image.frame.width - 4*horizontalSpace, 60)
@@ -335,6 +303,11 @@ class QSTheirCellNEW: UITableViewCell {
         responsesText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(12))!
         responsesText?.textColor = UIColor.darkGrayColor()
         responsesText.text = "\(totalResponses) \(resp)"
+        
+        textCenterStart.x = bounds.width - option1Text.frame.width/2 - 2*horizontalSpace
+        imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
+        imageBarCenterStart.x = option1Bar.frame.width/2 + horizontalSpace
+        voteCenterStart.x = option1Checkmark.frame.width/2
     }
     
     
@@ -363,12 +336,6 @@ class QSTheirCellNEW: UITableViewCell {
 //            scale = abs(1 - (percentMoved/0.5 - 1)) + 1
 //        }
 //        println(scale)
-        
-        // MOVE THESE TO TO MAIN SCOPE SO NOT ALWAYS REDECLARED
-        var textCenterStart = CGPoint(); textCenterStart.x = bounds.width - option1Text.frame.width/2 - 2*horizontalSpace
-        var imageCenterStart = CGPoint(); imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
-        var imageBarCenterStart = CGPoint(); imageBarCenterStart.x = option1Bar.frame.width/2 + horizontalSpace
-        var voteCenterStart = CGPoint(); voteCenterStart.x = option1Vote.frame.width/2
             
         // Total amount the image view will move
         let a = bounds.width - option1Image.frame.width - 2*horizontalSpace
@@ -386,8 +353,13 @@ class QSTheirCellNEW: UITableViewCell {
             let percentMoved = (label.center.x - imageCenterStart.x) / a
             option1Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option1Text.center.y)
             option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option1Bar.center.y)
-            option1Vote.center = CGPoint(x: option1Offset + translation.x, y: label.center.y)
-            option1Vote.alpha = percentMoved
+            option1Checkmark.center = CGPoint(x: option1Offset + translation.x, y: label.center.y)
+            option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
+            if percentMoved >= 0.5 && option1Checkmark.layer.borderWidth == 0.0 {
+                option1Checkmark.layer.borderWidth = 2.0
+            } else if percentMoved < 0.5 && option1Checkmark.layer.borderWidth == 2.0 {
+                option1Checkmark.layer.borderWidth = 0.0
+            }
             
         } else {
             
@@ -396,8 +368,13 @@ class QSTheirCellNEW: UITableViewCell {
             let percentMoved = (label.center.x - imageCenterStart.x) / a
             option2Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option2Text.center.y)
             option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option2Bar.center.y)
-            option2Vote.center = CGPoint(x: option2Offset + translation.x, y: label.center.y)
-            option2Vote.alpha = percentMoved
+            option2Checkmark.center = CGPoint(x: option2Offset + translation.x, y: label.center.y)
+            option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
+            if percentMoved >= 0.5 && option2Checkmark.layer.borderWidth == 0.0 {
+                option2Checkmark.layer.borderWidth = 2.0
+            } else if percentMoved < 0.5 && option2Checkmark.layer.borderWidth == 2.0 {
+                option2Checkmark.layer.borderWidth = 0.0
+            }
         }
         
         let xFromCenter = label.center.x - bounds.width / 2
@@ -425,11 +402,11 @@ class QSTheirCellNEW: UITableViewCell {
                     label.center = CGPoint(x: endX, y: label.center.y)
                     self.option1Image.center = label.center
                     
-                    let percentMoved = (label.center.x - imageCenterStart.x) / a
-                    self.option1Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: self.option1Text.center.y)
-                    self.option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: self.option1Bar.center.y)
-                    self.option1Vote.center = CGPoint(x: endX, y: label.center.y)
-                    self.option1Vote.alpha = percentMoved
+                    let percentMoved = (label.center.x - self.imageCenterStart.x) / a
+                    self.option1Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option1Text.center.y)
+                    self.option1Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option1Bar.center.y)
+                    self.option1Checkmark.center = CGPoint(x: endX, y: label.center.y)
+                    self.option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
                     
                     }, completion: { (isFinished) -> Void in
                 })
@@ -443,11 +420,11 @@ class QSTheirCellNEW: UITableViewCell {
                     label.center = CGPoint(x: endX, y: label.center.y)
                     self.option2Image.center = label.center
                     
-                    let percentMoved = (label.center.x - imageCenterStart.x) / a
-                    self.option2Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: self.option2Text.center.y)
-                    self.option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: self.option2Bar.center.y)
-                    self.option2Vote.center = CGPoint(x: endX, y: label.center.y)
-                    self.option2Vote.alpha = percentMoved
+                    let percentMoved = (label.center.x - self.imageCenterStart.x) / a
+                    self.option2Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option2Text.center.y)
+                    self.option2Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option2Bar.center.y)
+                    self.option2Checkmark.center = CGPoint(x: endX, y: label.center.y)
+                    self.option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
                     
                     }, completion: { (isFinished) -> Void in
                 })
