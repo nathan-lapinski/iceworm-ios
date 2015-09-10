@@ -186,9 +186,10 @@ class VotesTableVC: UITableViewController {
             
             if(questionToView!["questionText"] as? String != nil) {
                 
-                var headerTextView = UITextView(frame: CGRectMake(8, 0, self.view.frame.size.width - 8, 60))
+                var headerTextView = UITextView(frame: CGRectMake(68, 0, self.view.frame.size.width - 128, 60))
                 headerTextView.text = questionToView!["questionText"] as? String
                 headerTextView.textColor = UIColor.darkTextColor()
+                headerTextView.backgroundColor = UIColor.clearColor()
                 headerTextView.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)!
                 headerTextView.textAlignment = NSTextAlignment.Center
                 headerTextView.editable = false
@@ -197,7 +198,7 @@ class VotesTableVC: UITableViewController {
             
             if (questionToView!["questionPhoto"] as? PFFile != nil) {
                 
-                var frame = CGRectMake(0, 0, 60, 60)
+                var frame = CGRectMake(self.view.frame.size.width - 60, 0, 60, 60)
                 var headerImageView = UIImageView(frame: frame)
                 getImageFromPFFile(questionToView!["questionPhoto"] as! PFFile, { (image, error) -> () in
                     
@@ -208,6 +209,7 @@ class VotesTableVC: UITableViewController {
                         headerImageView.clipsToBounds = true
                         header.addSubview(headerImageView)
                         
+                        
                     } else {
                         
                         println("There was an error downloading questionPhoto - votesTableVC")
@@ -216,11 +218,11 @@ class VotesTableVC: UITableViewController {
             }
             
         } else { // Set option text or photo in section header
-            header.contentView.backgroundColor = mainColorPink
+            header.contentView.backgroundColor = mainColorRed
             
             if (questionToView!["option\(section)Photo"] as? PFFile != nil) {
                 //var frame = CGRectMake(0, 0, self.view.frame.size.width, 60) // full bar image
-                var frame = CGRectMake(self.view.frame.size.width - 60, 0, 60, 60)
+                var frame = CGRectMake(0, 0, 60, 60)
                 var headerImageView = UIImageView(frame: frame)
                 getImageFromPFFile(questionToView!["option\(section)Photo"]! as! PFFile, { (image, error) -> () in
                     
@@ -242,7 +244,7 @@ class VotesTableVC: UITableViewController {
             
             if (questionToView!["option\(section)Text"] as? String != nil) {
                 
-                var headerTextView = UITextView(frame: CGRectMake(0, 0, self.view.frame.size.width, 60))
+                var headerTextView = UITextView(frame: CGRectMake(68, 0, self.view.frame.size.width - 128, 60))
                 headerTextView.text = questionToView!["option\(section)Text"] as? String
                 headerTextView.textColor = UIColor.whiteColor()
                 headerTextView.backgroundColor = UIColor.clearColor()

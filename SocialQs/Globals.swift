@@ -23,7 +23,7 @@ var profilePicture = UIImage?()
 let bgAlpha: CGFloat = 0.7
 let bgColor = UIColor(red: 58/255, green: 154/255, blue: 188/255, alpha: bgAlpha)
 let winColor = UIColor(red: 58/255, green: 154/255, blue: 188/255, alpha: 1.0)
-let loseColor = UIColor.lightGrayColor()//UIColor(red: 85/255, green: 85/255, blue: 85/255, alpha: 1.0)
+let loseColor = UIColor(red: 85/255, green: 85/255, blue: 85/255, alpha: 1.0)
 let buttonBackgroundColor = UIColor(red: 239/256, green: 239/256, blue: 240/256, alpha: 0.8)
 let buttonTextColor = UIColor(red: 11/256, green: 11/256, blue: 11/256, alpha: 1.0)
 let cornerRadius: CGFloat = 2.0
@@ -31,10 +31,13 @@ let cornerRadius: CGFloat = 2.0
 //let buttonEdge = UIEdgeInsetsMake(insets, insets, insets, insets)
 
 // Colors to match SQ background images
-let mainColorBlue = UIColor(red: 82/256, green: 137/256, blue: 159/256, alpha: 1.0)
+let mainColorBlue = UIColor(red: 83/255, green: 138/255, blue: 159/255, alpha: 1.0) // winColor //
 //let mainColorOrange = UIColor(red: 239/256, green: 94/256, blue: 31/256, alpha: 1.0)
-let mainColorPink = UIColor(red: 194/256, green: 55/256, blue: 109/256, alpha: 1.0)
-let mainColorRed = UIColor(red: 238/256, green: 76/256, blue: 80/256, alpha: 1.0)
+let mainColorPink = UIColor(red: 194/255, green: 55/255, blue: 109/255, alpha: 1.0)
+let mainColorRed = UIColor(red: 238/255, green: 76/255, blue: 80/255, alpha: 1.0)
+let mainColorYellow = UIColor(red: 242/255, green: 206/255, blue: 58/255, alpha: 1.0)
+let mainColorTeal = UIColor(red: 96/255, green: 190/255, blue: 185/255, alpha: 1.0)
+let mainColorDarkBlue = UIColor(red: 46/255, green: 64/255, blue: 86/255, alpha: 1.0)
 
 // Tab bar colors
 let activeTabColor = UIColor.whiteColor()

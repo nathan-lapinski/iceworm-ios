@@ -28,9 +28,9 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         self.tableView.addSubview(refresher)
         // Pull to refresh --------------------------------------------------------
         
-        backgroundImageView.image = UIImage(named: "bg3.png")
+        backgroundImageView.image = UIImage(named: "bg5.png")
         tableView.backgroundColor = UIColor.clearColor()
-        //tableView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.95)
+//        tableView.backgroundColor = UIColor(red: 236/256, green: 236/256, blue: 236/256, alpha: 1.0) //UIColor.whiteColor()//.colorWithAlphaComponent(0.95)
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -190,15 +190,9 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) { }
     
     
-    
-    
-    
-    
-    
     func segueToZoom() {
         self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: self)
     }
-    
     
     
     func refresh() {

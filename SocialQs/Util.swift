@@ -785,8 +785,8 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     
     // Store login information in globals
     username = usernameToStore.lowercaseString
-    uId = PFUser.currentUser()!.objectId!
-    uQId = PFUser.currentUser()?["uQId"]! as! String
+//    uId = PFUser.currentUser()!.objectId!
+//    uQId = PFUser.currentUser()?["uQId"]! as! String
     if let temp = PFUser.currentUser()!["name"] as? String {
         name = temp
     }

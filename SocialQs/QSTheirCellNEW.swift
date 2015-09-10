@@ -22,7 +22,6 @@ class QSTheirCellNEW: UITableViewCell {
     var horizontalSpace: CGFloat = 8.0
     var imageBarExtraSpace: CGFloat = 3.0
     
-    // MOVE THESE TO TO MAIN SCOPE SO NOT ALWAYS REDECLARED
     var textCenterStart = CGPoint()
     var textCenterEnd = CGPoint()
     var imageCenterStart = CGPoint()
@@ -35,6 +34,8 @@ class QSTheirCellNEW: UITableViewCell {
     var option1Percent = Float(0.0)
     var option2Percent = Float(0.0)
     
+    var layout = false
+    
     var recognizer1 = UIPanGestureRecognizer()
     var recognizer2 = UIPanGestureRecognizer()
     
@@ -45,23 +46,28 @@ class QSTheirCellNEW: UITableViewCell {
     var option1Background: UIImageView = UIImageView()
     var option2Background: UIImageView = UIImageView()
     
+    var option1Stats: UIImageView = UIImageView()
+    var option2Stats: UIImageView = UIImageView()
+    
     var option1Image: UIImageView! = UIImageView()
     var option2Image: UIImageView! = UIImageView()
     
     var option1Checkmark: UIImageView! = UIImageView()
     var option2Checkmark: UIImageView! = UIImageView()
     
+    var option1VoteArrow: UIImageView! = UIImageView()
+    var option2VoteArrow: UIImageView! = UIImageView()
+    
     var questionZoom: UIButton = UIButton()
     var option1Zoom: UIButton = UIButton()
     var option2Zoom: UIButton = UIButton()
-    
-    var option1Bar: UIImageView! = UIImageView()
-    var option2Bar: UIImageView! = UIImageView()
     
     var usernameLabel: UILabel! = UILabel()
     var questionText: UILabel! = UILabel()
     var option1Text: UILabel! = UILabel()
     var option2Text: UILabel! = UILabel()
+    var option1PercentText: UILabel! = UILabel()
+    var option2PercentText: UILabel! = UILabel()
     var responsesText: UILabel! = UILabel()
     
     var QJoinObject: PFObject!
@@ -81,27 +87,32 @@ class QSTheirCellNEW: UITableViewCell {
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        self.addSubview(option1Background)
         self.addSubview(questionBackground)
+        self.addSubview(option2Background)
+        
         self.addSubview(profilePicture)
         self.addSubview(questionPicture)
         
-        self.addSubview(option1Background)
-        self.addSubview(option2Background)
+        self.addSubview(option1Stats)
+        self.addSubview(option2Stats)
         
         self.addSubview(usernameLabel)
         self.addSubview(questionText)
         self.addSubview(option1Text)
         self.addSubview(option2Text)
+        self.addSubview(option1PercentText)
+        self.addSubview(option2PercentText)
         self.addSubview(responsesText)
-        
-        //self.addSubview(option1Bar)
-        //self.addSubview(option2Bar)
         
         self.addSubview(option1Image)
         self.addSubview(option2Image)
         
         self.addSubview(option1Checkmark)
         self.addSubview(option2Checkmark)
+        
+        self.addSubview(option1VoteArrow)
+        self.addSubview(option2VoteArrow)
         
         self.addSubview(questionZoom)
         self.addSubview(option1Zoom)
@@ -111,7 +122,7 @@ class QSTheirCellNEW: UITableViewCell {
         selectionStyle = .None
         
         // Set background
-        backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.9)
+        //backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.9)
     }
     
     
@@ -119,8 +130,8 @@ class QSTheirCellNEW: UITableViewCell {
         super.layoutSubviews()
         
         questionBackground.frame = CGRectMake(8, 8, bounds.width - 16, 60)
-        questionBackground.layer.cornerRadius = questionBackground.frame.height/2
-        questionBackground.backgroundColor = mainColorBlue//.colorWithAlphaComponent(0.7)
+        questionBackground.layer.cornerRadius = 30
+        questionBackground.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)//mainColorBlue
         
         profilePicture.frame = CGRectMake(8, 8, 60, 60)
         if (QJoinObject["question"]!["asker"]!!["profilePicture"] as? PFFile != nil) {
@@ -135,14 +146,14 @@ class QSTheirCellNEW: UITableViewCell {
         profilePicture.clipsToBounds = true
         profilePicture.layer.cornerRadius = profilePicture.frame.width/2
         
-        usernameLabel.frame = CGRectMake(66, 6, 150, 20)
-        usernameLabel?.font = UIFont(name: "HelveticaNeue", size: CGFloat(12))!
-        usernameLabel?.textColor = UIColor.whiteColor()//mainColorBlue
+        usernameLabel.frame = CGRectMake(67, 7, 150, 20)
+        usernameLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
+        usernameLabel?.textColor = UIColor.whiteColor() // winColor // UIColor.lightGrayColor()
         let usernameString = QJoinObject["question"]!["asker"]!!["username"] as? String
-        usernameLabel.text = "@\(usernameString!)"
+        usernameLabel.text = "@\(usernameString!) asked:"
         
-        questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
         if let questionPhotoThumb = self.QJoinObject["question"]!["questionPhotoThumb"] as? PFFile {
+            questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
             getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
                 if error == nil {
                     self.questionPicture.image = image
@@ -152,21 +163,41 @@ class QSTheirCellNEW: UITableViewCell {
             })
             questionPicture.contentMode = UIViewContentMode.ScaleAspectFill
             questionPicture.clipsToBounds = true
-            questionPicture.layer.cornerRadius = questionPicture.frame.width/2
             questionPicture.hidden = false
+            
             questionZoom.enabled = true
+            questionZoom.frame = questionPicture.frame
+            questionZoom.addTarget(self, action: "questionZoom:", forControlEvents: UIControlEvents.TouchUpInside)
         } else {
+            questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 0, 60)
             questionPicture.hidden = true
             questionZoom.enabled = false
         }
+        questionPicture.layer.cornerRadius = questionPicture.frame.width/2
         
-        option1Background.frame = CGRectMake(horizontalSpace, 71, bounds.width - 2*horizontalSpace, 60)
-        option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(1.0)
+        questionText.frame = CGRectMake(profilePicture.center.x + profilePicture.frame.width/2 + horizontalSpace, 24, bounds.width - profilePicture.frame.width - questionPicture.frame.width - 4*horizontalSpace, 40)
+        if let qText = self.QJoinObject["question"]!["questionText"] as? String {
+            questionText.text = qText
+            questionText.numberOfLines = 0
+            questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            questionText.textAlignment = NSTextAlignment.Center
+            questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(14))!
+            questionText?.textColor = UIColor.whiteColor()
+            //questionText.sizeToFit()
+        } else {
+            questionText.text = ""
+        }
         
-        option2Background.frame = CGRectMake(horizontalSpace, 134, bounds.width - 2*horizontalSpace, 60)
-        option2Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(1.0)
+        option1Background.frame = CGRectMake(horizontalSpace, questionBackground.frame.origin.y + 60 + 3, bounds.width - 2*horizontalSpace, 60)
+        option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
+        option1Background.layer.cornerRadius = 10
         
-        option1Image.frame = CGRectMake(horizontalSpace, 71, 60, 60)
+        option2Background.frame = CGRectMake(horizontalSpace, option1Background.frame.origin.y + 60, bounds.width - 2*horizontalSpace, 60)
+        option2Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
+        option2Background.layer.cornerRadius = 10
+        
+        option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
+        option1Zoom.frame = option1Image.frame
         if let option1PhotoThumb = self.QJoinObject["question"]!["option1PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
@@ -177,19 +208,19 @@ class QSTheirCellNEW: UITableViewCell {
                 }
             })
             
-            //option1Zoom.enabled = true
+            option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
+            
             option1Image.alpha = 1.0
+            option1Image.layer.cornerRadius = 10
             
         } else {
-            //option1Zoom.enabled = false  // Must handle another way - disabling makes gesture not work!
-            option1Image.image = UIImage(named: "voteArrow.png")
-            option1Image.alpha = 0.7
-            //option1Image.backgroundColor = mainColorBlue
+            option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 0, 60)
         }
         option1Image.contentMode = UIViewContentMode.ScaleAspectFill
         option1Image.clipsToBounds = true
         
-        option2Image.frame = CGRectMake(horizontalSpace, 134, 60, 60)
+        option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
+        option2Zoom.frame = option2Image.frame
         if let option2PhotoThumb = self.QJoinObject["question"]!["option2PhotoThumb"] as? PFFile {
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -198,56 +229,49 @@ class QSTheirCellNEW: UITableViewCell {
                     println("There was an error downloading an option2Photo")
                 }
             })
-            //option2Zoom.enabled = true
+            
+            option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
+            
             option2Image.alpha = 1.0
+            option2Image.layer.cornerRadius = 10
         } else {
-            //option2Zoom.enabled = false // Must handle another way - disabling makes gesture not work!
-            option2Image.image = UIImage(named: "voteArrow.png")
-            option2Image.alpha = 0.7
-            //option2Image.backgroundColor = mainColorBlue
+            option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
         }
         option2Image.contentMode = UIViewContentMode.ScaleAspectFill
         option2Image.clipsToBounds = true
         
-//        option1Image.layer.borderColor = mainColorBlue.CGColor
-//        option1Image.layer.borderWidth = 4.0
-//        option1Image.layer.cornerRadius = 4.0
-//        option2Image.layer.borderColor = mainColorBlue.CGColor
-//        option2Image.layer.borderWidth = 4.0
-//        option2Image.layer.cornerRadius = 4.0
-        
-        option1Checkmark.frame = CGRectMake(0, 0, 25, 25)
-        option1Checkmark.center = option1Image.center
+        option1Checkmark.frame = CGRectMake(0, 0, 30, 30)
+        option1Checkmark.center = CGPoint(x: profilePicture.center.x, y: option1Image.center.y)
         option1Checkmark.layer.cornerRadius = option1Checkmark.frame.width/2
         option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
         option1Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
         option1Checkmark.image = UIImage(named: "voteCheckmark.png")
         option1Checkmark.alpha = 0.0
         
-        option2Checkmark.frame = CGRectMake(0, 0, 25, 25)
-        option2Checkmark.center = option2Image.center
+        option2Checkmark.frame = CGRectMake(0, 0, 30, 30)
+        option2Checkmark.center = CGPoint(x: profilePicture.center.x, y: option2Image.center.y)
         option2Checkmark.layer.cornerRadius = option2Checkmark.frame.width/2
         option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
         option2Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
         option2Checkmark.image = UIImage(named: "voteCheckmark.png")
         option2Checkmark.alpha = 0.0
         
-        option1Bar.frame = CGRectMake(option1Image.frame.origin.x, option1Image.center.y - option1Image.frame.height/2, option1Image.frame.width + imageBarExtraSpace, option1Image.frame.height)
-        option1Bar.backgroundColor = mainColorBlue
+        option1VoteArrow.frame = option1Checkmark.frame
+        option1VoteArrow.layer.cornerRadius = option1Checkmark.frame.width/2
+        option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option1VoteArrow.image = UIImage(named: "voteArrow.png")
+        option1VoteArrow.alpha = 0.0
         
-        option2Bar.frame = CGRectMake(option2Image.frame.origin.x, option2Image.center.y - option2Image.frame.height/2, option2Image.frame.width + imageBarExtraSpace, option2Image.frame.height)
-        option2Bar.backgroundColor = mainColorBlue
+        option2VoteArrow.frame = option2Checkmark.frame
+        option2VoteArrow.layer.cornerRadius = option2Checkmark.frame.width/2
+        option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option2VoteArrow.image = UIImage(named: "voteArrow.png")
+        option2VoteArrow.alpha = 0.0
         
-        questionZoom.frame = questionPicture.frame
-        questionZoom.addTarget(self, action: "questionZoom:", forControlEvents: UIControlEvents.TouchUpInside)
-        
-        option1Zoom.frame = option1Image.frame
-        option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
-        
-        option2Zoom.frame = option2Image.frame
-        option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
-        
-        if QJoinObject["vote"] == nil {
+        if let test = QJoinObject["vote"] as? Int {
+            option1VoteArrow.alpha = 0.0
+            option2VoteArrow.alpha = 0.0
+        } else {
             // add a pan recognizers
             recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
             recognizer1.delegate = self
@@ -256,29 +280,28 @@ class QSTheirCellNEW: UITableViewCell {
             recognizer2 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier2:")
             recognizer2.delegate = self
             option2Zoom.addGestureRecognizer(recognizer2)
+            
+            option1VoteArrow.alpha = 1.0
+            option2VoteArrow.alpha = 1.0
         }
         
         totalResponses = (self.QJoinObject["question"]!["option1Stats"] as! Int) + (QJoinObject["question"]!["option2Stats"] as! Int)
         if totalResponses != 0 {
             option1Percent = computePercents(1)
-            option2Percent = computePercents(2)
+            option2Percent = 100 - option1Percent//computePercents(2)
         }
         
-        questionText.frame = CGRectMake(76, 24, bounds.width - 120 - 16, 50)
-        if let qText = self.QJoinObject["question"]!["questionText"] as? String {
-            questionText.text = qText
-            questionText.numberOfLines = 0
-            questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            questionText.textAlignment = NSTextAlignment.Center
-            questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
-            questionText?.textColor = UIColor.darkTextColor()
-            questionText.sizeToFit()
-        } else {
-            questionText.text = ""
+        option1Stats.backgroundColor = winColor
+        option2Stats.backgroundColor = winColor
+        option1Stats.alpha = 0.0
+        option2Stats.alpha = 0.0
+        if option1Percent < option2Percent {
+            option1Stats.backgroundColor = mainColorBlue
+        } else if option2Percent < option1Percent {
+            option2Stats.backgroundColor = mainColorBlue
         }
         
-        setOptionText(1)
-        setOptionText(2)
+        setOptionText()
         
         resp = "responses"
         if totalResponses == 1 { resp = "response" }
@@ -288,30 +311,61 @@ class QSTheirCellNEW: UITableViewCell {
         responsesText?.textColor = UIColor.darkGrayColor()
         responsesText.text = "\(totalResponses) \(resp)"
         
-        textCenterStart.x = bounds.width - option1Text.frame.width/2 - 2*horizontalSpace
-        textCenterEnd.x = bounds.width - textCenterStart.x
-        imageBarCenterStart.x = option1Bar.frame.width/2 + horizontalSpace
+        textCenterStart.x = bounds.width/2 // bounds.width - option1Text.frame.width/2 - 2*horizontalSpace
+        textCenterEnd.x = textCenterStart.x // bounds.width - textCenterStart.x
         voteCenterStart.x = option1Checkmark.frame.width/2
         
         imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
         imageCenterEnd.x = bounds.width - option1Image.frame.width/2 - 8
+        option1PercentText.alpha = 0.0
+        option2PercentText.alpha = 0.0
         if let test = QJoinObject["vote"] as? Int {
+            option1PercentText.hidden = false
+            option2PercentText.hidden = false
+            option1VoteArrow.alpha = 0.0
+            option2VoteArrow.alpha = 0.0
+            println(QJoinObject["vote"] as? Int)
+            animateStatsBars()
             if test == 1 {
-                option1Zoom.center.x = imageCenterEnd.x
-                option1Image.center.x = imageCenterEnd.x
-                option1Checkmark.center.x = imageCenterEnd.x
-                option1Checkmark.layer.borderWidth = 2.0
-                option1Checkmark.alpha = 1.0
-                option1Text.center.x = textCenterEnd.x
+                //option1Checkmark.layer.borderWidth = 2.0
+                //option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option1Checkmark.alpha = 0.8
             } else if test == 2 {
-                option2Zoom.center.x = imageCenterEnd.x
-                option2Image.center.x = imageCenterEnd.x
-                option2Checkmark.center.x = imageCenterEnd.x
-                option2Checkmark.layer.borderWidth = 2.0
-                option2Checkmark.alpha = 1.0
-                option2Text.center.x = textCenterEnd.x
+                //option2Checkmark.layer.borderWidth = 2.0
+                //option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option2Checkmark.alpha = 0.8
             }
         }
+    }
+    
+    
+    func animateStatsBars() {
+        
+        let statsHeight: CGFloat = option1Text.frame.height
+        let statsWidth: CGFloat = option1Text.frame.width/2
+        
+        option1Stats.frame = CGRectMake(option1Image.frame.width, option1Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
+        option2Stats.frame = CGRectMake(option2Image.frame.width, option2Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
+        option1Stats.center.y = option1Image.center.y
+        option2Stats.center.y = option2Image.center.y
+        option1Stats.layer.cornerRadius = 4.0
+        option2Stats.layer.cornerRadius = 4.0
+        option1Stats.alpha = 0.0
+        option2Stats.alpha = 0.0
+        
+        UIView.animateWithDuration(2.0, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+            
+            self.option1Stats.frame = CGRectMake(self.option1Image.frame.width, self.option1Text.frame.origin.y, CGFloat(self.option1Percent/100)*(self.option1Text.frame.width + 2*self.horizontalSpace + self.option1Image.frame.width) + self.horizontalSpace, statsHeight)
+            self.option2Stats.frame = CGRectMake(self.option2Image.frame.width, self.option2Text.frame.origin.y, CGFloat(self.option2Percent/100)*(self.option2Text.frame.width + 2*self.horizontalSpace + self.option2Image.frame.width) + self.horizontalSpace, statsHeight)
+            self.option1Stats.center.y = self.option1Image.center.y
+            self.option2Stats.center.y = self.option2Image.center.y
+            self.option1Stats.alpha = 0.5
+            self.option2Stats.alpha = 0.5
+            self.option1PercentText.alpha = 1.0
+            self.option2PercentText.alpha = 1.0
+            
+        }) { (isFinished) -> Void in }
+        
     }
     
     
@@ -329,52 +383,51 @@ class QSTheirCellNEW: UITableViewCell {
     }
     
     
-    func setOptionText(id: Int) {
+    func setOptionText() {
+            
+        option1Text.frame = CGRectMake(option1Image.frame.width + 2*horizontalSpace, option1Image.frame.origin.y, bounds.width - 2*option1Image.frame.width - 4*horizontalSpace, 60)
+        if let oText = self.QJoinObject["question"]!["option1Text"] as? String {
+                option1Text.text = oText
+        } else {
+                option1Text.text = ""
+        }
+        option1Text.numberOfLines = 3
+        option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        option1Text.textAlignment = NSTextAlignment.Center
+        option1Text?.font = UIFont(name: "HelveticaNeue", size: CGFloat(14))!
+        option1Text?.textColor = UIColor.darkTextColor()
         
-        if id == 1 {
-            option1Text.frame = CGRectMake(option1Image.frame.width + 2*horizontalSpace, option1Image.frame.origin.y, bounds.width - option1Image.frame.width - 4*horizontalSpace, 60)
-            if let oText = self.QJoinObject["question"]!["option1Text"] as? String {
-                if totalResponses > 0 {
-                    option1Text.text = oText + "  \(Int(option1Percent))%"
-                } else {
-                    option1Text.text = oText
-                }
-            } else {
-                if totalResponses > 0 {
-                    option1Text.text = "\(Int(option1Percent))%"
-                } else {
-                    option1Text.text = ""
-                }
-            }
-            option1Text.numberOfLines = 3
-            option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            option1Text.textAlignment = NSTextAlignment.Center
-            option1Text?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
-            option1Text?.textColor = UIColor.darkTextColor()
+        option1PercentText.frame = CGRectMake(bounds.width - horizontalSpace - 60, option1Text.frame.origin.y, 60, 60)
+        option1PercentText?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(18))!
+        option1PercentText.textAlignment = NSTextAlignment.Center
+        option1PercentText?.textColor = UIColor.darkTextColor()
+        
+        option2Text.frame = CGRectMake(option2Image.frame.width + 2*horizontalSpace, option2Image.frame.origin.y, bounds.width - 2*option2Image.frame.width - 4*horizontalSpace, 60)
+        if let o2Text = self.QJoinObject["question"]!["option2Text"] as? String {
+            option2Text.text = o2Text
             
         } else {
-        
-            option2Text.frame = CGRectMake(option2Image.frame.width + 2*horizontalSpace, option2Image.frame.origin.y, bounds.width - option2Image.frame.width - 4*horizontalSpace, 60)
-            if let o2Text = self.QJoinObject["question"]!["option2Text"] as? String {
-                if totalResponses > 0 {
-                    option2Text.text = o2Text  + "  \(100 - Int(option1Percent))%"
-                } else {
-                    option2Text.text = o2Text
-                }
-                
-            } else {
-                if totalResponses > 0 {
-                    option2Text.text = "\(100 - Int(option1Percent))%"
-                } else {
-                    option2Text.text = ""
-                }
-            }
-            option2Text.numberOfLines = 3
-            option2Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            option2Text.textAlignment = NSTextAlignment.Center
-            option2Text?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(16))!
-            option2Text?.textColor = UIColor.darkTextColor()
+            option2Text.text = ""
         }
+        option2Text.numberOfLines = 3
+        option2Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        option2Text.textAlignment = NSTextAlignment.Center
+        option2Text?.font = UIFont(name: "HelveticaNeue", size: CGFloat(14))!
+        option2Text?.textColor = UIColor.darkTextColor()
+        
+        option2PercentText.frame = CGRectMake(bounds.width - horizontalSpace - 60, option2Text.frame.origin.y, 60, 60)
+        option2PercentText?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(18))!
+        option2PercentText.textAlignment = NSTextAlignment.Center
+        option2PercentText?.textColor = UIColor.darkTextColor()
+        
+        if totalResponses > 0 {
+            option1PercentText.text = "\(Int(option1Percent))%"
+            option2PercentText.text = "\(100 - Int(option1Percent))%"
+        } else {
+            option1PercentText.text = ""
+            option2PercentText.text = ""
+        }
+        
     }
     
     
@@ -431,14 +484,22 @@ class QSTheirCellNEW: UITableViewCell {
             label.center = CGPoint(x: option1Offset + translation.x, y: label.center.y)
             option1Image.center = label.center
             let percentMoved = (label.center.x - imageCenterStart.x) / a
-            option1Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option1Text.center.y)
-            option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option1Bar.center.y)
+            //option1Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option1Text.center.y)
+//            option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option1Bar.center.y)
             option1Checkmark.center = CGPoint(x: option1Offset + translation.x, y: label.center.y)
-            option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
-            if percentMoved >= 0.5 && option1Checkmark.layer.borderWidth == 0.0 {
-                option1Checkmark.layer.borderWidth = 2.0
-            } else if percentMoved < 0.5 && option1Checkmark.layer.borderWidth == 2.0 {
-                option1Checkmark.layer.borderWidth = 0.0
+            option1VoteArrow.center = option1Checkmark.center
+            //option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
+            //option1VoteArrow.alpha = min(1.0, 1 - 3*percentMoved)
+            
+            if percentMoved >= 0.5 { // && option1Checkmark.layer.borderWidth == 0.0 {
+                //option1Checkmark.layer.borderWidth = 2.0
+                //option1Checkmark.layer.borderColor = mainColorBlue.CGColor // UIColor.greenColor().colorWithAlphaComponent(0.6).CGColor
+                option1Checkmark.alpha = 0.8
+                option1VoteArrow.alpha = 0.0
+            } else if percentMoved < 0.5 { // && option1Checkmark.layer.borderWidth == 2.0 {
+                //option1Checkmark.layer.borderWidth = 0.0
+                option1Checkmark.alpha = 0.0
+                option1VoteArrow.alpha = 0.8
             }
             
         } else {
@@ -446,14 +507,22 @@ class QSTheirCellNEW: UITableViewCell {
             label.center = CGPoint(x: option2Offset + translation.x, y: label.center.y)
             option2Image.center = label.center
             let percentMoved = (label.center.x - imageCenterStart.x) / a
-            option2Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option2Text.center.y)
-            option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option2Bar.center.y)
+            //option2Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option2Text.center.y)
+//            option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option2Bar.center.y)
             option2Checkmark.center = CGPoint(x: option2Offset + translation.x, y: label.center.y)
-            option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
+            option2VoteArrow.center = option2Checkmark.center
+            //option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
+            //option2VoteArrow.alpha = min(1.0, 1 - 3*percentMoved)
+            
             if percentMoved >= 0.5 && option2Checkmark.layer.borderWidth == 0.0 {
                 option2Checkmark.layer.borderWidth = 2.0
+                //option2Checkmark.layer.borderColor = mainColorBlue.CGColor // UIColor.greenColor().colorWithAlphaComponent(0.6).CGColor
+                option2Checkmark.alpha = 1.0
+                option2VoteArrow.alpha = 0.0
             } else if percentMoved < 0.5 && option2Checkmark.layer.borderWidth == 2.0 {
                 option2Checkmark.layer.borderWidth = 0.0
+                option2Checkmark.alpha = 0.0
+                option2VoteArrow.alpha = 1.0
             }
         }
         
@@ -466,14 +535,13 @@ class QSTheirCellNEW: UITableViewCell {
         if recognizer.state == UIGestureRecognizerState.Ended {
             
             var endX: CGFloat = 0.0
-            
             if xFromCenter <= 0 {
-                endX = label.frame.width/2 + 8
+                //endX = label.frame.width/2 + 8
             } else {
-                endX = self.bounds.width - label.frame.width/2 - 8
-                
+                //endX = self.bounds.width - label.frame.width/2 - 8
                 castVote(id)
             }
+            endX = label.frame.width/2 + 8
             
             if id == 1 {
                 
@@ -485,10 +553,13 @@ class QSTheirCellNEW: UITableViewCell {
                     self.option1Image.center = label.center
                     
                     let percentMoved = (label.center.x - self.imageCenterStart.x) / a
-                    self.option1Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option1Text.center.y)
-                    self.option1Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option1Bar.center.y)
+                    //self.option1Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option1Text.center.y)
+//                    self.option1Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option1Bar.center.y)
                     self.option1Checkmark.center = CGPoint(x: endX, y: label.center.y)
                     self.option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
+                    //self.option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                    self.option1VoteArrow.center = CGPoint(x: endX, y: label.center.y)
+                    //self.option1VoteArrow.alpha = 0.8
                     
                     }, completion: { (isFinished) -> Void in
                 })
@@ -503,10 +574,13 @@ class QSTheirCellNEW: UITableViewCell {
                     self.option2Image.center = label.center
                     
                     let percentMoved = (label.center.x - self.imageCenterStart.x) / a
-                    self.option2Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option2Text.center.y)
-                    self.option2Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option2Bar.center.y)
+                    //self.option2Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option2Text.center.y)
+//                    self.option2Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option2Bar.center.y)
                     self.option2Checkmark.center = CGPoint(x: endX, y: label.center.y)
                     self.option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
+                    self.option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                    self.option2VoteArrow.center = CGPoint(x: endX, y: label.center.y)
+                    //self.option2VoteArrow.alpha = 0.8
                     
                     }, completion: { (isFinished) -> Void in
                 })
@@ -530,6 +604,15 @@ class QSTheirCellNEW: UITableViewCell {
         if totalResponses == 1 { resp = "response" }
         responsesText.text = "\(totalResponses) \(resp)"
         
+        option1Checkmark.alpha = 0.8
+        option2Checkmark.alpha = 0.8
+        
+        option1VoteArrow.removeFromSuperview()
+        option2VoteArrow.removeFromSuperview()
+        
+//        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+//        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        
         // Lock Q cell for voting
         if let recog = option1Zoom.gestureRecognizers {
             option1Zoom.removeGestureRecognizer(recognizer1)
@@ -540,7 +623,8 @@ class QSTheirCellNEW: UITableViewCell {
         
         // Update percentage stats and option text
         computePercents(optionId)
-        setOptionText(optionId)
+        setOptionText()
+        animateStatsBars()
     }
     
     

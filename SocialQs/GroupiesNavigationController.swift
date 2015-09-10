@@ -13,7 +13,7 @@ class GroupiesNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationBar.barTintColor = winColor
+        self.navigationBar.barTintColor = mainColorBlue // winColor
         //self.navigationBar.tintColor = UIColor.whiteColor()
         self.navigationBar.titleTextAttributes = [ NSForegroundColorAttributeName: UIColor.whiteColor() ]
     }

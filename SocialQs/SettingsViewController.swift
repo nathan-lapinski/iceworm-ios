@@ -23,7 +23,6 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     
     
-    
     @IBAction func spinnerButtonAction(sender: AnyObject) {
         
         displaySpinnerView(spinnerActive: true, UIBlock: true, self.boxView, self.blurView, "Testing Spinner", self)
@@ -231,7 +230,25 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
         
         profilePicture = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: 200, height: 200))
+        
         profilePictureImageView.image = profilePicture
+        
+        // Store image on parse to pull for Q display
+        let imageData = UIImagePNGRepresentation(profilePicture)
+        var imageFile: PFFile = PFFile(name: "profilePicture.png", data: imageData)
+        PFUser.currentUser()!.setObject(imageFile, forKey: "profilePicture")
+        
+        PFUser.currentUser()!.saveInBackgroundWithBlock({ (success, error) -> Void in
+            
+            if error == nil {
+                
+                println("image saved successfully")
+                
+            } else {
+                
+                println("image not saved")
+            }
+        })
         
         dismissViewControllerAnimated(true, completion: nil)
     }
