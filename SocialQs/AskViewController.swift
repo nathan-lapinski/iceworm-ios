@@ -250,7 +250,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     func submitQ(sender: AnyObject) -> Void {
         
-        displaySpinnerView(spinnerActive: true, UIBlock: true, askBoxView, askBlurView, "Submitting Q", self)
+        //displaySpinnerView(spinnerActive: true, UIBlock: true, askBoxView, askBlurView, "Submitting Q", self)
         
         //blockUI(true, askSpinner, askBlurView, self)
         
@@ -306,14 +306,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 
                 println("Successfully pinned new Q object")
                 
-                // Switch to results tab when question is submitted
-                // - storyboard ID for tabBarController = "tabBarController"
-                self.tabBarController?.selectedIndex = 1
+                self.navigationController?.popViewControllerAnimated(true)
+                //self.tabBarController?.selectedIndex = 1
                 
                 // clear text and photo entries
                 self.cancelButtonAction(sender)
                 
-                displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
+                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
                 
                 //blockUI(false, self.askSpinner, self.askBlurView, self)
             }
@@ -329,7 +328,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 
                 // Assign to groupies in QJoinTable
                 // Include an entry for self (ie: user will be "to", "from" AND "asker"
-                //  - This is for MyQs delete tracking
                 var sQsGroupieObjects: [PFObject] = []
                 
                 for sQsGroupie in self.socialQsGroupies {
@@ -373,16 +371,16 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 // ***************************************************
                 // DEBUG USE!! **************************
                 // ***************************************************
-                var qJoinCurrentUser = PFObject(className: "QJoin")
-                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
-                qJoinCurrentUser.setObject(PFUser.currentUser()!.username!, forKey: "to")
-                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
-                qJoinCurrentUser.setObject(false, forKey: "askeeDeleted")
-                qJoinCurrentUser.setObject(socialQ, forKey: "question")
-                qJoinCurrentUser.saveEventually({ (success, error) -> Void in
-                    
-                    println("QJoin entry successfully created")
-                })
+//                var qJoinCurrentUser = PFObject(className: "QJoin")
+//                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
+//                qJoinCurrentUser.setObject(PFUser.currentUser()!.username!, forKey: "to")
+//                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
+//                qJoinCurrentUser.setObject(false, forKey: "askeeDeleted")
+//                qJoinCurrentUser.setObject(socialQ, forKey: "question")
+//                qJoinCurrentUser.saveEventually({ (success, error) -> Void in
+//                    
+//                    println("QJoin entry successfully created")
+//                })
             }
         })
     }

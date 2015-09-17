@@ -105,14 +105,14 @@ class QSTheirCellNEW: UITableViewCell {
         self.addSubview(option2PercentText)
         self.addSubview(responsesText)
         
+        self.addSubview(option1VoteArrow)
+        self.addSubview(option2VoteArrow)
+        
         self.addSubview(option1Image)
         self.addSubview(option2Image)
         
         self.addSubview(option1Checkmark)
         self.addSubview(option2Checkmark)
-        
-        self.addSubview(option1VoteArrow)
-        self.addSubview(option2VoteArrow)
         
         self.addSubview(questionZoom)
         self.addSubview(option1Zoom)
@@ -256,17 +256,25 @@ class QSTheirCellNEW: UITableViewCell {
         option2Checkmark.image = UIImage(named: "voteCheckmark.png")
         option2Checkmark.alpha = 0.0
         
+        
+    
+        
         option1VoteArrow.frame = option1Checkmark.frame
+        option1VoteArrow.center = CGPoint(x: option1Image.center.x + option1Image.frame.width/2, y: option1Image.center.y)
         option1VoteArrow.layer.cornerRadius = option1Checkmark.frame.width/2
         option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
         option1VoteArrow.image = UIImage(named: "voteArrow.png")
         option1VoteArrow.alpha = 0.0
         
         option2VoteArrow.frame = option2Checkmark.frame
+        option2VoteArrow.center = CGPoint(x: option2Image.center.x + option2Image.frame.width/2, y: option2Image.center.y)
         option2VoteArrow.layer.cornerRadius = option2Checkmark.frame.width/2
         option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
         option2VoteArrow.image = UIImage(named: "voteArrow.png")
         option2VoteArrow.alpha = 0.0
+        
+        
+        
         
         if let test = QJoinObject["vote"] as? Int {
             option1VoteArrow.alpha = 0.0

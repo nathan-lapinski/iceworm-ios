@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="keB-Ft-4UR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="FL8-YP-Brd">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -1948,7 +1948,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" translucent="NO" id="eqR-bn-ddL">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
@@ -1956,8 +1956,9 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="ol0-y6-jkS" kind="relationship" relationship="viewControllers" id="7Oh-lZ-2Qp"/>
                         <segue destination="XoS-Et-fgi" kind="relationship" relationship="viewControllers" id="R5m-wT-YbU"/>
+                        <segue destination="ol0-y6-jkS" kind="relationship" relationship="viewControllers" id="7Oh-lZ-2Qp"/>
+                        <segue destination="q1z-JV-tiK" kind="relationship" relationship="viewControllers" id="VvZ-WA-DGI"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5hv-fB-cAa" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1988,7 +1989,7 @@
                                     <action selector="test:" destination="Y2K-QQ-ZOn" eventType="touchUpInside" id="poJ-cf-tkI"/>
                                 </connections>
                             </button>
-                            <tableView opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFill" ambiguous="YES" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="150" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="HeJ-p5-RO9">
+                            <tableView opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFill" fixedFrame="YES" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="150" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="HeJ-p5-RO9">
                                 <rect key="frame" x="16" y="82" width="343" height="405"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -2660,6 +2661,59 @@
             </objects>
             <point key="canvasLocation" x="-3453.5" y="-706.5"/>
         </scene>
+        <!--Global Qs-->
+        <scene sceneID="Gh2-dx-2zF">
+            <objects>
+                <viewController id="q1z-JV-tiK" customClass="QsTheirVC" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="vst-qx-KmZ"/>
+                        <viewControllerLayoutGuide type="bottom" id="yLK-83-TmN"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="HSz-W7-gy2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hfg-Lq-oKr">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </imageView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="214" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="9yK-yW-u6K">
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" rowHeight="214" id="suF-cs-iLM" customClass="QSTheirCellNEW" customModule="SocialQs" customModuleProvider="target">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="suF-cs-iLM" id="dey-4n-4v4">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="yLK-83-TmN" firstAttribute="top" secondItem="9yK-yW-u6K" secondAttribute="bottom" id="4gK-e3-DoS"/>
+                            <constraint firstItem="9yK-yW-u6K" firstAttribute="leading" secondItem="HSz-W7-gy2" secondAttribute="leadingMargin" constant="-16" id="R1q-76-Dxf"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="9yK-yW-u6K" secondAttribute="trailing" constant="-16" id="ZXC-gv-UGd"/>
+                            <constraint firstItem="9yK-yW-u6K" firstAttribute="top" secondItem="vst-qx-KmZ" secondAttribute="bottom" id="ecF-Hd-UuN"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Global Qs" image="global" id="YOh-Ei-fad">
+                        <offsetWrapper key="titlePositionAdjustment" horizontal="0.0" vertical="-3"/>
+                    </tabBarItem>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <connections>
+                        <outlet property="backgroundImageView" destination="hfg-Lq-oKr" id="syE-nc-bEM"/>
+                        <outlet property="tableView" destination="9yK-yW-u6K" id="aQu-We-nga"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="c9v-pa-UbU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-171.5" y="-1093.5"/>
+        </scene>
     </scenes>
     <resources>
         <image name="addGroup" width="26" height="26"/>
@@ -2670,6 +2724,7 @@
         <image name="camera" width="100" height="100"/>
         <image name="clear" width="19" height="19"/>
         <image name="createGroup" width="42" height="31"/>
+        <image name="global" width="26" height="26"/>
         <image name="logo_square" width="248" height="248"/>
         <image name="myQs" width="26" height="26"/>
         <image name="profile" width="800" height="600"/>

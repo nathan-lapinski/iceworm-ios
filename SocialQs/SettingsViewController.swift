@@ -157,6 +157,19 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
         uQId = ""
         profilePicture = nil
         
+        groupiesGroups = []
+        friendsDictionary = []
+        friendsPhotoDictionary = [:]
+        friendsDictionaryFiltered = []
+        nonFriendsDictionary = []
+        nonFriendsDictionaryFiltered = []
+        isGroupieName = []
+        groupiesDictionary = []
+        myGroups = [] // Stores strings of group names
+        //var myFriendsDictionary = [Dictionary<String, AnyObject>]()
+        myFriends = [] // Stores usernames of socialQs-typed users
+
+        
         // Logout PFUser
         PFUser.logOutInBackgroundWithBlock { (error) -> Void in
             

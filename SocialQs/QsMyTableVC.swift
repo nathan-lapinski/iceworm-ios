@@ -213,7 +213,6 @@ class QsMyTableVC: UITableViewController {
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) { }
     
     
-    // ALL query stuff moved to this function so it can run under pull-to-refresh conditions
     func refresh() {
         
         var myQsQueryLocal = PFQuery(className: "SocialQs")
@@ -228,6 +227,10 @@ class QsMyTableVC: UITableViewController {
         myQsQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
             if error == nil {
+                
+                if objects!.count < 1 {
+                    displayAlert("Let's get started!", "It looks like you need to create your first Q! Use the Ask button in the top left to begin building your Q.", self)
+                }
                 
                 self.questionObjects.removeAll(keepCapacity: true)
                 self.questionObjects = objects!
