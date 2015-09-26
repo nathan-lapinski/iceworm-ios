@@ -46,11 +46,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     @IBAction func test(sender: AnyObject) {
         var inviteDialog:FBSDKAppInviteDialog = FBSDKAppInviteDialog()
         if(inviteDialog.canShow()){
-            let appLinkUrl:NSURL = NSURL(string: "https://fb.me/1482092405439439")!
-//            let previewImageUrl:NSURL = NSURL(string: "http://mylink.com/image.png")!
+//            let appLinkUrl:NSURL = NSURL(string: "https://fb.me/1482092405439439")!
+//            let previewImageUrl:NSURL = NSURL(string: "http://socialqs.co/styles/images/brettFinal.png")!
             
             var inviteContent:FBSDKAppInviteContent = FBSDKAppInviteContent()
-            inviteContent.appLinkURL = appLinkUrl
+//            inviteContent.appLinkURL = appLinkUrl
 //            inviteContent.appInvitePreviewImageURL = previewImageUrl
             
             inviteDialog.content = inviteContent
@@ -173,16 +173,16 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //UITabBar.appearance().barTintColor = UIColor.whiteColor()
+//        var btnName: UIButton = UIButton()
+//        btnName.setImage(UIImage(named: "addUser.png"), forState: .Normal)
+//        btnName.frame = CGRectMake(0, 0, 30, 30)
+//        btnName.addTarget(self, action: Selector("displayGroupiesView"), forControlEvents: .TouchUpInside)
+//        //.... Set Right/Left Bar Button item
+//        var rightBarButton:UIBarButtonItem = UIBarButtonItem()
+//        rightBarButton.customView = btnName
+//        rightBarButton.tintColor = UIColor.greenColor()
+//        self.navigationItem.rightBarButtonItem = rightBarButton
         
-        //// IF IS LINKED WITH FACEBOOK ------------------------------------------------
-        // MOVED TO LOGIN/SIGNUP/WELCOME
-//        // Download FB data in background - backgrounding built into FBSDK methods (?)
-//        downloadFacebookFriends({ (isFinished) -> Void in
-//            
-//            if isFinished { println("FB Download completion handler executed") }
-//        })
-        //// IF IS LINKED WITH FACEBOOK ------------------------------------------------
         
         picker.delegate = self
         
@@ -210,6 +210,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //            displayAlert("Please reconsider", "SocialQs uses notification methods to minimize data usage and ensure users have recieve quick service! Follow the link in the SocialQs settings page to enable notifications.", self)
 //        }
     }
+    
+    
+//    func displayGroupiesView() {
+//        
+//        performSegueWithIdentifier("toGroupies", sender: self)
+//        
+//    }
     
     
     override func viewWillAppear(animated: Bool) {
@@ -356,7 +363,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                         
                         // *******************
                         //
-                        // sendPushes()
+                        self.sendPushes()
                         //
                         // *******************
                         
@@ -390,19 +397,19 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         println("Sending pushes")
         
-        // SEND CHANNEL PUSH -----------------------------------------------------
-        var pushGeneral:PFPush = PFPush()
-        pushGeneral.setChannel("reloadTheirTable")
-        
-        // Create dictionary to send JSON to parse/to other devices
-        var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
-        
-        pushGeneral.setData(dataGeneral)
-        
-        pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
-            if error == nil { //println("General push sent!")
-            }
-        })
+//        // SEND CHANNEL PUSH -----------------------------------------------------
+//        var pushGeneral:PFPush = PFPush()
+//        pushGeneral.setChannel("reloadTheirTable")
+//        
+//        // Create dictionary to send JSON to parse/to other devices
+//        var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
+//        
+//        pushGeneral.setData(dataGeneral)
+//        
+//        pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+//            if error == nil { //println("General push sent!")
+//            }
+//        })
         
         // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
         // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
@@ -576,7 +583,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 return rowHeights[2]
             }
         } else {
-            return 106
+            return 55
         }
     }
     

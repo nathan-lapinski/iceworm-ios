@@ -77,11 +77,11 @@ class QsMyTableVC: UITableViewController {
         // Pull to refresh --------------------------------------------------------
         
         // Set table background image
-        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg3.png"))
+        self.tableView.backgroundView = UIImageView(image: UIImage(named: "bg4.png"))
         //self.tableView.backgroundColor = UIColor.lightGrayColor()
         
         // Set separator color
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        //tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         
     }
@@ -228,9 +228,9 @@ class QsMyTableVC: UITableViewController {
             
             if error == nil {
                 
-                if objects!.count < 1 {
-                    displayAlert("Let's get started!", "It looks like you need to create your first Q! Use the Ask button in the top left to begin building your Q.", self)
-                }
+//                if objects!.count < 1 {
+//                    displayAlert("Let's get started!", "It looks like you need to create your first Q! Use the Ask button in the top left to begin building your Q.", self)
+//                }
                 
                 self.questionObjects.removeAll(keepCapacity: true)
                 self.questionObjects = objects!

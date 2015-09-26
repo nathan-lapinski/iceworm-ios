@@ -291,231 +291,295 @@ func downloadSocialQsFriends(completion: (Bool) -> Void) {
 func downloadFacebookFriends(completion: (Bool) -> Void) {
     
     backgroundThread(delay: 0.0, background: {
-    
+        
         // Get friends from FB to check for new friends OR friends that NOW have SocialQs
         friendsDictionary.removeAll(keepCapacity: true)
+
+        // Get list of facebook friends who have SOCIALQS
+        var friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
         
-        // Variable to store items that allow code to check if user is already in LDS
-        // and if they have recently downloaded and linked SocialQs
-        var friendCheck = Dictionary<String, String>()
-        
-        // Check currently DLd facebook friends and only log the ones that DNE yet (new friends)
-        var facebookFriendsQuery = PFQuery(className: "Friends")
-        facebookFriendsQuery.fromLocalDatastore()
-        facebookFriendsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
-        
-        facebookFriendsQuery.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+        friendsRequest1.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+            
+            //println("Downloading FB friends WITH sQs")
             
             if error == nil {
                 
-                if let temp = objects as? [PFObject] {
-                    
-                    for object in temp {
-                        
-                        var tempDict = Dictionary<String, AnyObject>()
-                        
-                        // Build an array of dictionaries to use for comparison to FB DL
-                        // Suggest: <picURL: type>
-                        tempDict["name"] = object["name"]! as! String
-                        tempDict["isSelected"] = false
-                        if let tempURL = object["picURL"] as? String { tempDict["picURL"] = tempURL as String }
-                        tempDict["type"] = object["type"]
-                        tempDict["id"] = object["id"]
-                        
-                        // Pull profile image and store in separate dict
-                        if let url = (tempDict["picURL"]) as? String {
-                            
-                            downloadFacebookFriendsPhotos(url, { (success) -> Void in })
-                        }
-                        
-                        if contains(isGroupieName, object["name"]! as! String) {
-                            
-                            tempDict["isSelected"] = true
-                        }
-                        
-                        // Add to friendCheck dictionary
-                        if let URLCheck = tempDict["picURL"] as? String {
-                            
-                            friendCheck[URLCheck as String] = tempDict["type"] as? String
-                        }
-                            
-                        // Append user to variable based friends system
-                        friendsDictionary.append(tempDict)
-                    }
-                }
-             
-                // Download from facebook -----------------------------------------------------------
-                struct userInfo {
-                    var id: String!
-                    var name: String!
-                }
+                var results: AnyObject = result["data"]!!
                 
-                var friendsWithApp = Dictionary<String, userInfo>()
+                var temp: AnyObject = result["data"]!!
                 
-                // Get list of facebook friends who have SOCIALQS
-                var friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
-                
-                friendsRequest1.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+                for var i = 0; i < results.count; i++ {
                     
-                    //println("Downloading FB friends WITH sQs")
+                    var tempDict = Dictionary<String, AnyObject>()
                     
-                    if error == nil {
+                    //tempDict.removeAll(keepCapacity: true)
+                    
+                    tempDict["name"] = results[i]["name"]!! as! String
+                    tempDict["isSelected"] = false
+                    tempDict["picURL"] = results[i]!["picture"]!!["data"]!!["url"]!!
+                    
+                    tempDict["type"] = "facebookWithApp"
+                    tempDict["id"] = results[i]["id"]!! as! String
+                    
+                    // Pull profile image and store in separate dict
+                    if let url = (tempDict["picURL"]) as? String {
                         
-                        friendsWithApp.removeAll(keepCapacity: true)
-                        
-                        var results: AnyObject = result["data"]!!
-                        
-                        for var i = 0; i < results.count; i++ {
-                            
-                            friendsWithApp[results[i]!["picture"]!!["data"]!!["url"]!! as! String] = userInfo(id: results[i]["id"]!! as! String, name: results[i]["name"]!! as! String)
-                        }
-                        
-                    } else {
-                        
-                        println("Error retrieving Facebook Users: \n\(error)")
+                        downloadFacebookFriendsPhotos(url, { (success) -> Void in })
                     }
                     
-                    // Get list of ALL facebook friends
-                    // - Nest in previous because we need the complete list of users who have SOCIALQS to filter "all" facebook friends properly
-                    var friendsRequest2 = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id,picture&limit=1000", parameters: nil);
-                    
-                    friendsRequest2.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+                    if contains(isGroupieName, results[i]["name"]!! as! String) {
                         
-                        //println("Downloading ALL FB friends and sorting")
-                        
-                        if error == nil {
-                            
-                            var temp: AnyObject = result["data"]!!
-                            
-                            var tempDict = Dictionary<String, AnyObject>()
-                            
-                            for var i = 0; i < temp.count; i++ {
-                                
-                                tempDict.removeAll(keepCapacity: true)
-                                
-                                tempDict["name"] = temp[i]["name"]!! as! String
-                                tempDict["isSelected"] = false
-                                tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
-                                
-                                // if this URL exists in "friendsWithApp" then we use "friendsWithApp" id because it is not just a token
-                                if let tempURL = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String] {
-                                    
-                                    tempDict["type"] = "facebookWithApp"
-                                    tempDict["id"] = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String]!.id
-                                    
-                                } else {
-                                    
-                                    tempDict["type"] = "facebookWithoutApp"
-                                    tempDict["id"] = temp[i]["id"]!! as! String
-                                }
-                                
-                                // Pull profile image and store in separate dict
-                                if let url = (tempDict["picURL"]) as? String {
-                                
-                                    downloadFacebookFriendsPhotos(url, { (success) -> Void in })
-                                }
-                                
-                                if contains(isGroupieName, temp[i]["name"]!! as! String) {
-                                    
-                                    tempDict["isSelected"] = true
-                                }
-                                
-                                // ************************************************
-                                // If this is going to run a lot, why bother with the skip?
-                                // - Just update all in LDS since it will be a background process anyway
-                                // ====================================================================
-                                // skip this user if they are NOT NEW and have NOT CHANGED type
-                                // (compare to friends pulled from LDS above
-                                if let check1 = friendCheck[temp[i]!["picture"]!!["data"]!!["url"]!! as! String] { // user already in LDS
-                                    
-                                    if friendCheck[tempDict["picURL"] as! String] == tempDict["type"] as? String { // user is same type in LDS
-                                        
-                                        //println("User exists in LDS with same account type. Skipping")
-                                        
-                                        // skip end of iteration as to not re-append this user
-                                        continue
-                                        
-                                    } else { // user varies in LDS - needs to be updated!
-                                        
-                                        println("User exists in LDS with different state. Updating user...")
-                                        
-                                        // update on LDS and DB
-                                        var friendQuery = PFQuery(className: "Friends")
-                                        friendQuery.fromLocalDatastore()
-                                        friendQuery.whereKey("picURL", equalTo: tempDict["picURL"] as! String)
-                                        
-                                        friendQuery.getFirstObjectInBackgroundWithBlock({ (object, error) -> Void in
-                                            
-                                            if error == nil {
-                                                
-                                                // Update account type
-                                                object?.setObject(tempDict["type"] as! String, forKey: "type")
-                                                
-                                                // rePin user to LDS
-                                                object?.pinInBackgroundWithBlock { (success, error) -> Void in
-                                                    
-                                                    if error == nil {
-                                                        
-                                                        //println("Successfully pinned user with updated account type")
-                                                    }
-                                                }
-                                            }
-                                        })
-                                        
-                                        // skip end of iteration as to not re-append this user
-                                        continue
-                                    }
-                                    
-                                } else { // User is NEW, add to dictionary and LDS
-                                    
-                                    friendsDictionary.append(tempDict)
-                                    
-                                    // ===================================================================
-                                    //
-                                    // Pin new asshole users
-                                    //
-                                    // ===================================================================
-                                    
-                                    var newFriend = PFObject(className: "Friends")
-                                    newFriend["name"] = tempDict["name"] as! String
-                                    newFriend["picURL"] = tempDict["picURL"] as! String
-                                    newFriend["type"] = tempDict["type"] as! String
-                                    newFriend["id"] = tempDict["id"] as! String
-                                    newFriend.setObject(PFUser.currentUser()!, forKey: "owner")
-                                    
-                                    // Pin new user
-                                    newFriend.pinInBackgroundWithBlock({ (success, error) -> Void in
-                                        
-                                        if error == nil {
-                                            
-                                            //println("Successfully pinned new user!")
-                                            
-                                        } else {
-                                            
-                                            println("There was an error pinning new user: \n\(error)")
-                                        }
-                                    })
-                                }
-                            }
-                            
-                            println("Facebook friend retrieval complete")
-                            
-                            // Set completion
-                            completion(true)
-                            
-                        } else {
-                            
-                            println("Error retrieving Facebook non-users: \n\(error)")
-                        }
+                        tempDict["isSelected"] = true
                     }
+
+                    friendsDictionary.append(tempDict)
+                    
                 }
                 
             } else {
                 
-                println("There was an error retrieving friends from the LDS: \n\(error)")
+                println("Error retrieving Facebook Users: \n\(error)")
             }
         }
     })
+    
+//
+//
+//    backgroundThread(delay: 0.0, background: {
+//
+//        // Get friends from FB to check for new friends OR friends that NOW have SocialQs
+//        friendsDictionary.removeAll(keepCapacity: true)
+//
+//        // Variable to store items that allow code to check if user is already in LDS
+//        // and if they have recently downloaded and linked SocialQs
+//        var friendCheck = Dictionary<String, String>()
+//        
+//        // Check currently DLd facebook friends and only log the ones that DNE yet (new friends)
+//        var facebookFriendsQuery = PFQuery(className: "Friends")
+//        facebookFriendsQuery.fromLocalDatastore()
+//        facebookFriendsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
+//        
+//        facebookFriendsQuery.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                if let temp = objects as? [PFObject] {
+//                    
+//                    for object in temp {
+//                        
+//                        var tempDict = Dictionary<String, AnyObject>()
+//                        
+//                        // Build an array of dictionaries to use for comparison to FB DL
+//                        // Suggest: <picURL: type>
+//                        tempDict["name"] = object["name"]! as! String
+//                        tempDict["isSelected"] = false
+//                        if let tempURL = object["picURL"] as? String { tempDict["picURL"] = tempURL as String }
+//                        tempDict["type"] = object["type"]
+//                        tempDict["id"] = object["id"]
+//                        
+//                        // Pull profile image and store in separate dict
+//                        if let url = (tempDict["picURL"]) as? String {
+//                            
+//                            downloadFacebookFriendsPhotos(url, { (success) -> Void in })
+//                        }
+//                        
+//                        if contains(isGroupieName, object["name"]! as! String) {
+//                            
+//                            tempDict["isSelected"] = true
+//                        }
+//                        
+//                        // Add to friendCheck dictionary
+//                        if let URLCheck = tempDict["picURL"] as? String {
+//                            
+//                            friendCheck[URLCheck as String] = tempDict["type"] as? String
+//                        }
+//                            
+//                        // Append user to variable based friends system
+//                        friendsDictionary.append(tempDict)
+//                    }
+//                }
+//                
+//                println(friendCheck.count)
+//                println(friendCheck)
+//             
+//                // Download from facebook -----------------------------------------------------------
+//                struct userInfo {
+//                    var id: String!
+//                    var name: String!
+//                }
+//                
+//                var friendsWithApp = Dictionary<String, userInfo>()
+//                
+                // Get list of facebook friends who have SOCIALQS
+//                var friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
+//                
+//                friendsRequest1.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+//                    
+//                    //println("Downloading FB friends WITH sQs")
+//                    
+//                    if error == nil {
+//                        
+//                        friendsWithApp.removeAll(keepCapacity: true)
+//                        
+//                        var results: AnyObject = result["data"]!!
+//                        
+//                        for var i = 0; i < results.count; i++ {
+//                            
+//                            //println(results[i])
+//                            
+//                            friendsWithApp[results[i]!["picture"]!!["data"]!!["url"]!! as! String] = userInfo(id: results[i]["id"]!! as! String, name: results[i]["name"]!! as! String)
+//                        }
+//                        
+//                    } else {
+//                        
+//                        println("Error retrieving Facebook Users: \n\(error)")
+//                    }
+//
+//                    // Get list of ALL facebook friends
+//                    // - Nest in previous because we need the complete list of users who have SOCIALQS to filter "all" facebook friends properly
+//                    var friendsRequest2 = FBSDKGraphRequest(graphPath:"/me/taggable_friends?fields=name,id,picture&limit=1000", parameters: nil);
+//                    
+//                    friendsRequest2.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
+//                        
+//                        //println("Downloading ALL FB friends and sorting")
+//                        
+//                        if error == nil {
+//                            
+//                            var temp: AnyObject = result["data"]!!
+//
+//                            var tempDict = Dictionary<String, AnyObject>()
+//                            
+//                            for var i = 0; i < temp.count; i++ {
+//                                
+//                                //println(temp[i])
+//                                
+//                                tempDict.removeAll(keepCapacity: true)
+//                                
+//                                tempDict["name"] = temp[i]["name"]!! as! String
+//                                tempDict["isSelected"] = false
+//                                tempDict["picURL"] = temp[i]!["picture"]!!["data"]!!["url"]!!
+//                                
+//                                // if this URL exists in "friendsWithApp" then we use "friendsWithApp" id because it is not just a token
+//                                if let tempURL = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String] {
+//                                    
+//                                    tempDict["type"] = "facebookWithApp"
+//                                    tempDict["id"] = friendsWithApp[temp[i]!["picture"]!!["data"]!!["url"]!! as! String]!.id
+//                                    
+//                                } else {
+//                                    
+//                                    tempDict["type"] = "facebookWithoutApp"
+//                                    tempDict["id"] = temp[i]["id"]!! as! String
+//                                }
+//                                
+//                                // Pull profile image and store in separate dict
+//                                if let url = (tempDict["picURL"]) as? String {
+//                                
+//                                    downloadFacebookFriendsPhotos(url, { (success) -> Void in })
+//                                }
+//                                
+//                                if contains(isGroupieName, temp[i]["name"]!! as! String) {
+//                                    
+//                                    tempDict["isSelected"] = true
+//                                }
+//
+//                                // ************************************************
+//                                // If this is going to run a lot, why bother with the skip?
+//                                // - Just update all in LDS since it will be a background process anyway
+//                                // ====================================================================
+//                                // skip this user if they are NOT NEW and have NOT CHANGED type
+//                                // (compare to friends pulled from LDS above
+//                                if let check1 = friendCheck[temp[i]!["picture"]!!["data"]!!["url"]!! as! String] { // user already in LDS
+//                                    
+//                                    if friendCheck[tempDict["picURL"] as! String] == tempDict["type"] as? String { // user is same type in LDS
+//                                        
+//                                        //println("User exists in LDS with same account type. Skipping")
+//                                        
+//                                        // skip end of iteration as to not re-append this user
+//                                        continue
+//                                        
+//                                    } else { // user varies in LDS - needs to be updated!
+//                                        
+//                                        println("User exists in LDS with different state. Updating user...")
+//                                        
+//                                        // update on LDS and DB
+//                                        var friendQuery = PFQuery(className: "Friends")
+//                                        friendQuery.fromLocalDatastore()
+//                                        friendQuery.whereKey("picURL", equalTo: tempDict["picURL"] as! String)
+//                                        
+//                                        friendQuery.getFirstObjectInBackgroundWithBlock({ (object, error) -> Void in
+//                                            
+//                                            if error == nil {
+//                                                
+//                                                // Update account type
+//                                                object?.setObject(tempDict["type"] as! String, forKey: "type")
+//                                                
+//                                                // rePin user to LDS
+//                                                object?.pinInBackgroundWithBlock { (success, error) -> Void in
+//                                                    
+//                                                    if error == nil {
+//                                                        
+//                                                        //println("Successfully pinned user with updated account type")
+//                                                    }
+//                                                }
+//                                            }
+//                                        })
+//                                        
+//                                        // skip end of iteration as to not re-append this user
+//                                        continue
+//                                    }
+//                                    
+//                                } else { // User is NEW, add to dictionary and LDS
+//                                    
+//                                    friendsDictionary.append(tempDict)
+//                                    
+//                                    // ===================================================================
+//                                    //
+//                                    // Pin new asshole users
+//                                    //
+//                                    // ===================================================================
+//                                    
+//                                    var newFriend = PFObject(className: "Friends")
+//                                    newFriend["name"] = tempDict["name"] as! String
+//                                    newFriend["picURL"] = tempDict["picURL"] as! String
+//                                    newFriend["type"] = tempDict["type"] as! String
+//                                    newFriend["id"] = tempDict["id"] as! String
+//                                    newFriend.setObject(PFUser.currentUser()!, forKey: "owner")
+//                                    
+//                                    // Pin new user
+//                                    newFriend.pinInBackgroundWithBlock({ (success, error) -> Void in
+//                                        
+//                                        if error == nil {
+//                                            
+//                                            //println("Successfully pinned new user!")
+//                                            
+//                                        } else {
+//                                            
+//                                            println("There was an error pinning new user: \n\(error)")
+//                                        }
+//                                    })
+//                                }
+//                            }
+//                            
+//                            println("Facebook friend retrieval complete")
+//                            
+//                            // Set completion
+//                            completion(true)
+//                            
+//                            println(friendsDictionary)
+//                            
+//                        } else {
+//                            
+//                            println("Error retrieving Facebook non-users: \n\(error)")
+//                        }
+//                    }
+//                }
+//                
+//            } else {
+//                
+//                println("There was an error retrieving friends from the LDS: \n\(error)")
+//            }
+//        }
+//    })
 }
 //*******************************************************************************
 // ^ NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!

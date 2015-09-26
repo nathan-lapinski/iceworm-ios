@@ -35,8 +35,6 @@ class SignupViewController: UIViewController {
                 
                 displaySpinnerView(spinnerActive: true, UIBlock: true, self.signupSpinner, self.signupBlurView, "Logging In", self)
                 
-                //blockUI(true, self.signupSpinner, self.signupBlurView, self)
-                
                 // Download socialQs friends
                 downloadSocialQsFriends({ (isFinished) -> Void in })
                 
@@ -55,24 +53,11 @@ class SignupViewController: UIViewController {
                     
                     getUserPhoto({ (isFinished) -> Void in })
                     
-//                    // Create entry in UserQs table
-//                    createUserQs(PFUser.currentUser()!.username!, { (isFinished) -> Void in // desired to complete before storing info
-//                        
-//                        if isFinished {
-//                            
-//                        } else {
-//                            
-//                            displayAlert("Unable to create account", "Please check your internet connection and try again!", self)
-//                        }
-//                    })
-                    
                     getUsersFacebookInfo({ (isFinished) -> Void in // desired to complete before storing info
                         
                         self.performSegueWithIdentifier("signedUp", sender: self)
                         
                         displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
-                        
-                        //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                         
                         storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
                         

@@ -268,15 +268,15 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         //self.title = "Select Groupies"
         
         
-        
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
-        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()
-        var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "addUser.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "findUser")
-        //var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "findUser")
-        groupsNavigationButton.tintColor = UIColor.whiteColor()
+        // Add "find user" button
+//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
+//        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()
+//        var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "addUser.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "findUser")
+//        //var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "findUser")
+//        groupsNavigationButton.tintColor = UIColor.whiteColor()
         if let addNavigationButton = self.navigationItem.rightBarButtonItem {
             addNavigationButton.tintColor = UIColor.whiteColor()
-            self.navigationItem.setRightBarButtonItems([addNavigationButton, groupsNavigationButton], animated: true)
+//            self.navigationItem.setRightBarButtonItems([addNavigationButton, groupsNavigationButton], animated: true)
         }
         
         // Format Done button
