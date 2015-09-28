@@ -129,25 +129,27 @@ class WelcomeVC: UIViewController {
                 myGroups = groups
             }
             
-            // Download socialQs friends
-            downloadSocialQsFriends({ (isFinished) -> Void in })
-            
-            // Download groups
-            downloadGroups({ (isFinished) -> Void in })
-            
-            // Download FB data in background - backgrounding built into FBSDK methods (?)
-            downloadFacebookFriends({ (isFinished) -> Void in
-                
-                if isFinished { println("FB Download completion handler executed") }
-            })
-            
             // No need to store data, pull photo etc... because user is
             // already logged in and data exists in proper locations
             performSegueWithIdentifier("alreadySignedIn", sender: self)
             
             getUserPhoto({ (isFinished) -> Void in })
             
-            storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+            storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in
+                
+                // Download FB data in background - backgrounding built into FBSDK methods (?)
+                downloadFacebookFriends({ (isFinished) -> Void in
+                    
+                    if isFinished { println("FB Download completion handler executed") }
+                })
+            
+            })
+            
+            //            // Download socialQs friends
+            //            downloadSocialQsFriends({ (isFinished) -> Void in })
+            
+            // Download groups
+            downloadGroups({ (isFinished) -> Void in })
         }
     }
 

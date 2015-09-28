@@ -1,14 +1,14 @@
 //
-//  QsTheirVC.swift
+//  QsMyVC.swift
 //  SocialQs
 //
-//  Created by Brett Wiesman on 9/4/15.
+//  Created by Brett Wiesman on 9/26/15.
 //  Copyright (c) 2015 BookSix. All rights reserved.
 //
 
 import UIKit
 
-class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, TheirTableViewCellDelegate {
+class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTableViewCellDelegate {
     
     var QJoinObjects: [AnyObject] = []
     var refresher: UIRefreshControl!
@@ -28,55 +28,55 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         self.tableView.addSubview(refresher)
         // Pull to refresh --------------------------------------------------------
         
-        backgroundImageView.image = UIImage(named: "bg5.png")
+        //backgroundImageView.image = UIImage(named: "bg5.png")
         tableView.backgroundColor = UIColor.clearColor()
-//        tableView.backgroundColor = UIColor(red: 236/256, green: 236/256, blue: 236/256, alpha: 1.0) //UIColor.whiteColor()//.colorWithAlphaComponent(0.95)
+        //        tableView.backgroundColor = UIColor(red: 236/256, green: 236/256, blue: 236/256, alpha: 1.0) //UIColor.whiteColor()//.colorWithAlphaComponent(0.95)
         
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.registerClass(QSTheirCellNEW.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(QSMyCellNEW.self, forCellReuseIdentifier: "cell")
     }
     
     
     override func viewWillAppear(animated: Bool) {
         
-//        if returningFromSettings == false && returningFromPopover == false {
-//            
-//            println("Page loaded from tab bar")
-//            
-//            topOffset = 64
-//            
-            refresh()
-//        }
-//        
-//        if returningFromPopover {
-//            
-//            println("Returned from popover")
-//            
-//            returningFromPopover = false
-//            
-//            if myViewReturnedOnce == false {
-//                myViewReturnedOnce = true
-//                topOffset = 0
-//            } else {
-//                topOffset = 64
-//            }
-//            
-//            tableView.reloadData()
-//        }
-//        
-//        if returningFromSettings {
-//            
-//            println("Returned from settings")
-//            
-//            returningFromSettings = false
-//            
-//            topOffset = 0
-//            
-//            tableView.reloadData()
-//        }
-//        
-//        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
+        //        if returningFromSettings == false && returningFromPopover == false {
+        //
+        //            println("Page loaded from tab bar")
+        //
+        //            topOffset = 64
+        //
+        refresh()
+        //        }
+        //
+        //        if returningFromPopover {
+        //
+        //            println("Returned from popover")
+        //
+        //            returningFromPopover = false
+        //
+        //            if myViewReturnedOnce == false {
+        //                myViewReturnedOnce = true
+        //                topOffset = 0
+        //            } else {
+        //                topOffset = 64
+        //            }
+        //
+        //            tableView.reloadData()
+        //        }
+        //
+        //        if returningFromSettings {
+        //
+        //            println("Returned from settings")
+        //
+        //            returningFromSettings = false
+        //
+        //            topOffset = 0
+        //
+        //            tableView.reloadData()
+        //        }
+        //
+        //        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
     }
     
     
@@ -90,10 +90,10 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSTheirCellNEW
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSMyCellNEW
         
         cell.delegate = self
-        cell.QJoinObject = QJoinObjects[indexPath.row] as! PFObject
+        cell.QObject = QJoinObjects[indexPath.row] as! PFObject
         
         return cell
     }
@@ -109,20 +109,20 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
             
             // Set question for viewing
-            questionToView = self.QJoinObjects[indexPath.row]["question"]!! as? PFObject
+            questionToView = self.QJoinObjects[indexPath.row] as? PFObject
             
-            self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
+            self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
             
             self.tableView.setEditing(false, animated: true)
         }
         view.backgroundColor = UIColor.orangeColor()
         
         
-//        let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
-//            
-//            println("share button tapped")
-//        }
-//        share.backgroundColor = UIColor.grayColor()
+        //        let share = UITableViewRowAction(style: .Normal, title: "Share") { action, index in
+        //
+        //            println("share button tapped")
+        //        }
+        //        share.backgroundColor = UIColor.grayColor()
         
         
         let trash = UITableViewRowAction(style: .Normal, title: "Trash") { action, index in
@@ -165,7 +165,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         }
         trash.backgroundColor = UIColor.redColor()
         
-        println("Swiped THEIR row: \(indexPath.row)")
+        println("Swiped MY row: \(indexPath.row)")
         
         if self.QJoinObjects[indexPath.row]["vote"] != nil {
             
@@ -191,7 +191,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     
     func segueToZoom() {
-        self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: self)
+        self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: self)
     }
     
     
@@ -199,17 +199,17 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         
         QJoinObjects.removeAll(keepCapacity: true)
         
-        var qJoinQueryLocal = PFQuery(className: "QJoin")
-        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!.username!)
-        qJoinQueryLocal.whereKey("asker", notEqualTo: PFUser.currentUser()!)
-        qJoinQueryLocal.orderByDescending("createdAt")
-        qJoinQueryLocal.whereKey("askeeDeleted", equalTo: false)
-        qJoinQueryLocal.limit = 1000
-        qJoinQueryLocal.includeKey("question")
-        qJoinQueryLocal.includeKey("asker")
-        qJoinQueryLocal.fromLocalDatastore()
+        var qQueryLocal = PFQuery(className: "QJoin")
+        qQueryLocal.fromLocalDatastore()
+        qQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!.username!)
+        qQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
+        qQueryLocal.orderByDescending("createdAt")
+        qQueryLocal.whereKey("askerDeleted", equalTo: false)
+        qQueryLocal.includeKey("asker")
+        qQueryLocal.includeKey("question")
+        qQueryLocal.limit = 1000
         
-        qJoinQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+        qQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
             var alreadyRetrieved = [String]()
             
@@ -230,16 +230,16 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 }
                 
                 // Get Qs that are not in localdata store
-                var qJoinQueryServer = PFQuery(className: "QJoin")
-                qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!.username!)
-                qJoinQueryServer.whereKey("asker", notEqualTo: PFUser.currentUser()!)
-                qJoinQueryServer.whereKey("objectId", notContainedIn: alreadyRetrieved)
-                qJoinQueryServer.orderByDescending("createdAt")
-                qJoinQueryServer.limit = 1000
-                qJoinQueryServer.includeKey("question")
-                qJoinQueryServer.includeKey("asker")
+                var qQueryServer = PFQuery(className: "QJoin")
+                qQueryServer.whereKey("asker", equalTo: PFUser.currentUser()!)
+                qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!.username!)
+                qQueryServer.whereKey("objectId", notContainedIn: alreadyRetrieved)
+                qQueryServer.orderByDescending("createdAt")
+                qQueryServer.includeKey("asker")
+                qQueryServer.includeKey("question")
+                qQueryServer.limit = 1000
                 
-                qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                qQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
                     
                     if error == nil {
                         
@@ -258,7 +258,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                                     
                                     if error == nil {
                                         
-                                        println("Their Qs QJoin Object \(object.objectId!) pinned!")
+                                        println("My Qs QJoin Object \(object.objectId!) pinned!")
                                     }
                                 }
                             }
@@ -277,6 +277,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                         
                         // Kill refresher when query finished
                         self.refresher.endRefreshing()
+                        
+                        println(self.QJoinObjects.count)
                     }
                 })
                 
@@ -289,7 +291,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
             
         }
     }
-
+    
     
     
     override func didReceiveMemoryWarning() {
@@ -299,4 +301,3 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     
 }
-

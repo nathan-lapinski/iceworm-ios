@@ -161,8 +161,8 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
         friendsDictionary = []
         friendsPhotoDictionary = [:]
         friendsDictionaryFiltered = []
-        nonFriendsDictionary = []
-        nonFriendsDictionaryFiltered = []
+//        nonFriendsDictionary = []
+//        nonFriendsDictionaryFiltered = []
         isGroupieName = []
         groupiesDictionary = []
         myGroups = [] // Stores strings of group names

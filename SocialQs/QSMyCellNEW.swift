@@ -1,21 +1,21 @@
 //
-//  QSTheirCellNEW.swift
+//  QSMyCellNEW.swift
 //  SocialQs
 //
-//  Created by Brett Wiesman on 9/4/15.
+//  Created by Brett Wiesman on 9/26/15.
 //  Copyright (c) 2015 BookSix. All rights reserved.
 //
 
 import UIKit
 
-protocol TheirTableViewCellDelegate {
+protocol MyTableViewCellDelegate {
     //func toDoItemDeleted()
     func segueToZoom()
 }
 
-class QSTheirCellNEW: UITableViewCell {
+class QSMyCellNEW: UITableViewCell {
     
-    var delegate: TheirTableViewCellDelegate?
+    var delegate: MyTableViewCellDelegate?
     var optionIdentifier: Int = 0
     var option1Offset: CGFloat = 38.0
     var option2Offset: CGFloat = 38.0
@@ -70,7 +70,7 @@ class QSTheirCellNEW: UITableViewCell {
     var option2PercentText: UILabel! = UILabel()
     var responsesText: UILabel! = UILabel()
     
-    var QJoinObject: PFObject!
+    var QObject: PFObject!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -134,8 +134,8 @@ class QSTheirCellNEW: UITableViewCell {
         questionBackground.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)//mainColorBlue
         
         profilePicture.frame = CGRectMake(8, 8, 60, 60)
-        if (QJoinObject["question"]!["asker"]!!["profilePicture"] as? PFFile != nil) {
-            getImageFromPFFile(QJoinObject["question"]!["asker"]!!["profilePicture"]!! as! PFFile, { (image, error) -> () in
+        if (QObject["asker"]!["profilePicture"] as? PFFile != nil) {
+            getImageFromPFFile(QObject["asker"]!["profilePicture"]!! as! PFFile, { (image, error) -> () in
                 if error == nil {
                     self.profilePicture.image = image
                 }
@@ -149,10 +149,10 @@ class QSTheirCellNEW: UITableViewCell {
         usernameLabel.frame = CGRectMake(67, 7, 150, 20)
         usernameLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
         usernameLabel?.textColor = UIColor.whiteColor() // winColor // UIColor.lightGrayColor()
-        let usernameString = QJoinObject["question"]!["asker"]!!["username"] as? String
+        let usernameString = QObject["asker"]!["username"] as? String
         usernameLabel.text = "@\(usernameString!) asked:"
         
-        if let questionPhotoThumb = self.QJoinObject["question"]!["questionPhotoThumb"] as? PFFile {
+        if let questionPhotoThumb = self.QObject["question"]!["questionPhotoThumb"] as? PFFile {
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
             getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -176,7 +176,7 @@ class QSTheirCellNEW: UITableViewCell {
         questionPicture.layer.cornerRadius = questionPicture.frame.width/2
         
         questionText.frame = CGRectMake(profilePicture.center.x + profilePicture.frame.width/2 + horizontalSpace, 24, bounds.width - profilePicture.frame.width - questionPicture.frame.width - 4*horizontalSpace, 40)
-        if let qText = self.QJoinObject["question"]!["questionText"] as? String {
+        if let qText = self.QObject["question"]!["questionText"] as? String {
             questionText.text = qText
             questionText.numberOfLines = 0
             questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
@@ -198,7 +198,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
         option1Zoom.frame = option1Image.frame
-        if let option1PhotoThumb = self.QJoinObject["question"]!["option1PhotoThumb"] as? PFFile {
+        if let option1PhotoThumb = self.QObject["question"]!["option1PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -221,7 +221,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
         option2Zoom.frame = option2Image.frame
-        if let option2PhotoThumb = self.QJoinObject["question"]!["option2PhotoThumb"] as? PFFile {
+        if let option2PhotoThumb = self.QObject["question"]!["option2PhotoThumb"] as? PFFile {
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
                 if error == nil {
                     self.option2Image.image = image
@@ -257,7 +257,7 @@ class QSTheirCellNEW: UITableViewCell {
         option2Checkmark.alpha = 0.0
         
         
-    
+        
         
         option1VoteArrow.frame = option1Checkmark.frame
         option1VoteArrow.center = CGPoint(x: option1Image.center.x + option1Image.frame.width/2, y: option1Image.center.y)
@@ -276,7 +276,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         
         
-        if let test = QJoinObject["vote"] as? Int {
+        if let test = QObject["vote"] as? Int {
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
         } else {
@@ -293,7 +293,7 @@ class QSTheirCellNEW: UITableViewCell {
             option2VoteArrow.alpha = 1.0
         }
         
-        totalResponses = (self.QJoinObject["question"]!["option1Stats"] as! Int) + (QJoinObject["question"]!["option2Stats"] as! Int)
+        totalResponses = (self.QObject["question"]!["option1Stats"] as! Int) + (QObject["question"]!["option2Stats"] as! Int)
         if totalResponses != 0 {
             option1Percent = computePercents(1)
             option2Percent = 100 - option1Percent//computePercents(2)
@@ -327,12 +327,12 @@ class QSTheirCellNEW: UITableViewCell {
         imageCenterEnd.x = bounds.width - option1Image.frame.width/2 - 8
         option1PercentText.alpha = 0.0
         option2PercentText.alpha = 0.0
-        if let test = QJoinObject["vote"] as? Int {
+        if let test = QObject["vote"] as? Int {
             option1PercentText.hidden = false
             option2PercentText.hidden = false
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
-            println(QJoinObject["vote"] as? Int)
+            println(QObject["vote"] as? Int)
             animateStatsBars()
             if test == 1 {
                 //option1Checkmark.layer.borderWidth = 2.0
@@ -372,7 +372,7 @@ class QSTheirCellNEW: UITableViewCell {
             self.option1PercentText.alpha = 1.0
             self.option2PercentText.alpha = 1.0
             
-        }) { (isFinished) -> Void in }
+            }) { (isFinished) -> Void in }
         
     }
     
@@ -382,9 +382,9 @@ class QSTheirCellNEW: UITableViewCell {
         var optionPercent:Float = 0.0
         
         if id == 1 {
-            optionPercent = Float((self.QJoinObject["question"]!["option1Stats"] as! Int))/Float(totalResponses)*100
+            optionPercent = Float((self.QObject["question"]!["option1Stats"] as! Int))/Float(totalResponses)*100
         } else {
-            optionPercent = Float((self.QJoinObject["question"]!["option2Stats"] as! Int))/Float(totalResponses)*100
+            optionPercent = Float((self.QObject["question"]!["option2Stats"] as! Int))/Float(totalResponses)*100
         }
         
         return optionPercent
@@ -392,12 +392,12 @@ class QSTheirCellNEW: UITableViewCell {
     
     
     func setOptionText() {
-            
+        
         option1Text.frame = CGRectMake(option1Image.frame.width + 2*horizontalSpace, option1Image.frame.origin.y, bounds.width - 2*option1Image.frame.width - 4*horizontalSpace, 60)
-        if let oText = self.QJoinObject["question"]!["option1Text"] as? String {
-                option1Text.text = oText
+        if let oText = self.QObject["question"]!["option1Text"] as? String {
+            option1Text.text = oText
         } else {
-                option1Text.text = ""
+            option1Text.text = ""
         }
         option1Text.numberOfLines = 3
         option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
@@ -411,7 +411,7 @@ class QSTheirCellNEW: UITableViewCell {
         option1PercentText?.textColor = UIColor.darkTextColor()
         
         option2Text.frame = CGRectMake(option2Image.frame.width + 2*horizontalSpace, option2Image.frame.origin.y, bounds.width - 2*option2Image.frame.width - 4*horizontalSpace, 60)
-        if let o2Text = self.QJoinObject["question"]!["option2Text"] as? String {
+        if let o2Text = self.QObject["question"]!["option2Text"] as? String {
             option2Text.text = o2Text
             
         } else {
@@ -441,22 +441,22 @@ class QSTheirCellNEW: UITableViewCell {
     
     func questionZoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QJoinObject["question"] as? PFObject
+        questionToView = QObject["question"]! as? PFObject
         self.delegate?.segueToZoom()
     }
     
     func image1Zoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QJoinObject["question"] as? PFObject
-        if (QJoinObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
+        questionToView = QObject["question"]! as? PFObject
+        if (QObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     
     func image2Zoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QJoinObject["question"] as? PFObject
-        if (QJoinObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
-        if (QJoinObject["question"]!["option1Photo"]  as? PFFile != nil) { zoomPage++ }
+        questionToView = QObject["question"]! as? PFObject
+        if (QObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
+        if (QObject["question"]!["option1Photo"]  as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     
@@ -470,14 +470,14 @@ class QSTheirCellNEW: UITableViewCell {
         let translation = recognizer.translationInView(self)
         var percentMoved = translation.x/(bounds.width - option1Image.frame.width - 2*horizontalSpace)
         
-//        var scale: CGFloat = 1.0
-//        if (percentMoved/0.5) <= 1.0 {
-//            scale = abs(percentMoved/0.5) + 1
-//        } else {
-//            scale = abs(1 - (percentMoved/0.5 - 1)) + 1
-//        }
-//        println(scale)
-            
+        //        var scale: CGFloat = 1.0
+        //        if (percentMoved/0.5) <= 1.0 {
+        //            scale = abs(percentMoved/0.5) + 1
+        //        } else {
+        //            scale = abs(1 - (percentMoved/0.5 - 1)) + 1
+        //        }
+        //        println(scale)
+        
         // Total amount the image view will move
         let a = bounds.width - option1Image.frame.width - 2*horizontalSpace
         
@@ -493,7 +493,7 @@ class QSTheirCellNEW: UITableViewCell {
             option1Image.center = label.center
             let percentMoved = (label.center.x - imageCenterStart.x) / a
             //option1Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option1Text.center.y)
-//            option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option1Bar.center.y)
+            //            option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option1Bar.center.y)
             option1Checkmark.center = CGPoint(x: option1Offset + translation.x, y: label.center.y)
             option1VoteArrow.center = option1Checkmark.center
             //option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
@@ -516,7 +516,7 @@ class QSTheirCellNEW: UITableViewCell {
             option2Image.center = label.center
             let percentMoved = (label.center.x - imageCenterStart.x) / a
             //option2Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option2Text.center.y)
-//            option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option2Bar.center.y)
+            //            option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option2Bar.center.y)
             option2Checkmark.center = CGPoint(x: option2Offset + translation.x, y: label.center.y)
             option2VoteArrow.center = option2Checkmark.center
             //option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
@@ -556,13 +556,13 @@ class QSTheirCellNEW: UITableViewCell {
                 option1Offset = endX
                 
                 UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-                
+                    
                     label.center = CGPoint(x: endX, y: label.center.y)
                     self.option1Image.center = label.center
                     
                     let percentMoved = (label.center.x - self.imageCenterStart.x) / a
                     //self.option1Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option1Text.center.y)
-//                    self.option1Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option1Bar.center.y)
+                    //                    self.option1Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option1Bar.center.y)
                     self.option1Checkmark.center = CGPoint(x: endX, y: label.center.y)
                     self.option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
                     //self.option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
@@ -583,7 +583,7 @@ class QSTheirCellNEW: UITableViewCell {
                     
                     let percentMoved = (label.center.x - self.imageCenterStart.x) / a
                     //self.option2Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option2Text.center.y)
-//                    self.option2Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option2Bar.center.y)
+                    //                    self.option2Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option2Bar.center.y)
                     self.option2Checkmark.center = CGPoint(x: endX, y: label.center.y)
                     self.option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
                     self.option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
@@ -599,10 +599,10 @@ class QSTheirCellNEW: UITableViewCell {
     
     func castVote(optionId: Int) {
         
-        QJoinObject.setObject(optionId, forKey: "vote")
-        QJoinObject!["question"]!.incrementKey("option\(optionId)Stats")
-        QJoinObject.pinInBackground()
-        QJoinObject!["question"]!.saveEventually { (success, error) -> Void in
+        QObject["question"]!.setObject(optionId, forKey: "vote")
+        QObject!["question"]!.incrementKey("option\(optionId)Stats")
+        QObject.pinInBackground()
+        QObject!["question"]!.saveEventually { (success, error) -> Void in
             if error == nil {
                 println("Successful vote cast in SocialQs!")
             }
@@ -618,8 +618,8 @@ class QSTheirCellNEW: UITableViewCell {
         option1VoteArrow.removeFromSuperview()
         option2VoteArrow.removeFromSuperview()
         
-//        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-//        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        //        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        //        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
         
         // Lock Q cell for voting
         if let recog = option1Zoom.gestureRecognizers {
@@ -641,5 +641,5 @@ class QSTheirCellNEW: UITableViewCell {
         
         // Configure the view for the selected state
     }
-
+    
 }

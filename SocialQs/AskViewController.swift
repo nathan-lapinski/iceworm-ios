@@ -44,19 +44,20 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     
     @IBAction func test(sender: AnyObject) {
-        var inviteDialog:FBSDKAppInviteDialog = FBSDKAppInviteDialog()
-        if(inviteDialog.canShow()){
-//            let appLinkUrl:NSURL = NSURL(string: "https://fb.me/1482092405439439")!
-//            let previewImageUrl:NSURL = NSURL(string: "http://socialqs.co/styles/images/brettFinal.png")!
-            
-            var inviteContent:FBSDKAppInviteContent = FBSDKAppInviteContent()
-//            inviteContent.appLinkURL = appLinkUrl
-//            inviteContent.appInvitePreviewImageURL = previewImageUrl
-            
-            inviteDialog.content = inviteContent
-            inviteDialog.delegate = self
-            inviteDialog.show()
-        }
+        downloadFacebookFriends { (success) -> Void in }
+//        var inviteDialog:FBSDKAppInviteDialog = FBSDKAppInviteDialog()
+//        if(inviteDialog.canShow()){
+////            let appLinkUrl:NSURL = NSURL(string: "https://fb.me/1482092405439439")!
+////            let previewImageUrl:NSURL = NSURL(string: "http://socialqs.co/styles/images/brettFinal.png")!
+//            
+//            var inviteContent:FBSDKAppInviteContent = FBSDKAppInviteContent()
+////            inviteContent.appLinkURL = appLinkUrl
+////            inviteContent.appInvitePreviewImageURL = previewImageUrl
+//            
+//            inviteDialog.content = inviteContent
+//            inviteDialog.delegate = self
+//            inviteDialog.show()
+//        }
     }
     func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didCompleteWithResults results: [NSObject : AnyObject]!) {
         println("Complete invite without error")
@@ -221,37 +222,36 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     override func viewWillAppear(animated: Bool) {
         
+        println(isGroupieName)
+        
         
 //        UITabBar.appearance().barTintColor = UIColor.whiteColor()
 //        UITabBar.appearance().translucent = false
-        
-        
         
         returningFromPopover = false
         returningFromSettings = false
         topOffset = 64
         
-        NSUserDefaults.standardUserDefaults().setObject(myFriends, forKey: myFriendsStorageKey)
+        //NSUserDefaults.standardUserDefaults().setObject(myFriends, forKey: myFriendsStorageKey)
         
-        /////////////////////////////////////////////
-        // Sort groupies
-        
-        for groupie in friendsDictionary {
-            if groupie["isSelected"] as! Bool == true {
-                
-                if groupie["type"] as! String == "socialQs" {
-                    socialQsGroupies.append(groupie["name"] as! String)
-                } else if groupie["type"] as! String == "facebookWithApp" {
-                    facebookWithAppGroupies.append(groupie["id"] as! String)
-                } else if groupie["type"] as! String == "facebookWithoutApp" {
-                    facebookWithoutAppGroupies.append(groupie["id"] as! String)
-                }
-            }
-        }
-        println("sQs: \n\(socialQsGroupies)")
-        println("FacebookWithApp: \n\(facebookWithAppGroupies)")
-        println("FacebookWithoutApp: \n\(facebookWithoutAppGroupies)")
-        /////////////////////////////////////////////
+//        /////////////////////////////////////////////
+//        // Sort groupies
+//        for groupie in friendsDictionary {
+//            if groupie["isSelected"] as! Bool == true {
+//
+//                if groupie["type"] as! String == "socialQs" {
+//                    socialQsGroupies.append(groupie["name"] as! String)
+//                } else if groupie["type"] as! String == "facebookWithApp" {
+//                    facebookWithAppGroupies.append(groupie["id"] as! String)
+//                } else if groupie["type"] as! String == "facebookWithoutApp" {
+//                    facebookWithoutAppGroupies.append(groupie["id"] as! String)
+//                }
+//            }
+//        }
+//        println("sQs: \n\(socialQsGroupies)")
+//        println("FacebookWithApp: \n\(facebookWithAppGroupies)")
+//        println("FacebookWithoutApp: \n\(facebookWithoutAppGroupies)")
+//        /////////////////////////////////////////////
     }
     
     
@@ -378,16 +378,16 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 // ***************************************************
                 // DEBUG USE!! **************************
                 // ***************************************************
-//                var qJoinCurrentUser = PFObject(className: "QJoin")
-//                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
-//                qJoinCurrentUser.setObject(PFUser.currentUser()!.username!, forKey: "to")
-//                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
-//                qJoinCurrentUser.setObject(false, forKey: "askeeDeleted")
-//                qJoinCurrentUser.setObject(socialQ, forKey: "question")
-//                qJoinCurrentUser.saveEventually({ (success, error) -> Void in
-//                    
-//                    println("QJoin entry successfully created")
-//                })
+                var qJoinCurrentUser = PFObject(className: "QJoin")
+                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
+                qJoinCurrentUser.setObject(PFUser.currentUser()!.username!, forKey: "to")
+                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
+                qJoinCurrentUser.setObject(false, forKey: "askeeDeleted")
+                qJoinCurrentUser.setObject(socialQ, forKey: "question")
+                qJoinCurrentUser.saveEventually({ (success, error) -> Void in
+                    
+                    println("QJoin entry for SELF successfully created")
+                })
             }
         })
     }

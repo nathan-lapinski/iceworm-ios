@@ -15,7 +15,6 @@
 		90135AC31B3AD4F400C9716F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABE1B3AD4F400C9716F /* Parse.framework */; };
 		90135AC41B3AD4F400C9716F /* ParseFacebookUtilsV4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */; };
 		901B23D91B7AA7FA003538BE /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 901B23D81B7AA7FA003538BE /* FBSDKShareKit.framework */; };
-		901DAA181B55C81300A20689 /* QsTheirTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901DAA171B55C81300A20689 /* QsTheirTableVC.swift */; };
 		901DAA1A1B55C84D00A20689 /* QsTheirCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901DAA191B55C84D00A20689 /* QsTheirCell.swift */; };
 		902B34CD1B3E4FB800B67ACE /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CC1B3E4FB800B67ACE /* SignupViewController.swift */; };
 		902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */; };
@@ -38,6 +37,8 @@
 		905B2D961B322625001A74EE /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905B2D951B322625001A74EE /* Globals.swift */; };
 		908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */; };
 		908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908A03F51B5E01070050C0D9 /* AskViewController.swift */; };
+		909937451BB7289E00535716 /* QsMyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909937441BB7289E00535716 /* QsMyVC.swift */; };
+		909937471BB7305D00535716 /* QSMyCellNEW.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909937461BB7305D00535716 /* QSMyCellNEW.swift */; };
 		90A1473D1B2E4CBA00947B33 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */; };
 		90A1473F1B2E4CBF00947B33 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A1473E1B2E4CBF00947B33 /* CFNetwork.framework */; };
 		90A147411B2E4CC500947B33 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A147401B2E4CC500947B33 /* CoreGraphics.framework */; };
@@ -82,7 +83,6 @@
 		90135ABE1B3AD4F400C9716F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = SocialQs/Parse.framework; sourceTree = "<group>"; };
 		90135ABF1B3AD4F400C9716F /* ParseFacebookUtilsV4.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtilsV4.framework; path = SocialQs/ParseFacebookUtilsV4.framework; sourceTree = "<group>"; };
 		901B23D81B7AA7FA003538BE /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
-		901DAA171B55C81300A20689 /* QsTheirTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsTheirTableVC.swift; sourceTree = "<group>"; };
 		901DAA191B55C84D00A20689 /* QsTheirCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsTheirCell.swift; sourceTree = "<group>"; };
 		902B34CC1B3E4FB800B67ACE /* SignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
@@ -109,6 +109,8 @@
 		905B2D951B322625001A74EE /* Globals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
 		908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AskTableViewCell.swift; sourceTree = "<group>"; };
 		908A03F51B5E01070050C0D9 /* AskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AskViewController.swift; sourceTree = "<group>"; };
+		909937441BB7289E00535716 /* QsMyVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsMyVC.swift; sourceTree = "<group>"; };
+		909937461BB7305D00535716 /* QSMyCellNEW.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QSMyCellNEW.swift; sourceTree = "<group>"; };
 		90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		90A1473E1B2E4CBF00947B33 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		90A147401B2E4CC500947B33 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -212,9 +214,10 @@
 				90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */,
 				902D87201B577862001F9954 /* QsMyCell.swift */,
 				902D87221B57793C001F9954 /* QsMyTableVC.swift */,
+				909937441BB7289E00535716 /* QsMyVC.swift */,
 				901DAA191B55C84D00A20689 /* QsTheirCell.swift */,
 				90FFFA711B9A6ABA005E9CDD /* QSTheirCellNEW.swift */,
-				901DAA171B55C81300A20689 /* QsTheirTableVC.swift */,
+				909937461BB7305D00535716 /* QSMyCellNEW.swift */,
 				90FFFA6F1B9A6958005E9CDD /* QsTheirVC.swift */,
 				902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */,
 				904E29C81B58CC4E007E17D2 /* SettingsPopoverViewController.swift */,
@@ -392,13 +395,13 @@
 			files = (
 				902D87231B57793C001F9954 /* QsMyTableVC.swift in Sources */,
 				903CF0F41B7A8283002BF72D /* SocialQs.xcdatamodeld in Sources */,
+				909937451BB7289E00535716 /* QsMyVC.swift in Sources */,
 				90FFFA701B9A6958005E9CDD /* QsTheirVC.swift in Sources */,
 				90D0B4EB1BA7EE7B009E284C /* QsGlobalVC.swift in Sources */,
 				904E29C91B58CC4E007E17D2 /* SettingsPopoverViewController.swift in Sources */,
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
 				908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */,
 				902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */,
-				901DAA181B55C81300A20689 /* QsTheirTableVC.swift in Sources */,
 				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,
 				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
 				901DAA1A1B55C84D00A20689 /* QsTheirCell.swift in Sources */,
@@ -409,6 +412,7 @@
 				902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */,
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
 				902B34CD1B3E4FB800B67ACE /* SignupViewController.swift in Sources */,
+				909937471BB7305D00535716 /* QSMyCellNEW.swift in Sources */,
 				900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */,
 				902D87211B577862001F9954 /* QsMyCell.swift in Sources */,
 				90EF88421B83B92400752A27 /* WelcomeVC.swift in Sources */,

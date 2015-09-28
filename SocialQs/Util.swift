@@ -290,7 +290,8 @@ func downloadSocialQsFriends(completion: (Bool) -> Void) {
 //*******************************************************************************
 func downloadFacebookFriends(completion: (Bool) -> Void) {
     
-    backgroundThread(delay: 0.0, background: {
+    //!!! Graph requests F up when on a background thread...(?)
+    //backgroundThread(delay: 0.0, background: {
         
         // Get friends from FB to check for new friends OR friends that NOW have SocialQs
         friendsDictionary.removeAll(keepCapacity: true)
@@ -298,21 +299,20 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
         // Get list of facebook friends who have SOCIALQS
         var friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
         
+        println("GETTING FRIENDS")
+        
         friendsRequest1.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
             
-            //println("Downloading FB friends WITH sQs")
+            println("Downloading FB friends WITH sQs")
             
             if error == nil {
                 
                 var results: AnyObject = result["data"]!!
-                
                 var temp: AnyObject = result["data"]!!
+                var tempDict = Dictionary<String, AnyObject>()
                 
                 for var i = 0; i < results.count; i++ {
-                    
-                    var tempDict = Dictionary<String, AnyObject>()
-                    
-                    //tempDict.removeAll(keepCapacity: true)
+                    tempDict.removeAll(keepCapacity: true)
                     
                     tempDict["name"] = results[i]["name"]!! as! String
                     tempDict["isSelected"] = false
@@ -331,17 +331,19 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                         
                         tempDict["isSelected"] = true
                     }
-
+                    
                     friendsDictionary.append(tempDict)
                     
                 }
+                
+                println("FRIENDS RETRIEVED: \(friendsDictionary)")
                 
             } else {
                 
                 println("Error retrieving Facebook Users: \n\(error)")
             }
         }
-    })
+    //})
     
 //
 //

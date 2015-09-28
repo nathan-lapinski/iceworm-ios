@@ -49,6 +49,8 @@ class VotesTableVC: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
+        println(questionToView)
+        
         returningFromPopover = true
         returningFromSettings = false
         
