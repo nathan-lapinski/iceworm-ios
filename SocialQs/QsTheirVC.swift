@@ -201,7 +201,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         
         var qJoinQueryLocal = PFQuery(className: "QJoin")
         qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-        qJoinQueryLocal.whereKey("asker", notEqualTo: PFUser.currentUser()!)
+        //qJoinQueryLocal.whereKey("asker", notEqualTo: PFUser.currentUser()!)
         qJoinQueryLocal.orderByDescending("createdAt")
         qJoinQueryLocal.whereKey("deleted", equalTo: false)
         qJoinQueryLocal.limit = 1000
@@ -232,7 +232,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 // Get Qs that are not in localdata store
                 var qJoinQueryServer = PFQuery(className: "QJoin")
                 qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-                qJoinQueryServer.whereKey("asker", notEqualTo: PFUser.currentUser()!)
+                //qJoinQueryServer.whereKey("asker", notEqualTo: PFUser.currentUser()!)
                 qJoinQueryServer.whereKey("objectId", notContainedIn: alreadyRetrieved)
                 qJoinQueryServer.orderByDescending("createdAt")
                 qJoinQueryServer.limit = 1000

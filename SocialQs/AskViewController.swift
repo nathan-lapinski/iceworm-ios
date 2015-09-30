@@ -185,6 +185,20 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //        self.navigationItem.rightBarButtonItem = rightBarButton
         
         
+        // Add "groupies" and "settings" buttons
+        var groupiesNavigationButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "addUser.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displayGroupiesView")
+        var settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
+        
+        groupiesNavigationButton.tintColor = UIColor.whiteColor()
+        settingsButton.tintColor = UIColor.whiteColor()
+        
+        //self.navigationItem.setRightBarButtonItems([settingsButton, groupiesNavigationButton], animated: true)
+        self.navigationItem.setRightBarButtonItems([groupiesNavigationButton], animated: true)
+        
+        
+        
+        
+        
         picker.delegate = self
         
         askTable.delegate = self
@@ -207,11 +221,16 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     
-//    func displayGroupiesView() {
-//        
-//        performSegueWithIdentifier("toGroupies", sender: self)
-//        
-//    }
+    func displayGroupiesView() {
+        
+        performSegueWithIdentifier("toGroupies", sender: self)
+    }
+    
+    
+    func displaySettingsView() {
+        
+        performSegueWithIdentifier("toSettings", sender: self)
+    }
     
     
     override func viewWillAppear(animated: Bool) {

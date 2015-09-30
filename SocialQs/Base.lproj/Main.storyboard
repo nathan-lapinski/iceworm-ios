@@ -388,23 +388,6 @@
             </objects>
             <point key="canvasLocation" x="-190" y="-2061"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="a11-Yi-w7c">
-            <objects>
-                <navigationController id="AcE-OI-yHE" sceneMemberID="viewController">
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Dmo-wm-7Ml">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="Y2K-QQ-ZOn" kind="relationship" relationship="rootViewController" id="o8C-XO-fER"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="XBR-mi-UOj" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1437.5" y="-2680.5"/>
-        </scene>
         <!--Welcome View Controller-->
         <scene sceneID="5Jd-ub-8fd">
             <objects>
@@ -1691,7 +1674,7 @@
                     <navigationItem key="navigationItem" id="6RK-in-g5V">
                         <barButtonItem key="leftBarButtonItem" image="ask" id="HkB-D4-eXH">
                             <connections>
-                                <segue destination="AcE-OI-yHE" kind="show" id="TjM-IL-65v"/>
+                                <segue destination="Y2K-QQ-ZOn" kind="show" id="K1e-RQ-zp6"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="settings" id="tC8-7a-PIW">
@@ -2127,23 +2110,19 @@
                             <constraint firstAttribute="trailingMargin" secondItem="S5w-ef-5Rv" secondAttribute="trailing" constant="-16" id="oUn-Sh-wYS"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="c9Q-cf-n5Y">
-                        <barButtonItem key="rightBarButtonItem" image="addUser" id="kVX-Le-TKE">
-                            <connections>
-                                <segue destination="hhb-0X-461" kind="popoverPresentation" identifier="toGroupies" popoverAnchorBarButtonItem="kVX-Le-TKE" id="HMg-d6-8Hs">
-                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                </segue>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="c9Q-cf-n5Y"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="askTable" destination="HeJ-p5-RO9" id="Qox-Wz-2y1"/>
+                        <segue destination="hhb-0X-461" kind="popoverPresentation" identifier="toGroupies" popoverAnchorView="HeJ-p5-RO9" id="Jwk-ME-UZp">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
+                        <segue destination="OY2-PK-A5I" kind="show" identifier="toSettings" id="ufi-eL-w8K"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nHM-l5-fcB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-921.5" y="-2732.5"/>
+            <point key="canvasLocation" x="-1153.5" y="-2078.5"/>
         </scene>
         <!--Sign Up-->
         <scene sceneID="AhA-xk-yoa">
@@ -2560,7 +2539,6 @@
     </scenes>
     <resources>
         <image name="addGroup" width="26" height="26"/>
-        <image name="addUser" width="22" height="26"/>
         <image name="ask" width="26" height="25"/>
         <image name="bg3WithLogo" width="621" height="1104"/>
         <image name="bg3_long" width="621" height="2208"/>
@@ -2580,6 +2558,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="aPw-PS-bwz"/>
+        <segue reference="ufi-eL-w8K"/>
         <segue reference="ipT-kz-A08"/>
         <segue reference="Uw8-gb-s0O"/>
         <segue reference="sQf-7n-mye"/>

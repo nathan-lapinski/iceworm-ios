@@ -22,6 +22,9 @@ class QSMyCellNEW: UITableViewCell {
     var horizontalSpace: CGFloat = 8.0
     var imageBarExtraSpace: CGFloat = 3.0
     
+    var indicatorAlpha = CGFloat(0.6)
+    var optionRadius = CGFloat(10)
+    
     var textCenterStart = CGPoint()
     var textCenterEnd = CGPoint()
     var imageCenterStart = CGPoint()
@@ -105,11 +108,11 @@ class QSMyCellNEW: UITableViewCell {
         self.addSubview(option2PercentText)
         self.addSubview(responsesText)
         
-        self.addSubview(option1VoteArrow)
-        self.addSubview(option2VoteArrow)
-        
         self.addSubview(option1Image)
         self.addSubview(option2Image)
+        
+        self.addSubview(option1VoteArrow)
+        self.addSubview(option2VoteArrow)
         
         self.addSubview(option1Checkmark)
         self.addSubview(option2Checkmark)
@@ -190,11 +193,11 @@ class QSMyCellNEW: UITableViewCell {
         
         option1Background.frame = CGRectMake(horizontalSpace, questionBackground.frame.origin.y + 60 + 3, bounds.width - 2*horizontalSpace, 60)
         option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
-        option1Background.layer.cornerRadius = 10
+        option1Background.layer.cornerRadius = optionRadius
         
         option2Background.frame = CGRectMake(horizontalSpace, option1Background.frame.origin.y + 60, bounds.width - 2*horizontalSpace, 60)
         option2Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
-        option2Background.layer.cornerRadius = 10
+        option2Background.layer.cornerRadius = optionRadius
         
         option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
         option1Zoom.frame = option1Image.frame
@@ -209,13 +212,13 @@ class QSMyCellNEW: UITableViewCell {
             })
             
             option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
-            
             option1Image.alpha = 1.0
-            option1Image.layer.cornerRadius = 10
             
         } else {
-            option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 0, 60)
+            option1Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+            //option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 0, 60)
         }
+        option1Image.layer.cornerRadius = 10
         option1Image.contentMode = UIViewContentMode.ScaleAspectFill
         option1Image.clipsToBounds = true
         
@@ -231,12 +234,12 @@ class QSMyCellNEW: UITableViewCell {
             })
             
             option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
-            
             option2Image.alpha = 1.0
-            option2Image.layer.cornerRadius = 10
         } else {
-            option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
+            option2Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+            //option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
         }
+        option2Image.layer.cornerRadius = 10
         option2Image.contentMode = UIViewContentMode.ScaleAspectFill
         option2Image.clipsToBounds = true
         
@@ -244,7 +247,7 @@ class QSMyCellNEW: UITableViewCell {
         option1Checkmark.center = CGPoint(x: profilePicture.center.x, y: option1Image.center.y)
         option1Checkmark.layer.cornerRadius = option1Checkmark.frame.width/2
         option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-        option1Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option1Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(indicatorAlpha)
         option1Checkmark.image = UIImage(named: "voteCheckmark.png")
         option1Checkmark.alpha = 0.0
         
@@ -252,7 +255,7 @@ class QSMyCellNEW: UITableViewCell {
         option2Checkmark.center = CGPoint(x: profilePicture.center.x, y: option2Image.center.y)
         option2Checkmark.layer.cornerRadius = option2Checkmark.frame.width/2
         option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-        option2Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option2Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(indicatorAlpha)
         option2Checkmark.image = UIImage(named: "voteCheckmark.png")
         option2Checkmark.alpha = 0.0
         
@@ -260,16 +263,16 @@ class QSMyCellNEW: UITableViewCell {
         
         
         option1VoteArrow.frame = option1Checkmark.frame
-        option1VoteArrow.center = CGPoint(x: option1Image.center.x + option1Image.frame.width/2, y: option1Image.center.y)
+        //option1VoteArrow.center = CGPoint(x: option1Image.center.x + option1Image.frame.width/2, y: option1Image.center.y)
         option1VoteArrow.layer.cornerRadius = option1Checkmark.frame.width/2
-        option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(indicatorAlpha)
         option1VoteArrow.image = UIImage(named: "voteArrow.png")
         option1VoteArrow.alpha = 0.0
         
         option2VoteArrow.frame = option2Checkmark.frame
-        option2VoteArrow.center = CGPoint(x: option2Image.center.x + option2Image.frame.width/2, y: option2Image.center.y)
+        //option2VoteArrow.center = CGPoint(x: option2Image.center.x + option2Image.frame.width/2, y: option2Image.center.y)
         option2VoteArrow.layer.cornerRadius = option2Checkmark.frame.width/2
-        option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(indicatorAlpha)
         option2VoteArrow.image = UIImage(named: "voteArrow.png")
         option2VoteArrow.alpha = 0.0
         
@@ -277,9 +280,12 @@ class QSMyCellNEW: UITableViewCell {
         
         
         if let test = QObject["vote"] as? Int {
+            
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
+            
         } else {
+            
             // add a pan recognizers
             recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
             recognizer1.delegate = self
@@ -289,8 +295,8 @@ class QSMyCellNEW: UITableViewCell {
             recognizer2.delegate = self
             option2Zoom.addGestureRecognizer(recognizer2)
             
-            option1VoteArrow.alpha = 1.0
-            option2VoteArrow.alpha = 1.0
+            option1VoteArrow.alpha = 0.8
+            option2VoteArrow.alpha = 0.8
         }
         
         totalResponses = (self.QObject["question"]!["option1Stats"] as! Int) + (QObject["question"]!["option2Stats"] as! Int)
@@ -332,7 +338,6 @@ class QSMyCellNEW: UITableViewCell {
             option2PercentText.hidden = false
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
-            println(QObject["vote"] as? Int)
             animateStatsBars()
             if test == 1 {
                 //option1Checkmark.layer.borderWidth = 2.0
@@ -352,19 +357,24 @@ class QSMyCellNEW: UITableViewCell {
         let statsHeight: CGFloat = option1Text.frame.height
         let statsWidth: CGFloat = option1Text.frame.width/2
         
-        option1Stats.frame = CGRectMake(option1Image.frame.width, option1Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
-        option2Stats.frame = CGRectMake(option2Image.frame.width, option2Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
+        //option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
+        //option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
+        option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, option1Image.frame.width, statsHeight)
+        option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, option2Image.frame.width, statsHeight)
+        
         option1Stats.center.y = option1Image.center.y
         option2Stats.center.y = option2Image.center.y
-        option1Stats.layer.cornerRadius = 4.0
-        option2Stats.layer.cornerRadius = 4.0
+        option1Stats.layer.cornerRadius = optionRadius
+        option2Stats.layer.cornerRadius = optionRadius
         option1Stats.alpha = 0.0
         option2Stats.alpha = 0.0
         
         UIView.animateWithDuration(2.0, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
             
-            self.option1Stats.frame = CGRectMake(self.option1Image.frame.width, self.option1Text.frame.origin.y, CGFloat(self.option1Percent/100)*(self.option1Text.frame.width + 2*self.horizontalSpace + self.option1Image.frame.width) + self.horizontalSpace, statsHeight)
-            self.option2Stats.frame = CGRectMake(self.option2Image.frame.width, self.option2Text.frame.origin.y, CGFloat(self.option2Percent/100)*(self.option2Text.frame.width + 2*self.horizontalSpace + self.option2Image.frame.width) + self.horizontalSpace, statsHeight)
+            //self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, CGFloat(self.option1Percent/100)*(self.option1Text.frame.width + 2*self.horizontalSpace + self.option1Image.frame.width) + self.horizontalSpace, statsHeight)
+            //self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, CGFloat(self.option2Percent/100)*(self.option2Text.frame.width + 2*self.horizontalSpace + self.option2Image.frame.width) + self.horizontalSpace, statsHeight)
+            self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width) + self.option1Image.frame.width, statsHeight)
+            self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width) + self.option1Image.frame.width, statsHeight)
             self.option1Stats.center.y = self.option1Image.center.y
             self.option2Stats.center.y = self.option2Image.center.y
             self.option1Stats.alpha = 0.5
@@ -468,15 +478,9 @@ class QSMyCellNEW: UITableViewCell {
         
         let label = recognizer.view!
         let translation = recognizer.translationInView(self)
-        var percentMoved = translation.x/(bounds.width - option1Image.frame.width - 2*horizontalSpace)
+        var percentMoved = translation.x/(bounds.width - profilePicture.frame.width - 2*horizontalSpace)
         
-        //        var scale: CGFloat = 1.0
-        //        if (percentMoved/0.5) <= 1.0 {
-        //            scale = abs(percentMoved/0.5) + 1
-        //        } else {
-        //            scale = abs(1 - (percentMoved/0.5 - 1)) + 1
-        //        }
-        //        println(scale)
+        println(percentMoved)
         
         // Total amount the image view will move
         let a = bounds.width - option1Image.frame.width - 2*horizontalSpace
@@ -491,21 +495,13 @@ class QSMyCellNEW: UITableViewCell {
             
             label.center = CGPoint(x: option1Offset + translation.x, y: label.center.y)
             option1Image.center = label.center
-            let percentMoved = (label.center.x - imageCenterStart.x) / a
-            //option1Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option1Text.center.y)
-            //            option1Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option1Bar.center.y)
             option1Checkmark.center = CGPoint(x: option1Offset + translation.x, y: label.center.y)
             option1VoteArrow.center = option1Checkmark.center
-            //option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
-            //option1VoteArrow.alpha = min(1.0, 1 - 3*percentMoved)
             
-            if percentMoved >= 0.5 { // && option1Checkmark.layer.borderWidth == 0.0 {
-                //option1Checkmark.layer.borderWidth = 2.0
-                //option1Checkmark.layer.borderColor = mainColorBlue.CGColor // UIColor.greenColor().colorWithAlphaComponent(0.6).CGColor
+            if percentMoved >= 0.5 {
                 option1Checkmark.alpha = 0.8
                 option1VoteArrow.alpha = 0.0
-            } else if percentMoved < 0.5 { // && option1Checkmark.layer.borderWidth == 2.0 {
-                //option1Checkmark.layer.borderWidth = 0.0
+            } else if percentMoved < 0.5 {
                 option1Checkmark.alpha = 0.0
                 option1VoteArrow.alpha = 0.8
             }
@@ -514,23 +510,15 @@ class QSMyCellNEW: UITableViewCell {
             
             label.center = CGPoint(x: option2Offset + translation.x, y: label.center.y)
             option2Image.center = label.center
-            let percentMoved = (label.center.x - imageCenterStart.x) / a
-            //option2Text.center = CGPoint(x: textCenterStart.x - b*percentMoved, y: option2Text.center.y)
-            //            option2Bar.center = CGPoint(x: imageBarCenterStart.x + c*percentMoved, y: option2Bar.center.y)
             option2Checkmark.center = CGPoint(x: option2Offset + translation.x, y: label.center.y)
             option2VoteArrow.center = option2Checkmark.center
-            //option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
-            //option2VoteArrow.alpha = min(1.0, 1 - 3*percentMoved)
             
-            if percentMoved >= 0.5 && option2Checkmark.layer.borderWidth == 0.0 {
-                option2Checkmark.layer.borderWidth = 2.0
-                //option2Checkmark.layer.borderColor = mainColorBlue.CGColor // UIColor.greenColor().colorWithAlphaComponent(0.6).CGColor
-                option2Checkmark.alpha = 1.0
+            if percentMoved >= 0.5 {
+                option2Checkmark.alpha = 0.8
                 option2VoteArrow.alpha = 0.0
-            } else if percentMoved < 0.5 && option2Checkmark.layer.borderWidth == 2.0 {
-                option2Checkmark.layer.borderWidth = 0.0
+            } else if percentMoved < 0.5 {
                 option2Checkmark.alpha = 0.0
-                option2VoteArrow.alpha = 1.0
+                option2VoteArrow.alpha = 0.8
             }
         }
         
@@ -542,94 +530,108 @@ class QSMyCellNEW: UITableViewCell {
         
         if recognizer.state == UIGestureRecognizerState.Ended {
             
-            var endX: CGFloat = 0.0
-            if xFromCenter <= 0 {
-                //endX = label.frame.width/2 + 8
-            } else {
-                //endX = self.bounds.width - label.frame.width/2 - 8
-                castVote(id)
-            }
-            endX = label.frame.width/2 + 8
+            var endX: CGFloat = label.frame.width/2 + 8
             
             if id == 1 {
                 
-                option1Offset = endX
+                //option1Offset = endX
                 
                 UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
                     
                     label.center = CGPoint(x: endX, y: label.center.y)
                     self.option1Image.center = label.center
                     
-                    let percentMoved = (label.center.x - self.imageCenterStart.x) / a
-                    //self.option1Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option1Text.center.y)
-                    //                    self.option1Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option1Bar.center.y)
                     self.option1Checkmark.center = CGPoint(x: endX, y: label.center.y)
-                    self.option1Checkmark.alpha = min(1.0, 1.5*percentMoved)
-                    //self.option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                     self.option1VoteArrow.center = CGPoint(x: endX, y: label.center.y)
-                    //self.option1VoteArrow.alpha = 0.8
+                    
+                    if percentMoved >= 0.5 {
+                        self.castVote(id)
+                        self.option1Checkmark.alpha = 0.8
+                        self.option1VoteArrow.alpha = 0.0
+                    } else if percentMoved < 0.5 {
+                        self.option1Checkmark.alpha = 0.0
+                        self.option1VoteArrow.alpha = 0.8
+                    }
                     
                     }, completion: { (isFinished) -> Void in
                 })
                 
             } else {
                 
-                option2Offset = endX
+                //option2Offset = endX
                 
                 UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
                     
                     label.center = CGPoint(x: endX, y: label.center.y)
                     self.option2Image.center = label.center
                     
-                    let percentMoved = (label.center.x - self.imageCenterStart.x) / a
-                    //self.option2Text.center = CGPoint(x: self.textCenterStart.x - b*percentMoved, y: self.option2Text.center.y)
-                    //                    self.option2Bar.center = CGPoint(x: self.imageBarCenterStart.x + c*percentMoved, y: self.option2Bar.center.y)
                     self.option2Checkmark.center = CGPoint(x: endX, y: label.center.y)
-                    self.option2Checkmark.alpha = min(1.0, 1.5*percentMoved)
-                    self.option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                     self.option2VoteArrow.center = CGPoint(x: endX, y: label.center.y)
-                    //self.option2VoteArrow.alpha = 0.8
+                    
+                    if percentMoved >= 0.5 {
+                        //self.castVote(id)
+                        self.option2Checkmark.alpha = 0.8
+                        println(self.option2Image)
+                        println(self.option2Checkmark)
+                    } else {
+                        self.option1Checkmark.alpha = 0.0
+                        println(self.option2Image)
+                        println(self.option2Checkmark)
+                    }
                     
                     }, completion: { (isFinished) -> Void in
                 })
             }
+            
+//            if xFromCenter <= 0 {
+//                //endX = label.frame.width/2 + 8
+//            } else {
+//                //endX = self.bounds.width - label.frame.width/2 - 8
+//                castVote(id)
+//            }
         }
     }
     
     
     func castVote(optionId: Int) {
         
-        QObject["question"]!.setObject(optionId, forKey: "vote")
+        QObject!.setObject(optionId, forKey: "vote")
         QObject!["question"]!.incrementKey("option\(optionId)Stats")
-        QObject.pinInBackground()
-        QObject!["question"]!.saveEventually { (success, error) -> Void in
+        QObject.pinInBackgroundWithBlock { (success, error) -> Void in
+            
+            if error == nil {
+                println("Vote has been pinned from MyQs")
+            }
+        }
+        
+        QObject!.saveEventually { (success, error) -> Void in
             if error == nil {
                 println("Successful vote cast in SocialQs!")
             }
         }
-        
+
         totalResponses++
         if totalResponses == 1 { resp = "response" }
         responsesText.text = "\(totalResponses) \(resp)"
         
-        option1Checkmark.alpha = 0.8
-        option2Checkmark.alpha = 0.8
-        
-        option1VoteArrow.removeFromSuperview()
-        option2VoteArrow.removeFromSuperview()
-        
-        //        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-        //        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-        
+////        option1Checkmark.alpha = 0.8
+////        option2Checkmark.alpha = 0.8
+//        
+////        option1VoteArrow.removeFromSuperview()
+////        option2VoteArrow.removeFromSuperview()
+//        
+//        //        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+//        //        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+//        
         // Lock Q cell for voting
-        if let recog = option1Zoom.gestureRecognizers {
+        if option1Zoom.gestureRecognizers != nil {
             option1Zoom.removeGestureRecognizer(recognizer1)
         }
-        if let recog = option2Zoom.gestureRecognizers {
+        if option2Zoom.gestureRecognizers != nil {
             option2Zoom.removeGestureRecognizer(recognizer2)
         }
-        
-        // Update percentage stats and option text
+//
+//        // Update percentage stats and option text
         computePercents(optionId)
         setOptionText()
         animateStatsBars()

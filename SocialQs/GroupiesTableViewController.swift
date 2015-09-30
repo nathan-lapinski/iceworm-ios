@@ -129,11 +129,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     group.setObject(groupName, forKey: "groupName")
                     group.setObject(PFUser.currentUser()!, forKey: "owner")
                     group.setObject(groupie["name"]!, forKey: "name")
-                    group.setObject(groupie["type"]!, forKey: "type")
-                    group.setObject(groupie["id"]!, forKey: "id")
-                    if let url = groupie["picURL"] as? String {
-                        group.setObject(url, forKey: "picURL")
-                    }
+                    //group.setObject(groupie["type"]!, forKey: "type")
+                    group.setObject(groupie["id"]!, forKey: "facebookId")
+                    //if let url = groupie["picURL"] as? String { group.setObject(url, forKey: "picURL") }
                     
                     // Pin new GroupJoin object to LDS
                     group.pinInBackgroundWithBlock({ (success, error) -> Void in
