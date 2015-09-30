@@ -129,7 +129,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
             
             let object = self.QJoinObjects[indexPath.row] as! PFObject
             
-            object["askeeDeleted"] = true
+            object["deleted"] = true
             
             object.unpinInBackgroundWithBlock({ (success, error) -> Void in
                 
@@ -200,10 +200,10 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         QJoinObjects.removeAll(keepCapacity: true)
         
         var qJoinQueryLocal = PFQuery(className: "QJoin")
-        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!.username!)
+        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
         qJoinQueryLocal.whereKey("asker", notEqualTo: PFUser.currentUser()!)
         qJoinQueryLocal.orderByDescending("createdAt")
-        qJoinQueryLocal.whereKey("askeeDeleted", equalTo: false)
+        qJoinQueryLocal.whereKey("deleted", equalTo: false)
         qJoinQueryLocal.limit = 1000
         qJoinQueryLocal.includeKey("question")
         qJoinQueryLocal.includeKey("asker")
@@ -231,7 +231,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 
                 // Get Qs that are not in localdata store
                 var qJoinQueryServer = PFQuery(className: "QJoin")
-                qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!.username!)
+                qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
                 qJoinQueryServer.whereKey("asker", notEqualTo: PFUser.currentUser()!)
                 qJoinQueryServer.whereKey("objectId", notContainedIn: alreadyRetrieved)
                 qJoinQueryServer.orderByDescending("createdAt")

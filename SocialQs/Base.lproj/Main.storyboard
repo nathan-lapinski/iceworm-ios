@@ -167,7 +167,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U9f-4W-bDJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-65.5" y="-1965.5"/>
+            <point key="canvasLocation" x="-555.5" y="-1963.5"/>
         </scene>
         <!--Groupies Navigation Controller-->
         <scene sceneID="dfP-KI-hSr">
@@ -185,7 +185,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="czp-Pe-fRX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-155.5" y="-1905.5"/>
+            <point key="canvasLocation" x="-645.5" y="-1903.5"/>
         </scene>
         <!--Settings-->
         <scene sceneID="Zpa-Vj-Jcc">
@@ -196,11 +196,11 @@
                         <viewControllerLayoutGuide type="bottom" id="Lyy-rZ-ogH"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8Vh-T9-hDQ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                        <rect key="frame" x="0.0" y="64" width="375" height="618"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg3WithLogo" translatesAutoresizingMaskIntoConstraints="NO" id="WhH-Nx-iKb">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="bg5" translatesAutoresizingMaskIntoConstraints="NO" id="WhH-Nx-iKb">
+                                <rect key="frame" x="0.0" y="0.0" width="376" height="667"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zPt-sG-ZeG">
                                 <rect key="frame" x="16" y="360" width="343" height="71"/>
@@ -217,7 +217,7 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile" translatesAutoresizingMaskIntoConstraints="NO" id="Cjh-SY-Mb6">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="profile" translatesAutoresizingMaskIntoConstraints="NO" id="Cjh-SY-Mb6">
                                 <rect key="frame" x="16" y="81" width="100" height="100"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -225,7 +225,7 @@
                                     <constraint firstAttribute="width" constant="100" id="m9R-wG-R4e"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yfh-P0-Irp">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yfh-P0-Irp">
                                 <rect key="frame" x="124" y="81" width="235" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="SFu-5K-YP0"/>
@@ -234,7 +234,7 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q3H-JC-wMC">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q3H-JC-wMC">
                                 <rect key="frame" x="36" y="217" width="303" height="40"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -254,14 +254,14 @@
                                     <action selector="linkWithFacebookAction:" destination="OY2-PK-A5I" eventType="touchUpInside" id="8oG-WQ-3Iq"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="share_facebook" translatesAutoresizingMaskIntoConstraints="NO" id="WgT-Jk-ISL">
+                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="share_facebook" translatesAutoresizingMaskIntoConstraints="NO" id="WgT-Jk-ISL">
                                 <rect key="frame" x="42" y="222" width="30" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="7AN-tQ-yxT"/>
                                     <constraint firstAttribute="width" constant="30" id="WM7-DA-fay"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EFp-eC-nVS">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EFp-eC-nVS">
                                 <rect key="frame" x="16" y="174" width="100" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="Xjx-8F-1Gq"/>
@@ -275,16 +275,7 @@
                                     <action selector="changeProfilePicture:" destination="OY2-PK-A5I" eventType="touchUpInside" id="4UG-Hn-ded"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mz3-Os-CmG">
-                                <rect key="frame" x="26" y="572" width="74" height="30"/>
-                                <state key="normal" title="SPINNER!!">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="spinnerButtonAction:" destination="OY2-PK-A5I" eventType="touchUpInside" id="cYg-Ac-fmu"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@handle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HhJ-Gm-5Tv">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="@handle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HhJ-Gm-5Tv">
                                 <rect key="frame" x="124" y="103" width="235" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="9Qn-AZ-baE"/>
@@ -308,11 +299,20 @@
                                     <segue destination="FL8-YP-Brd" kind="presentation" identifier="logout" id="TKM-yt-PEX"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mz3-Os-CmG">
+                                <rect key="frame" x="150" y="439" width="74" height="30"/>
+                                <state key="normal" title="SPINNER!!">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="spinnerButtonAction:" destination="OY2-PK-A5I" eventType="touchUpInside" id="cYg-Ac-fmu"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="HhJ-Gm-5Tv" firstAttribute="trailing" secondItem="8Vh-T9-hDQ" secondAttribute="trailingMargin" id="1ce-35-iik"/>
-                            <constraint firstItem="Lyy-rZ-ogH" firstAttribute="top" secondItem="WhH-Nx-iKb" secondAttribute="bottom" id="3f7-io-nhz"/>
+                            <constraint firstItem="Lyy-rZ-ogH" firstAttribute="top" secondItem="WhH-Nx-iKb" secondAttribute="bottom" constant="-49" id="3f7-io-nhz"/>
                             <constraint firstItem="EFp-eC-nVS" firstAttribute="leading" secondItem="Cjh-SY-Mb6" secondAttribute="leading" id="6Lt-QH-w7I"/>
                             <constraint firstItem="WhH-Nx-iKb" firstAttribute="leading" secondItem="8Vh-T9-hDQ" secondAttribute="leadingMargin" constant="-16" id="91t-3n-Fl1"/>
                             <constraint firstAttribute="centerX" secondItem="GP7-Jn-b76" secondAttribute="centerX" id="BBt-yq-93r"/>
@@ -356,7 +356,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8s9-qS-31U" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1159.5" y="-2622.5"/>
+            <point key="canvasLocation" x="402.5" y="-1297.5"/>
         </scene>
         <!--Groupies Settings Table View Controller-->
         <scene sceneID="wie-ud-EXN">
@@ -386,7 +386,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tR2-vd-Zbd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="300" y="-2063"/>
+            <point key="canvasLocation" x="-190" y="-2061"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="a11-Yi-w7c">
@@ -403,7 +403,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XBR-mi-UOj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-657.5" y="-2630.5"/>
+            <point key="canvasLocation" x="-1437.5" y="-2680.5"/>
         </scene>
         <!--Welcome View Controller-->
         <scene sceneID="5Jd-ub-8fd">
@@ -504,7 +504,6 @@
                         <outlet property="logoImageView" destination="RUR-YB-je1" id="pXv-Me-aka"/>
                         <outlet property="logoTopConstraint" destination="7hv-ce-rj5" id="lwE-JF-rT2"/>
                         <outlet property="signInButton" destination="oNk-hc-SR7" id="ndz-DU-bZg"/>
-                        <segue destination="ZJ0-6y-W0S" kind="presentation" identifier="alreadySignedIn" id="JxC-Xe-7gf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RXe-a9-bs8" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -705,7 +704,6 @@
                         <outlet property="loginFacebookButton" destination="QZw-yD-mr5" id="uk6-EG-i3F"/>
                         <outlet property="passwordTextField" destination="oou-Lj-FLs" id="uRv-dk-foE"/>
                         <outlet property="usernameTextField" destination="NIE-RW-hLL" id="YcL-Nm-Yuv"/>
-                        <segue destination="ZJ0-6y-W0S" kind="presentation" identifier="signedIn" id="i2W-g3-zd6"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ned-CM-5bl" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -982,10 +980,6 @@
                         <outlet property="signUpButton" destination="FUd-in-p5y" id="1gv-lN-8IO"/>
                         <outlet property="signUpFacebookButton" destination="n5a-3a-vLA" id="fRS-fd-c35"/>
                         <outlet property="username" destination="J3j-Xt-bEK" id="ABg-00-NSO"/>
-                        <segue destination="ZiS-cB-dzR" kind="popoverPresentation" identifier="signedUp" popoverAnchorView="tub-91-Wzs" id="SBt-an-vPT">
-                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                        </segue>
-                        <segue destination="ZJ0-6y-W0S" kind="presentation" identifier="signedUpWithoutFacebook" id="V95-x7-eNQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H2z-yK-qpd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1036,7 +1030,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BKH-AA-Tpr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1553.5" y="-267.5"/>
+            <point key="canvasLocation" x="-615.5" y="-1035.5"/>
         </scene>
         <!--Votes My Navigation Controller-->
         <scene sceneID="AYF-ZZ-Baj">
@@ -1053,7 +1047,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D1I-sj-miF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1609.5" y="-303.5"/>
+            <point key="canvasLocation" x="-671.5" y="-1093.5"/>
         </scene>
         <!--Username View Controller-->
         <scene sceneID="E4f-jh-dsz">
@@ -1067,7 +1061,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg3WithLogo" translatesAutoresizingMaskIntoConstraints="NO" id="G8a-cl-iTU">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg5" translatesAutoresizingMaskIntoConstraints="NO" id="G8a-cl-iTU">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="C68-Ow-DD2">
@@ -1153,7 +1147,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wr6-MS-kB9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2058.5" y="-1093.5"/>
+            <point key="canvasLocation" x="-2508.5" y="-1093.5"/>
         </scene>
         <!--Main Navigation Controller-->
         <scene sceneID="BeW-2s-NLB">
@@ -1164,8 +1158,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="3hF-Jb-TPn">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
-                        <segue destination="oJ2-Tr-ngZ" kind="relationship" relationship="rootViewController" id="eR2-1F-Erh"/>
+                        <segue destination="oJ2-Tr-ngZ" kind="relationship" relationship="rootViewController" id="3Zl-BW-ypq"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ja8-CY-wLn" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1231,7 +1228,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XWj-cA-ltC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-155.5" y="-1093.5"/>
+            <point key="canvasLocation" x="-1609.5" y="-1093.5"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="TY1-cM-cXZ">
@@ -1248,7 +1245,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0u7-ya-mXK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1131.5" y="-325.5"/>
+            <point key="canvasLocation" x="-155.5" y="-1093.5"/>
         </scene>
         <!--Peek Paged Scroll View Controller-->
         <scene sceneID="9J5-cl-I89">
@@ -1265,7 +1262,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dt5-Ex-c13" customClass="ScrollViewContainer" customModule="SocialQs" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg3" translatesAutoresizingMaskIntoConstraints="NO" id="h5q-92-ior">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg5" translatesAutoresizingMaskIntoConstraints="NO" id="h5q-92-ior">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                     </imageView>
                                     <scrollView multipleTouchEnabled="YES" contentMode="scaleAspectFit" directionalLockEnabled="YES" alwaysBounceHorizontal="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O9m-zk-wiy">
@@ -1344,7 +1341,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sCy-b2-ce8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1072.5" y="-267.5"/>
+            <point key="canvasLocation" x="-94.5" y="-1035.5"/>
         </scene>
         <!--My Qs-->
         <scene sceneID="RwK-8U-JWw">
@@ -1685,7 +1682,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H8w-c5-eAU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1609.5" y="-1093.5"/>
+            <point key="canvasLocation" x="-3385.5" y="-1816.5"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="BzJ-am-Nq6">
@@ -1699,11 +1696,11 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="settings" id="tC8-7a-PIW">
                             <connections>
-                                <segue destination="OY2-PK-A5I" kind="show" id="sWN-Ef-f3v"/>
+                                <segue destination="OY2-PK-A5I" kind="show" id="oCh-s1-R8c"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <nil key="simulatedBottomBarMetrics"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" translucent="NO" id="eqR-bn-ddL">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
@@ -1735,7 +1732,7 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg4" translatesAutoresizingMaskIntoConstraints="NO" id="S5w-ef-5Rv">
                                 <rect key="frame" x="0.0" y="-49" width="375" height="667"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j7R-hD-qfG">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j7R-hD-qfG">
                                 <rect key="frame" x="159" y="528" width="57" height="30"/>
                                 <state key="normal" title="CRASH!">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -2146,7 +2143,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nHM-l5-fcB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-657.5" y="-1861.5"/>
+            <point key="canvasLocation" x="-921.5" y="-2732.5"/>
         </scene>
         <!--Sign Up-->
         <scene sceneID="AhA-xk-yoa">
@@ -2444,7 +2441,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m5U-in-OIZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2058.5" y="-2622.5"/>
+            <point key="canvasLocation" x="-2508.5" y="-1861.5"/>
         </scene>
         <!--Global Qs-->
         <scene sceneID="Gh2-dx-2zF">
@@ -2497,7 +2494,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c9v-pa-UbU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="330.5" y="-1093.5"/>
+            <point key="canvasLocation" x="-1161.5" y="-1093.5"/>
         </scene>
         <!--My Qs-->
         <scene sceneID="ejf-U6-zx2">
@@ -2558,18 +2555,18 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mJm-Gz-A3T" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-657.5" y="-1093.5"/>
+            <point key="canvasLocation" x="-2058.5" y="-1093.5"/>
         </scene>
     </scenes>
     <resources>
         <image name="addGroup" width="26" height="26"/>
         <image name="addUser" width="22" height="26"/>
         <image name="ask" width="26" height="25"/>
-        <image name="bg3" width="621" height="1104"/>
         <image name="bg3WithLogo" width="621" height="1104"/>
         <image name="bg3_long" width="621" height="2208"/>
         <image name="bg4" width="1242" height="2208"/>
         <image name="bg4_long" width="621" height="2208"/>
+        <image name="bg5" width="1242" height="2208"/>
         <image name="camera" width="100" height="100"/>
         <image name="clear" width="19" height="19"/>
         <image name="createGroup" width="42" height="31"/>
@@ -2582,10 +2579,9 @@
         <image name="theirQs" width="26" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="qDC-td-61u"/>
-        <segue reference="J4v-Ho-5l9"/>
-        <segue reference="px8-el-IHk"/>
-        <segue reference="zrh-5R-OIZ"/>
+        <segue reference="aPw-PS-bwz"/>
+        <segue reference="ipT-kz-A08"/>
+        <segue reference="Uw8-gb-s0O"/>
         <segue reference="sQf-7n-mye"/>
     </inferredMetricsTieBreakers>
 </document>

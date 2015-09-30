@@ -25,12 +25,12 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @IBAction func spinnerButtonAction(sender: AnyObject) {
         
-        displaySpinnerView(spinnerActive: true, UIBlock: true, self.boxView, self.blurView, "Testing Spinner", self)
+        displaySpinnerView(spinnerActive: true, UIBlock: true, self.boxView, self.blurView, "Testing Spinner", self)//.navigationController!)
         
         backgroundThread(delay: 4.0, completion: {
             // Your delayed function here to be run in the foreground
             
-            displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
+            displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)//.navigationController!)
         })
     }
     
@@ -48,40 +48,40 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @IBAction func logoutButton(sender: AnyObject) { launchLogoutPopover() }
     
-    @IBAction func linkWithFacebookAction(sender: AnyObject) {
-        
-        displaySpinnerView(spinnerActive: true, UIBlock: true, boxView, blurView, "Linking with Facebook", self)
-        
-        //blockUI(true, self.settingsSpinner, self.settingsBlurView, self)
-        
-        linkUserWithFacebook({ (success, message) -> Void in
-            
-            if success == true {
-                
-                displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
-                
-                //blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
-                
-                self.updateImageAndButton(true)
-                
-            } else {
-                
-                displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
-                
-                //blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
-                
-                self.updateImageAndButton(false)
-                
-                displayAlert("Error", "Please verify that the Facebook user currently logged in on this device is not associated with another SocialQs account and try again later", self)
-            }
-        })
-        //                // UNLINK
-        //                self.updateImageAndButton(false)
-        //
-        //                let title = "SocialQs has unlinked from Facebook!"
-        //                let message = "Please remember that Facebook linking allows you to easily find and Q your friends!"
-        //                displayAlert(title, message, self)
-    }
+//    @IBAction func linkWithFacebookAction(sender: AnyObject) {
+//        
+//        //displaySpinnerView(spinnerActive: true, UIBlock: true, boxView, blurView, "Linking with Facebook", self)
+//        
+//        //blockUI(true, self.settingsSpinner, self.settingsBlurView, self)
+//        
+//        linkUserWithFacebook({ (success, message) -> Void in
+//            
+//            if success == true {
+//                
+//                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
+//                
+//                //blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
+//                
+//                self.updateImageAndButton(true)
+//                
+//            } else {
+//                
+//                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
+//                
+//                //blockUI(false, self.settingsSpinner, self.settingsBlurView, self)
+//                
+//                self.updateImageAndButton(false)
+//                
+//                displayAlert("Error", "Please verify that the Facebook user currently logged in on this device is not associated with another SocialQs account and try again later", self)
+//            }
+//        })
+//        //                // UNLINK
+//        //                self.updateImageAndButton(false)
+//        //
+//        //                let title = "SocialQs has unlinked from Facebook!"
+//        //                let message = "Please remember that Facebook linking allows you to easily find and Q your friends!"
+//        //                displayAlert(title, message, self)
+//    }
     
     
     @IBAction func changeProfilePicture(sender: AnyObject) {
@@ -150,7 +150,9 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     
     func logOut() -> Void {
-            
+        
+        displaySpinnerView(spinnerActive: true, UIBlock: true, boxView, blurView, "Logging Out", self)
+        
         username = ""
         name = ""
         uId = ""
@@ -178,6 +180,8 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
                 // Switch back to welcome screen
                 println("Logout complete, performing segue to welcome view")
                 self.performSegueWithIdentifier("logout", sender: self)
+                
+                displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
             }
         }
     }

@@ -60,13 +60,14 @@ func displaySpinnerView(#spinnerActive: Bool, #UIBlock: Bool, var _boxView: UIVi
     if spinnerActive == true {
         println("Adding activity indicator from superView")
         // You only need to adjust this frame to move it anywhere you want
-        _boxView.frame = CGRectMake(sender.view.frame.midX - 90, sender.view.frame.midY - 25, 180, 50)
+        //_boxView.frame = CGRectMake(sender.view.frame.midX - 90, sender.view.frame.midY - 25, 180, 50)
+        _boxView.frame = CGRectMake(sender.view.frame.midX - 90, sender.view.frame.height/2 - 50, 180, 50)
         _boxView.backgroundColor = UIColor.darkGrayColor()
         _boxView.alpha = 0.8
         _boxView.layer.cornerRadius = 10
         
         // setup blur view
-        _blurView.frame = sender.view.frame
+        _blurView.frame = CGRectMake(0, 0, sender.view.frame.width, sender.view.frame.height)// sender.view.frame
         
         //Here the spinnier is initialized
         var activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
@@ -612,13 +613,15 @@ func downloadFacebookFriendsPhotos(picURL: String, completion: (Bool) -> Void) {
 func formatButton(_button: UIButton) {
     
     _button.layer.cornerRadius = cornerRadius
-    _button.backgroundColor = buttonBackgroundColor
+    _button.backgroundColor = UIColor.clearColor()//buttonBackgroundColor
     _button.titleLabel?.textColor = buttonTextColor
+    _button.layer.borderWidth = 1.0
+    _button.layer.borderColor = UIColor.whiteColor().CGColor
+    _button.layer.cornerRadius = 4.0
 }
 
 
 func getImageFromPFFile(object: PFFile, completion: (image: UIImage?, error: String?) -> ()) {
-    
     
     object.getDataInBackgroundWithBlock({ (data, error) -> Void in
         

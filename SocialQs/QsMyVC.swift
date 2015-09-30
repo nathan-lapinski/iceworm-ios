@@ -21,6 +21,12 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Initiate Push Notifications
+        let userNotificationTypes = (UIUserNotificationType.Alert | UIUserNotificationType.Badge |  UIUserNotificationType.Sound)
+        let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
+        UIApplication.sharedApplication().registerForRemoteNotifications()
+        
         // Pull to refresh --------------------------------------------------------
         refresher = UIRefreshControl()
         refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -129,7 +135,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
             
             let object = self.QJoinObjects[indexPath.row] as! PFObject
             
-            object["askeeDeleted"] = true
+            object["deleted"] = true
             
             object.unpinInBackgroundWithBlock({ (success, error) -> Void in
                 
@@ -201,10 +207,10 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         
         var qQueryLocal = PFQuery(className: "QJoin")
         qQueryLocal.fromLocalDatastore()
-        qQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!.username!)
+        qQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
         qQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
         qQueryLocal.orderByDescending("createdAt")
-        qQueryLocal.whereKey("askerDeleted", equalTo: false)
+        qQueryLocal.whereKey("deleted", equalTo: false)
         qQueryLocal.includeKey("asker")
         qQueryLocal.includeKey("question")
         qQueryLocal.limit = 1000
@@ -232,7 +238,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                 // Get Qs that are not in localdata store
                 var qQueryServer = PFQuery(className: "QJoin")
                 qQueryServer.whereKey("asker", equalTo: PFUser.currentUser()!)
-                qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!.username!)
+                qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
                 qQueryServer.whereKey("objectId", notContainedIn: alreadyRetrieved)
                 qQueryServer.orderByDescending("createdAt")
                 qQueryServer.includeKey("asker")

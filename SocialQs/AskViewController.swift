@@ -199,12 +199,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         self.askTable.backgroundColor = UIColor.clearColor()
         
-        // Initiate Push Notifications
-        let userNotificationTypes = (UIUserNotificationType.Alert | UIUserNotificationType.Badge |  UIUserNotificationType.Sound)
-        let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
-        UIApplication.sharedApplication().registerForRemoteNotifications()
-        
         //
         // Does this AFTER notifications prompted is closed and if declined:
 //        if UIApplication.sharedApplication().isRegisteredForRemoteNotifications() == false {
@@ -234,24 +228,24 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         //NSUserDefaults.standardUserDefaults().setObject(myFriends, forKey: myFriendsStorageKey)
         
-//        /////////////////////////////////////////////
-//        // Sort groupies
-//        for groupie in friendsDictionary {
-//            if groupie["isSelected"] as! Bool == true {
-//
+        /////////////////////////////////////////////
+        // Sort groupies
+        for groupie in friendsDictionary {
+            if groupie["isSelected"] as! Bool == true {
+
 //                if groupie["type"] as! String == "socialQs" {
 //                    socialQsGroupies.append(groupie["name"] as! String)
 //                } else if groupie["type"] as! String == "facebookWithApp" {
-//                    facebookWithAppGroupies.append(groupie["id"] as! String)
+                    facebookWithAppGroupies.append(groupie["id"] as! String)
 //                } else if groupie["type"] as! String == "facebookWithoutApp" {
 //                    facebookWithoutAppGroupies.append(groupie["id"] as! String)
 //                }
-//            }
-//        }
+            }
+        }
 //        println("sQs: \n\(socialQsGroupies)")
 //        println("FacebookWithApp: \n\(facebookWithAppGroupies)")
 //        println("FacebookWithoutApp: \n\(facebookWithoutAppGroupies)")
-//        /////////////////////////////////////////////
+        /////////////////////////////////////////////
     }
     
     
@@ -295,7 +289,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         socialQ["option2Stats"] = Int(0)
         
         // Mark as undelted by asker
-        socialQ["askerDeleted"] = false
+        socialQ["deleted"] = false
         
         // Add images to PFObject
         if thumbnailImages[0] != nil { socialQ["questionPhotoThumb"] = thumbnailImages[0]! }
@@ -337,13 +331,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 // Include an entry for self (ie: user will be "to", "from" AND "asker"
                 var sQsGroupieObjects: [PFObject] = []
                 
-                for sQsGroupie in self.socialQsGroupies {
+                for groupiesId in self.facebookWithAppGroupies {
                     
                     var qJoin = PFObject(className: "QJoin")
                     qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
-                    qJoin.setObject(sQsGroupie, forKey: "to")
+                    qJoin.setObject(groupiesId, forKey: "to")
                     qJoin.setObject(PFUser.currentUser()!, forKey: "from")
-                    qJoin.setObject(false, forKey: "askeeDeleted")
+                    qJoin.setObject(false, forKey: "deleted")
                     qJoin.setObject(socialQ, forKey: "question")
                     
                     sQsGroupieObjects.append(qJoin)
@@ -373,17 +367,27 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     }
                 })
                 
-                
-                
                 // ***************************************************
-                // DEBUG USE!! **************************
+                // Askers QJoin entry
                 // ***************************************************
                 var qJoinCurrentUser = PFObject(className: "QJoin")
                 qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
-                qJoinCurrentUser.setObject(PFUser.currentUser()!.username!, forKey: "to")
+                qJoinCurrentUser.setObject(PFUser.currentUser()!["facebookId"] as! String, forKey: "to")
                 qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
-                qJoinCurrentUser.setObject(false, forKey: "askeeDeleted")
+                qJoinCurrentUser.setObject(false, forKey: "deleted")
                 qJoinCurrentUser.setObject(socialQ, forKey: "question")
+                
+                qJoinCurrentUser.pinInBackgroundWithBlock({ (success, error) -> Void in
+                    
+                    if error != nil {
+                        
+                        println("There was an error pinning new Q")
+                    }
+                })
+                
+                // Transition back to originating tab
+                self.navigationController?.popViewControllerAnimated(true)
+                
                 qJoinCurrentUser.saveEventually({ (success, error) -> Void in
                     
                     println("QJoin entry for SELF successfully created")
@@ -446,10 +450,14 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             if error == nil {
                 
                 isGroupieName.removeAll(keepCapacity: true)
-                //isGroupieQId.removeAll(keepCapacity: true)
                 
                 //println("Directed push notification sent!")
                 //println("-----")
+            } else {
+                
+                println("There was an error sending notifications")
+                
+                isGroupieName.removeAll(keepCapacity: true)
             }
         })
         // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
@@ -536,18 +544,18 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             formatButton(cell.clear)
             formatButton(cell.submit)
             
-            cell.groupies.layer.borderWidth = 1.0
-            cell.groupies.layer.borderColor = UIColor.whiteColor().CGColor
-            cell.groupies.layer.cornerRadius = 4.0
-            cell.privacy.layer.borderWidth = 1.0
-            cell.privacy.layer.borderColor = UIColor.whiteColor().CGColor
-            cell.privacy.layer.cornerRadius = 4.0
-            cell.clear.layer.borderWidth = 1.0
-            cell.clear.layer.borderColor = UIColor.whiteColor().CGColor
-            cell.clear.layer.cornerRadius = 4.0
-            cell.submit.layer.borderWidth = 1.0
-            cell.submit.layer.borderColor = UIColor.whiteColor().CGColor
-            cell.submit.layer.cornerRadius = 4.0
+//            cell.groupies.layer.borderWidth = 1.0
+//            cell.groupies.layer.borderColor = UIColor.whiteColor().CGColor
+//            cell.groupies.layer.cornerRadius = 4.0
+//            cell.privacy.layer.borderWidth = 1.0
+//            cell.privacy.layer.borderColor = UIColor.whiteColor().CGColor
+//            cell.privacy.layer.cornerRadius = 4.0
+//            cell.clear.layer.borderWidth = 1.0
+//            cell.clear.layer.borderColor = UIColor.whiteColor().CGColor
+//            cell.clear.layer.cornerRadius = 4.0
+//            cell.submit.layer.borderWidth = 1.0
+//            cell.submit.layer.borderColor = UIColor.whiteColor().CGColor
+//            cell.submit.layer.cornerRadius = 4.0
             
             self.clear = false
             

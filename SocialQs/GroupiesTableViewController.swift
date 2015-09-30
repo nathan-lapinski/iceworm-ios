@@ -765,7 +765,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
         
-        println("test")
         searchCancelled = true
         loadUsers("")
     }
