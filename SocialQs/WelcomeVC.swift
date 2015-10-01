@@ -200,7 +200,7 @@ class WelcomeVC: UIViewController {
             self.backgroundImageView.layoutIfNeeded()
             self.logoImageView.layoutIfNeeded()
             
-            self.facebookSignInButtonTopSpace.constant = 230
+            self.facebookSignInButtonTopSpace.constant = 300
             self.facebookSignInButton.layoutIfNeeded()
             self.facebookLogo.layoutIfNeeded()
             

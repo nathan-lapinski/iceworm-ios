@@ -10,6 +10,8 @@ import UIKit
 
 class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, TheirTableViewCellDelegate {
     
+    var alreadyRetrieved = [String]()
+    
     var QJoinObjects: [AnyObject] = []
     var refresher: UIRefreshControl!
     var myQsSpinner = UIView()
@@ -200,44 +202,37 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         QJoinObjects.removeAll(keepCapacity: true)
         
         var qJoinQueryLocal = PFQuery(className: "QJoin")
+        qJoinQueryLocal.fromLocalDatastore()
         qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-        //qJoinQueryLocal.whereKey("asker", notEqualTo: PFUser.currentUser()!)
+        qJoinQueryLocal.whereKey("asker", notEqualTo: PFUser.currentUser()!)
         qJoinQueryLocal.orderByDescending("createdAt")
         qJoinQueryLocal.whereKey("deleted", equalTo: false)
-        qJoinQueryLocal.limit = 1000
-        qJoinQueryLocal.includeKey("question")
         qJoinQueryLocal.includeKey("asker")
-        qJoinQueryLocal.fromLocalDatastore()
+        qJoinQueryLocal.includeKey("question")
+        qJoinQueryLocal.limit = 1000
         
         qJoinQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
-            
-            var alreadyRetrieved = [String]()
             
             if error == nil {
                 
                 self.QJoinObjects = objects!
                 
-                // Reload table data
-                self.tableView.reloadData()
-                
-                // Kill refresher when query finished
-                self.refresher.endRefreshing()
-                
                 for temp in objects! {
                     if temp.objectId! != nil {
-                        alreadyRetrieved.append(temp.objectId!!)
+                        self.alreadyRetrieved.append(temp.objectId!!)
                     }
                 }
                 
                 // Get Qs that are not in localdata store
                 var qJoinQueryServer = PFQuery(className: "QJoin")
                 qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-                //qJoinQueryServer.whereKey("asker", notEqualTo: PFUser.currentUser()!)
-                qJoinQueryServer.whereKey("objectId", notContainedIn: alreadyRetrieved)
+                qJoinQueryServer.whereKey("asker", notEqualTo: PFUser.currentUser()!)
+                qJoinQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrieved)
                 qJoinQueryServer.orderByDescending("createdAt")
-                qJoinQueryServer.limit = 1000
-                qJoinQueryServer.includeKey("question")
+                qJoinQueryServer.whereKey("deleted", equalTo: false)
                 qJoinQueryServer.includeKey("asker")
+                qJoinQueryServer.includeKey("question")
+                qJoinQueryServer.limit = 1000
                 
                 qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
                     
@@ -245,9 +240,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                         
                         // Append to local array of PFObjects
                         self.QJoinObjects = self.QJoinObjects + objects!
-                        
-                        // Reload table data
-                        self.tableView.reloadData()
                         
                         // Pin new Qs to local datastore
                         if let temp = objects as? [PFObject] {
@@ -260,12 +252,19 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                                         
                                         println("Their Qs QJoin Object \(object.objectId!) pinned!")
                                     }
+                                    
+//                                    if let test = object.objectId {
+//                                        self.alreadyRetrieved.append(test)
+//                                    }
                                 }
                             }
-                            
-                            // Reload table data
-                            self.tableView.reloadData()
                         }
+                        
+                        // Reload table data
+                        self.tableView.reloadData()
+                        
+                        // Kill refresher when query finished
+                        self.refresher.endRefreshing()
                         
                     } else {
                         
@@ -285,8 +284,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 println("There was an error loading Qs from local data store:")
                 println(error)
             }
-            
-            
         }
     }
 

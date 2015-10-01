@@ -76,6 +76,14 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         clear = true
         
+        isGroupieName = []
+        for var i=0; i < friendsDictionaryFiltered.count; i++ {
+            friendsDictionaryFiltered[i]["isSelected"] = false
+        }
+        for var i=0; i < friendsDictionary.count; i++ {
+            friendsDictionary[i]["isSelected"] = false
+        }
+        
         question = nil
         option1  = nil
         option2  = nil
@@ -153,8 +161,18 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     && (self.chosenImageHighRes[0] != nil || self.option1 != nil)
                     && (self.chosenImageHighRes[0] != nil || self.option2 != nil) {
                     
-                    // Submit Q
-                    self.submitQ(sender)
+                        if self.facebookWithAppGroupies.count > 1 {
+                            
+                            // Submit Q
+                            self.submitQ(sender)
+                        
+                        } else {
+                            
+                            let title = "Oops, you can't Q no one!"
+                            let message = "Use the \"Add Groupies\" button at the top right to select groupies."
+                            displayAlert(title, message, self)
+                            
+                        }
                     
                 } else {
                     
@@ -320,23 +338,58 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         if highResImages[2] != nil { socialQ["option2Photo"]  = highResImages[2]! }
         
         // Pin completed object to local data store
-        socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
+//        socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                println("Successfully pinned new Q object")
+//                
+//                // Trigger reload of calling view(s)
+//                NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
+//                //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+//                //NSNotificationCenter.defaultCenter().postNotificationName("refreshGlobalQs", object: nil)
+//                
+//                // Transition back to originating tab
+//                self.navigationController?.popViewControllerAnimated(true)
+//                
+//                // clear text and photo entries
+//                self.cancelButtonAction(sender)
+//
+//                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
+//                
+//                //blockUI(false, self.askSpinner, self.askBlurView, self)
+//            }
+        //        }
+        
+        // ***************************************************
+        // Askers QJoin entry
+        // ***************************************************
+        var qJoinCurrentUser = PFObject(className: "QJoin")
+        qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
+        qJoinCurrentUser.setObject(PFUser.currentUser()!["facebookId"] as! String, forKey: "to")
+        qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
+        qJoinCurrentUser.setObject(false, forKey: "deleted")
+        qJoinCurrentUser.setObject(socialQ, forKey: "question")
+        
+        qJoinCurrentUser.pinInBackgroundWithBlock({ (success, error) -> Void in
             
-            if error == nil {
+            if error != nil {
                 
-                println("Successfully pinned new Q object")
+                println("There was an error pinning new Q")
+            } else {
                 
+                // Trigger reload of calling view(s)
+                NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
+                NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+                NSNotificationCenter.defaultCenter().postNotificationName("refreshGlobalQs", object: nil)
+                
+                // Transition back to originating tab
                 self.navigationController?.popViewControllerAnimated(true)
-                //self.tabBarController?.selectedIndex = 1
                 
                 // clear text and photo entries
                 self.cancelButtonAction(sender)
-                
-                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
-                
-                //blockUI(false, self.askSpinner, self.askBlurView, self)
             }
-        }
+        })
         
         // ************** NETWORK CHECK **********************************
         // Save PFObject to Parse
@@ -386,27 +439,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     }
                 })
                 
-                // ***************************************************
-                // Askers QJoin entry
-                // ***************************************************
-                var qJoinCurrentUser = PFObject(className: "QJoin")
-                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
-                qJoinCurrentUser.setObject(PFUser.currentUser()!["facebookId"] as! String, forKey: "to")
-                qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
-                qJoinCurrentUser.setObject(false, forKey: "deleted")
-                qJoinCurrentUser.setObject(socialQ, forKey: "question")
-                
-                qJoinCurrentUser.pinInBackgroundWithBlock({ (success, error) -> Void in
-                    
-                    if error != nil {
-                        
-                        println("There was an error pinning new Q")
-                    }
-                })
-                
-                // Transition back to originating tab
-                self.navigationController?.popViewControllerAnimated(true)
-                
                 qJoinCurrentUser.saveEventually({ (success, error) -> Void in
                     
                     println("QJoin entry for SELF successfully created")
@@ -443,7 +475,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         if isGroupieName.isEmpty == false {
             
-            toUsers.whereKey("username", containedIn: isGroupieName)
+            toUsers.whereKey("facebookId", containedIn: facebookWithAppGroupies)
             pushQuery.whereKey("user", matchesQuery: toUsers)
             
         } else {
@@ -451,7 +483,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             // ********************************
             // CHANGE THIS LATER!!!!!!
             // ********************************
-            pushQuery.whereKey("user", notContainedIn: isGroupieName)
+            //pushQuery.whereKey("user", notContainedIn: isGroupieName)
             //pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
         }
         

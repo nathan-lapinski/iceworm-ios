@@ -153,7 +153,7 @@ class QSMyCellNEW: UITableViewCell {
         usernameLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
         usernameLabel?.textColor = UIColor.whiteColor() // winColor // UIColor.lightGrayColor()
         let usernameString = QObject["asker"]!["username"] as? String
-        usernameLabel.text = "@\(usernameString!) asked:"
+        usernameLabel.text = "From \(usernameString!)"
         
         if let questionPhotoThumb = self.QObject["question"]!["questionPhotoThumb"] as? PFFile {
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
@@ -371,8 +371,6 @@ class QSMyCellNEW: UITableViewCell {
         
         UIView.animateWithDuration(2.0, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
             
-            //self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, CGFloat(self.option1Percent/100)*(self.option1Text.frame.width + 2*self.horizontalSpace + self.option1Image.frame.width) + self.horizontalSpace, statsHeight)
-            //self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, CGFloat(self.option2Percent/100)*(self.option2Text.frame.width + 2*self.horizontalSpace + self.option2Image.frame.width) + self.horizontalSpace, statsHeight)
             self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width) + self.option1Image.frame.width, statsHeight)
             self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width) + self.option1Image.frame.width, statsHeight)
             self.option1Stats.center.y = self.option1Image.center.y
@@ -383,7 +381,6 @@ class QSMyCellNEW: UITableViewCell {
             self.option2PercentText.alpha = 1.0
             
             }) { (isFinished) -> Void in }
-        
     }
     
     
@@ -412,7 +409,7 @@ class QSMyCellNEW: UITableViewCell {
         option1Text.numberOfLines = 3
         option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
         option1Text.textAlignment = NSTextAlignment.Center
-        option1Text?.font = UIFont(name: "HelveticaNeue", size: CGFloat(14))!
+        option1Text?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(14))!
         option1Text?.textColor = UIColor.darkTextColor()
         
         option1PercentText.frame = CGRectMake(bounds.width - horizontalSpace - 60, option1Text.frame.origin.y, 60, 60)
@@ -430,7 +427,7 @@ class QSMyCellNEW: UITableViewCell {
         option2Text.numberOfLines = 3
         option2Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
         option2Text.textAlignment = NSTextAlignment.Center
-        option2Text?.font = UIFont(name: "HelveticaNeue", size: CGFloat(14))!
+        option2Text?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(14))!
         option2Text?.textColor = UIColor.darkTextColor()
         
         option2PercentText.frame = CGRectMake(bounds.width - horizontalSpace - 60, option2Text.frame.origin.y, 60, 60)
@@ -479,8 +476,6 @@ class QSMyCellNEW: UITableViewCell {
         let label = recognizer.view!
         let translation = recognizer.translationInView(self)
         var percentMoved = translation.x/(bounds.width - profilePicture.frame.width - 2*horizontalSpace)
-        
-        println(percentMoved)
         
         // Total amount the image view will move
         let a = bounds.width - option1Image.frame.width - 2*horizontalSpace
@@ -534,8 +529,6 @@ class QSMyCellNEW: UITableViewCell {
             
             if id == 1 {
                 
-                //option1Offset = endX
-                
                 UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
                     
                     label.center = CGPoint(x: endX, y: label.center.y)
@@ -558,8 +551,6 @@ class QSMyCellNEW: UITableViewCell {
                 
             } else {
                 
-                //option2Offset = endX
-                
                 UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
                     
                     label.center = CGPoint(x: endX, y: label.center.y)
@@ -569,26 +560,14 @@ class QSMyCellNEW: UITableViewCell {
                     self.option2VoteArrow.center = CGPoint(x: endX, y: label.center.y)
                     
                     if percentMoved >= 0.5 {
-                        //self.castVote(id)
                         self.option2Checkmark.alpha = 0.8
-                        println(self.option2Image)
-                        println(self.option2Checkmark)
                     } else {
                         self.option1Checkmark.alpha = 0.0
-                        println(self.option2Image)
-                        println(self.option2Checkmark)
                     }
                     
                     }, completion: { (isFinished) -> Void in
                 })
             }
-            
-//            if xFromCenter <= 0 {
-//                //endX = label.frame.width/2 + 8
-//            } else {
-//                //endX = self.bounds.width - label.frame.width/2 - 8
-//                castVote(id)
-//            }
         }
     }
     
@@ -614,15 +593,6 @@ class QSMyCellNEW: UITableViewCell {
         if totalResponses == 1 { resp = "response" }
         responsesText.text = "\(totalResponses) \(resp)"
         
-////        option1Checkmark.alpha = 0.8
-////        option2Checkmark.alpha = 0.8
-//        
-////        option1VoteArrow.removeFromSuperview()
-////        option2VoteArrow.removeFromSuperview()
-//        
-//        //        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-//        //        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-//        
         // Lock Q cell for voting
         if option1Zoom.gestureRecognizers != nil {
             option1Zoom.removeGestureRecognizer(recognizer1)
@@ -630,8 +600,8 @@ class QSMyCellNEW: UITableViewCell {
         if option2Zoom.gestureRecognizers != nil {
             option2Zoom.removeGestureRecognizer(recognizer2)
         }
-//
-//        // Update percentage stats and option text
+
+        // Update percentage stats and option text
         computePercents(optionId)
         setOptionText()
         animateStatsBars()

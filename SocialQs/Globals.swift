@@ -69,6 +69,8 @@ var myFriends = [String]() // Stores usernames of socialQs-typed users
 // Array to store non-FB friends
 //var mySocialQsFriends = [String]()
 
+
+
 // Variable for passing image to zoom and on which image to start (1 or 2)
 //var imageZoom: [UIImage?] = [nil, nil, nil]//[UIImage(named: "camera.png"), UIImage(named: "camera.png"), UIImage(named: "camera.png")]
 var questionToView: PFObject? = nil

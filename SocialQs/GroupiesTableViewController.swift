@@ -170,13 +170,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             println("completion block")
         })
         
-        //
-        //
-        // CLOUD SHITS
-        //
-        //
-        
-        
     }
     
     
@@ -200,57 +193,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveSettingsSavedNotification:", name: "SettingsSavedNotification", object: nil)
         
-//        if !PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
-//            
-//            var alert = UIAlertController(title: "Find Your Friends!", message: "Send this Q to your Facebook friends by linking your account in the SocialQs settings page!", preferredStyle: UIAlertControllerStyle.Alert)
-//            
-//            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: { (action) -> Void in }))
-//            
-//            alert.addAction(UIAlertAction(title: "Link With Facebook", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-//                
-//                linkUserWithFacebook({ (success, message) -> Void in
-//                    
-//                    if success == true {
-//                        
-//                        println(message)
-//                        
-//                        // User is now linked, download their friends for groupies use
-//                        downloadFacebookFriends({ (isFinished) -> Void in
-//                            
-//                            println("downloading friends")
-//                            
-//                            if isFinished {
-//                                
-//                                println("finished downloading friends")
-//                                
-//                                self.viewDidLoad()
-//                                
-//                            } else {
-//                                
-//                                // ********************************************************************
-//                                //
-//                                //
-//                                // HOW TO HANDLE? Try again? Unlink and have them manually retry?
-//                                //
-//                                //
-//                                // ********************************************************************
-//                            }
-//                        })
-//                        
-//                    } else {
-//                        
-//                        displayAlert("Error", "Please verify that the Facebook user currently logged in on this device is not associated with another SocialQs account and try again later", self)
-//                    }
-//                })
-//            }))
-//            
-//            presentViewController(alert, animated: true, completion: nil)
-//            
-//        }
-        
-        // get myFriends and add to dictionary//addFriends(nil, completion: { (isFinished) -> () in })
-        
-        
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBarStyle.Default
         searchBar.showsCancelButton = true
@@ -258,20 +200,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         // Load all users (no filter from searchbar
         self.loadUsers("")
         
-        
-        // Title table controller
-        //self.title = "Select Groupies"
-        
-        
-        // Add "find user" button
-//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "dismissPressed:")
-//        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()
-//        var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "addUser.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "findUser")
-//        //var groupsNavigationButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: "findUser")
-//        groupsNavigationButton.tintColor = UIColor.whiteColor()
         if let addNavigationButton = self.navigationItem.rightBarButtonItem {
             addNavigationButton.tintColor = UIColor.whiteColor()
-//            self.navigationItem.setRightBarButtonItems([addNavigationButton, groupsNavigationButton], animated: true)
         }
         
         // Format Done button
@@ -288,286 +218,11 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         tableView.separatorColor = UIColor.lightGrayColor()
         tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
         
-        // Initialize allSelected var the first time the controller is presented
-        //allSelected = false
-        
         // Keyboard open/closed notifications
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"keyboardWillAppear:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"keyboardWillDisappear:", name: UIKeyboardWillHideNotification, object: nil)
         
         
-    }
-    
-    
-    func findUser() {
-        
-        func configurationTextField(textField: UITextField!) {
-            
-            textField.placeholder = ""
-            friendEntry = textField
-        }
-        
-        func handleCancel(alertView: UIAlertAction!) {
-            
-            println("Cancelled !!")
-        }
-        
-        var alert = UIAlertController(title: "Enter a SocialQs handle", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alert.addTextFieldWithConfigurationHandler(configurationTextField)
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
-        
-        alert.addAction(UIAlertAction(title: "Add User", style: UIAlertActionStyle.Default, handler: { (UIAlertAction)in
-            
-            self.resignFirstResponder()
-            
-            let searchString = self.friendEntry.text
-            
-            PFCloud.callFunctionInBackground("findNewUser", withParameters: ["userString": searchString, "currentUser": username]) { (objects, error) -> Void in
-                
-                if error == nil {
-                    
-                    if objects!.count == 0 {
-                        
-                        displayAlert("Sorry!", "No users containing \(searchString) were found. Please verify spelling and try again!", self)
-                        
-                    } else if objects!.count == 1 {
-                        
-                        self.saveNewFriend(searchString)
-                        
-//                        // ONE USER FOUND, add it
-//                        myFriends.append(searchString)
-//                        isGroupieName.append(searchString)
-//                        
-//                        // Create "Friend" object, pin and upload
-//                        var newFriend = PFObject(className: "Friends")
-//                        newFriend.setObject(PFUser.currentUser()!, forKey: "owner")
-//                        newFriend.setObject(searchString, forKey: "friend")
-//                        
-//                        newFriend.pinInBackgroundWithBlock({ (success, error) -> Void in
-//                            
-//                            if error == nil {
-//                                
-//                                println("New friend pinned to LDS!")
-//                                
-//                            } else {
-//                                
-//                                println("There was an error pinning new friend: \n\(error)")
-//                            }
-//                        })
-//                        
-//                        newFriend.saveEventually({ (success, error) -> Void in
-//                            
-//                            if error == nil {
-//                                
-//                                println("New friend has been saved to the DB")
-//                                
-//                            } else {
-//                                
-//                                println("There was an error uploading friends to DB: \n\(error)")
-//                                
-//                            }
-//                        })
-                        
-                        
-//                        // Post notification to tell calling controller that the popover is being dismissed
-//                        // (or simply that the underlying should be reloaded)
-//                        NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
-//                        
-//                        // Check to make sure the delegate is set then call the returning function (saveText) - which
-//                        // lives in the calling/controlling VC
-//                        if self.delegate != nil {
-//                            
-//                            // Return PFUser
-//                            self.delegate?.saveText(objects![0])
-//                        }
-                        
-                        self.dismissViewControllerAnimated(true, completion: nil)
-                        
-                    } else {
-                        
-                        self.selectUserFromOptionsAlert(objects!)
-                    }
-                    
-                } else {
-                    
-                    println("Error filtering usernames in cloud")
-                    println(error)
-                }
-            }
-        }))
-        
-        self.presentViewController(alert, animated: true, completion: {
-            
-            println("completion block")
-        })
-    }
-    
-    
-    func selectUserFromOptionsAlert(objects: AnyObject) {
-        
-        func handleCancel(alertView: UIAlertAction!) {
-            
-            println("Cancelled !!")
-        }
-        
-        var alert = UIAlertController(title: "Did you mean:", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-        
-        var displayString: String = ""
-        
-        let finalCount = min(objects.count, 5)
-        
-        for var i = 0; i < finalCount; i++ {
-            //for var i = 0; i < 5; i++ {
-            
-            let userObject: AnyObject! = objects[i]
-            
-            let usernameLocal = objects[i]["userObject"]!!["username"]! as! String
-            
-            if let nameLocal = objects[i]["userObject"]!!["name"]! as? String {
-                
-                displayString = "@\(usernameLocal) (\(nameLocal))"
-                
-            } else {
-                
-                displayString = "@\(usernameLocal)"
-            }
-            
-            alert.addAction(UIAlertAction(title: displayString, style: .Default, handler: { (UIAlertAction) in
-                
-                self.saveNewFriend(usernameLocal)
-                
-//                myFriends.append(usernameLocal)
-//                isGroupieName.append(usernameLocal)
-                
-//                // Post notification to tell calling controller that the popover is being dismissed
-//                // (or simply that the underlying should be reloaded)
-//                NSNotificationCenter.defaultCenter().postNotificationName("SettingsSavedNotification", object: nil)
-//                
-//                if self.delegate != nil {
-//                    
-//                    // Return PFUser
-//                    self.delegate?.saveText(userObject)
-//                }
-                
-                self.dismissViewControllerAnimated(true, completion: nil)
-            }))
-        }
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler:handleCancel))
-        
-        self.presentViewController(alert, animated: true, completion: { })
-        
-    }
-    
-    
-    func saveNewFriend(usernameLocal: String) {
-        
-        // ONE USER FOUND, add it
-        myFriends.append(usernameLocal)
-        isGroupieName.append(usernameLocal)
-        
-        // Add newFriends to friendDictionary
-        addFriends(usernameLocal, completion: { (isFinished) -> () in
-            
-            if isFinished {
-                
-                for temp in friendsDictionary {
-                    
-                    if temp["name"] as! String == usernameLocal {
-                        
-                        // Create "Friend" object, pin and upload
-                        var newFriend = PFObject(className: "Friends")
-                        newFriend.setObject(PFUser.currentUser()!, forKey: "owner")
-                        newFriend.setObject(usernameLocal, forKey: "name")
-                        newFriend.setObject(temp["id"] as! String, forKey: "id")
-                        newFriend.setObject(true, forKey: "isSelected")
-                        newFriend.setObject(temp["type"] as! String, forKey: "type")
-                        
-                        newFriend.pinInBackgroundWithBlock({ (success, error) -> Void in
-                            
-                            if error == nil {
-                                
-                                println("New friend pinned to LDS!")
-                                
-                            } else {
-                                
-                                println("There was an error pinning new friend: \n\(error)")
-                            }
-                        })
-                        
-                        newFriend.saveEventually({ (success, error) -> Void in
-                            
-                            if error == nil {
-                                
-                                println("New friend has been saved to the DB")
-                                
-                            } else {
-                                
-                                println("There was an error uploading friends to DB: \n\(error)")
-                                
-                            }
-                        })
-                    }
-                }
-            }
-        })
-    }
-    
-    
-    func addFriends(newUser: String?, completion: (Bool) -> ()) {
-        
-        var usernameTest = ""
-        
-        if newUser != nil {
-            usernameTest = newUser!
-        }
-        
-        var alreadyAdded = [String]()
-        
-        for friend in friendsDictionary {
-            if friend["type"] as! String == "socialQs" {
-                alreadyAdded.append(friend["name"] as! String)
-            }
-        }
-        
-        var toAdd = Set(myFriends).subtract(Set(alreadyAdded))
-        
-        var socialQsUsersQuery = PFQuery(className: "_User")
-        socialQsUsersQuery.whereKey("username", notEqualTo: username) // omit current user
-        socialQsUsersQuery.whereKey("username", containedIn: Array(toAdd)) // No users that are already myFriends
-        socialQsUsersQuery.whereKeyDoesNotExist("authData") // No users linked to FB
-        
-        socialQsUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-            
-            if error == nil {
-                
-                if let temp = objects {
-                    
-                    for object in temp {
-                        
-                        var tempDict = Dictionary<String, AnyObject>()
-                        
-                        tempDict["name"] = object.username!!
-                        //tempDict["username"] = object.username!!
-                        tempDict["type"] = "socialQs"
-                        tempDict["id"] = object.objectId!!
-                        if tempDict["name"] as! String == usernameTest as String {
-                            tempDict["isSelected"] = true
-                        } else {
-                            tempDict["isSelected"] = false
-                        }
-                        
-                        friendsDictionary.append(tempDict)
-                        
-                        completion(true)
-                    }
-                }
-                
-                self.loadUsers("")
-            }
-        })
     }
     
     
@@ -658,7 +313,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         } else {
             
             friendsDictionaryFiltered = friendsDictionary
-            //nonFriendsDictionaryFiltered = nonFriendsDictionary
             
             sectionOneItems = self.fbAndSQNames
         }
@@ -669,90 +323,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         ]
         
         self.tableView.reloadData()
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-//        nonFriendsDictionary.sort { (item1, item2) -> Bool in
-//            
-//            let t1 = (item1["name"] as! String).lowercaseString
-//            let t2 = (item2["name"] as! String).lowercaseString
-//            
-//            return t1 < t2
-//        }
-//        
-//        // Fill display strings
-//        fbAndSQNames.removeAll(keepCapacity: true)
-//        for temp in friendsDictionary {
-//            
-//            self.fbAndSQNames.append(temp["name"] as! String)
-//        }
-//        sqOnlyNames.removeAll(keepCapacity: true)
-//        for temp in nonFriendsDictionary {
-//            
-//            self.sqOnlyNames.append(temp["name"] as! String)
-//        }
-//        
-//        // reset all entries in filtered users
-//        friendsDictionaryFiltered.removeAll(keepCapacity: true)
-//        nonFriendsDictionaryFiltered.removeAll(keepCapacity: true)
-//        
-//        var sectionTwoItems = [String]()
-//        var sectionThreeItems = [String]()
-//        
-//        // Fill filtered dictionaries from full dict and search key
-//        if !searchName.isEmpty {
-//            
-//            // Filter users by searchBar input
-//            var fbAndSQNamesFiltered = self.fbAndSQNames.filter({(item: String) -> Bool in
-//                
-//                var stringMatch = item.lowercaseString.rangeOfString(searchName.lowercaseString)
-//                return stringMatch != nil ? true : false
-//            })
-//            var sqOnlyNamesFiltered = self.sqOnlyNames.filter({(item: String) -> Bool in
-//                
-//                var stringMatch = item.lowercaseString.rangeOfString(searchName.lowercaseString)
-//                return stringMatch != nil ? true : false
-//            })
-//            
-//            // Fill filtered dictionaries
-//            for name in fbAndSQNamesFiltered {
-//                var index = find(self.fbAndSQNames, name)!
-//                friendsDictionaryFiltered.append(friendsDictionary[index])
-//            }
-//            for name in sqOnlyNamesFiltered {
-//                var index = find(self.sqOnlyNames, name)!
-//                nonFriendsDictionaryFiltered.append(nonFriendsDictionary[index])
-//            }
-//            
-//            sectionTwoItems = fbAndSQNamesFiltered
-//            sectionThreeItems = sqOnlyNamesFiltered
-//            
-//        } else {
-//            
-//            friendsDictionaryFiltered = friendsDictionary
-//            nonFriendsDictionaryFiltered = nonFriendsDictionary
-//            
-//            sectionTwoItems = self.fbAndSQNames
-//            sectionThreeItems = self.sqOnlyNames
-//        }
-//        
-//        // Fill object to populate table
-//        self.objectsArray = [
-//            Objects(sectionName: self.section1, sectionObjects: [""]),
-//            Objects(sectionName: self.section2, sectionObjects: sectionTwoItems)
-//            ,Objects(sectionName: self.section3, sectionObjects: sectionThreeItems)
-//        ]
-//        
-//        self.tableView.reloadData()
-        //:::::::::::::::::::::::::::::::::::::::::::
     }
     
     
@@ -802,7 +372,6 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         cell.usernameLabel.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]
         
         // Add profile pics
-        
         if let url = friendsDictionaryFiltered[indexPath.row]["picURL"] as? String {
             
             if let image: UIImage = friendsPhotoDictionary[url] {
@@ -819,68 +388,17 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             cell.profilePictureImageView.image = UIImage(named: "profile.png")
         }
         
-        //            if let image: UIImage = friendsDictionaryFiltered[indexPath.row]["profilePicture"] as? UIImage {
-        //
-        //                cell.profilePictureImageView.image = image
-        //
-        //            } else {
-        //
-        //                if let url = (friendsDictionaryFiltered[indexPath.row]["picURL"]) as? String {
-        //
-        //                    let urlRequest = NSURLRequest(URL: NSURL(string: url)!)
-        //
-        //                    NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
-        //
-        //                        friendsDictionaryFiltered[indexPath.row]["profilePicture"] = UIImage(data: data)!
-        //                        friendsDictionary[indexPath.row]["profilePicture"] = UIImage(data: data)!
-        //                        cell.profilePictureImageView.image = UIImage(data: data)!
-        //                    }
-        //
-        //                } else {
-        //
-        //                    cell.profilePictureImageView.image = UIImage(named: "profile.png")!
-        //                }
-        //            }
-        
         cell.profilePictureImageView.contentMode = UIViewContentMode.ScaleAspectFill
         cell.profilePictureImageView.clipsToBounds = true
-        
-//        // add account-type pics
-//        if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithApp" {
-//            
-//            cell.accountTypeImageView.image = UIImage(named: "share_facebook.png")
-//            
-//        } else if friendsDictionaryFiltered[indexPath.row]["type"] as! String == "socialQs" {
-//            
-//            cell.accountTypeImageView.image = UIImage(named: "logo_square.png")
-//        }
-//        cell.accountTypeImageView.contentMode = UIViewContentMode.ScaleAspectFill
-//        cell.accountTypeImageView.clipsToBounds = true
-//        cell.accountTypeImageView.backgroundColor = mainColorBlue
         
         if friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool == true {
             
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-//            cell.accountTypeImageView.alpha = 0.2
             
         } else {
             
             cell.accessoryType = UITableViewCellAccessoryType.None
-//            cell.accountTypeImageView.alpha = 1.0
         }
-        
-        // Tag and format invite button
-//        cell.inviteButton.tag = indexPath.row
-//        cell.inviteButton.backgroundColor = UIColor.clearColor()
-        
-//        if friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool && friendsDictionaryFiltered[indexPath.row]["type"] as! String == "facebookWithoutApp" {
-//            
-//            cell.inviteButton.hidden = false
-//            
-//        } else {
-//            
-//            cell.inviteButton.hidden = true
-//        }
         
         
         
