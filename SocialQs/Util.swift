@@ -337,7 +337,7 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                     
                 }
                 
-                println("FRIENDS RETRIEVED: \(friendsDictionary)")
+                //println("FRIENDS RETRIEVED: \(friendsDictionary)")
                 
             } else {
                 

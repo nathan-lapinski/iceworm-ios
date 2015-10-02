@@ -47,7 +47,6 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     }
     
     func refreshMyQs() {
-        println("REFRESHING POST-ASK")
         refresh()
     }
     
@@ -106,7 +105,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSMyCellNEW
         
         cell.delegate = self
-        cell.QObject = QJoinObjects[indexPath.row] as! PFObject
+        cell.QJoinObject = QJoinObjects[indexPath.row] as! PFObject
         
         return cell
     }
@@ -330,43 +329,47 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         // Build a temp question when none are available
         QJoinObjects.removeAll(keepCapacity: true)
             
-        println("NO QS!!")
+        println("NO MYQS!!")
         
         var noQsJoinObject = PFObject(className: "QJoin")
         var noQsQuestionObject = PFObject(className: "SocialQs")
+        var noQsPhotoJoinQObject = PFObject(className: "PhotoJoin")
+        var noQsPhotoJoin1Object = PFObject(className: "PhotoJoin")
+        var noQsPhotoJoin2Object = PFObject(className: "PhotoJoin")
         var noQsAskerObject = PFObject(className: "User")
         
         let profImageData = UIImagePNGRepresentation(UIImage(named: "arrowToAsk.png"))
         var profImageFile: PFFile = PFFile(name: "arrowToAsk.png", data: profImageData)
         noQsAskerObject.setObject(profImageFile, forKey: "profilePicture")
-        noQsAskerObject.setObject("SocialQs Team", forKey: "username")
-        
+        noQsAskerObject.setObject("SocialQs Team", forKey: "name")
+
         noQsQuestionObject.setObject("Use the ASK button to create a Q!", forKey: "questionText")
         noQsQuestionObject.setObject("Tap any of the images or arrows to zoom...", forKey: "option1Text")
         noQsQuestionObject.setObject("...or drag the image or arrow to the right to cast your vote!", forKey: "option2Text")
-        
+
         let qImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
         var qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData)
-        noQsQuestionObject.setObject(qImageFile, forKey: "questionPhotoThumb")
-        
         let o1ImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
         var o1ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o1ImageData)
-        noQsQuestionObject.setObject(o1ImageFile, forKey: "option1PhotoThumb")
-        
         let o2ImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
         var o2ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o2ImageData)
-        noQsQuestionObject.setObject(o2ImageFile, forKey: "option2PhotoThumb")
         
-        noQsQuestionObject.setObject(qImageFile, forKey: "questionPhoto")
-        noQsQuestionObject.setObject(o1ImageFile, forKey: "option1Photo")
-        noQsQuestionObject.setObject(o2ImageFile, forKey: "option2Photo")
+        noQsPhotoJoinQObject.setObject(qImageFile, forKey: "thumb")
+        noQsPhotoJoinQObject.setObject(qImageFile, forKey: "fullRes")
+        noQsPhotoJoin1Object.setObject(o1ImageFile, forKey: "thumb")
+        noQsPhotoJoin1Object.setObject(o1ImageFile, forKey: "fullRes")
+        noQsPhotoJoin2Object.setObject(o2ImageFile, forKey: "thumb")
+        noQsPhotoJoin2Object.setObject(o2ImageFile, forKey: "fullRes")
         
+        var images: [PFObject] = [noQsPhotoJoinQObject, noQsPhotoJoin1Object, noQsPhotoJoin2Object]
+        
+        noQsQuestionObject.setObject(images, forKey: "images")
         noQsQuestionObject.setObject(0, forKey: "option1Stats")
         noQsQuestionObject.setObject(0, forKey: "option2Stats")
-        
+
         noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
         noQsJoinObject.setObject(noQsAskerObject, forKey: "asker")
-        
+
         self.QJoinObjects = [noQsJoinObject]
     }
     

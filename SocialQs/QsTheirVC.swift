@@ -32,11 +32,17 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         
         backgroundImageView.image = UIImage(named: "bg5.png")
         tableView.backgroundColor = UIColor.clearColor()
-//        tableView.backgroundColor = UIColor(red: 236/256, green: 236/256, blue: 236/256, alpha: 1.0) //UIColor.whiteColor()//.colorWithAlphaComponent(0.95)
+        
+        // Create observer to montior for return from sequed push view
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTheirQs", name: "refreshTheirQs", object: nil)
         
         tableView.dataSource = self
         tableView.delegate = self
         tableView.registerClass(QSTheirCellNEW.self, forCellReuseIdentifier: "cell")
+    }
+    
+    func refreshTheirQs() {
+        refresh()
     }
     
     
@@ -260,6 +266,11 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                             }
                         }
                         
+                        if self.QJoinObjects.count < 1 {
+                            
+                            self.buildNoQsQuestion()
+                        }
+                        
                         // Reload table data
                         self.tableView.reloadData()
                         
@@ -270,6 +281,11 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                         
                         println("There was an error retrieving new Qs from the database:")
                         println(error)
+                        
+                        if self.QJoinObjects.count < 1 {
+                            
+                            self.buildNoQsQuestion()
+                        }
                         
                         // Reload table data
                         self.tableView.reloadData()
@@ -285,6 +301,56 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 println(error)
             }
         }
+    }
+    
+    
+    func buildNoQsQuestion() {
+        
+        // Build a temp question when none are available
+        QJoinObjects.removeAll(keepCapacity: true)
+        
+        println("NO THEIRQS!!")
+        
+        var noQsJoinObject = PFObject(className: "QJoin")
+        var noQsQuestionObject = PFObject(className: "SocialQs")
+        var noQsPhotoJoinQObject = PFObject(className: "PhotoJoin")
+        var noQsPhotoJoin1Object = PFObject(className: "PhotoJoin")
+        var noQsPhotoJoin2Object = PFObject(className: "PhotoJoin")
+        var noQsAskerObject = PFObject(className: "User")
+        
+        let profImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
+        var profImageFile: PFFile = PFFile(name: "logo_square_blueS.png", data: profImageData)
+        noQsAskerObject.setObject(profImageFile, forKey: "profilePicture")
+        noQsAskerObject.setObject("SocialQs Team", forKey: "name")
+        
+        noQsQuestionObject.setObject("No Qs! Don't you have friends?", forKey: "questionText")
+        noQsQuestionObject.setObject("I don't 😥, but I'll invite some!", forKey: "option1Text")
+        noQsQuestionObject.setObject("I do 😃, but I'll invite more!", forKey: "option2Text")
+        
+        let qImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
+        var qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData)
+        let o1ImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
+        var o1ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o1ImageData)
+        let o2ImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
+        var o2ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o2ImageData)
+        
+        noQsPhotoJoinQObject.setObject(qImageFile, forKey: "thumb")
+        noQsPhotoJoinQObject.setObject(qImageFile, forKey: "fullRes")
+        noQsPhotoJoin1Object.setObject(o1ImageFile, forKey: "thumb")
+        noQsPhotoJoin1Object.setObject(o1ImageFile, forKey: "fullRes")
+        noQsPhotoJoin2Object.setObject(o2ImageFile, forKey: "thumb")
+        noQsPhotoJoin2Object.setObject(o2ImageFile, forKey: "fullRes")
+        
+        var images: [PFObject] = [noQsPhotoJoinQObject, noQsPhotoJoin1Object, noQsPhotoJoin2Object]
+        
+        noQsQuestionObject.setObject(images, forKey: "images")
+        noQsQuestionObject.setObject(0, forKey: "option1Stats")
+        noQsQuestionObject.setObject(0, forKey: "option2Stats")
+        noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")
+        
+        noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
+        
+        self.QJoinObjects = [noQsJoinObject]
     }
 
     

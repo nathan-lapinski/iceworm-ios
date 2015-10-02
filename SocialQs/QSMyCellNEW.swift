@@ -73,7 +73,7 @@ class QSMyCellNEW: UITableViewCell {
     var option2PercentText: UILabel! = UILabel()
     var responsesText: UILabel! = UILabel()
     
-    var QObject: PFObject!
+    var QJoinObject: PFObject!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -137,8 +137,8 @@ class QSMyCellNEW: UITableViewCell {
         questionBackground.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)//mainColorBlue
         
         profilePicture.frame = CGRectMake(8, 8, 60, 60)
-        if (QObject["asker"]!["profilePicture"] as? PFFile != nil) {
-            getImageFromPFFile(QObject["asker"]!["profilePicture"]!! as! PFFile, { (image, error) -> () in
+        if (QJoinObject["asker"]!["profilePicture"] as? PFFile != nil) {
+            getImageFromPFFile(QJoinObject["asker"]!["profilePicture"]!! as! PFFile, { (image, error) -> () in
                 if error == nil {
                     self.profilePicture.image = image
                 }
@@ -152,10 +152,10 @@ class QSMyCellNEW: UITableViewCell {
         usernameLabel.frame = CGRectMake(67, 7, 150, 20)
         usernameLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
         usernameLabel?.textColor = UIColor.whiteColor() // winColor // UIColor.lightGrayColor()
-        let usernameString = QObject["asker"]!["username"] as? String
+        let usernameString = QJoinObject["asker"]!["name"] as? String
         usernameLabel.text = "From \(usernameString!)"
         
-        if let questionPhotoThumb = self.QObject["question"]!["questionPhotoThumb"] as? PFFile {
+        if let questionPhotoThumb = QJoinObject["question"]!["images"]!![0]["thumb"] as? PFFile {//self.QJoinObject["question"]!["questionPhotoThumb"] as? PFFile {
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
             getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -179,7 +179,7 @@ class QSMyCellNEW: UITableViewCell {
         questionPicture.layer.cornerRadius = questionPicture.frame.width/2
         
         questionText.frame = CGRectMake(profilePicture.center.x + profilePicture.frame.width/2 + horizontalSpace, 24, bounds.width - profilePicture.frame.width - questionPicture.frame.width - 4*horizontalSpace, 40)
-        if let qText = self.QObject["question"]!["questionText"] as? String {
+        if let qText = self.QJoinObject["question"]!["questionText"] as? String {
             questionText.text = qText
             questionText.numberOfLines = 0
             questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
@@ -201,7 +201,7 @@ class QSMyCellNEW: UITableViewCell {
         
         option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
         option1Zoom.frame = option1Image.frame
-        if let option1PhotoThumb = self.QObject["question"]!["option1PhotoThumb"] as? PFFile {
+        if let option1PhotoThumb = QJoinObject["question"]!["images"]!![1]["thumb"] as? PFFile {//self.QJoinObject["question"]!["option1PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -224,7 +224,7 @@ class QSMyCellNEW: UITableViewCell {
         
         option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
         option2Zoom.frame = option2Image.frame
-        if let option2PhotoThumb = self.QObject["question"]!["option2PhotoThumb"] as? PFFile {
+        if let option2PhotoThumb = QJoinObject["question"]!["images"]!![2]["thumb"] as? PFFile {//self.QJoinObject["question"]!["option2PhotoThumb"] as? PFFile {
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
                 if error == nil {
                     self.option2Image.image = image
@@ -279,7 +279,7 @@ class QSMyCellNEW: UITableViewCell {
         
         
         
-        if let test = QObject["vote"] as? Int {
+        if let test = QJoinObject["vote"] as? Int {
             
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
@@ -299,7 +299,7 @@ class QSMyCellNEW: UITableViewCell {
             option2VoteArrow.alpha = 0.8
         }
         
-        totalResponses = (self.QObject["question"]!["option1Stats"] as! Int) + (QObject["question"]!["option2Stats"] as! Int)
+        totalResponses = (self.QJoinObject["question"]!["option1Stats"] as! Int) + (QJoinObject["question"]!["option2Stats"] as! Int)
         if totalResponses != 0 {
             option1Percent = computePercents(1)
             option2Percent = 100 - option1Percent//computePercents(2)
@@ -333,7 +333,7 @@ class QSMyCellNEW: UITableViewCell {
         imageCenterEnd.x = bounds.width - option1Image.frame.width/2 - 8
         option1PercentText.alpha = 0.0
         option2PercentText.alpha = 0.0
-        if let test = QObject["vote"] as? Int {
+        if let test = QJoinObject["vote"] as? Int {
             option1PercentText.hidden = false
             option2PercentText.hidden = false
             option1VoteArrow.alpha = 0.0
@@ -389,9 +389,9 @@ class QSMyCellNEW: UITableViewCell {
         var optionPercent:Float = 0.0
         
         if id == 1 {
-            optionPercent = Float((self.QObject["question"]!["option1Stats"] as! Int))/Float(totalResponses)*100
+            optionPercent = Float((self.QJoinObject["question"]!["option1Stats"] as! Int))/Float(totalResponses)*100
         } else {
-            optionPercent = Float((self.QObject["question"]!["option2Stats"] as! Int))/Float(totalResponses)*100
+            optionPercent = Float((self.QJoinObject["question"]!["option2Stats"] as! Int))/Float(totalResponses)*100
         }
         
         return optionPercent
@@ -401,7 +401,7 @@ class QSMyCellNEW: UITableViewCell {
     func setOptionText() {
         
         option1Text.frame = CGRectMake(option1Image.frame.width + 2*horizontalSpace, option1Image.frame.origin.y, bounds.width - 2*option1Image.frame.width - 4*horizontalSpace, 60)
-        if let oText = self.QObject["question"]!["option1Text"] as? String {
+        if let oText = self.QJoinObject["question"]!["option1Text"] as? String {
             option1Text.text = oText
         } else {
             option1Text.text = ""
@@ -418,7 +418,7 @@ class QSMyCellNEW: UITableViewCell {
         option1PercentText?.textColor = UIColor.darkTextColor()
         
         option2Text.frame = CGRectMake(option2Image.frame.width + 2*horizontalSpace, option2Image.frame.origin.y, bounds.width - 2*option2Image.frame.width - 4*horizontalSpace, 60)
-        if let o2Text = self.QObject["question"]!["option2Text"] as? String {
+        if let o2Text = self.QJoinObject["question"]!["option2Text"] as? String {
             option2Text.text = o2Text
             
         } else {
@@ -448,22 +448,22 @@ class QSMyCellNEW: UITableViewCell {
     
     func questionZoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QObject["question"]! as? PFObject
+        questionToView = QJoinObject["question"]! as? PFObject
         self.delegate?.segueToZoom()
     }
     
     func image1Zoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QObject["question"]! as? PFObject
-        if (QObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
+        questionToView = QJoinObject["question"]! as? PFObject
+        if (QJoinObject["question"]!["images"]!![0]["fullRes"]! as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     
     func image2Zoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QObject["question"]! as? PFObject
-        if (QObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
-        if (QObject["question"]!["option1Photo"]  as? PFFile != nil) { zoomPage++ }
+        questionToView = QJoinObject["question"]! as? PFObject
+        if (QJoinObject["question"]!["images"]!![0]["fullRes"]! as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["images"]!![1]["fullRes"]! as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     
@@ -574,16 +574,16 @@ class QSMyCellNEW: UITableViewCell {
     
     func castVote(optionId: Int) {
         
-        QObject!.setObject(optionId, forKey: "vote")
-        QObject!["question"]!.incrementKey("option\(optionId)Stats")
-        QObject.pinInBackgroundWithBlock { (success, error) -> Void in
+        QJoinObject!.setObject(optionId, forKey: "vote")
+        QJoinObject!["question"]!.incrementKey("option\(optionId)Stats")
+        QJoinObject.pinInBackgroundWithBlock { (success, error) -> Void in
             
             if error == nil {
                 println("Vote has been pinned from MyQs")
             }
         }
         
-        QObject!.saveEventually { (success, error) -> Void in
+        QJoinObject!.saveEventually { (success, error) -> Void in
             if error == nil {
                 println("Successful vote cast in SocialQs!")
             }

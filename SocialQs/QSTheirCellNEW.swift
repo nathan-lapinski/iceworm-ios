@@ -152,10 +152,10 @@ class QSTheirCellNEW: UITableViewCell {
         usernameLabel.frame = CGRectMake(67, 7, 150, 20)
         usernameLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
         usernameLabel?.textColor = UIColor.whiteColor() // winColor // UIColor.lightGrayColor()
-        let usernameString = QJoinObject["question"]!["asker"]!!["username"] as? String
-        usernameLabel.text = "@\(usernameString!) asked:"
+        let usernameString = QJoinObject["question"]!["asker"]!!["name"] as? String
+        usernameLabel.text = "From \(usernameString!)"
         
-        if let questionPhotoThumb = self.QJoinObject["question"]!["questionPhotoThumb"] as? PFFile {
+        if let questionPhotoThumb = QJoinObject["question"]!["images"]!![0]["thumb"] as? PFFile {
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
             getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -201,7 +201,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
         option1Zoom.frame = option1Image.frame
-        if let option1PhotoThumb = self.QJoinObject["question"]!["option1PhotoThumb"] as? PFFile {
+        if let option1PhotoThumb = QJoinObject["question"]!["images"]!![1]["thumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -224,7 +224,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
         option2Zoom.frame = option2Image.frame
-        if let option2PhotoThumb = self.QJoinObject["question"]!["option2PhotoThumb"] as? PFFile {
+        if let option2PhotoThumb = QJoinObject["question"]!["images"]!![2]["thumb"] as? PFFile {
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
                 if error == nil {
                     self.option2Image.image = image
@@ -338,7 +338,6 @@ class QSTheirCellNEW: UITableViewCell {
             option2PercentText.hidden = false
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
-            println(QJoinObject["vote"] as? Int)
             animateStatsBars()
             if test == 1 {
                 //option1Checkmark.layer.borderWidth = 2.0
@@ -410,7 +409,7 @@ class QSTheirCellNEW: UITableViewCell {
         option1Text.numberOfLines = 3
         option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
         option1Text.textAlignment = NSTextAlignment.Center
-        option1Text?.font = UIFont(name: "HelveticaNeue", size: CGFloat(14))!
+        option1Text?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(14))!
         option1Text?.textColor = UIColor.darkTextColor()
         
         option1PercentText.frame = CGRectMake(bounds.width - horizontalSpace - 60, option1Text.frame.origin.y, 60, 60)
@@ -428,7 +427,7 @@ class QSTheirCellNEW: UITableViewCell {
         option2Text.numberOfLines = 3
         option2Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
         option2Text.textAlignment = NSTextAlignment.Center
-        option2Text?.font = UIFont(name: "HelveticaNeue", size: CGFloat(14))!
+        option2Text?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(14))!
         option2Text?.textColor = UIColor.darkTextColor()
         
         option2PercentText.frame = CGRectMake(bounds.width - horizontalSpace - 60, option2Text.frame.origin.y, 60, 60)

@@ -92,7 +92,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
     
     func updateImageAndButton(linked: Bool) -> Void {
         
-        nameLabel.text = "@\(username)"
+        nameLabel.text = name
         
         if linked {
             
@@ -107,13 +107,13 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
             linkWithFacebook.hidden = false
         }
         
-        if name != "" {
-            
-            handleLabel.text = name
-        } else {
-            
-            handleLabel.text = ""
-        }
+//        if name != "" {
+//            
+//            handleLabel.text = name
+//        } else {
+//            
+//            handleLabel.text = ""
+//        }
         
         profilePictureImageView.image = profilePicture
     }
@@ -137,7 +137,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String
         
-        logout.setTitle("Log Out " + username, forState: UIControlState.Normal)
+        logout.setTitle("Log Out", forState: UIControlState.Normal)
         appInfo.text = "Version: " + version! + "\nBuild: (" + build! + ")"
     }
     

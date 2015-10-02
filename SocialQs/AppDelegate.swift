@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import Parse
+import ParseCrashReporting
 import Bolts
 
 @UIApplicationMain
@@ -21,11 +22,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // https://parse.com/docs/ios_guide#localdatastore/iOS
         Parse.enableLocalDatastore()
         
-        // SocialQs Dev --------------------------------------------------------------------------------------------------------------
-        Parse.setApplicationId("TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR", clientKey: "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s")
+        var parseAppId = "TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR"
+        var parseClientKey = "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s"
         
-        // SocialQs Test 4 -----------------------------------------------------------------------------------------------------------
-        //Parse.setApplicationId("GePc935BnwSJ27iNNE3lKEv1VEgWLjdApRto0AQ7", clientKey: "nH1Kr6kpym4lYVxg22sO0B0fvBMwc744hwaHq1yE")
+        let mode = "dev"
+        
+        switch mode {
+        case "dev":
+            // SocialQs Dev ----------------------------------------------------
+            parseAppId = "TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR"
+            parseClientKey = "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s"
+            // -----------------------------------------------------------------
+        case "test":
+            // SocialQs Test 4 -------------------------------------------------
+            parseAppId = "GePc935BnwSJ27iNNE3lKEv1VEgWLjdApRto0AQ7"
+            parseClientKey = "nH1Kr6kpym4lYVxg22sO0B0fvBMwc744hwaHq1yE"
+            // -----------------------------------------------------------------
+        default:
+            // SocialQs Dev ----------------------------------------------------
+            parseAppId = "TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR"
+            parseClientKey = "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s"
+            // -----------------------------------------------------------------
+        }
         
         
         // SocialQs Test 3 -----------------------------------------------------------------------------------------------------------
@@ -34,6 +52,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Parse.setApplicationId("7aEu2aiPHAun7HWnN42hWJ4eQuZueBiHZoGq7GZb", clientKey: "FU38Qh4hHo0LDGLAQP8PKB8wtjzwhPFGArpwqj7t")
         // SocialQs Test 2 -----------------------------------------------------------------------------------------------------------
         //Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
+        
+        
+        // Enable Crash Reporting
+        ParseCrashReporting.enable();
+        
+        // Setup Parse
+        Parse.setApplicationId(parseAppId, clientKey: parseClientKey)
         
         
         PFFacebookUtils.initializeFacebookWithApplicationLaunchOptions(launchOptions)

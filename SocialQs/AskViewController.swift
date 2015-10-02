@@ -311,8 +311,54 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         if self.chosenImageHighRes[1] != nil { highResImages[1] = createPNG(self.chosenImageHighRes[1]!, "option1Image.png")  }
         if self.chosenImageHighRes[2] != nil { highResImages[2] = createPNG(self.chosenImageHighRes[2]!, "option2Image.png")  }
         
+        // Create PFObject for images
+        var photoJoinQ = PFObject(className: "PhotoJoin")
+        var photoJoin1 = PFObject(className: "PhotoJoin")
+        var photoJoin2 = PFObject(className: "PhotoJoin")
         
-        // Create PFObject (without images for 'saveEventually'
+        // Add images to PFObject
+        var qImages: [PFObject] = []
+        
+        if thumbnailImages[0] != nil {
+            photoJoinQ["thumb"] = thumbnailImages[0]!
+        } else {
+            photoJoinQ["thumb"] = NSNull()
+        }
+        if highResImages[0] != nil {
+            photoJoinQ["fullRes"] = highResImages[0]!
+        } else {
+            photoJoinQ["fullRes"] = NSNull()
+        }
+        println(photoJoinQ)
+        qImages.append(photoJoinQ)
+        
+        if thumbnailImages[1] != nil {
+            photoJoin1["thumb"]  = thumbnailImages[1]!
+        } else {
+            photoJoin1["thumb"]  = NSNull()
+        }
+        if highResImages[1] != nil {
+            photoJoin1["fullRes"]  = highResImages[1]!
+        } else {
+            photoJoin1["fullRes"]  = NSNull()
+        }
+        println(photoJoin1)
+        qImages.append(photoJoin1)
+        
+        if thumbnailImages[2] != nil {
+            photoJoin2["thumb"]  = thumbnailImages[2]!
+        } else {
+            photoJoin2["thumb"]  = NSNull()
+        }
+        if highResImages[2] != nil {
+            photoJoin2["fullRes"]  = highResImages[2]!
+        } else {
+            photoJoin2["fullRes"]  = NSNull()
+        }
+        println(photoJoin2)
+        qImages.append(photoJoin2)
+        
+        // Create PFObject for Q
         var socialQ = PFObject(className: "SocialQs")
         socialQ["asker"] = PFUser.currentUser()
         
@@ -321,21 +367,16 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         if option1  != nil { socialQ["option1Text"]  = option1  }
         if option2  != nil { socialQ["option2Text"]  = option2  }
         
+        // Add pointers to images
+        if qImages.count > 0 { socialQ.setObject(qImages, forKey: "images") }
+        
         // Initialize vote counters in PFObject
         socialQ["option1Stats"] = Int(0)
         socialQ["option2Stats"] = Int(0)
         
         // Mark as undelted by asker
-        socialQ["deleted"] = false
+        //socialQ["deleted"] = false
         
-        // Add images to PFObject
-        if thumbnailImages[0] != nil { socialQ["questionPhotoThumb"] = thumbnailImages[0]! }
-        if thumbnailImages[1] != nil { socialQ["option1PhotoThumb"]  = thumbnailImages[1]! }
-        if thumbnailImages[2] != nil { socialQ["option2PhotoThumb"]  = thumbnailImages[2]! }
-        
-        if highResImages[0] != nil { socialQ["questionPhoto"] = highResImages[0]! }
-        if highResImages[1] != nil { socialQ["option1Photo"]  = highResImages[1]! }
-        if highResImages[2] != nil { socialQ["option2Photo"]  = highResImages[2]! }
         
         // Pin completed object to local data store
 //        socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
