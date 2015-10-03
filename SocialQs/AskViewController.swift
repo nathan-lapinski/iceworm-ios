@@ -10,6 +10,8 @@ import UIKit
 
 class AskViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, FBSDKAppInviteDialogDelegate {
     
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+    
     let thumbnailMax = CGFloat(120)
     let photoMax = CGFloat(800)
     let rowHeights: [CGFloat] = [52, 130, 76, 150]
@@ -98,6 +100,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         askTable.beginUpdates()
         askTable.reloadData()
         askTable.endUpdates()
+        
+    }
+    
+    
+    private func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .Custom
     }
     
     @IBAction func addQPhotoAction(sender: AnyObject) {
@@ -123,6 +132,21 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         launchImagePickerPopover()
     }
+    
+    
+    @IBAction func addO2PhotoAction(sender: AnyObject) {
+        
+        whichCell = 2
+        
+        oPhoto = !oPhoto
+        
+        askTable.beginUpdates()
+        askTable.endUpdates()
+        
+        launchImagePickerPopover()
+    }
+    
+    
     
     @IBAction func qPhotoButtonPressed(sender: AnyObject) {
         
@@ -158,8 +182,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             dispatch_async(dispatch_get_main_queue()) { () -> Void in
                 
                 if (self.chosenImageHighRes[0] != nil || self.question != nil)
-                    && (self.chosenImageHighRes[0] != nil || self.option1 != nil)
-                    && (self.chosenImageHighRes[0] != nil || self.option2 != nil) {
+                    && (self.chosenImageHighRes[1] != nil || self.option1 != nil)
+                    && (self.chosenImageHighRes[2] != nil || self.option2 != nil) {
                     
                         if self.facebookWithAppGroupies.count > 1 {
                             
@@ -168,9 +192,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                         
                         } else {
                             
-                            let title = "Oops, you can't Q no one!"
-                            let message = "Use the \"Add Groupies\" button at the top right to select groupies."
-                            displayAlert(title, message, self)
+                            let overlayVC = self.storyboard?.instantiateViewControllerWithIdentifier("overlayViewController") as! UIViewController
+                            self.prepareOverlayVC(overlayVC)
+                            self.presentViewController(overlayVC, animated: true, completion: nil)
+                            
+//                            let title = "Oops, you can't Q no one!"
+//                            let message = "Use the \"Add Groupies\" button at the top right to select groupies."
+//                            displayAlert(title, message, self)
                             
                         }
                     
@@ -205,9 +233,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         // Add "groupies" and "settings" buttons
         var groupiesNavigationButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "addUser.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displayGroupiesView")
-        var settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
-        
         groupiesNavigationButton.tintColor = UIColor.whiteColor()
+        
+        var settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
         settingsButton.tintColor = UIColor.whiteColor()
         
         //self.navigationItem.setRightBarButtonItems([settingsButton, groupiesNavigationButton], animated: true)
@@ -417,6 +445,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             if error != nil {
                 
                 println("There was an error pinning new Q")
+                
             } else {
                 
                 // Trigger reload of calling view(s)
@@ -508,25 +537,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //        })
         
         // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
-        // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
         var toUsers: PFQuery = PFUser.query()!
-        // ****CURRENTLY SEND TO ALL IF NO ONE IS SELECTED!!****
-        
         var pushQuery: PFQuery = PFInstallation.query()!
         
-        if isGroupieName.isEmpty == false {
-            
-            toUsers.whereKey("facebookId", containedIn: facebookWithAppGroupies)
-            pushQuery.whereKey("user", matchesQuery: toUsers)
-            
-        } else {
-            // If sendToGroupies is empty, filter push to all users
-            // ********************************
-            // CHANGE THIS LATER!!!!!!
-            // ********************************
-            //pushQuery.whereKey("user", notContainedIn: isGroupieName)
-            //pushQuery.whereKey("username", doesNotMatchQuery: toUsers)
-        }
+        toUsers.whereKey("facebookId", containedIn: facebookWithAppGroupies)
+        pushQuery.whereKey("user", matchesQuery: toUsers)
         
         var pushDirected: PFPush = PFPush()
         pushDirected.setQuery(pushQuery)
@@ -534,22 +549,22 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         // Create dictionary to send JSON to parse/to other devices
         //var dataDirected: Dictionary = ["alert":"New Q from \(myName)!", "badge":"Increment", "content-available":"0", "sound":""]////
         //pushDirected.setData(dataDirected)////
-        pushDirected.setMessage("New Q from \(username)!")
+        pushDirected.setMessage("New Q from \(name)!")
         
         // Send Push Notifications
         pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
             
             if error == nil {
                 
-                isGroupieName.removeAll(keepCapacity: true)
+                self.facebookWithAppGroupies.removeAll(keepCapacity: true)
                 
-                //println("Directed push notification sent!")
-                //println("-----")
+                println("Directed push notification sent!")
+                
             } else {
                 
-                println("There was an error sending notifications")
+                self.facebookWithAppGroupies.removeAll(keepCapacity: true)
                 
-                isGroupieName.removeAll(keepCapacity: true)
+                println("There was an error sending notifications")
             }
         })
         // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
@@ -636,19 +651,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             formatButton(cell.clear)
             formatButton(cell.submit)
             
-//            cell.groupies.layer.borderWidth = 1.0
-//            cell.groupies.layer.borderColor = UIColor.whiteColor().CGColor
-//            cell.groupies.layer.cornerRadius = 4.0
-//            cell.privacy.layer.borderWidth = 1.0
-//            cell.privacy.layer.borderColor = UIColor.whiteColor().CGColor
-//            cell.privacy.layer.cornerRadius = 4.0
-//            cell.clear.layer.borderWidth = 1.0
-//            cell.clear.layer.borderColor = UIColor.whiteColor().CGColor
-//            cell.clear.layer.cornerRadius = 4.0
-//            cell.submit.layer.borderWidth = 1.0
-//            cell.submit.layer.borderColor = UIColor.whiteColor().CGColor
-//            cell.submit.layer.cornerRadius = 4.0
-            
             self.clear = false
             
         default: cell = askTable.dequeueReusableCellWithIdentifier("oCell", forIndexPath: indexPath) as! AskTableViewCell
@@ -702,8 +704,11 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         var titleMessage = "Please choose image source"
         if whichCell == 0 {
             titleMessage = "Please choose Q image source"
+        } else if whichCell == 1 {
+            //titleMessage = "Please choose Option \(((imageCount + 1) % 2) + 1) image source"
+            titleMessage = "Please choose Option 1 image source"
         } else {
-            titleMessage = "Please choose Option \(((imageCount + 1) % 2) + 1) image source"
+            titleMessage = "Please choose Option 2 image source"
         }
         
         let alert = UIAlertController(title: titleMessage, message: nil, preferredStyle:
@@ -730,8 +735,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             if self.whichCell == 0 && self.chosenImageHighRes[0] == nil {
                 self.qPhoto = false//!self.qPhoto
             } else if self.whichCell == 1 && self.chosenImageHighRes[2] == nil {
-                //self.chosenImageHighRes[1] = nil//UIImage(named: "camera.png")
-                //self.chosenImageHighRes[2] = nil//UIImage(named: "camera.png")
                 self.chosenImageHighRes[1] = nil
                 self.chosenImageHighRes[2] = nil
                 self.askTable.reloadData() // Could just reload row...
@@ -758,15 +761,25 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
         } else if whichCell == 1 {
             
-            imageCount = imageCount + 1
+            chosenImageHighRes[1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[1] = resizeImage(self.chosenImageHighRes[1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
             
-            chosenImageHighRes[(imageCount % 2) + 1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
-            chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(self.chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
+        } else if whichCell == 2 {
             
-        } else if whichCell == -1 {
+            chosenImageHighRes[2] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[2] = resizeImage(self.chosenImageHighRes[2]!, CGSize(width: thumbnailMax, height: thumbnailMax))
             
-            chosenImageHighRes[(imageCount % 2) + 1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
-            chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
+//        } else if whichCell == 1 {
+//            
+//            imageCount = imageCount + 1
+//            
+//            chosenImageHighRes[(imageCount % 2) + 1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
+//            chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(self.chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
+//            
+//        } else if whichCell == -1 {
+//            
+//            chosenImageHighRes[(imageCount % 2) + 1] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
+//            chosenImageThumbnail[(imageCount % 2) + 1] = resizeImage(chosenImageHighRes[(imageCount % 2) + 1]!, CGSize(width: thumbnailMax, height: thumbnailMax))
         }
         
         askTable.reloadData()

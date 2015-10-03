@@ -9,6 +9,8 @@
 import UIKit
 
 class TabBarController: UITabBarController, UITabBarControllerDelegate {
+    
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +41,26 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         let image = UIImage(named: "logo_square.png")
         imageView.image = image
         self.navigationItem.titleView = imageView
+        
+        
+        
+        var settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
+        settingsButton.tintColor = UIColor.whiteColor()
+        
+        //self.navigationItem.setRightBarButtonItems([settingsButton, groupiesNavigationButton], animated: true)
+        self.navigationItem.setRightBarButtonItems([settingsButton], animated: true)
 
+    }
+    
+    func displaySettingsView() {
+        let overlayVC = storyboard?.instantiateViewControllerWithIdentifier("settingsNEWViewController") as! UIViewController
+        prepareOverlayVC(overlayVC)
+        presentViewController(overlayVC, animated: true, completion: nil)
+    }
+    
+    private func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .Custom
     }
     
     

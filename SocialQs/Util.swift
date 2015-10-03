@@ -227,7 +227,9 @@ func downloadGroups(completion: (Bool) -> Void) {
      
         var groupsQuery = PFQuery(className: "GroupJoin")
         groupsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
-        groupsQuery.whereKey("groupName", containedIn: myGroups)
+        if myGroups.count < 1 {
+            groupsQuery.whereKey("groupName", containedIn: myGroups)
+        }
         
         groupsQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
             
@@ -241,7 +243,7 @@ func downloadGroups(completion: (Bool) -> Void) {
                             
                             if error == nil {
                                 
-                                println("Successfully pinned GroupJoin entry")
+                                println("Successfully pinned GROUPJOIN entry")
                             }
                         }
                     }

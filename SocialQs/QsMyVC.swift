@@ -235,6 +235,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         qQueryLocal.whereKey("deleted", equalTo: false)
         qQueryLocal.includeKey("asker")
         qQueryLocal.includeKey("question")
+        qQueryLocal.includeKey("images")
         qQueryLocal.limit = 1000
         
         qQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
@@ -253,11 +254,14 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                 var qQueryServer = PFQuery(className: "QJoin")
                 qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
                 qQueryServer.whereKey("asker", equalTo: PFUser.currentUser()!)
-                qQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrievedMyQs)
+                if self.alreadyRetrievedMyQs.count > 0 {
+                    qQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrievedMyQs)
+                }
                 qQueryServer.orderByDescending("createdAt")
                 qQueryServer.whereKey("deleted", equalTo: false)
                 qQueryServer.includeKey("asker")
                 qQueryServer.includeKey("question")
+                qQueryServer.includeKey("images")
                 qQueryServer.limit = 1000
                 
                 qQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
@@ -344,14 +348,14 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         noQsAskerObject.setObject("SocialQs Team", forKey: "name")
 
         noQsQuestionObject.setObject("Use the ASK button to create a Q!", forKey: "questionText")
-        noQsQuestionObject.setObject("Tap any of the images or arrows to zoom...", forKey: "option1Text")
-        noQsQuestionObject.setObject("...or drag the image or arrow to the right to cast your vote!", forKey: "option2Text")
+        noQsQuestionObject.setObject("Tap any of the images to enlarge...", forKey: "option1Text")
+        noQsQuestionObject.setObject("...or drag to the right to cast your vote!", forKey: "option2Text")
 
-        let qImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
+        let qImageData = UIImagePNGRepresentation(UIImage(named: "scenery3.png"))
         var qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData)
-        let o1ImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
+        let o1ImageData = UIImagePNGRepresentation(UIImage(named: "scenery1.png"))
         var o1ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o1ImageData)
-        let o2ImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
+        let o2ImageData = UIImagePNGRepresentation(UIImage(named: "scenery2.png"))
         var o2ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o2ImageData)
         
         noQsPhotoJoinQObject.setObject(qImageFile, forKey: "thumb")

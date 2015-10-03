@@ -49,6 +49,11 @@
 		90A66E1F1BBDC1C50015F27E /* ParseFacebookUtilsV4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A66E1E1BBDC1C50015F27E /* ParseFacebookUtilsV4.framework */; };
 		90A66E211BBDCB810015F27E /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A66E201BBDCB810015F27E /* ParseCrashReporting.framework */; };
 		90A66E231BBDF7C60015F27E /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A66E221BBDF7C60015F27E /* libstdc++.6.0.9.dylib */; };
+		90A66E2A1BBF9A1C0015F27E /* OverlayPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E271BBF9A1C0015F27E /* OverlayPresentationController.swift */; };
+		90A66E2B1BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E281BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift */; };
+		90A66E2C1BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E291BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift */; };
+		90A66E2E1BBF9A770015F27E /* OverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E2D1BBF9A770015F27E /* OverlayViewController.swift */; };
+		90A66E321BBFB2420015F27E /* SettingsNEWViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E311BBFB2420015F27E /* SettingsNEWViewController.swift */; };
 		90D0B4EB1BA7EE7B009E284C /* QsGlobalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */; };
 		90D7F3F81B62216B001284FA /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D7F3F71B62216B001284FA /* UsernameViewController.swift */; };
 		90DE6C211B30E9CC004F3BA0 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */; };
@@ -121,6 +126,11 @@
 		90A66E1E1BBDC1C50015F27E /* ParseFacebookUtilsV4.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseFacebookUtilsV4.framework; sourceTree = "<group>"; };
 		90A66E201BBDCB810015F27E /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseCrashReporting.framework; sourceTree = "<group>"; };
 		90A66E221BBDF7C60015F27E /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
+		90A66E271BBF9A1C0015F27E /* OverlayPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayPresentationController.swift; sourceTree = "<group>"; };
+		90A66E281BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayTransitioningDelegate.swift; sourceTree = "<group>"; };
+		90A66E291BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BouncyViewControllerAnimator.swift; sourceTree = "<group>"; };
+		90A66E2D1BBF9A770015F27E /* OverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayViewController.swift; sourceTree = "<group>"; };
+		90A66E311BBFB2420015F27E /* SettingsNEWViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNEWViewController.swift; sourceTree = "<group>"; };
 		90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsGlobalVC.swift; sourceTree = "<group>"; };
 		90D7F3F71B62216B001284FA /* UsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsernameViewController.swift; sourceTree = "<group>"; };
 		90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -210,7 +220,9 @@
 				90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */,
 				904123071B26A67C00397132 /* Main.storyboard */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
+				90A66E2D1BBF9A770015F27E /* OverlayViewController.swift */,
 				902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */,
+				90A66E261BBF9A030015F27E /* Popover Present */,
 				90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */,
 				909937461BB7305D00535716 /* QSMyCellNEW.swift */,
 				909937441BB7289E00535716 /* QsMyVC.swift */,
@@ -224,6 +236,7 @@
 				904122FF1B26A67C00397132 /* Supporting Files */,
 				902B34D41B3EA21300B67ACE /* TabBarController.swift */,
 				90D7F3F71B62216B001284FA /* UsernameViewController.swift */,
+				90A66E311BBFB2420015F27E /* SettingsNEWViewController.swift */,
 				904E29CA1B59DC10007E17D2 /* Util.swift */,
 				90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */,
 				90FE1F221B43A941005F2D68 /* VotesTableVC.swift */,
@@ -284,6 +297,16 @@
 				90A1473C1B2E4CBA00947B33 /* AudioToolbox.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		90A66E261BBF9A030015F27E /* Popover Present */ = {
+			isa = PBXGroup;
+			children = (
+				90A66E271BBF9A1C0015F27E /* OverlayPresentationController.swift */,
+				90A66E281BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift */,
+				90A66E291BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift */,
+			);
+			name = "Popover Present";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -403,15 +426,19 @@
 				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
 				90DE6C211B30E9CC004F3BA0 /* LoginViewController.swift in Sources */,
+				90A66E2E1BBF9A770015F27E /* OverlayViewController.swift in Sources */,
 				90FE1F1F1B43A89F005F2D68 /* VotesCell.swift in Sources */,
 				90FE1F231B43A941005F2D68 /* VotesTableVC.swift in Sources */,
 				902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */,
+				90A66E2A1BBF9A1C0015F27E /* OverlayPresentationController.swift in Sources */,
+				90A66E2B1BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift in Sources */,
 				90F995931BBB75CF003CAB58 /* SettingsVC.swift in Sources */,
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
 				902B34CD1B3E4FB800B67ACE /* SignupViewController.swift in Sources */,
 				909937471BB7305D00535716 /* QSMyCellNEW.swift in Sources */,
 				900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */,
 				90EF88421B83B92400752A27 /* WelcomeVC.swift in Sources */,
+				90A66E321BBFB2420015F27E /* SettingsNEWViewController.swift in Sources */,
 				900ED8821B75279D005FED93 /* GroupiesSettingsTableViewController.swift in Sources */,
 				90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */,
 				904E29CB1B59DC10007E17D2 /* Util.swift in Sources */,
@@ -419,6 +446,7 @@
 				908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */,
 				902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,
+				90A66E2C1BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift in Sources */,
 				90D7F3F81B62216B001284FA /* UsernameViewController.swift in Sources */,
 				902D871F1B5747A9001F9954 /* ScrollViewContainer.swift in Sources */,
 				90E46CEF1B8EEA4800D5E8AB /* GroupiesNavigationController.swift in Sources */,

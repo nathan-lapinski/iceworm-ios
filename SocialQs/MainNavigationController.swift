@@ -9,7 +9,6 @@
 import UIKit
 
 class MainNavigationController: UINavigationController {
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,8 +32,15 @@ class MainNavigationController: UINavigationController {
         navigationItem.titleView = imageView // tried adding self.
         // FUNCTION ***************************************************************
         */
+     
+        
+        
         
     }
+    
+    
+    
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

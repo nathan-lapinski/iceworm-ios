@@ -448,22 +448,22 @@ class QSTheirCellNEW: UITableViewCell {
     
     func questionZoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QJoinObject["question"] as? PFObject
+        questionToView = QJoinObject["question"]! as? PFObject
         self.delegate?.segueToZoom()
     }
     
     func image1Zoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QJoinObject["question"] as? PFObject
-        if (QJoinObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
+        questionToView = QJoinObject["question"]! as? PFObject
+        if (QJoinObject["question"]!["images"]!![0]["fullRes"]! as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     
     func image2Zoom(sender: UIButton!) {
         zoomPage = 0
-        questionToView = QJoinObject["question"] as? PFObject
-        if (QJoinObject["question"]!["questionPhoto"] as? PFFile != nil) { zoomPage++ }
-        if (QJoinObject["question"]!["option1Photo"]  as? PFFile != nil) { zoomPage++ }
+        questionToView = QJoinObject["question"]! as? PFObject
+        if (QJoinObject["question"]!["images"]!![0]["fullRes"]! as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["images"]!![1]["fullRes"]! as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     

@@ -168,7 +168,7 @@ class WelcomeVC: UIViewController {
         facebookSignInButton.layoutIfNeeded()
         facebookLogo.layoutIfNeeded()
         
-        postWarningTextViewTopSpace.constant = 3 * spacingMultiplier
+        postWarningTextViewTopSpace.constant = 10 * spacingMultiplier
         postWarningTextView.layoutIfNeeded()
         
 //        orTextViewTopSpace.constant = 12 * spacingMultiplier

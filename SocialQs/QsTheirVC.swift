@@ -233,7 +233,9 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 var qJoinQueryServer = PFQuery(className: "QJoin")
                 qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
                 qJoinQueryServer.whereKey("asker", notEqualTo: PFUser.currentUser()!)
-                qJoinQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrieved)
+                if self.alreadyRetrieved.count > 0 {
+                    qJoinQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrieved)
+                }
                 qJoinQueryServer.orderByDescending("createdAt")
                 qJoinQueryServer.whereKey("deleted", equalTo: false)
                 qJoinQueryServer.includeKey("asker")
@@ -327,12 +329,24 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         noQsQuestionObject.setObject("I don't 😥, but I'll invite some!", forKey: "option1Text")
         noQsQuestionObject.setObject("I do 😃, but I'll invite more!", forKey: "option2Text")
         
-        let qImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
+        let qImageData = UIImagePNGRepresentation(UIImage(named: "scenery3.png"))
         var qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData)
-        let o1ImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
-        var o1ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o1ImageData)
-        let o2ImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png"))
-        var o2ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o2ImageData)
+        
+        var o1ImageData = NSData()
+        if arc4random_uniform(2) == 0 {
+            o1ImageData = UIImagePNGRepresentation(UIImage(named: "sadNate.png"))
+        } else {
+            o1ImageData = UIImagePNGRepresentation(UIImage(named: "sadBrett.png"))
+            }
+        var o1ImageFile: PFFile = PFFile(name: "option1Picture.png", data: o1ImageData)
+        
+        var o2ImageData = NSData()
+        if arc4random_uniform(2) == 0 {
+            o2ImageData = UIImagePNGRepresentation(UIImage(named: "happyNate.png"))
+        } else {
+            o2ImageData = UIImagePNGRepresentation(UIImage(named: "happyBrett.png"))
+        }
+        var o2ImageFile: PFFile = PFFile(name: "option2Picture.png", data: o2ImageData)
         
         noQsPhotoJoinQObject.setObject(qImageFile, forKey: "thumb")
         noQsPhotoJoinQObject.setObject(qImageFile, forKey: "fullRes")
