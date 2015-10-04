@@ -15,14 +15,6 @@ class VotesTableVC: UITableViewController {
     var objectsArray = [Objects]()
     let headerHeight = CGFloat(60)
     
-//    var votesId       = ""
-//    var questionText  = ""
-//    var option1Text   = ""
-//    var option2Text   = ""
-//    var questionPhoto: PFFile? = PFFile()
-//    var option1Photo: PFFile?  = PFFile()
-//    var option2Photo: PFFile?  = PFFile()
-    
     struct Objects {
         var sectionName: String!
         var sectionObjects: [String]?
@@ -48,11 +40,6 @@ class VotesTableVC: UITableViewController {
 
     
     override func viewWillAppear(animated: Bool) {
-        
-        println(questionToView)
-        
-//        returningFromPopover = true
-//        returningFromSettings = false
         
         var query = PFQuery(className: "QJoin")
         query.whereKey("question", equalTo: questionToView!)
@@ -131,8 +118,6 @@ class VotesTableVC: UITableViewController {
                         ]
                     }
                     
-                    println(self.objectsArray.count)
-                    
                     // Reload table data
                     self.tableView.reloadData()
                     //self.tableView.reloadInputViews()
@@ -177,9 +162,6 @@ class VotesTableVC: UITableViewController {
     
     // Format section header
     override func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        
-        println("\(section) \(objectsArray[section].sectionName)")
-        println(objectsArray[section].sectionObjects)
         
         let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView //recast your view as a UITableViewHeaderFooterView
         

@@ -27,6 +27,12 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        println(questionToView)
         
         if (questionToView!["asker"]!["profilePicture"] as? PFFile != nil) {
             getImageFromPFFile(questionToView!["asker"]!["profilePicture"] as! PFFile, { (image, error) -> () in
@@ -38,13 +44,6 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
         profilePicture.layer.masksToBounds = false
         profilePicture.clipsToBounds = true
-    }
-    
-    
-    override func viewWillAppear(animated: Bool) {
-        
-//        returningFromPopover = true
-//        topOffset = 64
         
         var expectedCount = 0
         var downloadedCount = 0

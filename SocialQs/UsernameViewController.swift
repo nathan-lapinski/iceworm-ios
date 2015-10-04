@@ -15,6 +15,8 @@ class UsernameViewController: UIViewController {
     var usernameSpinner = UIView()
     var usernameBlurView = globalBlurView()
     
+    @IBOutlet var submitButton: UIButton!
+    
     @IBOutlet var usernameTextField: UITextField!
     
     @IBAction func submitUsernameButtonPressed(sender: AnyObject) {
@@ -87,6 +89,8 @@ class UsernameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        formatButton(submitButton)
 
         navigationController?.navigationBarHidden = false
     }

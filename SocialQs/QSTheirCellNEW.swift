@@ -172,6 +172,7 @@ class QSTheirCellNEW: UITableViewCell {
             questionZoom.frame = questionPicture.frame
             questionZoom.addTarget(self, action: "questionZoom:", forControlEvents: UIControlEvents.TouchUpInside)
         } else {
+            questionPicture.image = nil
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 0, 60)
             questionPicture.hidden = true
             questionZoom.enabled = false
@@ -211,10 +212,14 @@ class QSTheirCellNEW: UITableViewCell {
                 }
             })
             
+            option1Zoom.enabled = true
             option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option1Image.alpha = 1.0
             
         } else {
+            
+            option1Zoom.enabled = false
+            option1Image.image = nil
             option1Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
             //option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 0, 60)
         }
@@ -233,9 +238,14 @@ class QSTheirCellNEW: UITableViewCell {
                 }
             })
             
+            option2Zoom.enabled = true
             option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option2Image.alpha = 1.0
+            
         } else {
+            
+            option2Zoom.enabled = false
+            option2Image.image = nil
             option2Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
             //option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
         }
@@ -333,6 +343,7 @@ class QSTheirCellNEW: UITableViewCell {
         imageCenterEnd.x = bounds.width - option1Image.frame.width/2 - 8
         option1PercentText.alpha = 0.0
         option2PercentText.alpha = 0.0
+        
         if let test = QJoinObject["vote"] as? Int {
             option1PercentText.hidden = false
             option2PercentText.hidden = false
@@ -453,24 +464,40 @@ class QSTheirCellNEW: UITableViewCell {
     }
     
     func image1Zoom(sender: UIButton!) {
-        zoomPage = 0
-        questionToView = QJoinObject["question"]! as? PFObject
-        if (QJoinObject["question"]!["option1ImageThumb"] as? PFFile != nil) { zoomPage++ }
-        self.delegate?.segueToZoom()
+        if (QJoinObject["question"]!["option1ImageThumb"] as? PFFile != nil) {
+            zoomPage = 0
+            questionToView = QJoinObject["question"]! as? PFObject
+            if (QJoinObject["question"]!["questionImageThumb"] as? PFFile != nil) { zoomPage++ }
+            self.delegate?.segueToZoom()
+        }
     }
     
     func image2Zoom(sender: UIButton!) {
-        zoomPage = 0
-        questionToView = QJoinObject["question"]! as? PFObject
-        if (QJoinObject["question"]!["option1ImageThumb"] as? PFFile != nil) { zoomPage++ }
-        if (QJoinObject["question"]!["option2ImageThumb"] as? PFFile != nil) { zoomPage++ }
-        self.delegate?.segueToZoom()
+        if (QJoinObject["question"]!["option2ImageThumb"] as? PFFile != nil) {
+            zoomPage = 0
+            questionToView = QJoinObject["question"]! as? PFObject
+            if (QJoinObject["question"]!["questionImageThumb"] as? PFFile != nil) { zoomPage++ }
+            if (QJoinObject["question"]!["option1ImageThumb"] as? PFFile != nil) { zoomPage++ }
+            self.delegate?.segueToZoom()
+        }
     }
     
     
     //MARK: - horizontal pan gesture methods
-    func recognizerIdentifier1(recognizer: UIPanGestureRecognizer) { handlePan(recognizer, id: 1) }
-    func recognizerIdentifier2(recognizer: UIPanGestureRecognizer) { handlePan(recognizer, id: 2) }
+    func recognizerIdentifier1(recognizer: UIPanGestureRecognizer) {
+        if(QJoinObject["vote"] as? Int) == nil {
+            //disabled when first gesture recognized, to prevent swiping both options
+            option2Zoom.enabled = false
+            handlePan(recognizer, id: 1)
+        }
+    }
+    func recognizerIdentifier2(recognizer: UIPanGestureRecognizer) {
+        if(QJoinObject["vote"] as? Int) == nil {
+            //disabled when first gesture recognized, to prevent swiping both options
+            option1Zoom.enabled = false
+            handlePan(recognizer, id: 2)
+        }
+    }
     func handlePan(recognizer: UIPanGestureRecognizer, id: Int) {
         
         let label = recognizer.view!
@@ -525,6 +552,13 @@ class QSTheirCellNEW: UITableViewCell {
         
         if recognizer.state == UIGestureRecognizerState.Ended {
             
+            // Had to move this from inside the animation block - didn't work there
+            if percentMoved >= 0.5 { castVote(id) }
+            
+            // Re-enable buttons (disabled when first gestre recognized, to prevent swiping both options)
+            option1Zoom.enabled = false
+            option2Zoom.enabled = false
+            
             var endX: CGFloat = label.frame.width/2 + 8
             
             if id == 1 {
@@ -538,7 +572,6 @@ class QSTheirCellNEW: UITableViewCell {
                     self.option1VoteArrow.center = CGPoint(x: endX, y: label.center.y)
                     
                     if percentMoved >= 0.5 {
-                        self.castVote(id)
                         self.option1Checkmark.alpha = 0.8
                         self.option1VoteArrow.alpha = 0.0
                     } else if percentMoved < 0.5 {

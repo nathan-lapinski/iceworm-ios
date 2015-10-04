@@ -30,12 +30,16 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet var logoutButton: UIButton!
     @IBOutlet var appInfo: UILabel!
     @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var handleLabel: UILabel!
     @IBOutlet var profilePictureImageView: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         nameLabel.text = name
+        if let username = PFUser.currentUser()!["username"] as? String {
+            handleLabel.text = "@\(username)"
+        }
         
         view.backgroundColor = mainColorBlue.colorWithAlphaComponent(0.85)
         
