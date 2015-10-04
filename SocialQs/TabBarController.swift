@@ -43,7 +43,15 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         self.navigationItem.titleView = imageView
         
         
+        // ASK
+        var askButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "ask.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displayAskView")
+        askButton.tintColor = UIColor.whiteColor()
         
+        //self.navigationItem.setRightBarButtonItems([settingsButton, groupiesNavigationButton], animated: true)
+        self.navigationItem.setLeftBarButtonItems([askButton], animated: true)
+        
+        
+        // SETTINGS
         var settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
         settingsButton.tintColor = UIColor.whiteColor()
         
@@ -52,7 +60,19 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
 
     }
     
+    func displayAskView() {
+        
+//        popDirection = "left"
+//        let overlayVC = storyboard?.instantiateViewControllerWithIdentifier("askVC") as! UIViewController
+//        prepareOverlayVC(overlayVC)
+//        presentViewController(overlayVC, animated: true, completion: nil)
+        
+        performSegueWithIdentifier("toAsk", sender: self)
+    }
+    
     func displaySettingsView() {
+        
+        popDirection = "right"
         let overlayVC = storyboard?.instantiateViewControllerWithIdentifier("settingsNEWViewController") as! UIViewController
         prepareOverlayVC(overlayVC)
         presentViewController(overlayVC, animated: true, completion: nil)
@@ -61,6 +81,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     private func prepareOverlayVC(overlayVC: UIViewController) {
         overlayVC.transitioningDelegate = overlayTransitioningDelegate
         overlayVC.modalPresentationStyle = .Custom
+        overlayVC.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
     }
     
     

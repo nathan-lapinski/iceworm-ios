@@ -27,13 +27,20 @@ class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitio
         if let presentedView = transitionContext.viewForKey(UITransitionContextToViewKey) {
             
             let centre = presentedView.center
-            //presentedView.center = CGPointMake(centre.x, -presentedView.bounds.size.height)
-            presentedView.center = CGPointMake(presentedView.bounds.size.width, centre.y)
+            
+            switch popDirection {
+            case "right":
+                presentedView.center = CGPointMake(presentedView.bounds.size.width, centre.y)
+            case "left":
+                presentedView.center = CGPointMake(-presentedView.bounds.size.width, centre.y)
+            default:
+                presentedView.center = CGPointMake(centre.x, -presentedView.bounds.size.height)
+            }
             
             transitionContext.containerView().addSubview(presentedView)
             
             UIView.animateWithDuration(self.transitionDuration(transitionContext),
-                delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 10.0, options: nil,
+                delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: nil,
                 animations: {
                     
                     presentedView.center = centre

@@ -616,7 +616,7 @@ func formatButton(_button: UIButton) {
     
     _button.layer.cornerRadius = cornerRadius
     _button.backgroundColor = UIColor.clearColor()//buttonBackgroundColor
-    _button.titleLabel?.textColor = buttonTextColor
+    _button.titleLabel?.textColor = buttonTextColor//UIColor.whiteColor()//
     _button.layer.borderWidth = 1.0
     _button.layer.borderColor = UIColor.whiteColor().CGColor
     _button.layer.cornerRadius = 4.0
@@ -857,7 +857,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     // Store login information in globals
     username = usernameToStore.lowercaseString
 //    uId = PFUser.currentUser()!.objectId!
-//    uQId = PFUser.currentUser()?["uQId"]! as! String
     if let temp = PFUser.currentUser()!["name"] as? String {
         name = temp
     }
@@ -866,7 +865,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     usernameStorageKey  = username + "username"
     nameStorageKey      = username + "name"
     uIdStorageKey       = username + "uId"
-    uQIdStorageKey      = username + "uQId"
 //    myVoted1StorageKey  = username + "votedOn1Ids"
 //    myVoted2StorageKey  = username + "votedOn2Ids"
     myFriendsStorageKey = username + "myFriends"
@@ -874,7 +872,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     // Store user info on the phone
     NSUserDefaults.standardUserDefaults().setObject(username, forKey: usernameStorageKey)
     NSUserDefaults.standardUserDefaults().setObject(uId, forKey: uIdStorageKey)
-    NSUserDefaults.standardUserDefaults().setObject(uQId, forKey: uQIdStorageKey)
     
     if isNew {
         
@@ -911,7 +908,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
         
 //        // Store votedOnIds locally
 //        var userQsQuery = PFQuery(className: "UserQs")
-//        userQsQuery.getObjectInBackgroundWithId(uQId, block: { (userQsObjects, error) -> Void in
 //            
 //            if error != nil {
 //                

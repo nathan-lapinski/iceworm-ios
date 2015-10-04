@@ -156,7 +156,6 @@
 //        username = ""
 //        name = ""
 //        uId = ""
-//        uQId = ""
 //        profilePicture = nil
 //        
 //        groupiesGroups = []

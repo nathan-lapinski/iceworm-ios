@@ -16,7 +16,7 @@
 
 import UIKit
 
-class OverlayViewController: UIViewController {
+class ErrorOverlayViewController: UIViewController {
   
     @IBOutlet var dismissButton: UIButton!
     @IBOutlet var backgroundImage: UIImageView!
@@ -27,12 +27,19 @@ class OverlayViewController: UIViewController {
     super.viewDidLoad()
     
     //errorButton.layer.cornerRadius = 4.0
-    errorButton.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.7)
+    errorButton.backgroundColor = UIColor.clearColor()//blackColor().colorWithAlphaComponent(0.7)
     errorButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
     
     //mainMessage.layer.cornerRadius = 4.0
-    mainMessage.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.7)
+    mainMessage.editable = true
+    mainMessage.selectable = true
+    mainMessage.text = popErrorMessage
+    mainMessage.backgroundColor = UIColor.clearColor()//blackColor().colorWithAlphaComponent(0.7)
+    //mainMessage.font = UIFont(name: "HeleveticaNeue-Thin", size: )
+    mainMessage.textAlignment = NSTextAlignment.Center
     mainMessage.textColor = UIColor.whiteColor()
+    mainMessage.selectable = false
+    mainMessage.editable = false
     
     backgroundImage.layer.cornerRadius = 20.0
     backgroundImage.layer.masksToBounds = true
@@ -40,7 +47,7 @@ class OverlayViewController: UIViewController {
     formatButton(dismissButton)
     dismissButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
     
-    // These settings are of questionable (OK, they look shit) style, but I never said I was a designer
+    // Format View
     view.layer.cornerRadius = 20.0
     view.layer.shadowColor = UIColor.blackColor().CGColor
     view.layer.shadowOffset = CGSizeMake(0, 0)

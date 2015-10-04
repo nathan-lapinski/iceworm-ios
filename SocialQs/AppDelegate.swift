@@ -25,7 +25,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var parseAppId = "TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR"
         var parseClientKey = "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s"
         
-        let mode = "dev"
+        //////////////////////////////////////////
+        //////////////////////////////////////////
+        let mode = "test"  ///////////////////////
+        //////////////////////////////////////////
+        //////////////////////////////////////////
         
         switch mode {
         case "dev":
@@ -34,9 +38,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             parseClientKey = "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s"
             // -----------------------------------------------------------------
         case "test":
-            // SocialQs Test 4 -------------------------------------------------
-            parseAppId = "GePc935BnwSJ27iNNE3lKEv1VEgWLjdApRto0AQ7"
-            parseClientKey = "nH1Kr6kpym4lYVxg22sO0B0fvBMwc744hwaHq1yE"
+            // SocialQs Test 5 -------------------------------------------------
+            parseAppId = "d7CUQUOHn2tn9bIxpch99L23SixOabT7058UftQ3"
+            parseClientKey = "LY3NJ0LXUJh7x0YWu955qJ2sWRdvnr4RwTSB91O5"
             // -----------------------------------------------------------------
         default:
             // SocialQs Dev ----------------------------------------------------
@@ -45,26 +49,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // -----------------------------------------------------------------
         }
         
-        
-        // SocialQs Test 3 -----------------------------------------------------------------------------------------------------------
-        //Parse.setApplicationId("K4FZAb1Wd3dIE81YUTDJykvShnr0ViJRdKNDx496", clientKey: "aeqbE3vPZ1m4EBbeLiBhF1dhVhlLWxtBOaPElCLB")
-        // SocialQs Blackula ---------------------------------------------------------------------------------------------------------
-        //Parse.setApplicationId("7aEu2aiPHAun7HWnN42hWJ4eQuZueBiHZoGq7GZb", clientKey: "FU38Qh4hHo0LDGLAQP8PKB8wtjzwhPFGArpwqj7t")
-        // SocialQs Test 2 -----------------------------------------------------------------------------------------------------------
-        //Parse.setApplicationId("4Jp7N84ASCGrEMdCxaWRWWmtHBDdxstvQxGIRqQb", clientKey: "RehfxlD1kQP6VdnzhJt3MbBCZShJx5jbMV0jZj8x")
-        
-        
         // Enable Crash Reporting
         ParseCrashReporting.enable();
         
         // Setup Parse
         Parse.setApplicationId(parseAppId, clientKey: parseClientKey)
         
-        
+        // Setup Parse/Facebook
         PFFacebookUtils.initializeFacebookWithApplicationLaunchOptions(launchOptions)
         
         // [Optional] Track statistics around application opens.
-        //PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
+        PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
         
 //        // Setup notifications
 //        let userNotificationTypes = (UIUserNotificationType.Alert | UIUserNotificationType.Badge |  UIUserNotificationType.Sound)

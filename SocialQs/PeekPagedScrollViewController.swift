@@ -11,6 +11,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet var scrollView: UIScrollView!
     @IBOutlet var pageControl: UIPageControl!
     @IBOutlet var questionLabel: UILabel!
+    @IBOutlet var profilePicture: UIImageView!
     
     var imageZoom: [UIImage?] = [nil, nil, nil]
     var pageImages: [UIImage] = []
@@ -26,24 +27,33 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if (questionToView!["asker"]!["profilePicture"] as? PFFile != nil) {
+            getImageFromPFFile(questionToView!["asker"]!["profilePicture"] as! PFFile, { (image, error) -> () in
+                if error == nil {
+                    self.profilePicture.image = image
+                }
+            })
+        }
+        profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
+        profilePicture.layer.masksToBounds = false
+        profilePicture.clipsToBounds = true
     }
     
     
     override func viewWillAppear(animated: Bool) {
         
-        returningFromPopover = true
-        topOffset = 64
+//        returningFromPopover = true
+//        topOffset = 64
         
         var expectedCount = 0
         var downloadedCount = 0
         
-        println(questionToView!["images"]![0]["fullRes"])
+        if let qtemp  = questionToView!["questionImageFull"] as? PFFile { expectedCount++ }
+        if let o1Temp = questionToView!["option1ImageFull"] as? PFFile { expectedCount++ }
+        if let o2temp = questionToView!["option2ImageFull"] as? PFFile { expectedCount++ }
         
-        if let qtemp  = questionToView!["images"]![0]["fullRes"] as? PFFile { expectedCount++ }
-        if let o1Temp = questionToView!["images"]![1]["fullRes"] as? PFFile { expectedCount++ }
-        if let o2temp = questionToView!["images"]![2]["fullRes"] as? PFFile { expectedCount++ }
-        
-        if let questionPhoto = questionToView!["images"]![0]["fullRes"] as? PFFile {
+        if let questionPhoto = questionToView!["questionImageFull"] as? PFFile {
             
             questionPhoto.getDataInBackgroundWithBlock({ (data, error) -> Void in
                 
@@ -72,7 +82,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
             })
         }
         
-        if let option1Photo = questionToView!["images"]![1]["fullRes"] as? PFFile {
+        if let option1Photo = questionToView!["option1ImageFull"] as? PFFile {
             
             option1Photo.getDataInBackgroundWithBlock({ (data, error) -> Void in
                 
@@ -101,7 +111,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
             })
         }
         
-        if let option2Photo = questionToView!["images"]![2]["fullRes"] as? PFFile {
+        if let option2Photo = questionToView!["option2ImageFull"] as? PFFile {
             
             option2Photo.getDataInBackgroundWithBlock({ (data, error) -> Void in
                 

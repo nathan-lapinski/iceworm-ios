@@ -18,6 +18,8 @@ import UIKit
 
 class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+    
     let picker = UIImagePickerController()
     
     var boxView = UIView()
@@ -46,13 +48,14 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let build = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String
         
-        logoutButton.setTitle("Log Out", forState: UIControlState.Normal)
         appInfo.text = "Version: " + version! + "\nBuild: (" + build! + ")"
         
         backgroundImage.layer.cornerRadius = 20.0
         backgroundImage.layer.masksToBounds = true
         
+        logoutButton.setTitle("Log Out", forState: UIControlState.Normal)
         formatButton(logoutButton)
+        logoutButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         
         // Format view
         view.layer.cornerRadius = 20.0
@@ -63,26 +66,50 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
     }
     
     @IBAction func handleDismissedPressed(sender: AnyObject) {
-        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+        
+        var endCenter = presentingViewController!.view.center
+        var containerFrame = presentingViewController!.view.frame
+        
+        UIView.animateWithDuration(0.8,
+            delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: nil,
+            animations: {
+                
+                self.view.center.x = endCenter.x + self.view.frame.width
+                self.view.center.y = endCenter.y
+                
+                self.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+                
+            }, completion: {
+                _ in
+        })
     }
     
     
     @IBAction func logoutAction(sender: AnyObject) {
         
         launchLogoutPopover()
+        
+//        popErrorMessage = "...if you're leaving us already 😕 We hope you come back soon!"
+//        popDirection = "top"
+//        let overlayVC = self.storyboard?.instantiateViewControllerWithIdentifier("errorOverlayViewController") as! UIViewController
+//        self.prepareOverlayVC(overlayVC)
+//        self.presentViewController(overlayVC, animated: true, completion: nil)
+//    }
+//    private func prepareOverlayVC(overlayVC: UIViewController) {
+//        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+//        overlayVC.modalPresentationStyle = .Custom
     }
     
     
     
     func logOut() -> Void {
         
-        displaySpinnerView(spinnerActive: true, UIBlock: true, boxView, blurView, "Logging Out", self)
+        displaySpinnerView(spinnerActive: true, UIBlock: true, boxView, blurView, "Logging Out", self.presentingViewController!)
 
         // Clear all local values so they don't bleed into next user
         username = ""
         name = ""
         uId = ""
-        uQId = ""
         profilePicture = nil
         groupiesGroups = []
         friendsDictionary = []
@@ -103,7 +130,7 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
                 self.performSegueWithIdentifier("logout", sender: self)
             }
             
-            displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self)
+            displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self.presentingViewController!)
         }
     }
     

@@ -155,7 +155,7 @@ class QSTheirCellNEW: UITableViewCell {
         let usernameString = QJoinObject["question"]!["asker"]!!["name"] as? String
         usernameLabel.text = "From \(usernameString!)"
         
-        if let questionPhotoThumb = QJoinObject["question"]!["images"]!![0]["thumb"] as? PFFile {
+        if let questionPhotoThumb = QJoinObject["question"]!["questionImageThumb"] as? PFFile {
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
             getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -201,7 +201,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
         option1Zoom.frame = option1Image.frame
-        if let option1PhotoThumb = QJoinObject["question"]!["images"]!![1]["thumb"] as? PFFile {
+        if let option1PhotoThumb = QJoinObject["question"]!["option1ImageThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -224,7 +224,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
         option2Zoom.frame = option2Image.frame
-        if let option2PhotoThumb = QJoinObject["question"]!["images"]!![2]["thumb"] as? PFFile {
+        if let option2PhotoThumb = QJoinObject["question"]!["option2ImageThumb"] as? PFFile {
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
                 if error == nil {
                     self.option2Image.image = image
@@ -455,15 +455,15 @@ class QSTheirCellNEW: UITableViewCell {
     func image1Zoom(sender: UIButton!) {
         zoomPage = 0
         questionToView = QJoinObject["question"]! as? PFObject
-        if (QJoinObject["question"]!["images"]!![0]["fullRes"]! as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["option1ImageThumb"] as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     
     func image2Zoom(sender: UIButton!) {
         zoomPage = 0
         questionToView = QJoinObject["question"]! as? PFObject
-        if (QJoinObject["question"]!["images"]!![0]["fullRes"]! as? PFFile != nil) { zoomPage++ }
-        if (QJoinObject["question"]!["images"]!![1]["fullRes"]! as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["option1ImageThumb"] as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["option2ImageThumb"] as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     

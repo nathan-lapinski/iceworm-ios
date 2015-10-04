@@ -47,13 +47,13 @@ class WelcomeVC: UIViewController {
     
     @IBAction func facebookButtonAction(sender: AnyObject) {
         
+        displaySpinnerView(spinnerActive: true, UIBlock: true, self.signupSpinner, self.signupBlurView, "Logging In", self)
+        
         let permissions = ["public_profile", "email", "user_friends"]
         
         PFFacebookUtils.logInInBackgroundWithReadPermissions(permissions) {(user: PFUser?, error: NSError?) -> Void in
             
             if let user = user {
-                
-                displaySpinnerView(spinnerActive: true, UIBlock: true, self.signupSpinner, self.signupBlurView, "Logging In", self)
                 
                 // Download socialQs friends
                 downloadSocialQsFriends({ (isFinished) -> Void in })

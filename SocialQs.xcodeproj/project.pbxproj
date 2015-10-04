@@ -12,8 +12,6 @@
 		90135AC11B3AD4F400C9716F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABC1B3AD4F400C9716F /* FBSDKCoreKit.framework */; };
 		90135AC21B3AD4F400C9716F /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90135ABD1B3AD4F400C9716F /* FBSDKLoginKit.framework */; };
 		901B23D91B7AA7FA003538BE /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 901B23D81B7AA7FA003538BE /* FBSDKShareKit.framework */; };
-		902B34CD1B3E4FB800B67ACE /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CC1B3E4FB800B67ACE /* SignupViewController.swift */; };
-		902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */; };
 		902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */; };
 		902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */; };
 		902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D41B3EA21300B67ACE /* TabBarController.swift */; };
@@ -52,16 +50,16 @@
 		90A66E2A1BBF9A1C0015F27E /* OverlayPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E271BBF9A1C0015F27E /* OverlayPresentationController.swift */; };
 		90A66E2B1BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E281BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift */; };
 		90A66E2C1BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E291BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift */; };
-		90A66E2E1BBF9A770015F27E /* OverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E2D1BBF9A770015F27E /* OverlayViewController.swift */; };
+		90A66E2E1BBF9A770015F27E /* ErrorOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E2D1BBF9A770015F27E /* ErrorOverlayViewController.swift */; };
 		90A66E321BBFB2420015F27E /* SettingsNEWViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E311BBFB2420015F27E /* SettingsNEWViewController.swift */; };
+		90A66E341BC053A70015F27E /* AskVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E331BC053A70015F27E /* AskVC.swift */; };
+		90A66E3A1BC07B400015F27E /* GroupiesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E391BC07B400015F27E /* GroupiesVC.swift */; };
 		90D0B4EB1BA7EE7B009E284C /* QsGlobalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */; };
 		90D7F3F81B62216B001284FA /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D7F3F71B62216B001284FA /* UsernameViewController.swift */; };
-		90DE6C211B30E9CC004F3BA0 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */; };
 		90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */; };
 		90E46CEF1B8EEA4800D5E8AB /* GroupiesNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E46CEE1B8EEA4800D5E8AB /* GroupiesNavigationController.swift */; };
 		90EF88421B83B92400752A27 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EF88411B83B92400752A27 /* WelcomeVC.swift */; };
 		90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */; };
-		90F995931BBB75CF003CAB58 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F995921BBB75CF003CAB58 /* SettingsVC.swift */; };
 		90FE1F1F1B43A89F005F2D68 /* VotesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */; };
 		90FE1F231B43A941005F2D68 /* VotesTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F221B43A941005F2D68 /* VotesTableVC.swift */; };
 		90FFFA701B9A6958005E9CDD /* QsTheirVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FFFA6F1B9A6958005E9CDD /* QsTheirVC.swift */; };
@@ -84,8 +82,6 @@
 		90135ABC1B3AD4F400C9716F /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = SocialQs/FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		90135ABD1B3AD4F400C9716F /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = SocialQs/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		901B23D81B7AA7FA003538BE /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
-		902B34CC1B3E4FB800B67ACE /* SignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
-		902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesTableViewController.swift; sourceTree = "<group>"; };
 		902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesCell.swift; sourceTree = "<group>"; };
 		902B34D41B3EA21300B67ACE /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -129,16 +125,16 @@
 		90A66E271BBF9A1C0015F27E /* OverlayPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayPresentationController.swift; sourceTree = "<group>"; };
 		90A66E281BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayTransitioningDelegate.swift; sourceTree = "<group>"; };
 		90A66E291BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BouncyViewControllerAnimator.swift; sourceTree = "<group>"; };
-		90A66E2D1BBF9A770015F27E /* OverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayViewController.swift; sourceTree = "<group>"; };
+		90A66E2D1BBF9A770015F27E /* ErrorOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorOverlayViewController.swift; sourceTree = "<group>"; };
 		90A66E311BBFB2420015F27E /* SettingsNEWViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNEWViewController.swift; sourceTree = "<group>"; };
+		90A66E331BC053A70015F27E /* AskVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AskVC.swift; sourceTree = "<group>"; };
+		90A66E391BC07B400015F27E /* GroupiesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesVC.swift; sourceTree = "<group>"; };
 		90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsGlobalVC.swift; sourceTree = "<group>"; };
 		90D7F3F71B62216B001284FA /* UsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsernameViewController.swift; sourceTree = "<group>"; };
-		90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		90E46CEE1B8EEA4800D5E8AB /* GroupiesNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesNavigationController.swift; sourceTree = "<group>"; };
 		90EF88411B83B92400752A27 /* WelcomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
 		90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = socialQuestionModel.swift; sourceTree = "<group>"; };
-		90F995921BBB75CF003CAB58 /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesCell.swift; sourceTree = "<group>"; };
 		90FE1F221B43A941005F2D68 /* VotesTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesTableVC.swift; sourceTree = "<group>"; };
 		90FFFA6F1B9A6958005E9CDD /* QsTheirVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QsTheirVC.swift; sourceTree = "<group>"; };
@@ -208,19 +204,20 @@
 			children = (
 				904123011B26A67C00397132 /* AppDelegate.swift */,
 				908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */,
+				90A66E331BC053A70015F27E /* AskVC.swift */,
 				908A03F51B5E01070050C0D9 /* AskViewController.swift */,
+				90A66E2D1BBF9A770015F27E /* ErrorOverlayViewController.swift */,
 				905B2D951B322625001A74EE /* Globals.swift */,
 				902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */,
 				90E46CEE1B8EEA4800D5E8AB /* GroupiesNavigationController.swift */,
 				900ED8831B752AB1005FED93 /* GroupiesSettingsCell.swift */,
 				900ED8811B75279D005FED93 /* GroupiesSettingsTableViewController.swift */,
 				902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */,
+				90A66E391BC07B400015F27E /* GroupiesVC.swift */,
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
-				90DE6C201B30E9CC004F3BA0 /* LoginViewController.swift */,
 				904123071B26A67C00397132 /* Main.storyboard */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
-				90A66E2D1BBF9A770015F27E /* OverlayViewController.swift */,
 				902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */,
 				90A66E261BBF9A030015F27E /* Popover Present */,
 				90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */,
@@ -229,19 +226,16 @@
 				90FFFA711B9A6ABA005E9CDD /* QSTheirCellNEW.swift */,
 				90FFFA6F1B9A6958005E9CDD /* QsTheirVC.swift */,
 				902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */,
-				90F995921BBB75CF003CAB58 /* SettingsVC.swift */,
+				90A66E311BBFB2420015F27E /* SettingsNEWViewController.swift */,
 				904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */,
-				902B34CC1B3E4FB800B67ACE /* SignupViewController.swift */,
 				90F11A9F1B3A4B7200AB1914 /* socialQuestionModel.swift */,
 				904122FF1B26A67C00397132 /* Supporting Files */,
 				902B34D41B3EA21300B67ACE /* TabBarController.swift */,
 				90D7F3F71B62216B001284FA /* UsernameViewController.swift */,
-				90A66E311BBFB2420015F27E /* SettingsNEWViewController.swift */,
 				904E29CA1B59DC10007E17D2 /* Util.swift */,
 				90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */,
 				90FE1F221B43A941005F2D68 /* VotesTableVC.swift */,
 				90EF88411B83B92400752A27 /* WelcomeVC.swift */,
-				902B34CE1B3E543800B67ACE /* WelcomeViewController.swift */,
 			);
 			path = SocialQs;
 			sourceTree = "<group>";
@@ -421,22 +415,19 @@
 				90D0B4EB1BA7EE7B009E284C /* QsGlobalVC.swift in Sources */,
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
 				908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */,
-				902B34CF1B3E543800B67ACE /* WelcomeViewController.swift in Sources */,
 				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,
 				902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */,
 				904123021B26A67C00397132 /* AppDelegate.swift in Sources */,
-				90DE6C211B30E9CC004F3BA0 /* LoginViewController.swift in Sources */,
-				90A66E2E1BBF9A770015F27E /* OverlayViewController.swift in Sources */,
+				90A66E2E1BBF9A770015F27E /* ErrorOverlayViewController.swift in Sources */,
 				90FE1F1F1B43A89F005F2D68 /* VotesCell.swift in Sources */,
 				90FE1F231B43A941005F2D68 /* VotesTableVC.swift in Sources */,
 				902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */,
 				90A66E2A1BBF9A1C0015F27E /* OverlayPresentationController.swift in Sources */,
 				90A66E2B1BBF9A1C0015F27E /* OverlayTransitioningDelegate.swift in Sources */,
-				90F995931BBB75CF003CAB58 /* SettingsVC.swift in Sources */,
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
-				902B34CD1B3E4FB800B67ACE /* SignupViewController.swift in Sources */,
 				909937471BB7305D00535716 /* QSMyCellNEW.swift in Sources */,
 				900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */,
+				90A66E341BC053A70015F27E /* AskVC.swift in Sources */,
 				90EF88421B83B92400752A27 /* WelcomeVC.swift in Sources */,
 				90A66E321BBFB2420015F27E /* SettingsNEWViewController.swift in Sources */,
 				900ED8821B75279D005FED93 /* GroupiesSettingsTableViewController.swift in Sources */,
@@ -444,6 +435,7 @@
 				904E29CB1B59DC10007E17D2 /* Util.swift in Sources */,
 				90FFFA721B9A6ABA005E9CDD /* QSTheirCellNEW.swift in Sources */,
 				908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */,
+				90A66E3A1BC07B400015F27E /* GroupiesVC.swift in Sources */,
 				902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,
 				90A66E2C1BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift in Sources */,

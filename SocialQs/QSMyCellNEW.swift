@@ -129,12 +129,6 @@ class QSMyCellNEW: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-//        if let imagePointers = QJoinObject["question"]!["images"] as? [AnyObject] {
-//            println("-----------------------------------")
-//            println(imagePointers[0])
-//            println("-----------------------------------")
-//        }
-        
         questionBackground.frame = CGRectMake(8, 8, bounds.width - 16, 60)
         questionBackground.layer.cornerRadius = 30
         questionBackground.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)//mainColorBlue
@@ -158,8 +152,7 @@ class QSMyCellNEW: UITableViewCell {
         let usernameString = QJoinObject["asker"]!["name"] as? String
         usernameLabel.text = "From \(usernameString!)"
         
-        println("Setting Q image")
-        if let questionPhotoThumb = QJoinObject["question"]!["images"]!![0]["thumb"] as? PFFile {//self.QJoinObject["question"]!["questionPhotoThumb"] as? PFFile {
+        if let questionPhotoThumb = QJoinObject["question"]!["questionImageThumb"] as? PFFile {//self.QJoinObject["question"]!["questionPhotoThumb"] as? PFFile {
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
             getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -176,6 +169,7 @@ class QSMyCellNEW: UITableViewCell {
             questionZoom.frame = questionPicture.frame
             questionZoom.addTarget(self, action: "questionZoom:", forControlEvents: UIControlEvents.TouchUpInside)
         } else {
+            questionPicture.image = nil
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 0, 60)
             questionPicture.hidden = true
             questionZoom.enabled = false
@@ -195,7 +189,6 @@ class QSMyCellNEW: UITableViewCell {
             questionText.text = ""
         }
         
-        println("Setting O1 image")
         option1Background.frame = CGRectMake(horizontalSpace, questionBackground.frame.origin.y + 60 + 3, bounds.width - 2*horizontalSpace, 60)
         option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
         option1Background.layer.cornerRadius = optionRadius
@@ -206,7 +199,7 @@ class QSMyCellNEW: UITableViewCell {
         
         option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
         option1Zoom.frame = option1Image.frame
-        if let option1PhotoThumb = QJoinObject["question"]!["images"]!![1]["thumb"] as? PFFile {//self.QJoinObject["question"]!["option1PhotoThumb"] as? PFFile {
+        if let option1PhotoThumb = QJoinObject["question"]!["option1ImageThumb"] as? PFFile {//self.QJoinObject["question"]!["option1PhotoThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
                 if error == nil {
@@ -228,10 +221,9 @@ class QSMyCellNEW: UITableViewCell {
         option1Image.contentMode = UIViewContentMode.ScaleAspectFill
         option1Image.clipsToBounds = true
         
-        println("Setting O2 image")
         option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
         option2Zoom.frame = option2Image.frame
-        if let option2PhotoThumb = QJoinObject["question"]!["images"]!![2]["thumb"] as? PFFile {//self.QJoinObject["question"]!["option2PhotoThumb"] as? PFFile {
+        if let option2PhotoThumb = QJoinObject["question"]!["option2ImageThumb"] as? PFFile {//self.QJoinObject["question"]!["option2PhotoThumb"] as? PFFile {
             getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
                 if error == nil {
                     self.option2Image.image = image
@@ -243,6 +235,7 @@ class QSMyCellNEW: UITableViewCell {
             option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option2Image.alpha = 1.0
         } else {
+            option2Image.image = nil
             option2Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
             //option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
         }
@@ -462,15 +455,15 @@ class QSMyCellNEW: UITableViewCell {
     func image1Zoom(sender: UIButton!) {
         zoomPage = 0
         questionToView = QJoinObject["question"]! as? PFObject
-        if (QJoinObject["question"]!["images"]!![0]["fullRes"]! as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["option1ImageThumb"] as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     
     func image2Zoom(sender: UIButton!) {
         zoomPage = 0
         questionToView = QJoinObject["question"]! as? PFObject
-        if (QJoinObject["question"]!["images"]!![0]["fullRes"]! as? PFFile != nil) { zoomPage++ }
-        if (QJoinObject["question"]!["images"]!![1]["fullRes"]! as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["option1ImageThumb"] as? PFFile != nil) { zoomPage++ }
+        if (QJoinObject["question"]!["option2ImageThumb"] as? PFFile != nil) { zoomPage++ }
         self.delegate?.segueToZoom()
     }
     

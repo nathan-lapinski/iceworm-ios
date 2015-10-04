@@ -51,8 +51,8 @@ class VotesTableVC: UITableViewController {
         
         println(questionToView)
         
-        returningFromPopover = true
-        returningFromSettings = false
+//        returningFromPopover = true
+//        returningFromSettings = false
         
         var query = PFQuery(className: "QJoin")
         query.whereKey("question", equalTo: questionToView!)
