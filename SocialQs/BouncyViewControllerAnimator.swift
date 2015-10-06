@@ -18,7 +18,7 @@ import UIKit
 
 class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitioning {
     
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning) -> NSTimeInterval {
+    func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
         return 0.8
     }
     
@@ -37,10 +37,10 @@ class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitio
                 presentedView.center = CGPointMake(centre.x, -presentedView.bounds.size.height)
             }
             
-            transitionContext.containerView().addSubview(presentedView)
+            transitionContext.containerView()!.addSubview(presentedView)
             
             UIView.animateWithDuration(self.transitionDuration(transitionContext),
-                delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: nil,
+                delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: [],
                 animations: {
                     
                     presentedView.center = centre

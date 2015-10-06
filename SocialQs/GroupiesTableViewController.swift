@@ -76,10 +76,10 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         func handleCancel(alertView: UIAlertAction!) {
             
-            println("Cancelled !!")
+            print("Cancelled !!")
         }
         
-        var alert = UIAlertController(title: "Enter group name", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Enter group name", message: "", preferredStyle: UIAlertControllerStyle.Alert)
         
         alert.addTextFieldWithConfigurationHandler(configurationTextField)
         
@@ -96,7 +96,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 //
                 //
                 
-            } else if contains(myGroups, groupEntry.text) {
+            } else if myGroups.contains(groupEntry.text!) {
                 
                 // GROUP NAME ALREADY EXISTS! 
                 //
@@ -104,20 +104,20 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 
             } else {
                 
-                var groupName = groupEntry.text
+                let groupName = groupEntry.text
                 
                 // Add group name to array of group names in the phone and on Parse
-                myGroups.append(groupName)
-                PFUser.currentUser()!.addUniqueObject(groupName, forKey: "myGroups")
+                myGroups.append(groupName!)
+                PFUser.currentUser()!.addUniqueObject(groupName!, forKey: "myGroups")
                 PFUser.currentUser()!.saveEventually({ (success, error) -> Void in
                     
                     if error == nil {
                         
-                        println("Group added to user's account")
+                        print("Group added to user's account")
                     
                     } else {
                         
-                        println("There was an error adding group to users account: \n\(error)")
+                        print("There was an error adding group to users account: \n\(error)")
                     }
                 })
                 
@@ -126,7 +126,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 for groupie in groupiesDictionary {
                     
                     var group = PFObject(className: "GroupJoin")
-                    group.setObject(groupName, forKey: "groupName")
+                    group.setObject(groupName!, forKey: "groupName")
                     group.setObject(PFUser.currentUser()!, forKey: "owner")
                     group.setObject(groupie["name"]!, forKey: "name")
                     //group.setObject(groupie["type"]!, forKey: "type")
@@ -137,9 +137,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     group.pinInBackgroundWithBlock({ (success, error) -> Void in
                         
                         if error == nil {
-                            println("New GroupJoin pinned")
+                            print("New GroupJoin pinned")
                         } else {
-                            println("There was an error pinning GroupJoin \n\(error)")
+                            print("There was an error pinning GroupJoin \n\(error)")
                         }
                     })
                     
@@ -155,11 +155,11 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     
                     if error == nil {
                         
-                        println("GroupJoin entries created")
+                        print("GroupJoin entries created")
                         
                     } else {
                         
-                        println("There was an error creating GroupJoin entries: \n\(error)")
+                        print("There was an error creating GroupJoin entries: \n\(error)")
                     }
                 })
             }
@@ -167,7 +167,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         self.presentViewController(alert, animated: true, completion: {
             
-            println("completion block")
+            print("completion block")
         })
         
     }
@@ -242,7 +242,11 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     override func viewWillAppear(animated: Bool) {
         
-        topOffset = 64
+        downloadFacebookFriends { (success) -> Void in
+            print(friendsDictionary)
+        }
+        
+        //topOffset = 64
         
         tableView.reloadData()
     }
@@ -272,7 +276,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         //:::::::::::::::::::::::::::::::::::::::::::
         // Sort dictionaries
-        friendsDictionary.sort { (item1, item2) -> Bool in
+        friendsDictionary.sortInPlace { (item1, item2) -> Bool in
             
             let t1 = (item1["name"] as! String).lowercaseString
             let t2 = (item2["name"] as! String).lowercaseString
@@ -296,15 +300,15 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         if !searchName.isEmpty {
             
             // Filter users by searchBar input
-            var fbAndSQNamesFiltered = self.fbAndSQNames.filter({(item: String) -> Bool in
+            let fbAndSQNamesFiltered = self.fbAndSQNames.filter({(item: String) -> Bool in
                 
-                var stringMatch = item.lowercaseString.rangeOfString(searchName.lowercaseString)
+                let stringMatch = item.lowercaseString.rangeOfString(searchName.lowercaseString)
                 return stringMatch != nil ? true : false
             })
             
             // Fill filtered dictionaries
             for name in fbAndSQNamesFiltered {
-                var index = find(self.fbAndSQNames, name)!
+                let index = self.fbAndSQNames.indexOf(name)!
                 friendsDictionaryFiltered.append(friendsDictionary[index])
             }
             
@@ -358,9 +362,9 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             searchCancelled = false
         }
         
-        println("\(indexPath.row): \(friendsDictionaryFiltered[indexPath.row])")
+        print("\(indexPath.row): \(friendsDictionaryFiltered[indexPath.row])")
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("groupiesCell", forIndexPath: indexPath) as! GroupiesCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("groupiesCell", forIndexPath: indexPath) as! GroupiesCell
         
         // Configure the cell...
         cell.selectionStyle = UITableViewCellSelectionStyle.None
@@ -409,7 +413,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        var cell: UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
+        let cell: UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
         
         cell.resignFirstResponder()
         
@@ -424,14 +428,14 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         
         if (friendsDictionary[indexPath.row]["isSelected"] as! Bool) == true {
             
-            if !contains(isGroupieName, friendsDictionary[indexPath.row]["name"] as! String) {
+            if !isGroupieName.contains((friendsDictionary[indexPath.row]["name"] as! String)) {
                 
                 isGroupieName.append(friendsDictionary[indexPath.row]["name"] as! String)
             }
             
         } else {
             
-            let index = find(isGroupieName, friendsDictionary[indexPath.row]["name"] as! String)
+            let index = isGroupieName.indexOf((friendsDictionary[indexPath.row]["name"] as! String))
             if index != nil {
                 
                 isGroupieName.removeAtIndex(index!)
@@ -459,7 +463,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         tableView.endUpdates()
 //
         // Fill in selected users - must be after section header refreshing (above)
-        textView.text = ", ".join(isGroupieName)
+        textView.text = isGroupieName.joinWithSeparator(", ")
         
         if isGroupieName.count > 0 {
             let text = textView.text
@@ -468,8 +472,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             var range: NSRange? = nil
             
             text.enumerateSubstringsInRange(textRange, options: NSStringEnumerationOptions.ByWords, { (substring, substringRange, enclosingRange, stop) -> () in
-                let start = distance(text.startIndex, substringRange.startIndex)
-                let length = distance(substringRange.startIndex, substringRange.endIndex)
+                let start = text.startIndex.distanceTo(substringRange.startIndex)
+                let length = substringRange.startIndex.distanceTo(substringRange.endIndex)
                 range = NSMakeRange(start, length)
             })
             textView.scrollRangeToVisible(range!)
@@ -502,17 +506,17 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             
             textView = UITextView(frame: CGRectMake(0, -5, self.view.frame.size.width - 70, 68))
             textView.editable = false
-            textView.text = ", ".join(isGroupieName)
+            textView.text = isGroupieName.joinWithSeparator(", ")
             textView.backgroundColor = UIColor.clearColor() // mainColorBlue
             textView.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
             textView.textAlignment = NSTextAlignment.Left
             textView.textColor = UIColor.darkTextColor()
             
-            var clearButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 28, 22, 20, 20))
+            let clearButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 28, 22, 20, 20))
             clearButton.setImage(UIImage(named: "clear.png"), forState: UIControlState.Normal)
             clearButton.addTarget(self, action: "clearSelectedGroupies", forControlEvents: .TouchUpInside)
             
-            var groupButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 78, 18, 42, 32))
+            let groupButton = UIButton(frame: CGRectMake(self.tableView.frame.size.width - 78, 18, 42, 32))
 //            groupButton.layer.borderWidth = 1
 //            groupButton.layer.borderColor = mainColorBlue.CGColor
 //            groupButton.layer.cornerRadius = 4
@@ -597,7 +601,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     // Function which returns data from the Group popover:
     func saveText(selectedGroup: AnyObject) {
         
-        var groupQuery = PFQuery(className: "GroupJoin")
+        let groupQuery = PFQuery(className: "GroupJoin")
         groupQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
         groupQuery.whereKey("groupName", equalTo: selectedGroup as! String)
         groupQuery.fromLocalDatastore()
@@ -621,7 +625,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                     // Change isSelected status on appropriate friends
                     for var i = 0; i < friendsDictionary.count; i++ {
                         
-                        if contains(tempGroupNames, friendsDictionary[i]["name"] as! String) {
+                        if tempGroupNames.contains((friendsDictionary[i]["name"] as! String)) {
                             
                             friendsDictionary[i]["isSelected"] = true
                         }
@@ -634,7 +638,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 
             } else {
                 
-                println("There was an error loading the selected group: \n\(error)")
+                print("There was an error loading the selected group: \n\(error)")
             }
             
         }

@@ -24,7 +24,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         super.viewDidLoad()
         
         // Initiate Push Notifications
-        let userNotificationTypes = (UIUserNotificationType.Alert | UIUserNotificationType.Badge |  UIUserNotificationType.Sound)
+        let userNotificationTypes: UIUserNotificationType = ([UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound])
         let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
         UIApplication.sharedApplication().registerForRemoteNotifications()
@@ -44,6 +44,17 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         tableView.dataSource = self
         tableView.delegate = self
         tableView.registerClass(QSMyCellNEW.self, forCellReuseIdentifier: "cell")
+        
+        
+        
+        if (FBSDKAccessToken.currentAccessToken() != nil) {
+            // User is already logged in, do work such as go to next view controller.
+            print("this never prints")
+            //self.generateAPILoginDetails()
+            
+        } else {
+            displayAlert("Error", message: "A Facebook error has prevented Groupies from loading. Please quit the app (double-click the home button and swipe up). Relaunching and logging back in should fix the problem!", sender: self)
+        }
     }
     
     func refreshMyQs() {
@@ -52,43 +63,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     override func viewWillAppear(animated: Bool) {
         
-        //        if returningFromSettings == false && returningFromPopover == false {
-        //
-        //            println("Page loaded from tab bar")
-        //
-        //            topOffset = 64
-        //
         refresh()
-        //        }
-        //
-        //        if returningFromPopover {
-        //
-        //            println("Returned from popover")
-        //
-        //            returningFromPopover = false
-        //
-        //            if myViewReturnedOnce == false {
-        //                myViewReturnedOnce = true
-        //                topOffset = 0
-        //            } else {
-        //                topOffset = 64
-        //            }
-        //
-        //            tableView.reloadData()
-        //        }
-        //
-        //        if returningFromSettings {
-        //
-        //            println("Returned from settings")
-        //
-        //            returningFromSettings = false
-        //
-        //            topOffset = 0
-        //
-        //            tableView.reloadData()
-        //        }
-        //
-        //        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
     }
     
     
@@ -115,7 +90,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     
     
-    func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
+    func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
         
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
@@ -149,25 +124,25 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                 
                 if error == nil {
                     
-                    println("question unpinned")
+                    print("question unpinned")
                     
                     object.saveEventually({ (success, error) -> Void in
                         
                         if error == nil {
                             
-                            println("Question updated to be labeled as deleted on SERVER")
+                            print("Question updated to be labeled as deleted on SERVER")
                             
                         } else {
                             
-                            println("There was an error updating the question as deleted:")
-                            println(error)
+                            print("There was an error updating the question as deleted:")
+                            print(error)
                         }
                     })
                     
                 } else {
                     
-                    println("There was an error unpinning the question:")
-                    println(error)
+                    print("There was an error unpinning the question:")
+                    print(error)
                 }
             })
             
@@ -187,7 +162,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         }
         trash.backgroundColor = UIColor.redColor()
         
-        println("Swiped MY row: \(indexPath.row)")
+        print("Swiped MY row: \(indexPath.row)")
         
         if indexPath.row > -1 {
             if self.QJoinObjects[indexPath.row]["vote"] != nil {
@@ -227,7 +202,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         
         QJoinObjects.removeAll(keepCapacity: true)
         
-        var qQueryLocal = PFQuery(className: "QJoin")
+        let qQueryLocal = PFQuery(className: "QJoin")
         qQueryLocal.fromLocalDatastore()
         qQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
         qQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
@@ -245,85 +220,85 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                 self.QJoinObjects = objects!
                 
                 for temp in objects! {
-                    if temp.objectId! != nil {
-                        self.alreadyRetrievedMyQs.append(temp.objectId!!)
+                    if let tempId: String = temp.objectId {
+                        self.alreadyRetrievedMyQs.append(tempId)
                     }
                 }
-                
-                // Get Qs that are not in localdata store
-                var qQueryServer = PFQuery(className: "QJoin")
-                qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-                qQueryServer.whereKey("asker", equalTo: PFUser.currentUser()!)
-                if self.alreadyRetrievedMyQs.count > 0 {
-                    qQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrievedMyQs)
-                }
-                qQueryServer.orderByDescending("createdAt")
-                qQueryServer.whereKey("deleted", equalTo: false)
-                qQueryServer.includeKey("asker")
-                qQueryServer.includeKey("question")
-                qQueryServer.includeKey("images")
-                qQueryServer.limit = 1000
-                
-                qQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-                    
-                    if error == nil {
-                        
-                        // Append to local array of PFObjects
-                        self.QJoinObjects = self.QJoinObjects + objects!
-                        
-                        // Pin new Qs to local datastore
-                        if let temp = objects as? [PFObject] {
-                            
-                            for object in temp {
-                                
-                                object.pinInBackgroundWithBlock { (success, error) -> Void in
-                                    
-                                    if error == nil {
-                                        
-                                        println("My Qs QJoin Object \(object.objectId!) pinned!")
-                                    }
-                                    
-//                                    if let test = object.objectId {
-//                                        self.alreadyRetrievedMyQs.append(test)
-//                                    }
-                                }
-                            }
-                        }
-                        
-                        if self.QJoinObjects.count < 1 {
-                            
-                            self.buildNoQsQuestion()
-                        }
-                        
-                        // Reload table data
-                        self.tableView.reloadData()
-                        
-                        // Kill refresher when query finished
-                        self.refresher.endRefreshing()
-                        
-                    } else {
-                        
-                        println("There was an error retrieving new Qs from the database:")
-                        println(error)
-                        
-                        if self.QJoinObjects.count < 1 {
-                            
-                            self.buildNoQsQuestion()
-                        }
-                        
-                        // Reload table data
-                        self.tableView.reloadData()
-                        
-                        // Kill refresher when query finished
-                        self.refresher.endRefreshing()
-                    }
-                })
                 
             } else {
                 
-                println("There was an error loading Qs from local data store:")
-                println(error)
+                print("There was an error loading Qs from local data store:")
+                print(error)
             }
+            
+            // Get Qs that are not in localdata store
+            let qQueryServer = PFQuery(className: "QJoin")
+            qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+            qQueryServer.whereKey("asker", equalTo: PFUser.currentUser()!)
+            if self.alreadyRetrievedMyQs.count > 0 {
+                qQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrievedMyQs)
+            }
+            qQueryServer.orderByDescending("createdAt")
+            qQueryServer.whereKey("deleted", equalTo: false)
+            qQueryServer.includeKey("asker")
+            qQueryServer.includeKey("question")
+            qQueryServer.includeKey("images")
+            qQueryServer.limit = 1000
+            
+            qQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+                
+                if error == nil {
+                    
+                    // Append to local array of PFObjects
+                    self.QJoinObjects = self.QJoinObjects + objects!
+                    
+                    // Pin new Qs to local datastore
+                    if let temp: [PFObject] = objects {
+                        
+                        for object in temp {
+                            
+                            object.pinInBackgroundWithBlock { (success, error) -> Void in
+                                
+                                if error == nil {
+                                    
+                                    print("My Qs QJoin Object \(object.objectId!) pinned!")
+                                }
+                                
+                                //                                    if let test = object.objectId {
+                                //                                        self.alreadyRetrievedMyQs.append(test)
+                                //                                    }
+                            }
+                        }
+                    }
+                    
+                    if self.QJoinObjects.count < 1 {
+                        
+                        self.buildNoQsQuestion()
+                    }
+                    
+                    // Reload table data
+                    self.tableView.reloadData()
+                    
+                    // Kill refresher when query finished
+                    self.refresher.endRefreshing()
+                    
+                } else {
+                    
+                    print("There was an error retrieving new Qs from the database:")
+                    print(error)
+                    
+                    if self.QJoinObjects.count < 1 {
+                        
+                        self.buildNoQsQuestion()
+                    }
+                    
+                    // Reload table data
+                    self.tableView.reloadData()
+                    
+                    // Kill refresher when query finished
+                    self.refresher.endRefreshing()
+                }
+            })
         }
     }
     
@@ -333,7 +308,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         // Build a temp question when none are available
         QJoinObjects.removeAll(keepCapacity: true)
             
-        println("NO MYQS!!")
+        print("NO MYQS!!")
         
         var noQsJoinObject = PFObject(className: "QJoin")
         var noQsQuestionObject = PFObject(className: "SocialQs")
@@ -342,8 +317,9 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
 //        var noQsPhotoJoin2Object = PFObject(className: "PhotoJoin")
         var noQsAskerObject = PFObject(className: "User")
         
-        let profImageData = UIImagePNGRepresentation(UIImage(named: "arrowToAsk.png"))
-        var profImageFile: PFFile = PFFile(name: "arrowToAsk.png", data: profImageData)
+        let profImageData = UIImagePNGRepresentation(UIImage(named: "arrowToAsk.png")!)
+        let
+        profImageFile: PFFile = PFFile(name: "arrowToAsk.png", data: profImageData!)
         noQsAskerObject.setObject(profImageFile, forKey: "profilePicture")
         noQsAskerObject.setObject("SocialQs Team", forKey: "name")
 
@@ -352,12 +328,12 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         noQsQuestionObject.setObject("...or drag to the right to cast your vote!", forKey: "option2Text")
         noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")
 
-        let qImageData = UIImagePNGRepresentation(UIImage(named: "scenery3.png"))
-        var qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData)
-        let o1ImageData = UIImagePNGRepresentation(UIImage(named: "scenery1.png"))
-        var o1ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o1ImageData)
-        let o2ImageData = UIImagePNGRepresentation(UIImage(named: "scenery2.png"))
-        var o2ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o2ImageData)
+        let qImageData = UIImagePNGRepresentation(UIImage(named: "scenery3.png")!)
+        let qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData!)
+        let o1ImageData = UIImagePNGRepresentation(UIImage(named: "scenery1.png")!)
+        let o1ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o1ImageData!)
+        let o2ImageData = UIImagePNGRepresentation(UIImage(named: "scenery2.png")!)
+        let o2ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o2ImageData!)
         
         noQsQuestionObject.setObject(qImageFile, forKey: "questionImageThumb")
         noQsQuestionObject.setObject(qImageFile, forKey: "questionImageFull")

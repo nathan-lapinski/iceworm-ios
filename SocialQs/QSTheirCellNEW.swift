@@ -81,7 +81,7 @@ class QSTheirCellNEW: UITableViewCell {
     }
     
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("NSCoding not supported")
     }
     
@@ -138,7 +138,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         profilePicture.frame = CGRectMake(8, 8, 60, 60)
         if (QJoinObject["question"]!["asker"]!!["profilePicture"] as? PFFile != nil) {
-            getImageFromPFFile(QJoinObject["question"]!["asker"]!!["profilePicture"]!! as! PFFile, { (image, error) -> () in
+            getImageFromPFFile(QJoinObject["question"]!["asker"]!!["profilePicture"]!! as! PFFile, completion: { (image, error) -> () in
                 if error == nil {
                     self.profilePicture.image = image
                 }
@@ -157,11 +157,11 @@ class QSTheirCellNEW: UITableViewCell {
         
         if let questionPhotoThumb = QJoinObject["question"]!["questionImageThumb"] as? PFFile {
             questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
-            getImageFromPFFile(questionPhotoThumb, { (image, error) -> () in
+            getImageFromPFFile(questionPhotoThumb, completion: { (image, error) -> () in
                 if error == nil {
                     self.questionPicture.image = image
                 } else {
-                    println("There was an error downloading a questionPhoto")
+                    print("There was an error downloading a questionPhoto")
                 }
             })
             questionPicture.contentMode = UIViewContentMode.ScaleAspectFill
@@ -204,21 +204,19 @@ class QSTheirCellNEW: UITableViewCell {
         option1Zoom.frame = option1Image.frame
         if let option1PhotoThumb = QJoinObject["question"]!["option1ImageThumb"] as? PFFile {
             
-            getImageFromPFFile(option1PhotoThumb, { (image, error) -> () in
+            getImageFromPFFile(option1PhotoThumb, completion: { (image, error) -> () in
                 if error == nil {
                     self.option1Image.image = image
                 } else {
-                    println("There was an error downloading an option1Photo")
+                    print("There was an error downloading an option1Photo")
                 }
             })
             
-            option1Zoom.enabled = true
             option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option1Image.alpha = 1.0
             
         } else {
             
-            option1Zoom.enabled = false
             option1Image.image = nil
             option1Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
             //option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 0, 60)
@@ -230,21 +228,19 @@ class QSTheirCellNEW: UITableViewCell {
         option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
         option2Zoom.frame = option2Image.frame
         if let option2PhotoThumb = QJoinObject["question"]!["option2ImageThumb"] as? PFFile {
-            getImageFromPFFile(option2PhotoThumb, { (image, error) -> () in
+            getImageFromPFFile(option2PhotoThumb, completion: { (image, error) -> () in
                 if error == nil {
                     self.option2Image.image = image
                 } else {
-                    println("There was an error downloading an option2Photo")
+                    print("There was an error downloading an option2Photo")
                 }
             })
             
-            option2Zoom.enabled = true
             option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option2Image.alpha = 1.0
             
         } else {
             
-            option2Zoom.enabled = false
             option2Image.image = nil
             option2Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
             //option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
@@ -289,7 +285,7 @@ class QSTheirCellNEW: UITableViewCell {
         
         
         
-        if let test = QJoinObject["vote"] as? Int {
+        if let _ = QJoinObject["vote"] as? Int {
             
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
@@ -366,7 +362,7 @@ class QSTheirCellNEW: UITableViewCell {
     func animateStatsBars() {
         
         let statsHeight: CGFloat = option1Text.frame.height
-        let statsWidth: CGFloat = option1Text.frame.width/2
+        //let statsWidth: CGFloat = option1Text.frame.width/2
         
         //option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
         //option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
@@ -502,16 +498,16 @@ class QSTheirCellNEW: UITableViewCell {
         
         let label = recognizer.view!
         let translation = recognizer.translationInView(self)
-        var percentMoved = translation.x/(bounds.width - profilePicture.frame.width - 2*horizontalSpace)
+        let percentMoved = translation.x/(bounds.width - profilePicture.frame.width - 2*horizontalSpace)
         
         // Total amount the image view will move
-        let a = bounds.width - option1Image.frame.width - 2*horizontalSpace
+        //let a = bounds.width - option1Image.frame.width - 2*horizontalSpace
         
         // Total amount the text box needs to move
-        let b = bounds.width - option1Text.frame.width - 4*horizontalSpace
+        //let b = bounds.width - option1Text.frame.width - 4*horizontalSpace
         
         // Total amount the image bar BG will move
-        let c = a - imageBarExtraSpace
+        //let c = a - imageBarExtraSpace
         
         if id == 1 {
             
@@ -522,6 +518,8 @@ class QSTheirCellNEW: UITableViewCell {
             
             if percentMoved >= 0.5 {
                 option1Checkmark.alpha = 0.8
+                option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option1Checkmark.layer.borderWidth = 2.0
                 option1VoteArrow.alpha = 0.0
             } else if percentMoved < 0.5 {
                 option1Checkmark.alpha = 0.0
@@ -537,6 +535,8 @@ class QSTheirCellNEW: UITableViewCell {
             
             if percentMoved >= 0.5 {
                 option2Checkmark.alpha = 0.8
+                option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option2Checkmark.layer.borderWidth = 2.0
                 option2VoteArrow.alpha = 0.0
             } else if percentMoved < 0.5 {
                 option2Checkmark.alpha = 0.0
@@ -544,9 +544,9 @@ class QSTheirCellNEW: UITableViewCell {
             }
         }
         
-        let xFromCenter = label.center.x - bounds.width / 2
-        var rotation = CGAffineTransformMakeRotation(0)
-        var stretch = CGAffineTransformScale(rotation, 1, 1)
+        //let xFromCenter = label.center.x - bounds.width / 2
+        let rotation = CGAffineTransformMakeRotation(0)
+        let stretch = CGAffineTransformScale(rotation, 1, 1)
         
         label.transform = stretch
         
@@ -556,10 +556,10 @@ class QSTheirCellNEW: UITableViewCell {
             if percentMoved >= 0.5 { castVote(id) }
             
             // Re-enable buttons (disabled when first gestre recognized, to prevent swiping both options)
-            option1Zoom.enabled = false
-            option2Zoom.enabled = false
+            option1Zoom.enabled = true
+            option2Zoom.enabled = true
             
-            var endX: CGFloat = label.frame.width/2 + 8
+            let endX: CGFloat = label.frame.width/2 + 8
             
             if id == 1 {
                 
@@ -612,13 +612,13 @@ class QSTheirCellNEW: UITableViewCell {
         QJoinObject.pinInBackgroundWithBlock { (success, error) -> Void in
             
             if error == nil {
-                println("Vote has been pinned from MyQs")
+                print("Vote has been pinned from MyQs")
             }
         }
         
         QJoinObject!.saveEventually { (success, error) -> Void in
             if error == nil {
-                println("Successful vote cast in SocialQs!")
+                print("Successful vote cast in SocialQs!")
             }
         }
         

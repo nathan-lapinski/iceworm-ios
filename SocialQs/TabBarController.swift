@@ -44,7 +44,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         
         // ASK
-        var askButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "ask.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displayAskView")
+        let askButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "ask.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displayAskView")
         askButton.tintColor = UIColor.whiteColor()
         
         //self.navigationItem.setRightBarButtonItems([settingsButton, groupiesNavigationButton], animated: true)
@@ -52,12 +52,11 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         
         // SETTINGS
-        var settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
+        let settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
         settingsButton.tintColor = UIColor.whiteColor()
         
         //self.navigationItem.setRightBarButtonItems([settingsButton, groupiesNavigationButton], animated: true)
         self.navigationItem.setRightBarButtonItems([settingsButton], animated: true)
-
     }
     
     func displayAskView() {
@@ -73,7 +72,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     func displaySettingsView() {
         
         popDirection = "right"
-        let overlayVC = storyboard?.instantiateViewControllerWithIdentifier("settingsNEWViewController") as! UIViewController
+        let overlayVC = storyboard!.instantiateViewControllerWithIdentifier("settingsNEWViewController")
         prepareOverlayVC(overlayVC)
         presentViewController(overlayVC, animated: true, completion: nil)
     }
@@ -89,7 +88,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         UITabBar.appearance().barTintColor = UIColor.whiteColor()
         UITabBar.appearance().translucent = false
-        
     }
     
     
@@ -112,11 +110,11 @@ class TransitioningObject: NSObject, UIViewControllerAnimatedTransitioning {
         let toView: UIView = transitionContext.viewForKey(UITransitionContextToViewKey)!
         let toViewController: UIViewController = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
         
-        transitionContext.containerView().addSubview(fromView)
-        transitionContext.containerView().addSubview(toView)
+        transitionContext.containerView()!.addSubview(fromView)
+        transitionContext.containerView()!.addSubview(toView)
         
-        let fromViewControllerIndex = find(self.tabBarController.viewControllers! as! [UIViewController], fromViewController)
-        let toViewControllerIndex = find(self.tabBarController.viewControllers!as! [UIViewController], toViewController)
+        let fromViewControllerIndex = (self.tabBarController.viewControllers! ).indexOf(fromViewController)
+        let toViewControllerIndex = (self.tabBarController.viewControllers!).indexOf(toViewController)
         
         // 1 will slide left, -1 will slide right
         var directionInteger: CGFloat!
@@ -139,7 +137,7 @@ class TransitioningObject: NSObject, UIViewControllerAnimatedTransitioning {
         }
     }
     
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning) -> NSTimeInterval {
+    func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
         return 0.33
     }
 }
@@ -149,10 +147,10 @@ extension UIImage {
     func imageWithColor(tintColor: UIColor) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(self.size, false, self.scale)
         
-        let context = UIGraphicsGetCurrentContext() as CGContextRef
+        let context = UIGraphicsGetCurrentContext()! as CGContextRef
         CGContextTranslateCTM(context, 0, self.size.height)
         CGContextScaleCTM(context, 1.0, -1.0);
-        CGContextSetBlendMode(context, kCGBlendModeNormal)
+        CGContextSetBlendMode(context, CGBlendMode.Normal)
         
         let rect = CGRectMake(0, 0, self.size.width, self.size.height) as CGRect
         CGContextClipToMask(context, rect, self.CGImage)

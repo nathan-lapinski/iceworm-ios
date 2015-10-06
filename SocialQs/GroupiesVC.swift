@@ -14,11 +14,11 @@ class GroupiesVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBAction func handleDismissedPressed(sender: AnyObject) {
         
-        var endCenter = presentingViewController!.view.center
-        var containerFrame = presentingViewController!.view.frame
+        let endCenter = presentingViewController!.view.center
+        //var containerFrame = presentingViewController!.view.frame
         
         UIView.animateWithDuration(0.8,
-            delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: nil,
+            delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: [],
             animations: {
                 
                 self.view.center.x = endCenter.x + self.view.frame.width
@@ -57,7 +57,7 @@ class GroupiesVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(askTable: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = UITableViewCell()
+        let cell = UITableViewCell()
 //
 //        switch indexPath.row {
 //        case 0://QUESTION

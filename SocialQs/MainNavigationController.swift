@@ -34,8 +34,7 @@ class MainNavigationController: UINavigationController {
         */
      
         
-        
-        
+        //print(FBSDKAccessToken.currentAccessToken().tokenString)
     }
     
     

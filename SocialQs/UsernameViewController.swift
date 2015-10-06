@@ -10,11 +10,9 @@ import UIKit
 
 class UsernameViewController: UIViewController {
     
-//    var usernameSpinner = UIActivityIndicatorView()
-//    var usernameBlurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
     var usernameSpinner = UIView()
     var usernameBlurView = globalBlurView()
-    
+
     @IBOutlet var submitButton: UIButton!
     
     @IBOutlet var usernameTextField: UITextField!
@@ -23,17 +21,17 @@ class UsernameViewController: UIViewController {
         
         usernameTextField.resignFirstResponder()
         
-        checkIfUserExists(usernameTextField.text) { (isUser) -> Void in
+        checkIfUserExists(usernameTextField.text!) { (isUser) -> Void in
             
             if isUser == true {
                 
-                displayAlert("That username is already taken!", "Please select a new one", self)
+                displayAlert("That username is already taken!", message: "Please select a new one", sender: self)
                 
                 self.usernameTextField.text = ""
                 
             } else {
                 
-                displaySpinnerView(spinnerActive: true, UIBlock: true, self.usernameSpinner, self.usernameBlurView, "Setting Username", self)
+                displaySpinnerView(spinnerActive: true, UIBlock: true, _boxView: self.usernameSpinner, _blurView: self.usernameBlurView, progressText: "Setting Username", sender: self)
                 
                 //blockUI(true, self.usernameSpinner, self.usernameBlurView, self)
                 
@@ -44,18 +42,18 @@ class UsernameViewController: UIViewController {
                     
                     if success {
                         
-                        username = self.usernameTextField.text
+                        username = self.usernameTextField.text!
                         
                         //displayAlert("Welcome to SocialQs", "", self)
                         self.performSegueWithIdentifier("signedUp2", sender: self)
                         
                     } else {
                         
-                        println("Error saving new username")
-                        println(error)
+                        print("Error saving new username")
+                        print(error)
                     }
                     
-                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.usernameSpinner, self.usernameBlurView, nil, self)
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.usernameSpinner, _blurView: self.usernameBlurView, progressText: nil, sender: self)
                     
                     //blockUI(false, self.usernameSpinner, self.usernameBlurView, self)
                 })
@@ -65,13 +63,12 @@ class UsernameViewController: UIViewController {
     
     
     func checkIfUserExists(usernameToCheck: String, completion: ((isUser: Bool?) -> Void)!) {
-        
+
         var isPresent: Bool = false;
         
         let query: PFQuery = PFQuery(className: "_User")
         query.whereKey("username", equalTo: usernameToCheck)
-        query.findObjectsInBackgroundWithBlock {
-            (objects: [AnyObject]?, error: NSError?) -> Void in
+        query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
             if error == nil {
                 
@@ -80,11 +77,26 @@ class UsernameViewController: UIViewController {
             } else {
                 
                 // Log details of the failure
-                println("Error: \(error) \(error!.userInfo!)")
+                print("Error: \(error) \(error!.userInfo)")
             }
             
             completion(isUser: isPresent);
         }
+//        query.findObjectsInBackgroundWithBlock {
+//            (objects: [AnyObject]?, error: NSError?) -> Void in
+//            
+//            if error == nil {
+//                
+//                if (objects!.count > 0) { isPresent = true }
+//                
+//            } else {
+//                
+//                // Log details of the failure
+//                print("Error: \(error) \(error!.userInfo)")
+//            }
+//
+//            completion(isUser: isPresent);
+//        }
     }
 
     override func viewDidLoad() {

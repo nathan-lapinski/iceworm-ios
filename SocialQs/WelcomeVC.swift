@@ -40,23 +40,29 @@ class WelcomeVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //NSNotificationCenter.defaultCenter().addObserver(self, selector: "onProfileUpdated:", name:FBSDKProfileDidChangeNotification, object: nil)
+        
+        // Do any additional setup after loading the view, typically from a nib.
+        //print(FBSDKAccessToken.currentAccessToken()) //prints nil
+        
         animateWelcome()
+        
     }
-    
     
     
     @IBAction func facebookButtonAction(sender: AnyObject) {
         
-        displaySpinnerView(spinnerActive: true, UIBlock: true, self.signupSpinner, self.signupBlurView, "Logging In", self)
+        displaySpinnerView(spinnerActive: true, UIBlock: true, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: "Logging In", sender: self)
+        
+        print("0")
         
         let permissions = ["public_profile", "email", "user_friends"]
         
-        PFFacebookUtils.logInInBackgroundWithReadPermissions(permissions) {(user: PFUser?, error: NSError?) -> Void in
+        // Ensure that PFUser == nil
+        PFUser.logOut()
+        PFFacebookUtils.logInWithPermissions(permissions) { (user, error) -> Void in
             
             if let user = user {
-                
-                // Download socialQs friends
-                downloadSocialQsFriends({ (isFinished) -> Void in })
                 
                 // Download groups
                 downloadGroups({ (isFinished) -> Void in })
@@ -64,12 +70,12 @@ class WelcomeVC: UIViewController {
                 // Download FB data in background - backgrounding built into FBSDK methods (?)
                 downloadFacebookFriends({ (isFinished) -> Void in
                     
-                    if isFinished { println("FB Download completion handler executed") }
+                    if isFinished { print("FB Download completion handler executed") }
                 })
                 
                 if user.isNew {
                     
-                    println("User signed up and logged in through Facebook!")
+                    print("User signed up and logged in through Facebook!")
                     
                     getUserPhoto({ (isFinished) -> Void in })
                     
@@ -77,16 +83,18 @@ class WelcomeVC: UIViewController {
                         
                         self.performSegueWithIdentifier("signedUp", sender: self)
                         
-                        displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
+                        displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
                         
-                        storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                        storeUserInfo(PFUser.currentUser()!.username!, isNew: true, completion: { (isFinished) -> Void in })
                         
                         getUsersFacebookInfo({ (isFinished) -> Void in })
                     })
                     
                 } else {
                     
-                    println("User logged in through Facebook!")
+                    print("3")
+                    
+                    print("User logged in through Facebook!")
                     
                     getUserPhoto({ (isFinished) -> Void in })
                     
@@ -96,20 +104,20 @@ class WelcomeVC: UIViewController {
                         myGroups = groups
                     }
                     
-                    displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
                     
                     //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                     
-                    storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in })
+                    storeUserInfo(PFUser.currentUser()!.username!, isNew: true, completion: { (isFinished) -> Void in })
                     
                     getUsersFacebookInfo({ (isFinished) -> Void in })
                 }
                 
             } else {
                 
-                println("Uh oh. The user cancelled the Facebook login.")
+                print("Uh oh. The user cancelled the Facebook login.")
                 
-                displaySpinnerView(spinnerActive: false, UIBlock: false, self.signupSpinner, self.signupBlurView, nil, self)
+                displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
                 
                 //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                 
@@ -117,7 +125,6 @@ class WelcomeVC: UIViewController {
             }
         }
     }
-    
     
     
     override func viewDidAppear(animated: Bool) {
@@ -133,30 +140,29 @@ class WelcomeVC: UIViewController {
             // already logged in and data exists in proper locations
             performSegueWithIdentifier("alreadySignedIn", sender: self)
             
-            getUserPhoto({ (isFinished) -> Void in })
+            getUserPhoto({ (isFinished) -> Void in
+            })
             
-            storeUserInfo(PFUser.currentUser()!.username!, true, { (isFinished) -> Void in
+            storeUserInfo(PFUser.currentUser()!.username!, isNew: false, completion: { (isFinished) -> Void in
                 
                 // Download FB data in background - backgrounding built into FBSDK methods (?)
                 downloadFacebookFriends({ (isFinished) -> Void in
-                    
-                    if isFinished { println("FB Download completion handler executed") }
+                                        
+                    if isFinished { print("FBFriends Download completion handler executed") }
                 })
-            
             })
-            
-            //            // Download socialQs friends
-            //            downloadSocialQsFriends({ (isFinished) -> Void in })
             
             // Download groups
             downloadGroups({ (isFinished) -> Void in })
+        } else {
+            print("No active PFUser - must log in")
         }
     }
 
     
     func animateWelcome() {
         
-        var spacingMultiplier: CGFloat = 10
+        let spacingMultiplier: CGFloat = 10
         
         backgroundImageViewTopSpace.constant = 0
         backgroundImageView.layoutIfNeeded()
@@ -192,7 +198,7 @@ class WelcomeVC: UIViewController {
 //        logo2ImageView.alpha = 0.0
 //        logo2ImageView.layoutIfNeeded()
         
-        UIView.animateWithDuration(3.0, delay: 1.0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.3, options: nil, animations: { () -> Void in
+        UIView.animateWithDuration(3.0, delay: 1.0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.3, options: [], animations: { () -> Void in
             
             self.backgroundImageViewTopSpace.constant = -150
             self.logoImageViewTopSpace.constant = -100
@@ -206,6 +212,8 @@ class WelcomeVC: UIViewController {
             
             self.postWarningTextViewTopSpace.constant = 3
             self.postWarningTextView.layoutIfNeeded()
+            
+            self.view.layoutIfNeeded()
             
 //            self.orTextViewTopSpace.constant = 12
 //            self.orTextView.layoutIfNeeded()

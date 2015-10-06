@@ -32,10 +32,10 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewWillAppear(animated: Bool) {
         
-        println(questionToView)
+        print(questionToView)
         
         if (questionToView!["asker"]!["profilePicture"] as? PFFile != nil) {
-            getImageFromPFFile(questionToView!["asker"]!["profilePicture"] as! PFFile, { (image, error) -> () in
+            getImageFromPFFile(questionToView!["asker"]!["profilePicture"] as! PFFile, completion: { (image, error) -> () in
                 if error == nil {
                     self.profilePicture.image = image
                 }
@@ -48,9 +48,9 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         var expectedCount = 0
         var downloadedCount = 0
         
-        if let qtemp  = questionToView!["questionImageFull"] as? PFFile { expectedCount++ }
-        if let o1Temp = questionToView!["option1ImageFull"] as? PFFile { expectedCount++ }
-        if let o2temp = questionToView!["option2ImageFull"] as? PFFile { expectedCount++ }
+        if let _  = questionToView!["questionImageFull"] as? PFFile { expectedCount++ }
+        if let _  = questionToView!["option1ImageFull"]  as? PFFile { expectedCount++ }
+        if let _  = questionToView!["option2ImageFull"]  as? PFFile { expectedCount++ }
         
         if let questionPhoto = questionToView!["questionImageFull"] as? PFFile {
             
@@ -76,7 +76,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
                     
                 } else {
                     
-                    println("There was an error downloading an option2Photo")
+                    print("There was an error downloading an option2Photo")
                 }
             })
         }
@@ -105,7 +105,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
                     
                 } else {
                     
-                    println("There was an error downloading an option2Photo")
+                    print("There was an error downloading an option2Photo")
                 }
             })
         }
@@ -134,7 +134,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
                     
                 } else {
                     
-                    println("There was an error downloading an option2Photo")
+                    print("There was an error downloading an option2Photo")
                 }
             })
         }
@@ -175,7 +175,7 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         scrollView.contentSize = CGSizeMake(pagesScrollViewSize.width * CGFloat(pageImages.count), 1.0)//pagesScrollViewSize.height)
         
         // Set offset to show clicked image (1st or 2nd option)
-        var offset = CGPointMake(scrollView.frame.size.width*CGFloat(zoomPage), 0)
+        let offset = CGPointMake(scrollView.frame.size.width*CGFloat(zoomPage), 0)
         scrollView.setContentOffset(offset, animated: false) // changed to false as to not see page selection during page load
     }
     

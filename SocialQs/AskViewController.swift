@@ -63,10 +63,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //        }
     }
     func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didCompleteWithResults results: [NSObject : AnyObject]!) {
-        println("Complete invite without error")
+        print("Complete invite without error")
     }
     func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didFailWithError error: NSError!) {
-        println("Error in invite \(error)")
+        print("Error in invite \(error)")
     }
     
     
@@ -200,7 +200,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                             
                             popErrorMessage = "You must select at least one groupie from the menu at the top right!"
                             popDirection = "top"
-                            let overlayVC = self.storyboard?.instantiateViewControllerWithIdentifier("errorOverlayViewController") as! UIViewController
+                            let overlayVC = self.storyboard!.instantiateViewControllerWithIdentifier("errorOverlayViewController") 
                             self.prepareOverlayVC(overlayVC)
                             self.presentViewController(overlayVC, animated: true, completion: nil)
                             
@@ -214,7 +214,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     
                     popErrorMessage = "You must provide a Q and two options!"
                     popDirection = "top"
-                    let overlayVC = self.storyboard?.instantiateViewControllerWithIdentifier("errorOverlayViewController") as! UIViewController
+                    let overlayVC = self.storyboard!.instantiateViewControllerWithIdentifier("errorOverlayViewController")
                     self.prepareOverlayVC(overlayVC)
                     self.presentViewController(overlayVC, animated: true, completion: nil)
                     
@@ -246,10 +246,10 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         
         // Add "groupies" and "settings" buttons
-        var groupiesNavigationButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "addUser.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displayGroupiesView")
+        let groupiesNavigationButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "addUser.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displayGroupiesView")
         groupiesNavigationButton.tintColor = UIColor.whiteColor()
         
-        var settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
+        let settingsButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "settings.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "displaySettingsView")
         settingsButton.tintColor = UIColor.whiteColor()
         
         //self.navigationItem.setRightBarButtonItems([settingsButton, groupiesNavigationButton], animated: true)
@@ -267,7 +267,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         askTable.backgroundColor = tableBackgroundColor
         askTable.layer.cornerRadius = cornerRadius
         
-        var tapGesture = UITapGestureRecognizer(target: self, action: "resignKeyboard")
+        let tapGesture = UITapGestureRecognizer(target: self, action: "resignKeyboard")
         tapGesture.cancelsTouchesInView = true
         askTable.addGestureRecognizer(tapGesture)
         
@@ -295,7 +295,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     override func viewWillAppear(animated: Bool) {
         
-        println(isGroupieName)
+        print(isGroupieName)
         
         
 //        UITabBar.appearance().barTintColor = UIColor.whiteColor()
@@ -328,6 +328,233 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     
+//    func submitQ(sender: AnyObject) -> Void {
+//        
+//        //displaySpinnerView(spinnerActive: true, UIBlock: true, askBoxView, askBlurView, "Submitting Q", self)
+//        
+//        //blockUI(true, askSpinner, askBlurView, self)
+//        
+//        func createPNG(image: UIImage, name: String) -> (PFFile) {
+//            
+//            let imageData = UIImagePNGRepresentation(image)
+//            let imageFile: PFFile = PFFile(name: name, data: imageData!)
+//            return imageFile
+//        }
+//        
+//        
+//        // Create PFObject for Q
+//        var socialQ = PFObject(className: "SocialQs")
+//        socialQ["asker"] = PFUser.currentUser()
+//        
+//        
+//        // Store images to a temp var so the view can be cleared 
+//        // to submit another Q while images upload
+////        var thumbnailImages: [PFFile?] = [nil, nil, nil]
+////        var highResImages: [PFFile?] = [nil, nil, nil]
+//        
+//        if self.chosenImageThumbnail[0] != nil {
+//            //var photoJoinQ = PFObject(className: "PhotoJoin")
+//            let thumbnailImages = createPNG(self.chosenImageThumbnail[0]!, name: "questionImage.png")
+//            //photoJoinQ["thumb"] = thumbnailImages
+//            let highResImages = createPNG(self.chosenImageHighRes[0]!, name: "questionImage.png")
+//            //photoJoinQ["fullRes"] = highResImages
+//            socialQ.setObject(thumbnailImages, forKey: "questionImageThumb")
+//            socialQ.setObject(highResImages, forKey: "questionImageFull")
+//        }
+//        if self.chosenImageThumbnail[1] != nil {
+//            //var photoJoin1 = PFObject(className: "PhotoJoin")
+//            let thumbnailImages = createPNG(self.chosenImageThumbnail[1]!, name: "option1Image.png")
+//            //photoJoin1["thumb"] = thumbnailImages
+//            let highResImages = createPNG(self.chosenImageHighRes[1]!, name: "option1Image.png")
+//            //photoJoin1["fullRes"] = highResImages
+//            socialQ.setObject(thumbnailImages, forKey: "option1ImageThumb")
+//            socialQ.setObject(highResImages, forKey: "option1ImageFull")
+//        }
+//        if self.chosenImageThumbnail[2] != nil {
+//            //var photoJoin2 = PFObject(className: "PhotoJoin")
+//            let thumbnailImages = createPNG(self.chosenImageThumbnail[2]!, name: "option2Image.png")
+//            //photoJoin2["thumb"] = thumbnailImages
+//            let highResImages = createPNG(self.chosenImageHighRes[2]!, name: "option2Image.png")
+//            //photoJoin2["fullRes"] = highResImages
+//            socialQ.setObject(thumbnailImages, forKey: "option2ImageThumb")
+//            socialQ.setObject(highResImages, forKey: "option2ImageFull")
+//        }
+//        
+////        if self.chosenImageHighRes[0] != nil { }
+////        if self.chosenImageHighRes[1] != nil { }
+////        if self.chosenImageHighRes[2] != nil { }
+//        
+//        // Create PFObject for images
+//        
+//        // Add images to PFObject
+//        //var qImages: [PFObject] = []
+//        
+////        if thumbnailImages[0] != nil {
+////            
+////        } else {
+////            photoJoinQ["thumb"] = NSNull()
+////        }
+////        if highResImages[0] != nil {
+////            
+////        } else {
+////            photoJoinQ["fullRes"] = NSNull()
+////        }
+////        println(photoJoinQ)
+////        //qImages.append(photoJoinQ)
+////        
+////        if thumbnailImages[1] != nil {
+////            
+////        } else {
+////            photoJoin1["thumb"]  = NSNull()
+////        }
+////        if highResImages[1] != nil {
+////            
+////        } else {
+////            photoJoin1["fullRes"]  = NSNull()
+////        }
+////        println(photoJoin1)
+////        //qImages.append(photoJoin1)
+////        
+////        if thumbnailImages[2] != nil {
+////            
+////        } else {
+////            photoJoin2["thumb"]  = NSNull()
+////        }
+////        if highResImages[2] != nil {
+////            
+////        } else {
+////            photoJoin2["fullRes"]  = NSNull()
+////        }
+////        println(photoJoin2)
+////        //qImages.append(photoJoin2)
+//        
+//        // Add text to PFObject
+//        if question != nil { socialQ["questionText"] = question }
+//        if option1  != nil { socialQ["option1Text"]  = option1  }
+//        if option2  != nil { socialQ["option2Text"]  = option2  }
+//        
+////        // Add pointers to images
+////        if qImages.count > 0 { socialQ.setObject(qImages, forKey: "images") }
+//        
+//        // Initialize vote counters in PFObject
+//        socialQ["option1Stats"] = Int(0)
+//        socialQ["option2Stats"] = Int(0)
+//        
+//        // Mark as undelted by asker
+//        //socialQ["deleted"] = false
+//        
+//        
+//        // Pin completed object to local data store
+////        socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
+////            
+////            if error == nil {
+////                
+////                println("Successfully pinned new Q object")
+////                
+////                // Trigger reload of calling view(s)
+////                NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
+////                //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+////                //NSNotificationCenter.defaultCenter().postNotificationName("refreshGlobalQs", object: nil)
+////                
+////                // Transition back to originating tab
+////                self.navigationController?.popViewControllerAnimated(true)
+////                
+////                // clear text and photo entries
+////                self.cancelButtonAction(sender)
+////
+////                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
+////                
+////                //blockUI(false, self.askSpinner, self.askBlurView, self)
+////            }
+//        //        }
+//        
+//        // ***************************************************
+//        // Askers QJoin entry
+//        // ***************************************************
+//        var qJoinCurrentUser = PFObject(className: "QJoin")
+//        qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "asker")
+//        qJoinCurrentUser.setObject(PFUser.currentUser()!["facebookId"] as! String, forKey: "to")
+//        qJoinCurrentUser.setObject(PFUser.currentUser()!, forKey: "from")
+//        qJoinCurrentUser.setObject(false, forKey: "deleted")
+//        qJoinCurrentUser.setObject(socialQ, forKey: "question")
+//        
+//        qJoinCurrentUser.pinInBackgroundWithBlock({ (success, error) -> Void in
+//            
+//            if error != nil {
+//                
+//                print("There was an error pinning new Q")
+//                
+//            } else {
+//                
+//                // Trigger reload of calling view(s)
+//                NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
+////                NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+////                NSNotificationCenter.defaultCenter().postNotificationName("refreshGlobalQs", object: nil)
+//                
+//                // Transition back to originating tab
+//                self.navigationController?.popViewControllerAnimated(true)
+//                //self.tabBarController?.selectedIndex = 1
+//                
+//                // clear text and photo entries
+//                self.cancelButtonAction(sender)
+//            }
+//        })
+//        
+//        // ************** NETWORK CHECK **********************************
+//        // Save PFObject to Parse
+//        socialQ.saveInBackgroundWithBlock({ (success, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                print("Success saving images in background!")
+//                
+//                // Assign to groupies in QJoinTable
+//                // Include an entry for self (ie: user will be "to", "from" AND "asker"
+//                var sQsGroupieObjects: [PFObject] = []
+//                
+//                for groupiesId in self.facebookWithAppGroupies {
+//                    
+//                    var qJoin = PFObject(className: "QJoin")
+//                    qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
+//                    qJoin.setObject(groupiesId, forKey: "to")
+//                    qJoin.setObject(PFUser.currentUser()!, forKey: "from")
+//                    qJoin.setObject(false, forKey: "deleted")
+//                    qJoin.setObject(socialQ, forKey: "question")
+//                    
+//                    sQsGroupieObjects.append(qJoin)
+//
+//                }
+//                
+//                // ***************************************************
+//                // ***************************************************
+//                // **** NEEDS NETWORK CHECK + RETRY FUNCTIONALITY ****
+//                // ***************************************************
+//                // ***************************************************
+//                PFObject.saveAllInBackground(sQsGroupieObjects, block: { (success, error) -> Void in
+//                    
+//                    if error == nil {
+//                        
+//                        print("sQs QJoin entries created")
+//                        
+//                        // *******************
+//                        //
+//                        self.sendPushes()
+//                        //
+//                        // *******************
+//                        
+//                    } else {
+//                        
+//                        print("There was an error creating sQs QJoin entries: \n\(error)")
+//                    }
+//                })
+//                
+//                qJoinCurrentUser.saveEventually({ (success, error) -> Void in
+//                    
+//                    print("QJoin entry for SELF successfully created")
+//                })
+//            }
+//        })
+//    }
     func submitQ(sender: AnyObject) -> Void {
         
         //displaySpinnerView(spinnerActive: true, UIBlock: true, askBoxView, askBlurView, "Submitting Q", self)
@@ -337,7 +564,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         func createPNG(image: UIImage, name: String) -> (PFFile) {
             
             let imageData = UIImagePNGRepresentation(image)
-            var imageFile: PFFile = PFFile(name: name, data: imageData)
+            var imageFile: PFFile = PFFile(name: name, data: imageData!)
             return imageFile
         }
         
@@ -346,94 +573,94 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         var socialQ = PFObject(className: "SocialQs")
         socialQ["asker"] = PFUser.currentUser()
         
-        // Store images to a temp var so the view can be cleared 
+        // Store images to a temp var so the view can be cleared
         // to submit another Q while images upload
-//        var thumbnailImages: [PFFile?] = [nil, nil, nil]
-//        var highResImages: [PFFile?] = [nil, nil, nil]
+        //        var thumbnailImages: [PFFile?] = [nil, nil, nil]
+        //        var highResImages: [PFFile?] = [nil, nil, nil]
         
         if self.chosenImageThumbnail[0] != nil {
             //var photoJoinQ = PFObject(className: "PhotoJoin")
-            var thumbnailImages = createPNG(self.chosenImageThumbnail[0]!, "questionImage.png")
+            var thumbnailImages = createPNG(self.chosenImageThumbnail[0]!, name: "questionImage.png")
             //photoJoinQ["thumb"] = thumbnailImages
-            var highResImages = createPNG(self.chosenImageHighRes[0]!, "questionImage.png")
+            var highResImages = createPNG(self.chosenImageHighRes[0]!, name: "questionImage.png")
             //photoJoinQ["fullRes"] = highResImages
             socialQ.setObject(thumbnailImages, forKey: "questionImageThumb")
             socialQ.setObject(highResImages, forKey: "questionImageFull")
         }
         if self.chosenImageThumbnail[1] != nil {
             //var photoJoin1 = PFObject(className: "PhotoJoin")
-            var thumbnailImages = createPNG(self.chosenImageThumbnail[1]!, "option1Image.png")
+            var thumbnailImages = createPNG(self.chosenImageThumbnail[1]!, name: "option1Image.png")
             //photoJoin1["thumb"] = thumbnailImages
-            var highResImages = createPNG(self.chosenImageHighRes[1]!, "option1Image.png")
+            var highResImages = createPNG(self.chosenImageHighRes[1]!, name: "option1Image.png")
             //photoJoin1["fullRes"] = highResImages
             socialQ.setObject(thumbnailImages, forKey: "option1ImageThumb")
             socialQ.setObject(highResImages, forKey: "option1ImageFull")
         }
         if self.chosenImageThumbnail[2] != nil {
             //var photoJoin2 = PFObject(className: "PhotoJoin")
-            var thumbnailImages = createPNG(self.chosenImageThumbnail[2]!, "option2Image.png")
+            var thumbnailImages = createPNG(self.chosenImageThumbnail[2]!, name: "option2Image.png")
             //photoJoin2["thumb"] = thumbnailImages
-            var highResImages = createPNG(self.chosenImageHighRes[2]!, "option2Image.png")
+            var highResImages = createPNG(self.chosenImageHighRes[2]!, name: "option2Image.png")
             //photoJoin2["fullRes"] = highResImages
             socialQ.setObject(thumbnailImages, forKey: "option2ImageThumb")
             socialQ.setObject(highResImages, forKey: "option2ImageFull")
         }
         
-//        if self.chosenImageHighRes[0] != nil { }
-//        if self.chosenImageHighRes[1] != nil { }
-//        if self.chosenImageHighRes[2] != nil { }
+        //        if self.chosenImageHighRes[0] != nil { }
+        //        if self.chosenImageHighRes[1] != nil { }
+        //        if self.chosenImageHighRes[2] != nil { }
         
         // Create PFObject for images
         
         // Add images to PFObject
         //var qImages: [PFObject] = []
         
-//        if thumbnailImages[0] != nil {
-//            
-//        } else {
-//            photoJoinQ["thumb"] = NSNull()
-//        }
-//        if highResImages[0] != nil {
-//            
-//        } else {
-//            photoJoinQ["fullRes"] = NSNull()
-//        }
-//        println(photoJoinQ)
-//        //qImages.append(photoJoinQ)
-//        
-//        if thumbnailImages[1] != nil {
-//            
-//        } else {
-//            photoJoin1["thumb"]  = NSNull()
-//        }
-//        if highResImages[1] != nil {
-//            
-//        } else {
-//            photoJoin1["fullRes"]  = NSNull()
-//        }
-//        println(photoJoin1)
-//        //qImages.append(photoJoin1)
-//        
-//        if thumbnailImages[2] != nil {
-//            
-//        } else {
-//            photoJoin2["thumb"]  = NSNull()
-//        }
-//        if highResImages[2] != nil {
-//            
-//        } else {
-//            photoJoin2["fullRes"]  = NSNull()
-//        }
-//        println(photoJoin2)
-//        //qImages.append(photoJoin2)
+        //        if thumbnailImages[0] != nil {
+        //
+        //        } else {
+        //            photoJoinQ["thumb"] = NSNull()
+        //        }
+        //        if highResImages[0] != nil {
+        //
+        //        } else {
+        //            photoJoinQ["fullRes"] = NSNull()
+        //        }
+        //        println(photoJoinQ)
+        //        //qImages.append(photoJoinQ)
+        //
+        //        if thumbnailImages[1] != nil {
+        //
+        //        } else {
+        //            photoJoin1["thumb"]  = NSNull()
+        //        }
+        //        if highResImages[1] != nil {
+        //
+        //        } else {
+        //            photoJoin1["fullRes"]  = NSNull()
+        //        }
+        //        println(photoJoin1)
+        //        //qImages.append(photoJoin1)
+        //
+        //        if thumbnailImages[2] != nil {
+        //
+        //        } else {
+        //            photoJoin2["thumb"]  = NSNull()
+        //        }
+        //        if highResImages[2] != nil {
+        //
+        //        } else {
+        //            photoJoin2["fullRes"]  = NSNull()
+        //        }
+        //        println(photoJoin2)
+        //        //qImages.append(photoJoin2)
         
         // Add text to PFObject
         if question != nil { socialQ["questionText"] = question }
         if option1  != nil { socialQ["option1Text"]  = option1  }
         if option2  != nil { socialQ["option2Text"]  = option2  }
         
-//        // Add pointers to images
-//        if qImages.count > 0 { socialQ.setObject(qImages, forKey: "images") }
+        //        // Add pointers to images
+        //        if qImages.count > 0 { socialQ.setObject(qImages, forKey: "images") }
         
         // Initialize vote counters in PFObject
         socialQ["option1Stats"] = Int(0)
@@ -444,27 +671,27 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         
         // Pin completed object to local data store
-//        socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                println("Successfully pinned new Q object")
-//                
-//                // Trigger reload of calling view(s)
-//                NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
-//                //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
-//                //NSNotificationCenter.defaultCenter().postNotificationName("refreshGlobalQs", object: nil)
-//                
-//                // Transition back to originating tab
-//                self.navigationController?.popViewControllerAnimated(true)
-//                
-//                // clear text and photo entries
-//                self.cancelButtonAction(sender)
-//
-//                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
-//                
-//                //blockUI(false, self.askSpinner, self.askBlurView, self)
-//            }
+        //        socialQ.pinInBackgroundWithBlock { (success, error) -> Void in
+        //
+        //            if error == nil {
+        //
+        //                println("Successfully pinned new Q object")
+        //
+        //                // Trigger reload of calling view(s)
+        //                NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
+        //                //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+        //                //NSNotificationCenter.defaultCenter().postNotificationName("refreshGlobalQs", object: nil)
+        //
+        //                // Transition back to originating tab
+        //                self.navigationController?.popViewControllerAnimated(true)
+        //
+        //                // clear text and photo entries
+        //                self.cancelButtonAction(sender)
+        //
+        //                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
+        //
+        //                //blockUI(false, self.askSpinner, self.askBlurView, self)
+        //            }
         //        }
         
         // ***************************************************
@@ -481,14 +708,14 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             if error != nil {
                 
-                println("There was an error pinning new Q")
+                print("There was an error pinning new Q")
                 
             } else {
                 
                 // Trigger reload of calling view(s)
                 NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
-//                NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
-//                NSNotificationCenter.defaultCenter().postNotificationName("refreshGlobalQs", object: nil)
+                //                NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+                //                NSNotificationCenter.defaultCenter().postNotificationName("refreshGlobalQs", object: nil)
                 
                 // Transition back to originating tab
                 self.navigationController?.popViewControllerAnimated(true)
@@ -505,7 +732,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             if error == nil {
                 
-                println("Success saving images in background!")
+                print("Success saving images in background!")
                 
                 // Assign to groupies in QJoinTable
                 // Include an entry for self (ie: user will be "to", "from" AND "asker"
@@ -521,7 +748,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     qJoin.setObject(socialQ, forKey: "question")
                     
                     sQsGroupieObjects.append(qJoin)
-
+                    
                 }
                 
                 // ***************************************************
@@ -533,7 +760,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     
                     if error == nil {
                         
-                        println("sQs QJoin entries created")
+                        print("sQs QJoin entries created")
                         
                         // *******************
                         //
@@ -543,22 +770,25 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                         
                     } else {
                         
-                        println("There was an error creating sQs QJoin entries: \n\(error)")
+                        print("There was an error creating sQs QJoin entries: \n\(error)")
                     }
                 })
                 
                 qJoinCurrentUser.saveEventually({ (success, error) -> Void in
                     
-                    println("QJoin entry for SELF successfully created")
+                    print("QJoin entry for SELF successfully created")
                 })
             }
         })
     }
     
     
+    
+    
+    
     func sendPushes() {
         
-        println("Sending pushes")
+        print("Sending pushes")
         
 //        // SEND CHANNEL PUSH -----------------------------------------------------
 //        var pushGeneral:PFPush = PFPush()
@@ -575,13 +805,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //        })
         
         // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
-        var toUsers: PFQuery = PFUser.query()!
-        var pushQuery: PFQuery = PFInstallation.query()!
+        let toUsers: PFQuery = PFUser.query()!
+        let pushQuery: PFQuery = PFInstallation.query()!
         
         toUsers.whereKey("facebookId", containedIn: facebookWithAppGroupies)
         pushQuery.whereKey("user", matchesQuery: toUsers)
         
-        var pushDirected: PFPush = PFPush()
+        let pushDirected: PFPush = PFPush()
         pushDirected.setQuery(pushQuery)
         
         // Create dictionary to send JSON to parse/to other devices
@@ -596,13 +826,13 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 
                 self.facebookWithAppGroupies.removeAll(keepCapacity: true)
                 
-                println("Directed push notification sent!")
+                print("Directed push notification sent!")
                 
             } else {
                 
                 self.facebookWithAppGroupies.removeAll(keepCapacity: true)
                 
-                println("There was an error sending notifications")
+                print("There was an error sending notifications")
             }
         })
         // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
@@ -731,7 +961,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     func resignKeyboard() { self.askTable.endEditing(true) }
     
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)
     }
     
@@ -794,19 +1024,19 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         
         if whichCell == 0 {
             
-            chosenImageHighRes[0] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
-            chosenImageThumbnail[0] = resizeImage(chosenImageHighRes[0]!, CGSize(width: thumbnailMax, height: thumbnailMax))
+            chosenImageHighRes[0] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[0] = resizeImage(chosenImageHighRes[0]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
             
         } else if whichCell == 1 {
             
-            println(imageCount)
+            print(imageCount)
             
-            chosenImageHighRes[imageCount] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))
-            chosenImageThumbnail[imageCount] = resizeImage(self.chosenImageHighRes[imageCount]!, CGSize(width: thumbnailMax, height: thumbnailMax))
+            chosenImageHighRes[imageCount] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
+            chosenImageThumbnail[imageCount] = resizeImage(self.chosenImageHighRes[imageCount]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
             
             
 //            chosenImageHighRes[2] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, CGSize(width: photoMax, height: photoMax))

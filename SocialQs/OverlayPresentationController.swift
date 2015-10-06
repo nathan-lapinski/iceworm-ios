@@ -20,7 +20,7 @@ class OverlayPresentationController: UIPresentationController {
     
     let dimmingView = UIView()
     
-    override init(presentedViewController: UIViewController!, presentingViewController: UIViewController!) {
+    override init(presentedViewController: UIViewController, presentingViewController: UIViewController) {
         
         super.init(presentedViewController: presentedViewController, presentingViewController: presentingViewController)
         dimmingView.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
@@ -29,9 +29,9 @@ class OverlayPresentationController: UIPresentationController {
     // Creates dimming view and initializes its transition
     override func presentationTransitionWillBegin() {
         
-        dimmingView.frame = containerView.bounds
+        dimmingView.frame = containerView!.bounds
         dimmingView.alpha = 0.0
-        containerView.insertSubview(dimmingView, atIndex: 0)
+        containerView!.insertSubview(dimmingView, atIndex: 0)
         
         presentedViewController.transitionCoordinator()?.animateAlongsideTransition({
             context in
@@ -59,11 +59,11 @@ class OverlayPresentationController: UIPresentationController {
         
         switch popDirection {
         case "left":
-            returnFrame = CGRectMake(containerView.frame.origin.x - 2*popInset, containerView.frame.origin.y + popInset, containerView.frame.width + popInset, containerView.frame.height - 2*popInset)
+            returnFrame = CGRectMake(containerView!.frame.origin.x - 2*popInset, containerView!.frame.origin.y + popInset, containerView!.frame.width + popInset, containerView!.frame.height - 2*popInset)
         case "right":
-            returnFrame = CGRectMake(containerView.frame.origin.x + popInset, containerView.frame.origin.y + popInset, containerView.frame.width + popInset, containerView.frame.height - 2*popInset)
+            returnFrame = CGRectMake(containerView!.frame.origin.x + popInset, containerView!.frame.origin.y + popInset, containerView!.frame.width + popInset, containerView!.frame.height - 2*popInset)
         default:
-            returnFrame = CGRectMake(containerView.frame.origin.x + popInset, containerView.frame.origin.y + popInset, containerView.frame.width - 2*popInset, containerView.frame.height - 2*popInset)
+            returnFrame = CGRectMake(containerView!.frame.origin.x + popInset, containerView!.frame.origin.y + popInset, containerView!.frame.width - 2*popInset, containerView!.frame.height - 2*popInset)
         }
         
         return returnFrame
@@ -72,7 +72,7 @@ class OverlayPresentationController: UIPresentationController {
     // Pulls the frame of the popover view from function
     override func containerViewWillLayoutSubviews() {
         
-        dimmingView.frame = containerView.bounds
-        presentedView().frame = frameOfPresentedViewInContainerView()
+        dimmingView.frame = containerView!.bounds
+        presentedView()!.frame = frameOfPresentedViewInContainerView()
     }
 }

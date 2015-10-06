@@ -71,11 +71,11 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
     
     @IBAction func handleDismissedPressed(sender: AnyObject) {
         
-        var endCenter = presentingViewController!.view.center
-        var containerFrame = presentingViewController!.view.frame
+        let endCenter = presentingViewController!.view.center
+        //var containerFrame = presentingViewController!.view.frame
         
         UIView.animateWithDuration(0.8,
-            delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: nil,
+            delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: [],
             animations: {
                 
                 self.view.center.x = endCenter.x + self.view.frame.width
@@ -108,8 +108,15 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
     
     func logOut() -> Void {
         
-        displaySpinnerView(spinnerActive: true, UIBlock: true, boxView, blurView, "Logging Out", self.presentingViewController!)
-
+        displaySpinnerView(spinnerActive: true, UIBlock: true, _boxView: boxView, _blurView: blurView, progressText: "Logging Out", sender: self.presentingViewController!)
+        
+        if (FBSDKAccessToken.currentAccessToken() != nil)
+        {
+            // User is already logged in, do work such as go to next view controller.
+            print("(&*%^( TEH FUQ O*&&^(")
+            //self.generateAPILoginDetails()
+        }
+        
         // Clear all local values so they don't bleed into next user
         username = ""
         name = ""
@@ -130,11 +137,11 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
             if error == nil {
                 
                 // Switch back to welcome screen
-                println("Logout complete, performing segue to welcome view")
+                print("Logout complete, performing segue to welcome view")
                 self.performSegueWithIdentifier("logout", sender: self)
             }
             
-            displaySpinnerView(spinnerActive: false, UIBlock: false, self.boxView, self.blurView, nil, self.presentingViewController!)
+            displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.boxView, _blurView: self.blurView, progressText: nil, sender: self.presentingViewController!)
         }
     }
     

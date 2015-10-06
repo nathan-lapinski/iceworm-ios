@@ -12,7 +12,7 @@ import UIKit
 
 func backgroundThread(delay: Double = 0.0, background: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
     
-    dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0)) {
+    dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0)) {
         
         if(background != nil){ background!(); }
         
@@ -47,7 +47,7 @@ backgroundThread(delay: 3.0, completion: {
 });
 */
 
-func displaySpinnerView(#spinnerActive: Bool, #UIBlock: Bool, var _boxView: UIView, var _blurView: UIVisualEffectView, progressText: String?, sender: UIViewController) {
+func displaySpinnerView(spinnerActive spinnerActive: Bool, UIBlock: Bool, _boxView: UIView, _blurView: UIVisualEffectView, progressText: String?, sender: UIViewController) {
     
     if UIBlock == true {
         // block application input
@@ -58,7 +58,7 @@ func displaySpinnerView(#spinnerActive: Bool, #UIBlock: Bool, var _boxView: UIVi
     }
     
     if spinnerActive == true {
-        println("Adding activity indicator from superView")
+        print("Adding activity indicator from superView")
         // You only need to adjust this frame to move it anywhere you want
         //_boxView.frame = CGRectMake(sender.view.frame.midX - 90, sender.view.frame.midY - 25, 180, 50)
         _boxView.frame = CGRectMake(sender.view.frame.midX - 90, sender.view.frame.height/2 - 50, 180, 50)
@@ -70,11 +70,11 @@ func displaySpinnerView(#spinnerActive: Bool, #UIBlock: Bool, var _boxView: UIVi
         _blurView.frame = CGRectMake(0, 0, sender.view.frame.width, sender.view.frame.height)// sender.view.frame
         
         //Here the spinnier is initialized
-        var activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+        let activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
         activityView.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
         activityView.startAnimating()
         
-        var textLabel = UILabel(frame: CGRect(x: 30, y: 0, width: 150, height: 50))
+        let textLabel = UILabel(frame: CGRect(x: 30, y: 0, width: 150, height: 50))
         textLabel.textColor = UIColor.whiteColor()
         textLabel.textAlignment = .Center
         textLabel.text = progressText
@@ -126,7 +126,7 @@ func displaySpinnerView(#spinnerActive: Bool, #UIBlock: Bool, var _boxView: UIVi
 }
 
 
-func displayCellSpinnerView(var _boxView: UIView, var _blurView: UIVisualEffectView, progressText: String?, sender: UITableViewCell) {
+func displayCellSpinnerView(_boxView: UIView, _blurView: UIVisualEffectView, progressText: String?, sender: UITableViewCell) {
     
 //    if UIBlock == true {
 //        // block application input
@@ -137,7 +137,7 @@ func displayCellSpinnerView(var _boxView: UIView, var _blurView: UIVisualEffectV
 //    }
 //    
 //    if spinnerActive == true {
-        println("Adding activity indicator from superView")
+        print("Adding activity indicator from superView")
         // You only need to adjust this frame to move it anywhere you want
         _boxView.frame = CGRectMake(sender.frame.midX - 90, sender.frame.midY - 25, 180, 50)
         _boxView.backgroundColor = UIColor.darkGrayColor()
@@ -149,11 +149,11 @@ func displayCellSpinnerView(var _boxView: UIView, var _blurView: UIVisualEffectV
         _blurView.layer.cornerRadius = cornerRadius
         
         //Here the spinnier is initialized
-        var activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+        let activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
         activityView.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
         activityView.startAnimating()
         
-        var textLabel = UILabel(frame: CGRect(x: 30, y: 0, width: 150, height: 50))
+        let textLabel = UILabel(frame: CGRect(x: 30, y: 0, width: 150, height: 50))
         textLabel.textColor = UIColor.whiteColor()
         textLabel.textAlignment = .Center
         textLabel.text = progressText
@@ -207,7 +207,7 @@ func displayCellSpinnerView(var _boxView: UIView, var _blurView: UIVisualEffectV
 
 func displayAlert(title: String, message: String, sender: UIViewController) {
     
-    var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
     
     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
         
@@ -221,18 +221,18 @@ func displayAlert(title: String, message: String, sender: UIViewController) {
 
 func downloadGroups(completion: (Bool) -> Void) {
     
-    backgroundThread(delay: 0.0, background: {
+    //backgroundThread(0.0, background: {
+    
+    if let myGroupsTemp = PFUser.currentUser()!["myGroups"] as? [String] {
         
-        if let myGroupsTemp = PFUser.currentUser()!["myGroups"] as? [String] { myGroups = myGroupsTemp }
-     
+        myGroups = myGroupsTemp
+        
         var groupsQuery = PFQuery(className: "GroupJoin")
         groupsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
-        if myGroups.count < 1 {
-            groupsQuery.whereKey("groupName", containedIn: myGroups)
-        }
-        
+        groupsQuery.whereKey("groupName", containedIn: myGroups)
+                
         groupsQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-            
+                        
             if error == nil {
                 
                 if let temp = objects {
@@ -243,49 +243,50 @@ func downloadGroups(completion: (Bool) -> Void) {
                             
                             if error == nil {
                                 
-                                println("Successfully pinned GROUPJOIN entry")
+                                print("Successfully pinned GROUPJOIN entry")
                             }
                         }
                     }
                 }
             }
         })
-    })
+    }
+    //})
 }
 
 
 
 
-//*******************************************************************************
-// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
-//*******************************************************************************
-func downloadSocialQsFriends(completion: (Bool) -> Void) {
-    
-    backgroundThread(delay: 0.0, background: {
-        
-        var friendsQuery = PFQuery(className: "Friends")
-        friendsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
-        
-        friendsQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-            
-            if error == nil {
-                
-                myFriends.removeAll(keepCapacity: true)
-                
-                if let temp = objects {
-                    
-                    for object in temp {
-                        
-                        myFriends.append(object["name"] as! String)
-                    }
-                }
-            }
-        })
-    })
-}
-//*******************************************************************************
-// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
-//*******************************************************************************
+////*******************************************************************************
+//// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
+////*******************************************************************************
+//func downloadSocialQsFriends(completion: (Bool) -> Void) {
+//    
+//    backgroundThread(0.0, background: {
+//        
+//        var friendsQuery = PFQuery(className: "Friends")
+//        friendsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
+//        
+//        friendsQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                myFriends.removeAll(keepCapacity: true)
+//                
+//                if let temp = objects {
+//                    
+//                    for object in temp {
+//                        
+//                        myFriends.append(object["name"] as! String)
+//                    }
+//                }
+//            }
+//        })
+//    })
+//}
+////*******************************************************************************
+//// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
+////*******************************************************************************
 
 
 //*******************************************************************************
@@ -300,18 +301,37 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
         friendsDictionary.removeAll(keepCapacity: true)
 
         // Get list of facebook friends who have SOCIALQS
-        var friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
+        let friendsRequest1 = FBSDKGraphRequest(graphPath:"/me/friends?fields=name,id,picture&limit=1000", parameters: nil);
         
-        println("GETTING FRIENDS")
-        
+        print("GETTING FRIENDS")
+    
         friendsRequest1.startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result : AnyObject!, error : NSError!) -> Void in
             
-            println("Downloading FB friends WITH sQs")
+            print("Downloading FB friends WITH sQs")
             
             if error == nil {
                 
-                var results: AnyObject = result["data"]!!
-                var temp: AnyObject = result["data"]!!
+                
+                
+//                var login: FBSDKLoginManager = FBSDKLoginManager()
+//                login.logInWithReadPermissions(["public_profile", "email", "user_friends"], handler: {(result: FBSDKLoginManagerLoginResult, error: NSErrorPointer) in
+//                    if error {
+//                        NSLog("Process error")
+//                    }
+//                    else {
+//                        if result.isCancelled {
+//                            NSLog("Cancelled")
+//                        }
+//                        else {
+//                            NSLog("Logged in")
+//                        }
+//                    }
+//                })
+                
+                
+                
+                let results: AnyObject = result["data"]!!
+                //var temp: AnyObject = result["data"]!!
                 var tempDict = Dictionary<String, AnyObject>()
                 
                 for var i = 0; i < results.count; i++ {
@@ -327,10 +347,10 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                     // Pull profile image and store in separate dict
                     if let url = (tempDict["picURL"]) as? String {
                         
-                        downloadFacebookFriendsPhotos(url, { (success) -> Void in })
+                        downloadFacebookFriendsPhotos(url, completion: { (success) -> Void in })
                     }
                     
-                    if contains(isGroupieName, results[i]["name"]!! as! String) {
+                    if isGroupieName.contains((results[i]["name"]!! as! String)) {
                         
                         tempDict["isSelected"] = true
                     }
@@ -343,7 +363,7 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                 
             } else {
                 
-                println("Error retrieving Facebook Users: \n\(error)")
+                print("Error retrieving Facebook Users: \n\(error)")
             }
         }
     //})
@@ -601,11 +621,11 @@ func downloadFacebookFriendsPhotos(picURL: String, completion: (Bool) -> Void) {
             
             if data != nil {
                 
-                friendsPhotoDictionary[picURL] = UIImage(data: data)
+                friendsPhotoDictionary[picURL] = UIImage(data: data!)
                 
             } else {
                 
-                println("There was an error downloading a friend's FB photo: \n\(error)")
+                print("There was an error downloading a friend's FB photo: \n\(error)")
             }
         }
     }
@@ -652,7 +672,7 @@ func getUserPhoto(completion: (Bool) -> Void) {
             if error == nil {
                 
                 if let downloadedImage = UIImage(data: data!) {
-                    println("got it!")
+                    print("got it!")
                     
                     profilePicture = downloadedImage
                     
@@ -663,8 +683,8 @@ func getUserPhoto(completion: (Bool) -> Void) {
                 
             } else {
                 
-                println("There was an error retrieving the users profile picture - welcomeController")
-                println(error)
+                print("There was an error retrieving the users profile picture - welcomeController")
+                print(error)
                 
                 profilePicture = UIImage(named: "profile.png")
             }
@@ -675,15 +695,15 @@ func getUserPhoto(completion: (Bool) -> Void) {
     } else if (PFUser.currentUser()!["profilePicture"] as? PFFile == nil) && PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) == true {
         
         // Get profile pic from FB and store it locally (var) and on Parse
-        var accessToken = FBSDKAccessToken.currentAccessToken().tokenString
-        var url = NSURL(string: "https://graph.facebook.com/me/picture?type=large&return_ssl_resources=1&access_token=" + accessToken)
+        let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
+        let url = NSURL(string: "https://graph.facebook.com/me/picture?type=large&return_ssl_resources=1&access_token=" + accessToken)
         let urlRequest = NSURLRequest(URL: url!)
         
         NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
             
             // Set app image
             if data != nil {
-                let image = UIImage(data: data)
+                let image = UIImage(data: data!)
                 profilePicture = image
             } else {
                 profilePicture = UIImage(named: "profile.png")
@@ -694,20 +714,20 @@ func getUserPhoto(completion: (Bool) -> Void) {
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
                 
-                var user = PFUser.currentUser()
-                let imageData = UIImagePNGRepresentation(profilePicture)
-                let picture = PFFile(name:"profilePicture.png", data: imageData)
+                let user = PFUser.currentUser()
+                let imageData = UIImagePNGRepresentation(profilePicture!)
+                let picture = PFFile(name:"profilePicture.png", data: imageData!)
                 user!.setObject(picture, forKey: "profilePicture")
                 
                 user!.saveInBackgroundWithBlock({ (success, error) -> Void in
                     
                     if error == nil {
                         
-                        println("image saved successfully")
+                        print("image saved successfully")
                         
                     } else {
                         
-                        println("image not saved")
+                        print("image not saved")
                     }
                 })
             })
@@ -728,17 +748,19 @@ func getUserPhoto(completion: (Bool) -> Void) {
 func getUsersFacebookInfo(completion: (Bool) -> Void) { // ONLY USER FOR "ISNEW"
     // Gets facebook user info (name, firstname, email, id) and saves to Parse
     
-    let request = FBSDKGraphRequest(graphPath:"me", parameters:nil)
+    let request = FBSDKGraphRequest(graphPath:"/me?fields=name,id,picture,first_name,last_name,email", parameters:nil)
+    
+    print("!@#$%^&*()")
     
     request.startWithCompletionHandler { (connection, result, error) in
         
         if error != nil {
             
-            println("Error Getting User's FB infomation \(error)")
+            print("Error Getting User's FB infomation \(error)")
             
         } else if let userData = result as? [String:AnyObject] {
             
-            var user = PFUser.currentUser()
+            let user = PFUser.currentUser()
         
             user!.setObject((userData["name"]! as? String)!, forKey: "name")
             user!.setObject((userData["email"]! as? String)!, forKey: "email")
@@ -750,11 +772,11 @@ func getUsersFacebookInfo(completion: (Bool) -> Void) { // ONLY USER FOR "ISNEW"
                 
                 if error == nil {
                     
-                    println("User's data successfully stored to Parse")
+                    print("User's data successfully stored to Parse")
                     
                 } else {
                     
-                    println("There was an error storing user's data to Parse")
+                    print("There was an error storing user's data to Parse")
                 }
             })
             
@@ -800,54 +822,54 @@ func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
 }
 
 
-// Function to link/unlink users with facebook (settings and groupies alertView)
-func linkUserWithFacebook(completion: (success: Bool, message: String?) -> Void) {
-    
-    if !PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
-        
-        let permissions = ["public_profile", "email", "user_friends"]
-        
-        PFFacebookUtils.linkUserInBackground(PFUser.currentUser()!, withReadPermissions: permissions, block: { (succeeded, error) -> Void in
-            
-            if succeeded {
-                
-                getUserPhoto() { (isFinished) -> Void in
-                    
-                    if isFinished {
-                        
-                        completion(success: true, message: "User is linked with Facebook - photo downloaded")
-                        
-                    } else {
-                        
-                        completion(success: true, message: "User is linked with Facebook - photo NOT downloaded")
-                    }
-                }
-                
-            } else {
-                
-                println(error!)
-                
-                completion(success: false, message: "User could not be linked with ")
-            }
-        })
-    }
-//    else { // UNLINK FACEBOOK
+//// Function to link/unlink users with facebook (settings and groupies alertView)
+//func linkUserWithFacebook(completion: (success: Bool, message: String?) -> Void) {
+//    
+//    if !PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
 //        
-//        //
-//        //
-//        // TEST IF REGULAR PARSE ACCOUNT IS SETUP - REQUIRE SETUP IF NO
-//        //
-//        //
+//        let permissions = ["public_profile", "email", "user_friends"]
 //        
-//        PFFacebookUtils.unlinkUserInBackground(PFUser.currentUser()!, block: { (succeeded, error) -> Void in
+//        PFFacebookUtils.linkUserInBackground(PFUser.currentUser()!, withReadPermissions: permissions, block: { (succeeded, error) -> Void in
 //            
-//            if error == nil {
+//            if succeeded {
 //                
-//                println("User is no longer associated with their Facebook account.")
+//                getUserPhoto() { (isFinished) -> Void in
+//                    
+//                    if isFinished {
+//                        
+//                        completion(success: true, message: "User is linked with Facebook - photo downloaded")
+//                        
+//                    } else {
+//                        
+//                        completion(success: true, message: "User is linked with Facebook - photo NOT downloaded")
+//                    }
+//                }
+//                
+//            } else {
+//                
+//                print(error!)
+//                
+//                completion(success: false, message: "User could not be linked with ")
 //            }
 //        })
 //    }
-}
+////    else { // UNLINK FACEBOOK
+////        
+////        //
+////        //
+////        // TEST IF REGULAR PARSE ACCOUNT IS SETUP - REQUIRE SETUP IF NO
+////        //
+////        //
+////        
+////        PFFacebookUtils.unlinkUserInBackground(PFUser.currentUser()!, block: { (succeeded, error) -> Void in
+////            
+////            if error == nil {
+////                
+////                println("User is no longer associated with their Facebook account.")
+////            }
+////        })
+////    }
+//}
 
 
 // Sets globals, changes to custom NSUserDefault keys and fills that data in
@@ -882,12 +904,12 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
             
             if error == nil {
                 
-                println("New user data stored!")
+                print("New user data stored!")
                 
             } else {
                 
-                println("Error storing new user data:")
-                println(error)
+                print("Error storing new user data:")
+                print(error)
                 
             }
             
@@ -902,7 +924,7 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
             NSUserDefaults.standardUserDefaults().setObject(name, forKey: nameStorageKey)
         }
         
-        println("Returning user data has been stored")
+        print("Returning user data has been stored")
         completion(true)
     
         

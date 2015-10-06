@@ -33,20 +33,20 @@ class GroupiesSettingsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        println("Popover recieved: \(strSaveText)")
+        print("Popover recieved: \(strSaveText)")
         
         tableView.backgroundColor = UIColor.groupTableViewBackgroundColor()
     }
     
     override func viewWillAppear(animated: Bool) {
         
-        println(myGroups)
+        print(myGroups)
         
         var firstRowText: String = ""
         if myGroups.count == 0 {
             
             firstRowText = "No Groups"
-            displayAlert("Create a group!", "Select groupies from the list below and use the \"Create Group\" button, which will appear next to the groupies list, to store.", self)
+            displayAlert("Create a group!", message: "Select groupies from the list below and use the \"Create Group\" button, which will appear next to the groupies list, to store.", sender: self)
             
         } else {
             
@@ -75,7 +75,7 @@ class GroupiesSettingsTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("groupiesSettingsCell", forIndexPath: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("groupiesSettingsCell", forIndexPath: indexPath) 
 
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         cell.textLabel?.text = objectsArray[indexPath.section].sectionObjects[indexPath.row]

@@ -41,7 +41,7 @@ class VotesTableVC: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        var query = PFQuery(className: "QJoin")
+        let query = PFQuery(className: "QJoin")
         query.whereKey("question", equalTo: questionToView!)
         
         query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
@@ -55,7 +55,7 @@ class VotesTableVC: UITableViewController {
                     
                     for object in temp {
                         
-                        if object["vote"]! != nil {
+                        if let _: PFObject = object["vote"]! as? PFObject {
                             
                             if (object["vote"] as! Int) == 1 { voter1s.append(object["to"] as! String) }
                                 
@@ -123,8 +123,8 @@ class VotesTableVC: UITableViewController {
                     //self.tableView.reloadInputViews()
                     
                 } else {
-                    println("Voter retreival error")
-                    println(error)
+                    print("Voter retreival error")
+                    print(error)
                 }
             }
         }
@@ -182,9 +182,9 @@ class VotesTableVC: UITableViewController {
             
             if (questionToView!["questionPhoto"] as? PFFile != nil) {
                 
-                var frame = CGRectMake(self.view.frame.size.width - 60, 0, 60, 60)
-                var headerImageView = UIImageView(frame: frame)
-                getImageFromPFFile(questionToView!["questionPhoto"] as! PFFile, { (image, error) -> () in
+                let frame = CGRectMake(self.view.frame.size.width - 60, 0, 60, 60)
+                let headerImageView = UIImageView(frame: frame)
+                getImageFromPFFile(questionToView!["questionPhoto"] as! PFFile, completion: { (image, error) -> () in
                     
                     if error == nil {
                         
@@ -196,7 +196,7 @@ class VotesTableVC: UITableViewController {
                         
                     } else {
                         
-                        println("There was an error downloading questionPhoto - votesTableVC")
+                        print("There was an error downloading questionPhoto - votesTableVC")
                     }
                 })
             }
@@ -206,13 +206,13 @@ class VotesTableVC: UITableViewController {
             
             if (questionToView!["option\(section)Photo"] as? PFFile != nil) {
                 //var frame = CGRectMake(0, 0, self.view.frame.size.width, 60) // full bar image
-                var frame = CGRectMake(0, 0, 60, 60)
-                var headerImageView = UIImageView(frame: frame)
-                getImageFromPFFile(questionToView!["option\(section)Photo"]! as! PFFile, { (image, error) -> () in
+                let frame = CGRectMake(0, 0, 60, 60)
+                let headerImageView = UIImageView(frame: frame)
+                getImageFromPFFile(questionToView!["option\(section)Photo"]! as! PFFile, completion: { (image, error) -> () in
                     
                     if error == nil {
                         
-                        println("Adding image to section \(section) header")
+                        print("Adding image to section \(section) header")
                         
                             headerImageView.image = image
                             headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
@@ -221,7 +221,7 @@ class VotesTableVC: UITableViewController {
                         
                     } else {
                         
-                        println("There was an error downloading questionPhoto - votesTableVC")
+                        print("There was an error downloading questionPhoto - votesTableVC")
                     }
                 })
             }
