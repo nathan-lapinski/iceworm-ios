@@ -286,8 +286,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                             // If user has current channels, check if this one is NOT there and add it
                             if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
                                 
-                                print(channels)
-                                
                                 if !channels.contains(newChannel) {
                                     currentInstallation.addUniqueObject(newChannel, forKey: "channels")
                                     currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in

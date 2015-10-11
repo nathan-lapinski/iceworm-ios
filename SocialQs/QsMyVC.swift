@@ -45,15 +45,22 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         tableView.delegate = self
         tableView.registerClass(QSMyCellNEW.self, forCellReuseIdentifier: "cell")
         
-        
-        
         if (FBSDKAccessToken.currentAccessToken() != nil) {
+            
             // User is already logged in, do work such as go to next view controller.
             print("FB Access Token is good...")
             //self.generateAPILoginDetails()
             
         } else {
             displayAlert("Error", message: "A Facebook error has prevented Groupies from loading. Please quit the app (double-click the home button and swipe up). Relaunching and logging back in should fix the problem!", sender: self)
+            
+//            PFSession.getCurrentSessionInBackgroundWithBlock { (sessionObject, error) -> Void in
+//                
+//                if error == nil {
+//                    
+//                    FBSDKAccessToken.setCurrentAccessToken(sessionObject!.sessionToken!)
+//                }
+//            }
         }
     }
     

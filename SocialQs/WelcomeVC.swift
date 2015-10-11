@@ -54,76 +54,93 @@ class WelcomeVC: UIViewController {
         
         displaySpinnerView(spinnerActive: true, UIBlock: true, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: "Logging In", sender: self)
         
-        print("0")
+        // Ensure that PFUser == nil
+        PFUser.logOut()
         
         let permissions = ["public_profile", "email", "user_friends"]
         
-        // Ensure that PFUser == nil
-        PFUser.logOut()
-        PFFacebookUtils.logInWithPermissions(permissions) { (user, error) -> Void in
-            
-            if let user = user {
-                
-                // Download groups
-                downloadGroups({ (isFinished) -> Void in })
-                
-                // Download FB data in background - backgrounding built into FBSDK methods (?)
-                downloadFacebookFriends({ (isFinished) -> Void in
+        let login: FBSDKLoginManager = FBSDKLoginManager()
+        login.logInWithReadPermissions(permissions, handler: {(result: FBSDKLoginManagerLoginResult!, error: NSError!) in
+            if (error != nil) {
+                NSLog("Process error")
+            }
+            else {
+                if result.isCancelled {
+                    NSLog("Cancelled")
+                }
+                else {
+                    NSLog("Logged in")
                     
-                    if isFinished { print("FB Download completion handler executed") }
-                })
-                
-                if user.isNew {
-                    
-                    print("User signed up and logged in through Facebook!")
-                    
-                    getUserPhoto({ (isFinished) -> Void in })
-                    
-                    getUsersFacebookInfo({ (isFinished) -> Void in // desired to complete before storing info
+                    PFFacebookUtils.logInWithPermissions(permissions) { (user, error) -> Void in
                         
-                        self.performSegueWithIdentifier("signedUp", sender: self)
-                        
-                        displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
-                        
-                        storeUserInfo(PFUser.currentUser()!.username!, isNew: true, completion: { (isFinished) -> Void in })
-                        
-                        getUsersFacebookInfo({ (isFinished) -> Void in })
-                    })
-                    
-                } else {
-                    
-                    print("3")
-                    
-                    print("User logged in through Facebook!")
-                    
-                    getUserPhoto({ (isFinished) -> Void in })
-                    
-                    self.performSegueWithIdentifier("alreadySignedIn", sender: self)
-                    
-                    if let groups = PFUser.currentUser()!["myGroups"] as? [String] {
-                        myGroups = groups
+                        if let user = user {
+                            
+                            // Download groups
+                            downloadGroups({ (isFinished) -> Void in })
+                            
+                            // Download FB data in background - backgrounding built into FBSDK methods (?)
+                            downloadFacebookFriends({ (isFinished) -> Void in
+                                
+                                if isFinished { print("FB Download completion handler executed") }
+                            })
+                            
+                            if user.isNew {
+                                
+                                print("User signed up and logged in through Facebook!")
+                                
+                                getUserPhoto({ (isFinished) -> Void in })
+                                
+                                getUsersFacebookInfo({ (isFinished) -> Void in // desired to complete before storing info
+                                    
+                                    self.performSegueWithIdentifier("signedUp", sender: self)
+                                    
+                                    displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
+                                    
+                                    storeUserInfo(PFUser.currentUser()!.username!, isNew: true, completion: { (isFinished) -> Void in })
+                                    
+                                    getUsersFacebookInfo({ (isFinished) -> Void in })
+                                })
+                                
+                            } else {
+                                
+                                print("User logged in through Facebook!")
+                                
+                                getUserPhoto({ (isFinished) -> Void in })
+                                
+                                self.performSegueWithIdentifier("alreadySignedIn", sender: self)
+                                
+                                if let groups = PFUser.currentUser()!["myGroups"] as? [String] {
+                                    myGroups = groups
+                                }
+                                
+                                displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
+                                
+                                //blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                                
+                                storeUserInfo(PFUser.currentUser()!.username!, isNew: true, completion: { (isFinished) -> Void in })
+                                
+                                getUsersFacebookInfo({ (isFinished) -> Void in })
+                            }
+                            
+                        } else {
+                            
+                            print("Uh oh. The user cancelled the Facebook login.")
+                            
+                            displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
+                            
+                            //blockUI(false, self.signupSpinner, self.signupBlurView, self)
+                            
+                            self.navigationController?.navigationBarHidden = false
+                        }
                     }
                     
-                    displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
                     
-                    //blockUI(false, self.signupSpinner, self.signupBlurView, self)
-                    
-                    storeUserInfo(PFUser.currentUser()!.username!, isNew: true, completion: { (isFinished) -> Void in })
-                    
-                    getUsersFacebookInfo({ (isFinished) -> Void in })
                 }
-                
-            } else {
-                
-                print("Uh oh. The user cancelled the Facebook login.")
-                
-                displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.signupSpinner, _blurView: self.signupBlurView, progressText: nil, sender: self)
-                
-                //blockUI(false, self.signupSpinner, self.signupBlurView, self)
-                
-                self.navigationController?.navigationBarHidden = false
             }
-        }
+            
+        })
+        
+        
     }
     
     

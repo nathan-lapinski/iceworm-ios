@@ -750,8 +750,6 @@ func getUsersFacebookInfo(completion: (Bool) -> Void) { // ONLY USER FOR "ISNEW"
     
     let request = FBSDKGraphRequest(graphPath:"/me?fields=name,id,picture,first_name,last_name,email", parameters:nil)
     
-    print("!@#$%^&*()")
-    
     request.startWithCompletionHandler { (connection, result, error) in
         
         if error != nil {

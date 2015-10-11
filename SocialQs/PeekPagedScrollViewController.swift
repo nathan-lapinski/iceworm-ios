@@ -13,6 +13,9 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet var questionLabel: UILabel!
     @IBOutlet var profilePicture: UIImageView!
     
+    var zoomBoxView = UIView()
+    var zoomBlurView = globalBlurView()
+    
     var imageZoom: [UIImage?] = [nil, nil, nil]
     var pageImages: [UIImage] = []
     var pageViews: [UIImageView?] = []
@@ -31,6 +34,8 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     
     
     override func viewWillAppear(animated: Bool) {
+        
+        displaySpinnerView(spinnerActive: true, UIBlock: false, _boxView: zoomBoxView, _blurView: zoomBlurView, progressText: "Loading Images", sender: self)
         
         if (questionToView!["asker"]!["profilePicture"] as? PFFile != nil) {
             getImageFromPFFile(questionToView!["asker"]!["profilePicture"] as! PFFile, completion: { (image, error) -> () in
@@ -64,6 +69,8 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
                         
                         if downloadedCount == expectedCount {
                             
+                            displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.zoomBoxView, _blurView: self.zoomBlurView, progressText: "", sender: self)
+                            
                             // Set page counts and page numbers
                             self.preparePages()
                             
@@ -93,6 +100,8 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
                         
                         if downloadedCount == expectedCount {
                             
+                            displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.zoomBoxView, _blurView: self.zoomBlurView, progressText: "", sender: self)
+                            
                             // Set page counts and page numbers
                             self.preparePages()
                             
@@ -121,6 +130,9 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
                         downloadedCount++
                         
                         if downloadedCount == expectedCount {
+                            
+                            displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.zoomBoxView, _blurView: self.zoomBlurView, progressText: "", sender: self)
+                            
                             
                             // Set page counts and page numbers
                             self.preparePages()

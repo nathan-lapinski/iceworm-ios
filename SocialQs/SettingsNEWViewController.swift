@@ -138,14 +138,25 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
     
     func logOut() -> Void {
         
-        displaySpinnerView(spinnerActive: true, UIBlock: true, _boxView: boxView, _blurView: blurView, progressText: "Logging Out", sender: self.presentingViewController!)
+        let endCenter = presentingViewController!.view.center
+        //var containerFrame = presentingViewController!.view.frame
         
-        if (FBSDKAccessToken.currentAccessToken() != nil)
-        {
-            // User is already logged in, do work such as go to next view controller.
-            print("(&*%^( TEH FUQ O*&&^(")
-            //self.generateAPILoginDetails()
-        }
+        UIView.animateWithDuration(0.8,
+            delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: [],
+            animations: {
+                
+                // Move settings view "drawer" back off screen...
+                self.view.center.x = endCenter.x + self.view.frame.width
+                self.view.center.y = endCenter.y
+                
+                // ... but don't dimiss or the segue back to "welcome" will fail!
+                //self.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+                
+            }, completion: {
+                _ in
+        })
+        
+        displaySpinnerView(spinnerActive: true, UIBlock: true, _boxView: boxView, _blurView: blurView, progressText: "Logging Out", sender: self.presentingViewController!)
         
         // Clear all local values so they don't bleed into next user
         username = ""
