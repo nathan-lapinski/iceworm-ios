@@ -613,7 +613,27 @@ class QSMyCellNEW: UITableViewCell {
         
         QJoinObject!.saveEventually { (success, error) -> Void in
             if error == nil {
+                
                 print("Successful vote cast in SocialQs!")
+                
+                // SEND BADGE INCREMENT PUSH
+                let objId = self.QJoinObject["question"].objectId!!
+                let newChannel = "Question_\(objId)"
+                let pushGeneral:PFPush = PFPush()
+                pushGeneral.setChannel(newChannel)
+                
+                // Create dictionary to send JSON to parse/to other devices
+                let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"0", "sound":""]
+                
+                pushGeneral.setData(dataGeneral)
+                
+                pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        print("Badge sent for \(newChannel) sent!")
+                    }
+                })
             }
         }
 

@@ -33,6 +33,36 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet var handleLabel: UILabel!
     @IBOutlet var profilePictureImageView: UIImageView!
     
+    
+    
+    
+    @IBOutlet var testButton: UIButton!
+    
+    @IBAction func testButtonAction(sender: AnyObject) {
+        
+        var toUsers: Dictionary<String, String> = [:]
+        toUsers[PFUser.currentUser()!["facebookId"] as! String] = "facebook"
+        
+        print(toUsers)
+        
+        PFCloud.callFunctionInBackground("sendNewQuestionPushes", withParameters: ["to": toUsers, "from": PFUser.currentUser()!["name"] as! String]) { (objects, error) -> Void in
+            
+            if error == nil {
+                
+                print(objects)
+                
+            } else {
+                
+                print("ERROR")
+                print(error)
+            }
+        }
+    }
+    
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

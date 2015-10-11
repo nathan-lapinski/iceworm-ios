@@ -31,6 +31,7 @@
 		902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D41B3EA21300B67ACE /* TabBarController.swift */; };
 		902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */; };
 		902D871F1B5747A9001F9954 /* ScrollViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */; };
+		9035C7101BC88F16008C3ABD /* PseudoCodeForCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035C70F1BC88F16008C3ABD /* PseudoCodeForCloud.swift */; settings = {ASSET_TAGS = (); }; };
 		903CF0F41B7A8283002BF72D /* SocialQs.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 903CF0F21B7A8283002BF72D /* SocialQs.xcdatamodeld */; };
 		904123021B26A67C00397132 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123011B26A67C00397132 /* AppDelegate.swift */; };
 		904123091B26A67C00397132 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 904123071B26A67C00397132 /* Main.storyboard */; };
@@ -113,6 +114,7 @@
 		902B34D41B3EA21300B67ACE /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeekPagedScrollViewController.swift; sourceTree = "<group>"; };
 		902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollViewContainer.swift; sourceTree = "<group>"; };
+		9035C70F1BC88F16008C3ABD /* PseudoCodeForCloud.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PseudoCodeForCloud.swift; sourceTree = SOURCE_ROOT; };
 		903CF0F31B7A8283002BF72D /* SocialQs.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SocialQs.xcdatamodel; sourceTree = "<group>"; };
 		904122FC1B26A67B00397132 /* SocialQs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocialQs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		904123001B26A67C00397132 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				904123071B26A67C00397132 /* Main.storyboard */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
 				902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */,
+				9035C70F1BC88F16008C3ABD /* PseudoCodeForCloud.swift */,
 				90A66E261BBF9A030015F27E /* Popover Present */,
 				90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */,
 				909937461BB7305D00535716 /* QSMyCellNEW.swift */,
@@ -496,6 +499,7 @@
 				908A03F61B5E01070050C0D9 /* AskViewController.swift in Sources */,
 				90A66E3A1BC07B400015F27E /* GroupiesVC.swift in Sources */,
 				902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */,
+				9035C7101BC88F16008C3ABD /* PseudoCodeForCloud.swift in Sources */,
 				905B2D961B322625001A74EE /* Globals.swift in Sources */,
 				90A66E2C1BBF9A1C0015F27E /* BouncyViewControllerAnimator.swift in Sources */,
 				90D7F3F81B62216B001284FA /* UsernameViewController.swift in Sources */,

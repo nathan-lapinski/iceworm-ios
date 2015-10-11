@@ -51,6 +51,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Enable Crash Reporting
         ParseCrashReporting.enable();
+        //NSException(name: NSGenericException, reason: "Everything is ok. This is just a test crash.", userInfo: nil).raise()
+        
+//        dispatch_after(
+//            dispatch_time(DISPATCH_TIME_NOW, Int64(5.0 * Double(NSEC_PER_SEC))),
+//            dispatch_get_main_queue(),
+//            { () -> Void in
+//                self.crash()
+//        });
         
         // Setup Parse
         Parse.setApplicationId(parseAppId, clientKey: parseClientKey)
@@ -60,21 +68,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //PFUser.enableRevocableSessionInBackground()
         
         // Setup Parse/Facebook
-        //FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-        //FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-        //PFFacebookUtils.initializeFacebookWithApplicationLaunchOptions(launchOptions)
         PFFacebookUtils.initializeFacebook()
             
         // [Optional] Track statistics around application opens.
-        //PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
+        PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
         
 //        // Setup notifications
 //        let userNotificationTypes = (UIUserNotificationType.Alert | UIUserNotificationType.Badge |  UIUserNotificationType.Sound)
 //        let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
 //        application.registerUserNotificationSettings(settings)
 //        application.registerForRemoteNotifications()
-        
-        
         
         //return true
         return FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -148,6 +151,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+        // Clear badges
+        let currentInstallation = PFInstallation.currentInstallation()
+        if currentInstallation.badge != 0 {
+            currentInstallation.badge = 0
+            currentInstallation.saveEventually()
+        }
         
         FBSDKAppEvents.activateApp()
     }

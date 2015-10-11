@@ -32,8 +32,6 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewWillAppear(animated: Bool) {
         
-        print(questionToView)
-        
         if (questionToView!["asker"]!["profilePicture"] as? PFFile != nil) {
             getImageFromPFFile(questionToView!["asker"]!["profilePicture"] as! PFFile, completion: { (image, error) -> () in
                 if error == nil {
@@ -48,9 +46,9 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         var expectedCount = 0
         var downloadedCount = 0
         
-        if let _  = questionToView!["questionImageFull"] as? PFFile { expectedCount++ }
-        if let _  = questionToView!["option1ImageFull"]  as? PFFile { expectedCount++ }
-        if let _  = questionToView!["option2ImageFull"]  as? PFFile { expectedCount++ }
+        if let _  = questionToView!["questionImageThumb"] as? PFFile { expectedCount++ }
+        if let _  = questionToView!["option1ImageThumb"]  as? PFFile { expectedCount++ }
+        if let _  = questionToView!["option2ImageThumb"]  as? PFFile { expectedCount++ }
         
         if let questionPhoto = questionToView!["questionImageFull"] as? PFFile {
             
@@ -187,7 +185,8 @@ class PeekPagedScrollViewController: UIViewController, UIScrollViewDelegate {
         }
         
         // Load an individual page, first checking if you've already loaded it
-        if let pageView = pageViews[page] {
+        if let _ = pageViews[page] {
+            //if let pageView...
             // Do nothing. The view is already loaded.
         } else {
             var frame = scrollView.bounds
