@@ -59,6 +59,8 @@ class WelcomeVC: UIViewController {
         
         let permissions = ["public_profile", "email", "user_friends"]
         
+        print("Preparing to log in with FB")
+        
         let login: FBSDKLoginManager = FBSDKLoginManager()
         login.logInWithReadPermissions(permissions, handler: {(result: FBSDKLoginManagerLoginResult!, error: NSError!) in
             if (error != nil) {
@@ -71,7 +73,9 @@ class WelcomeVC: UIViewController {
                 else {
                     NSLog("Logged in")
                     
-                    PFFacebookUtils.logInWithPermissions(permissions) { (user, error) -> Void in
+                    print(FBSDKAccessToken.currentAccessToken().userID)
+                    
+                    PFFacebookUtils.logInWithFacebookId(FBSDKAccessToken.currentAccessToken().userID, accessToken: FBSDKAccessToken.currentAccessToken().tokenString, expirationDate: FBSDKAccessToken.currentAccessToken().expirationDate, block: { (user, error) -> Void in
                         
                         if let user = user {
                             
@@ -131,16 +135,11 @@ class WelcomeVC: UIViewController {
                             //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                             
                             self.navigationController?.navigationBarHidden = false
-                        }
-                    }
-                    
-                    
+                        } 
+                    })
                 }
             }
-            
         })
-        
-        
     }
     
     
