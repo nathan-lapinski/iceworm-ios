@@ -334,12 +334,12 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
             
         print("NO MYQS!!")
         
-        var noQsJoinObject = PFObject(className: "QJoin")
-        var noQsQuestionObject = PFObject(className: "SocialQs")
+        let noQsJoinObject = PFObject(className: "QJoin")
+        let noQsQuestionObject = PFObject(className: "SocialQs")
 //        var noQsPhotoJoinQObject = PFObject(className: "PhotoJoin")
 //        var noQsPhotoJoin1Object = PFObject(className: "PhotoJoin")
 //        var noQsPhotoJoin2Object = PFObject(className: "PhotoJoin")
-        var noQsAskerObject = PFObject(className: "User")
+        let noQsAskerObject = PFObject(className: "User")
         
         let profImageData = UIImagePNGRepresentation(UIImage(named: "arrowToAsk.png")!)
         let

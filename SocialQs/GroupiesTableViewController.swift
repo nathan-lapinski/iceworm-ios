@@ -125,7 +125,7 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
                 var groupObjects: [PFObject] = []
                 for groupie in groupiesDictionary {
                     
-                    var group = PFObject(className: "GroupJoin")
+                    let group = PFObject(className: "GroupJoin")
                     group.setObject(groupName!, forKey: "groupName")
                     group.setObject(PFUser.currentUser()!, forKey: "owner")
                     group.setObject(groupie["name"]!, forKey: "name")
@@ -426,46 +426,37 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
             }
         }
         
-        if (friendsDictionary[indexPath.row]["isSelected"] as! Bool) == true {
+        // Transfer friends from dictionary to isGroupieName
+        if (friendsDictionaryFiltered[indexPath.row]["isSelected"] as! Bool) == true {
             
-            if !isGroupieName.contains((friendsDictionary[indexPath.row]["name"] as! String)) {
+            if !isGroupieName.contains((friendsDictionaryFiltered[indexPath.row]["name"] as! String)) {
                 
-                isGroupieName.append(friendsDictionary[indexPath.row]["name"] as! String)
+                isGroupieName.append(friendsDictionaryFiltered[indexPath.row]["name"] as! String)
             }
             
         } else {
             
-            let index = isGroupieName.indexOf((friendsDictionary[indexPath.row]["name"] as! String))
+            let index = isGroupieName.indexOf((friendsDictionaryFiltered[indexPath.row]["name"] as! String))
             if index != nil {
                 
                 isGroupieName.removeAtIndex(index!)
             }
         }
         
-//        //var count = 0
-//        for var i = 0; i < friendsDictionary.count; i++ {
-//            
-//            if friendsDictionary[i]["isSelected"] as! Bool == true {
-//                //count++
-//            }
-//        }
-//        
-//        
-//        
-//        
         // Collapse header if no groupies selectionized
         tableView.beginUpdates()
-        if isGroupieName.count < 2 {
+        if isGroupieName.count < 1 {
             
             tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.None)
         }
         tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
         tableView.endUpdates()
-//
+
         // Fill in selected users - must be after section header refreshing (above)
         textView.text = isGroupieName.joinWithSeparator(", ")
         
         if isGroupieName.count > 0 {
+            
             let text = textView.text
             let textRange = text.startIndex..<text.endIndex
             let attributedString = NSMutableAttributedString(string: text)

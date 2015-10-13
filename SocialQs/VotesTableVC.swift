@@ -170,7 +170,7 @@ class VotesTableVC: UITableViewController {
             
             if(questionToView!["questionText"] as? String != nil) {
                 
-                var headerTextView = UITextView(frame: CGRectMake(68, 0, self.view.frame.size.width - 128, 60))
+                let headerTextView = UITextView(frame: CGRectMake(68, 0, self.view.frame.size.width - 128, 60))
                 headerTextView.text = questionToView!["questionText"] as? String
                 headerTextView.textColor = UIColor.darkTextColor()
                 headerTextView.backgroundColor = UIColor.clearColor()
@@ -228,7 +228,7 @@ class VotesTableVC: UITableViewController {
             
             if (questionToView!["option\(section)Text"] as? String != nil) {
                 
-                var headerTextView = UITextView(frame: CGRectMake(68, 0, self.view.frame.size.width - 128, 60))
+                let headerTextView = UITextView(frame: CGRectMake(68, 0, self.view.frame.size.width - 128, 60))
                 headerTextView.text = questionToView!["option\(section)Text"] as? String
                 headerTextView.textColor = UIColor.whiteColor()
                 headerTextView.backgroundColor = UIColor.clearColor()

@@ -708,7 +708,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                 // Include an entry for self (ie: user will be "to", "from" AND "asker"
                 var sQsGroupieObjects: [PFObject] = []
                 
-                for groupiesId in self.facebookWithAppGroupies {
+                for groupiesId in Set(self.facebookWithAppGroupies) {
                     
                     let qJoin = PFObject(className: "QJoin")
                     qJoin.setObject(PFUser.currentUser()!, forKey: "asker")

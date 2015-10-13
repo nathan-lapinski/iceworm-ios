@@ -227,7 +227,7 @@ func downloadGroups(completion: (Bool) -> Void) {
         
         myGroups = myGroupsTemp
         
-        var groupsQuery = PFQuery(className: "GroupJoin")
+        let groupsQuery = PFQuery(className: "GroupJoin")
         groupsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
         groupsQuery.whereKey("groupName", containedIn: myGroups)
                 
