@@ -102,10 +102,10 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
         
         //"More"
-        let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
+        let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: " V ") { (action, index) -> Void in
             
             // Set question for viewing
-            questionToView = self.QJoinObjects[indexPath.row] as? PFObject
+            questionToView = self.QJoinObjects[indexPath.row]["question"]!! as? PFObject
             
             self.performSegueWithIdentifier("viewVotesMyQs", sender: self)
             
@@ -121,13 +121,11 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         //        share.backgroundColor = UIColor.grayColor()
         
         
-        let trash = UITableViewRowAction(style: .Normal, title: "Trash") { action, index in
+        let trash = UITableViewRowAction(style: .Normal, title: " D ") { action, index in
             
             let object = self.QJoinObjects[indexPath.row] as! PFObject
             
             object.setObject(true, forKey: "deleted")
-            
-            //object["deleted"] = true
             
             object.unpinInBackgroundWithBlock({ (success, error) -> Void in
                 
@@ -170,14 +168,6 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                 }
             })
             
-//            object.saveInBackgroundWithBlock({ (success, error) -> Void in
-//            
-//                if error == nil {
-//                    println("Q delete status updated on server")
-//                }
-//                
-//            })
-            
             self.QJoinObjects.removeAtIndex(indexPath.row)
             
             tableView.beginUpdates()
@@ -189,7 +179,8 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         print("Swiped MY row: \(indexPath.row)")
         
         if indexPath.row > -1 {
-            if self.QJoinObjects[indexPath.row]["vote"] != nil {
+            
+            if let _: Int = self.QJoinObjects[indexPath.row]["vote"] as? Int {
                 
                 return [trash, view] // Order = appearance order, right to left on screen
                 

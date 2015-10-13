@@ -48,6 +48,8 @@ class VotesTableVC: UITableViewController {
             
             if error == nil {
                 
+                print(objects)
+                
                 if let temp = objects {
                     
                     var voter1s:[String] = []
@@ -55,7 +57,9 @@ class VotesTableVC: UITableViewController {
                     
                     for object in temp {
                         
-                        if let _: PFObject = object["vote"]! as? PFObject {
+                        print(object)
+                        
+                        if let _: Int = object["vote"] as? Int {
                             
                             if (object["vote"] as! Int) == 1 { voter1s.append(object["to"] as! String) }
                                 

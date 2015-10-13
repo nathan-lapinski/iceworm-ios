@@ -116,7 +116,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
         
         //"More"
-        let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "View") { (action, index) -> Void in
+        let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: " V ") { (action, index) -> Void in
             
             // Set question for viewing
             questionToView = self.QJoinObjects[indexPath.row]["question"]!! as? PFObject
@@ -135,7 +135,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
 //        share.backgroundColor = UIColor.grayColor()
         
         
-        let trash = UITableViewRowAction(style: .Normal, title: "Trash") { action, index in
+        let trash = UITableViewRowAction(style: .Normal, title: " D ") { action, index in
             
             let object = self.QJoinObjects[indexPath.row] as! PFObject
             
@@ -192,13 +192,20 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         
         print("Swiped THEIR row: \(indexPath.row)")
         
-        if self.QJoinObjects[indexPath.row]["vote"] != nil {
+        if indexPath.row > -1 {
             
-            return [trash, view] // Order = appearance order, right to left on screen
+            if let _: Int = self.QJoinObjects[indexPath.row]["vote"] as? Int {
+                
+                return [trash, view] // Order = appearance order, right to left on screen
+                
+            } else {
+                
+                return [trash] // Order = appearance order, right to left on screen
+            }
             
         } else {
             
-            return [trash] // Order = appearance order, right to left on screen
+            return []
         }
     }
     

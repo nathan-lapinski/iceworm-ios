@@ -135,7 +135,7 @@ class WelcomeVC: UIViewController {
                             //blockUI(false, self.signupSpinner, self.signupBlurView, self)
                             
                             self.navigationController?.navigationBarHidden = false
-                        } 
+                        }
                     })
                 }
             }
