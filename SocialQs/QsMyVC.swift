@@ -77,19 +77,29 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        
         return 1
     }
     
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return QJoinObjects.count }
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        print("Number of rows to build = \(QJoinObjects.count)")
+        
+        return QJoinObjects.count
+    }
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSMyCellNEW
         
-        cell.delegate = self
-        cell.QJoinObject = QJoinObjects[indexPath.row] as! PFObject
+        if indexPath.row >= 0 {
+            cell.delegate = self
+            cell.QJoinObject = QJoinObjects[indexPath.row] as! PFObject
+        } else {
+            print("WTF?!? indexPath.row = \(indexPath.row)")
+        }
         
         return cell
     }
@@ -100,6 +110,8 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+        
+        if indexPath.row < 0 { return [] }
         
         //"More"
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: " V ") { (action, index) -> Void in
@@ -196,26 +208,28 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     }
     
     
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell,
-        forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
             cell.backgroundColor = UIColor.clearColor()
     }
     
     
-    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool { return true }
+    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        
+        return true
+    }
     
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) { }
     
     
     func segueToZoom() {
+        
         self.performSegueWithIdentifier("zoomMyPhotoSegue", sender: self)
     }
     
     
     func refresh() {
-        
-        QJoinObjects.removeAll(keepCapacity: true)
         
 //        let qQueryLocal = PFQuery(className: "QJoin")
 //        qQueryLocal.fromLocalDatastore()
@@ -263,6 +277,8 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
             qQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
                 
                 if error == nil {
+                    
+                    self.QJoinObjects.removeAll(keepCapacity: true)
                     
                     // Append to local array of PFObjects
                     self.QJoinObjects = self.QJoinObjects + objects!

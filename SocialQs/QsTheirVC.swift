@@ -229,8 +229,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     func refresh() {
         
-        QJoinObjects.removeAll(keepCapacity: true)
-        
 //        let qJoinQueryLocal = PFQuery(className: "QJoin")
 //        qJoinQueryLocal.fromLocalDatastore()
 //        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
@@ -277,6 +275,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
             qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
                 
                 if error == nil {
+                    
+                    QJoinObjects.removeAll(keepCapacity: true)
                     
                     // Append to local array of PFObjects
                     self.QJoinObjects = self.QJoinObjects + objects!

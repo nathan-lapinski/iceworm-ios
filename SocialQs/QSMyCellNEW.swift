@@ -181,7 +181,7 @@ class QSMyCellNEW: UITableViewCell {
             questionText.text = qText
             questionText.numberOfLines = 0
             questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            questionText.textAlignment = NSTextAlignment.Center
+            questionText.textAlignment = NSTextAlignment.Left
             questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(14))!
             questionText?.textColor = UIColor.whiteColor()
             //questionText.sizeToFit()
@@ -409,7 +409,7 @@ class QSMyCellNEW: UITableViewCell {
         }
         option1Text.numberOfLines = 3
         option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        option1Text.textAlignment = NSTextAlignment.Center
+        option1Text.textAlignment = NSTextAlignment.Left
         option1Text?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(14))!
         option1Text?.textColor = UIColor.darkTextColor()
         
@@ -427,7 +427,7 @@ class QSMyCellNEW: UITableViewCell {
         }
         option2Text.numberOfLines = 3
         option2Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        option2Text.textAlignment = NSTextAlignment.Center
+        option2Text.textAlignment = NSTextAlignment.Left
         option2Text?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(14))!
         option2Text?.textColor = UIColor.darkTextColor()
         
