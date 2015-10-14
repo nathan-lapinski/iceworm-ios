@@ -267,11 +267,11 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                     // Append to local array of PFObjects
                     self.QJoinObjects = self.QJoinObjects + objects!
                     
-                    // Pin new Qs to local datastore
-                    if let temp: [PFObject] = objects {
-                        
-                        for object in temp {
-                            
+//                    // Pin new Qs to local datastore
+//                    if let temp: [PFObject] = objects {
+//                        
+//                        for object in temp {
+//                            
 //                            object.pinInBackgroundWithBlock { (success, error) -> Void in
 //                                
 //                                if error == nil {
@@ -283,8 +283,8 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
 //                                //                                        self.alreadyRetrievedMyQs.append(test)
 //                                //                                    }
 //                            }
-                        }
-                    }
+//                        }
+//                    }
                     
                     if self.QJoinObjects.count < 1 {
                         

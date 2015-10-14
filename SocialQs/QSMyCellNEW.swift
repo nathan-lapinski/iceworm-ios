@@ -338,7 +338,6 @@ class QSMyCellNEW: UITableViewCell {
             option2PercentText.hidden = false
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
-            animateStatsBars()
             if test == 1 {
                 //option1Checkmark.layer.borderWidth = 2.0
                 //option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
@@ -349,6 +348,8 @@ class QSMyCellNEW: UITableViewCell {
                 option2Checkmark.alpha = 0.8
             }
         }
+        
+        if totalResponses > 0 { animateStatsBars() }
     }
     
     
