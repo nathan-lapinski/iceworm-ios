@@ -33,8 +33,6 @@ class MainNavigationController: UINavigationController {
         // FUNCTION ***************************************************************
         */
      
-        
-        //print(FBSDKAccessToken.currentAccessToken().tokenString)
     }
     
     

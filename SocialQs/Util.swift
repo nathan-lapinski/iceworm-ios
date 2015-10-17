@@ -243,7 +243,7 @@ func downloadGroups(completion: (Bool) -> Void) {
                             
                             if error == nil {
                                 
-                                print("Successfully pinned GROUPJOIN entry")
+                                //print("Successfully pinned GROUPJOIN entry")
                             }
                         }
                     }
@@ -253,40 +253,6 @@ func downloadGroups(completion: (Bool) -> Void) {
     }
     //})
 }
-
-
-
-
-////*******************************************************************************
-//// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
-////*******************************************************************************
-//func downloadSocialQsFriends(completion: (Bool) -> Void) {
-//    
-//    backgroundThread(0.0, background: {
-//        
-//        var friendsQuery = PFQuery(className: "Friends")
-//        friendsQuery.whereKey("owner", equalTo: PFUser.currentUser()!)
-//        
-//        friendsQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                myFriends.removeAll(keepCapacity: true)
-//                
-//                if let temp = objects {
-//                    
-//                    for object in temp {
-//                        
-//                        myFriends.append(object["name"] as! String)
-//                    }
-//                }
-//            }
-//        })
-//    })
-//}
-////*******************************************************************************
-//// NEEDS PROPER ERROR HANDLING - and appropriate use of completion with errors!
-////*******************************************************************************
 
 
 //*******************************************************************************
@@ -310,25 +276,6 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
             print("Downloading FB friends WITH sQs")
             
             if error == nil {
-                
-                
-                
-//                var login: FBSDKLoginManager = FBSDKLoginManager()
-//                login.logInWithReadPermissions(["public_profile", "email", "user_friends"], handler: {(result: FBSDKLoginManagerLoginResult, error: NSErrorPointer) in
-//                    if error {
-//                        NSLog("Process error")
-//                    }
-//                    else {
-//                        if result.isCancelled {
-//                            NSLog("Cancelled")
-//                        }
-//                        else {
-//                            NSLog("Logged in")
-//                        }
-//                    }
-//                })
-                
-                
                 
                 let results: AnyObject = result["data"]!!
                 //var temp: AnyObject = result["data"]!!
@@ -361,9 +308,13 @@ func downloadFacebookFriends(completion: (Bool) -> Void) {
                 
                 //println("FRIENDS RETRIEVED: \(friendsDictionary)")
                 
+                completion(true)
+                
             } else {
                 
                 print("Error retrieving Facebook Users: \n\(error)")
+                
+                completion(false)
             }
         }
     //})
@@ -820,54 +771,165 @@ func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
 }
 
 
-//// Function to link/unlink users with facebook (settings and groupies alertView)
-//func linkUserWithFacebook(completion: (success: Bool, message: String?) -> Void) {
-//    
-//    if !PFFacebookUtils.isLinkedWithUser(PFUser.currentUser()!) {
-//        
-//        let permissions = ["public_profile", "email", "user_friends"]
-//        
-//        PFFacebookUtils.linkUserInBackground(PFUser.currentUser()!, withReadPermissions: permissions, block: { (succeeded, error) -> Void in
-//            
-//            if succeeded {
-//                
-//                getUserPhoto() { (isFinished) -> Void in
-//                    
-//                    if isFinished {
-//                        
-//                        completion(success: true, message: "User is linked with Facebook - photo downloaded")
-//                        
-//                    } else {
-//                        
-//                        completion(success: true, message: "User is linked with Facebook - photo NOT downloaded")
-//                    }
-//                }
-//                
-//            } else {
-//                
-//                print(error!)
-//                
-//                completion(success: false, message: "User could not be linked with ")
-//            }
-//        })
-//    }
-////    else { // UNLINK FACEBOOK
-////        
-////        //
-////        //
-////        // TEST IF REGULAR PARSE ACCOUNT IS SETUP - REQUIRE SETUP IF NO
-////        //
-////        //
-////        
-////        PFFacebookUtils.unlinkUserInBackground(PFUser.currentUser()!, block: { (succeeded, error) -> Void in
-////            
-////            if error == nil {
-////                
-////                println("User is no longer associated with their Facebook account.")
-////            }
-////        })
-////    }
-//}
+func downloadTheirQs(completion: (Bool) -> Void) {
+    
+    //        let qJoinQueryLocal = PFQuery(className: "QJoin")
+    //        qJoinQueryLocal.fromLocalDatastore()
+    //        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+    //        qJoinQueryLocal.whereKey("from", notEqualTo: PFUser.currentUser()!)
+    //        qJoinQueryLocal.orderByDescending("createdAt")
+    //        qJoinQueryLocal.whereKey("deleted", equalTo: false)
+    //        qJoinQueryLocal.includeKey("from")
+    //        qJoinQueryLocal.includeKey("question")
+    //        qJoinQueryLocal.limit = 1000
+    //
+    //        qJoinQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+    //
+    //            if error == nil {
+    //
+    //                self.QJoinObjects = objects!
+    //
+    //                for temp in objects! {
+    //
+    //                    if let tempId: String = temp.objectId {
+    //
+    //                        self.alreadyRetrieved.append(tempId)
+    //                    }
+    //                }
+    //
+    //            } else {
+    //
+    //                print("There was an error loading Qs from local data store:")
+    //                print(error)
+    //            }
+    
+    // Get Qs that are not in localdata store
+    let qJoinQueryServer = PFQuery(className: "QJoin")
+    qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+    qJoinQueryServer.whereKey("from", notEqualTo: PFUser.currentUser()!)
+    if myAlreadyRetrieved.count > 0 {
+        qJoinQueryServer.whereKey("objectId", notContainedIn: myAlreadyRetrieved)
+    }
+    qJoinQueryServer.orderByDescending("createdAt")
+    qJoinQueryServer.whereKey("deleted", equalTo: false)
+    qJoinQueryServer.includeKey("from")
+    qJoinQueryServer.includeKey("question")
+    qJoinQueryServer.limit = 1000
+    
+    qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+        
+        if error == nil {
+            
+            //print("\(objects!.count) objects downloaded)")
+            
+            theirQJoinObjects.removeAll(keepCapacity: true)
+            
+            // Append to local array of PFObjects
+            theirQJoinObjects = theirQJoinObjects + objects!
+            
+            // Pin new Qs to local datastore
+            if let temp: [PFObject] = objects!{
+                
+                for object in temp {
+                    
+                    let objId = object["question"].objectId!!
+                    let newChannel = "Question_\(objId)"
+                    let currentInstallation = PFInstallation.currentInstallation()
+                    
+                    // If user has current channels, check if this one is NOT there and add it
+                    if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
+                        
+                        if !channels.contains(newChannel) {
+                            currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+                            currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+                                
+                                if error == nil {
+                                    
+                                    print("Subscribed to \(newChannel)")
+                                }
+                            })
+                        }
+                        
+                    } else { // else add it as the first
+                        
+                        currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+                        currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+                            
+                            if error == nil {
+                                
+                                print("Subscribed to \(newChannel)")
+                            }
+                        })
+                    }
+                    
+                    //                            object.pinInBackgroundWithBlock { (success, error) -> Void in
+                    //
+                    //                                if error == nil {
+                    //
+                    //                                    print("Their Qs QJoin Object \(object.objectId!) pinned!")
+                    //                                }
+                    //
+                    //                                //                                    if let test = object.objectId {
+                    //                                //                                        self.alreadyRetrieved.append(test)
+                    //                                //                                    }
+                    //                            }
+                }
+            }
+            
+            completion(true)
+            
+            // Update badge
+            print("Updating theirBadge (1)")
+            NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
+            
+        } else {
+            
+            print("There was an error retrieving new Qs from the database:")
+            print(error)
+            
+            completion(false)
+        }
+    })
+    //        }
+}
+
+
+func updateBadge(tabNumber: String) -> Int {
+    
+    // Count badges for tabBar
+    var count: Int = 0
+    
+    if tabNumber == "my" {
+        for obj in myQJoinObjects {
+            if let _ = obj["vote"] as? Int { } else {
+                count++
+            }
+        }
+    } else if tabNumber == "their" {
+        for obj in theirQJoinObjects {
+            //print(obj)
+            if let _ = obj["vote"] as? Int { } else {
+                count++
+            }
+        }
+    }
+    
+    return count
+}
+
+
+func updateMainBadge(delta: Int) {
+    
+    print("Updating Main Badge")
+    
+    let currentInstallation = PFInstallation.currentInstallation()
+    if currentInstallation.badge + delta >= 0 {
+        currentInstallation.badge = currentInstallation.badge + delta
+    } else {
+        currentInstallation.badge = 0
+    }
+    currentInstallation.saveInBackground()
+}
 
 
 // Sets globals, changes to custom NSUserDefault keys and fills that data in
@@ -887,7 +949,7 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
     uIdStorageKey       = username + "uId"
 //    myVoted1StorageKey  = username + "votedOn1Ids"
 //    myVoted2StorageKey  = username + "votedOn2Ids"
-    myFriendsStorageKey = username + "myFriends"
+//    myFriendsStorageKey = username + "myFriends"
     
     // Store user info on the phone
     NSUserDefaults.standardUserDefaults().setObject(username, forKey: usernameStorageKey)
@@ -924,39 +986,6 @@ func storeUserInfo(usernameToStore: String, isNew: Bool, completion: (Bool) -> V
         
         print("Returning user data has been stored")
         completion(true)
-    
-        
-//        // Store votedOnIds locally
-//        var userQsQuery = PFQuery(className: "UserQs")
-//            
-//            if error != nil {
-//                
-//                println("Error loading UserQs/votedOnId")
-//                println(error)
-//                
-//            } else {
-//                
-//                if let votedOn1Id = userQsObjects!["votedOn1Id"] as? [String] {
-//                    
-//                    votedOn1Ids = votedOn1Id
-//                    
-//                    NSUserDefaults.standardUserDefaults().setObject(votedOn1Ids, forKey: myVoted1StorageKey)
-//                }
-//                
-//                if let votedOn2Id = userQsObjects!["votedOn2Id"] as? [String] {
-//                    
-//                    votedOn2Ids = votedOn2Id
-//                    
-//                    NSUserDefaults.standardUserDefaults().setObject(votedOn2Ids, forKey: myVoted2StorageKey)
-//                }
-//                
-//                // Recall myFriends if applicable
-//                if NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey) != nil {
-//                    
-//                    myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
-//                }
-//            }
-//        })
     }
 }
 

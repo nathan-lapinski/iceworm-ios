@@ -624,8 +624,8 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         //                // Transition back to originating tab
         //                self.navigationController?.popViewControllerAnimated(true)
         //
-        //                // clear text and photo entries
-        //                self.cancelButtonAction(sender)
+//                        // clear text and photo entries
+//                        self.cancelButtonAction(sender)
         //
         //                //displaySpinnerView(spinnerActive: false, UIBlock: false, self.askBoxView, self.askBlurView, nil, self)
         //
@@ -753,6 +753,9 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                     NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
                     self.navigationController?.popViewControllerAnimated(true)
                     
+                    // clear text and photo entries
+                    self.cancelButtonAction(sender)
+
                     print("QJoin entry for SELF successfully created")
                 })
             }
@@ -792,7 +795,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         pushDirected.setQuery(pushQuery)
         
         // Create dictionary to send JSON to parse/to other devices
-        let dataDirected: Dictionary = ["alert":"New Q from \(name)!", "badge":"Increment", "content-available":"0"]
+        let dataDirected: Dictionary = ["alert":"New Q from \(name)!", "badge":"Increment", "content-available":"1", "action":"newQ"]
         pushDirected.setData(dataDirected)
         //pushDirected.setMessage("New Q from \(name)!")
         
@@ -1007,6 +1010,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             chosenImageHighRes[0] = resizeImage((info[UIImagePickerControllerOriginalImage] as? UIImage)!, targetSize: CGSize(width: photoMax, height: photoMax))
             chosenImageThumbnail[0] = resizeImage(chosenImageHighRes[0]!, targetSize: CGSize(width: thumbnailMax, height: thumbnailMax))
+            
+
+//            // TEST CLOUD CODE
+//            let imageData = UIImagePNGRepresentation(self.chosenImageThumbnail[0]!)
+//            PFCloud.callFunctionInBackground("testImageUpload", withParameters: ["fileData": imageData!]) { (objects, error) -> Void in }
+            
             
         } else if whichCell == 1 {
             

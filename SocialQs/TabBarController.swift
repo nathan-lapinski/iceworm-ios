@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import M13BadgeView
 
 class TabBarController: UITabBarController, UITabBarControllerDelegate {
     
@@ -15,6 +16,11 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
+        
+        // Notifier for "theirQs badge"
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTheirQsBadge", name: "refreshTheirQsBadge", object: nil)
+        
+        refreshTheirQsBadge()
         
 //        // Active text color
 //        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: activeTabColor], forState: UIControlState.Selected)
@@ -85,9 +91,53 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     
     
     override func viewWillAppear(animated: Bool) {
-        
+                
         UITabBar.appearance().barTintColor = UIColor.whiteColor()
         UITabBar.appearance().translucent = false
+        
+        // Set badges
+//        let viewArray: NSMutableArray = []
+        for view: UIView in self.tabBar.subviews {
+//            if view.userInteractionEnabled {
+//                viewArray.addObject(view)
+//            }
+            
+//            var badge = M13BadgeView()
+//            badge.badgeBackgroundColor = mainColorRed.colorWithAlphaComponent(1.0)
+//            badge.font = UIFont(name: "Helvetica", size: CGFloat(10))
+//            badge.alpha = 1.0
+//            print(badge.frame)
+//            badge.text = "1.3k+Qs"
+//            print(badge.frame)
+//            badge.horizontalAlignment = M13BadgeViewHorizontalAlignmentCenter
+//            print(badge.frame)
+//            badge.center.x = view.center.x
+//            view.addSubview(badge)
+//            print(view)
+        }
+        
+        
+        
+        //self.tabBar.items!.first!.badgeValue = "1.3k+Qs"
+    }
+    
+    
+    func refreshTheirQsBadge() {
+        print("Updating theirBadge (2)")
+        
+        //let theirCount = updateBadge("their")
+        newQsBadgeCount = 0
+        for obj in theirQJoinObjects {
+            if let _ = obj["vote"] as? Int { } else {
+                newQsBadgeCount++
+            }
+        }
+        
+        if newQsBadgeCount > 0 {
+            self.tabBar.items![1].badgeValue = "\(newQsBadgeCount)"
+        } else {
+            self.tabBar.items![1].badgeValue = nil
+        }
     }
     
     

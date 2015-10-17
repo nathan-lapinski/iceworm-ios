@@ -8,3 +8,4 @@
 #import <Parse/Parse.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <FBSDKShareKit/FBSDKShareKit.h>
+#import <M13BadgeView/M13BadgeView.h>

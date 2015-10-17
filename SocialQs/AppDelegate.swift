@@ -22,12 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // https://parse.com/docs/ios_guide#localdatastore/iOS
         Parse.enableLocalDatastore()
         
-        var parseAppId = "TLaFl9hrzzz7BG5ou2mJaeokLLElJbOCBIrZqCPR"
-        var parseClientKey = "Ajogm9URc6Ix9gxur6j7JnGGcg4tw2ytR89Ooy6s"
+        var parseAppId = ""
+        var parseClientKey = ""
         
         //////////////////////////////////////////
         //////////////////////////////////////////
-        let mode = "test"  ///////////////////////
+        let mode = "dev"
         //////////////////////////////////////////
         //////////////////////////////////////////
         
@@ -92,22 +92,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         
+        print(userInfo)
+        
         let temp: NSDictionary = userInfo as NSDictionary
         let notification: NSDictionary = temp.objectForKey("aps") as! NSDictionary
         
-        //println("-------NOTIFICATION-------")
-        //println(notification)
-        //println("-------NOTIFICATION-------")
-        //println((notification.objectForKey("content-available")) != nil)
+        if let temp = notification.objectForKey("badge") as? String {
+            
+            if temp == "Increment" {
+                
+                UIApplication.sharedApplication().applicationIconBadgeNumber++
+            }
+        }
         
         if (notification.objectForKey("content-available") != nil) {
             
-            // *** KEEP THIS FOR WHEN WE WANT TO SEND GLOBAL Qs FROM THE SOCIALQS TEAM
-            // if equal to one, silent notification is telling us there is a new Q
             if (notification.objectForKey("content-available")?.isEqualToNumber(1) != nil) {
+                
+                if let action = temp.objectForKey("action") as? String {
+                    
+                    switch action {
+                    case "newQ":
+                        // refresh theirQs
+                        print("Refresh TheirQs from push")
+                        downloadTheirQs({ (isFinished) -> Void in })
+                        //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
+                        
+                    default:
+                        // Do ???
+                        print("Notification default option")
+                    }
+                }
+                
+                
                 // Then this is a silent notification - post local notification
                 // This can be used to trigger a function and reload data within the app when a push is recieved
-                NSNotificationCenter.defaultCenter().postNotificationName("reloadTheirTable", object: nil)
+                //NSNotificationCenter.defaultCenter().postNotificationName("reloadTheirTable", object: nil)
+                
+                
+                
             } else {
                 // Else this is a standard notification - standard display of push message/badge/alertview
                 // ie: we can set "content-available" to nil and make the push a standard message or some shit
@@ -143,6 +166,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        
+        // Store vote values back out (for badges)
+        if PFUser.currentUser() != nil {
+            
+//            if NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey) != nil {
+//                
+//                myFriends = NSUserDefaults.standardUserDefaults().objectForKey(myFriendsStorageKey)! as! [String]
+            //            }
+            
+            
+            // Store the deltas back out
+            NSUserDefaults.standardUserDefaults().setObject(myQsBadgeCount, forKey: "myQsBadgeCount")
+            NSUserDefaults.standardUserDefaults().setObject(theirQsBadgeCount, forKey: "theirQsBadgeCount")
+        }
+        
+        
+        UIApplication.sharedApplication().applicationIconBadgeNumber = newQsBadgeCount + theirQsBadgeCount + myQsBadgeCount
     }
 
     func applicationWillEnterForeground(application: UIApplication) {
@@ -152,12 +192,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
-        // Clear badges
-        let currentInstallation = PFInstallation.currentInstallation()
-        if currentInstallation.badge != 0 {
-            currentInstallation.badge = 0
-            currentInstallation.saveEventually()
+        // Compute vote deltas
+        if PFUser.currentUser() != nil {
+            
+            // Compute new myVotes
+//            if myQJoinObjects.count > 0 {
+//                
+//                for var i = 0; i < myQJoinObjects.count; i++ {
+//                    
+//                    let tempObject = myQJoinObjects[i] as! PFObject
+//                    
+//                    let count = (tempObject["question"]!["option1Stats"] as! Int) + (tempObject["question"]!["option1Stats"] as! Int)
+//                    myQsBadgeCount = myQsBadgeCount + count
+//                }
+//            }
+            // Compute delta and store back
+            if NSUserDefaults.standardUserDefaults().objectForKey("myQsBadgeCount") != nil {
+                
+                myQsBadgeCount = myQsBadgeCount - (NSUserDefaults.standardUserDefaults().objectForKey("myQsBadgeCount")! as! Int)
+            }
+            
+            // Compute new theirVotes
+//            if theirQJoinObjects.count > 0 {
+//                
+//                for var i = 0; i < theirQJoinObjects.count; i++ {
+//                    
+//                    let tempObject = theirQJoinObjects[i] as! PFObject
+//                    
+//                    let count = (tempObject["question"]!["option1Stats"] as! Int) + (tempObject["question"]!["option1Stats"] as! Int)
+//                    theirQsBadgeCount = theirQsBadgeCount + count
+//                }
+//            }
+            // Compute delta and store back
+            if NSUserDefaults.standardUserDefaults().objectForKey("theirQsBadgeCount") != nil {
+                
+                theirQsBadgeCount = theirQsBadgeCount - (NSUserDefaults.standardUserDefaults().objectForKey("theirQsBadgeCount")! as! Int)
+            }
         }
+        
+        // Clear badges
+//        let currentInstallation = PFInstallation.currentInstallation()
+//        if currentInstallation.badge != 0 {
+//            currentInstallation.badge = 0
+//            currentInstallation.saveEventually()
+//        }
         
         FBSDKAppEvents.activateApp()
     }

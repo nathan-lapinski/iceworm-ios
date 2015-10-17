@@ -79,6 +79,8 @@ class WelcomeVC: UIViewController {
                         
                         if let user = user {
                             
+                            downloadTheirQs { (completion) -> Void in }
+                            
                             // Download groups
                             downloadGroups({ (isFinished) -> Void in })
                             
@@ -126,6 +128,9 @@ class WelcomeVC: UIViewController {
                                 getUsersFacebookInfo({ (isFinished) -> Void in })
                             }
                             
+                            // Add user channel for push updates
+                            self.addUserChannel()
+                            
                         } else {
                             
                             print("Uh oh. The user cancelled the Facebook login.")
@@ -147,6 +152,8 @@ class WelcomeVC: UIViewController {
         
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
+            
+            downloadTheirQs { (completion) -> Void in }
             
             if let groups = PFUser.currentUser()!["myGroups"] as? [String] {
                 myGroups = groups
@@ -170,8 +177,45 @@ class WelcomeVC: UIViewController {
             
             // Download groups
             downloadGroups({ (isFinished) -> Void in })
+            
+            // add user channel for push updates
+            addUserChannel()
+            
         } else {
+            
             print("No active PFUser - must log in")
+        }
+    }
+    
+    
+    func addUserChannel() {
+        
+        // If user has current channels, check if this one is NOT there and add it
+        let currentInstallation = PFInstallation.currentInstallation()
+        let newChannel = "user_\(PFUser.currentUser()!.objectId!)"
+        if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
+            
+            if !channels.contains(newChannel) {
+                currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+                currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+                    
+                    if error == nil {
+                        
+                        print("Subscribed to \(newChannel)")
+                    }
+                })
+            }
+            
+        } else { // else add it as the first
+            
+            currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+            currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+                
+                if error == nil {
+                    
+                    print("Subscribed to \(newChannel)")
+                }
+            })
         }
     }
 

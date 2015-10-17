@@ -10,9 +10,9 @@ import UIKit
 
 class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, TheirTableViewCellDelegate {
     
-    var alreadyRetrieved = [String]()
+//    var alreadyRetrieved = [String]()
     
-    var QJoinObjects: [AnyObject] = []
+//    var QJoinObjects: [AnyObject] = []
     var refresher: UIRefreshControl!
     var myQsSpinner = UIView()
     var myQsBlurView = globalBlurView()
@@ -93,7 +93,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     }
     
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return QJoinObjects.count }
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return theirQJoinObjects.count }
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -103,7 +103,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSTheirCellNEW
         
         cell.delegate = self
-        cell.QJoinObject = QJoinObjects[indexPath.row] as! PFObject
+        cell.QJoinObject = theirQJoinObjects[indexPath.row] as! PFObject
         
         return cell
     }
@@ -119,7 +119,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         let view = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: " V ") { (action, index) -> Void in
             
             // Set question for viewing
-            questionToView = self.QJoinObjects[indexPath.row]["question"]!! as? PFObject
+            questionToView = theirQJoinObjects[indexPath.row]["question"]!! as? PFObject
             
             self.performSegueWithIdentifier("viewVotesTheirQs", sender: self)
             
@@ -137,7 +137,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         
         let trash = UITableViewRowAction(style: .Normal, title: " D ") { action, index in
             
-            let object = self.QJoinObjects[indexPath.row] as! PFObject
+            let object = theirQJoinObjects[indexPath.row] as! PFObject
             
             object["deleted"] = true
             
@@ -182,7 +182,10 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 }
             })
             
-            self.QJoinObjects.removeAtIndex(indexPath.row)
+            theirQJoinObjects.removeAtIndex(indexPath.row)
+            
+            // Update badge
+            NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
             
             tableView.beginUpdates()
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
@@ -194,7 +197,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         
         if indexPath.row > -1 {
             
-            if let _: Int = self.QJoinObjects[indexPath.row]["vote"] as? Int {
+            if let _: Int = theirQJoinObjects[indexPath.row]["vote"] as? Int {
                 
                 return [trash, view] // Order = appearance order, right to left on screen
                 
@@ -229,143 +232,190 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     func refresh() {
         
-//        let qJoinQueryLocal = PFQuery(className: "QJoin")
-//        qJoinQueryLocal.fromLocalDatastore()
-//        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-//        qJoinQueryLocal.whereKey("from", notEqualTo: PFUser.currentUser()!)
-//        qJoinQueryLocal.orderByDescending("createdAt")
-//        qJoinQueryLocal.whereKey("deleted", equalTo: false)
-//        qJoinQueryLocal.includeKey("from")
-//        qJoinQueryLocal.includeKey("question")
-//        qJoinQueryLocal.limit = 1000
-//        
-//        qJoinQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                self.QJoinObjects = objects!
-//                
-//                for temp in objects! {
-//                    
-//                    if let tempId: String = temp.objectId {
-//                        
-//                        self.alreadyRetrieved.append(tempId)
-//                    }
-//                }
-//                
-//            } else {
-//                
-//                print("There was an error loading Qs from local data store:")
-//                print(error)
-//            }
-        
-            // Get Qs that are not in localdata store
-            let qJoinQueryServer = PFQuery(className: "QJoin")
-            qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-            qJoinQueryServer.whereKey("from", notEqualTo: PFUser.currentUser()!)
-            if self.alreadyRetrieved.count > 0 {
-                qJoinQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrieved)
-            }
-            qJoinQueryServer.orderByDescending("createdAt")
-            qJoinQueryServer.whereKey("deleted", equalTo: false)
-            qJoinQueryServer.includeKey("from")
-            qJoinQueryServer.includeKey("question")
-            qJoinQueryServer.limit = 1000
+        downloadTheirQs { (completion) -> Void in
             
-            qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+            if completion == true {
                 
-                if error == nil {
+                if theirQJoinObjects.count < 1 {
                     
-                    QJoinObjects.removeAll(keepCapacity: true)
+                    self.buildNoQsQuestion()
+                }
+                
+                // Reload table data
+                self.tableView.reloadData()
+                
+                // update tabBar badge
+                let theirCount = updateBadge("their")
+                self.tabBarController!.tabBar.items![1].badgeValue = "\(theirCount)"
+                
+                // Kill refresher when query finished
+                self.refresher.endRefreshing()
+                
+            } else {
+                
+                if theirQJoinObjects.count < 1 {
                     
-                    // Append to local array of PFObjects
-                    self.QJoinObjects = self.QJoinObjects + objects!
-                    
-                    // Pin new Qs to local datastore
-                    if let temp: [PFObject] = objects!{
-                        
-                        for object in temp {
-                            
-                            let objId = object["question"].objectId!!
-                            let newChannel = "Question_\(objId)"
-                            let currentInstallation = PFInstallation.currentInstallation()
-                            
-                            // If user has current channels, check if this one is NOT there and add it
-                            if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
-                                
-                                if !channels.contains(newChannel) {
-                                    currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-                                    currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-                                        
-                                        if error == nil {
-                                            
-                                            print("Subscribed to \(newChannel)")
-                                        }
-                                    })
-                                }
-                                
-                            } else { // else add it as the first
-                                
-                                currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-                                currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-                                    
-                                    if error == nil {
-                                        
-                                        print("Subscribed to \(newChannel)")
-                                    }
-                                })
-                            }
-                            
-//                            object.pinInBackgroundWithBlock { (success, error) -> Void in
+                    self.buildNoQsQuestion()
+                }
+
+//                // Reload table data
+//                self.tableView.reloadData()
+//                
+//                // update tabBar badge
+//                //self.updateBadge()
+//                
+//                // Kill refresher when query finished
+//                self.refresher.endRefreshing()
+                
+            }
+        }
+        
+        
+        
+//
+////        let qJoinQueryLocal = PFQuery(className: "QJoin")
+////        qJoinQueryLocal.fromLocalDatastore()
+////        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+////        qJoinQueryLocal.whereKey("from", notEqualTo: PFUser.currentUser()!)
+////        qJoinQueryLocal.orderByDescending("createdAt")
+////        qJoinQueryLocal.whereKey("deleted", equalTo: false)
+////        qJoinQueryLocal.includeKey("from")
+////        qJoinQueryLocal.includeKey("question")
+////        qJoinQueryLocal.limit = 1000
+////        
+////        qJoinQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+////            
+////            if error == nil {
+////                
+////                self.QJoinObjects = objects!
+////                
+////                for temp in objects! {
+////                    
+////                    if let tempId: String = temp.objectId {
+////                        
+////                        self.alreadyRetrieved.append(tempId)
+////                    }
+////                }
+////                
+////            } else {
+////                
+////                print("There was an error loading Qs from local data store:")
+////                print(error)
+////            }
+//        
+//            // Get Qs that are not in localdata store
+//            let qJoinQueryServer = PFQuery(className: "QJoin")
+//            qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+//            qJoinQueryServer.whereKey("from", notEqualTo: PFUser.currentUser()!)
+//            if self.alreadyRetrieved.count > 0 {
+//                qJoinQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrieved)
+//            }
+//            qJoinQueryServer.orderByDescending("createdAt")
+//            qJoinQueryServer.whereKey("deleted", equalTo: false)
+//            qJoinQueryServer.includeKey("from")
+//            qJoinQueryServer.includeKey("question")
+//            qJoinQueryServer.limit = 1000
+//            
+//            qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+//                
+//                if error == nil {
+//                    
+//                    self.QJoinObjects.removeAll(keepCapacity: true)
+//                    
+//                    // Append to local array of PFObjects
+//                    self.QJoinObjects = self.QJoinObjects + objects!
+//                    
+//                    // Pin new Qs to local datastore
+//                    if let temp: [PFObject] = objects!{
+//                        
+//                        for object in temp {
+//                            
+//                            let objId = object["question"].objectId!!
+//                            let newChannel = "Question_\(objId)"
+//                            let currentInstallation = PFInstallation.currentInstallation()
+//                            
+//                            // If user has current channels, check if this one is NOT there and add it
+//                            if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
 //                                
-//                                if error == nil {
-//                                    
-//                                    print("Their Qs QJoin Object \(object.objectId!) pinned!")
+//                                if !channels.contains(newChannel) {
+//                                    currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+//                                    currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+//                                        
+//                                        if error == nil {
+//                                            
+//                                            print("Subscribed to \(newChannel)")
+//                                        }
+//                                    })
 //                                }
 //                                
-//                                //                                    if let test = object.objectId {
-//                                //                                        self.alreadyRetrieved.append(test)
-//                                //                                    }
+//                            } else { // else add it as the first
+//                                
+//                                currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+//                                currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+//                                    
+//                                    if error == nil {
+//                                        
+//                                        print("Subscribed to \(newChannel)")
+//                                    }
+//                                })
 //                            }
-                        }
-                    }
-                    
-                    if self.QJoinObjects.count < 1 {
-                        
-                        self.buildNoQsQuestion()
-                    }
-                    
-                    // Reload table data
-                    self.tableView.reloadData()
-                    
-                    // Kill refresher when query finished
-                    self.refresher.endRefreshing()
-                    
-                } else {
-                    
-                    print("There was an error retrieving new Qs from the database:")
-                    print(error)
-                    
-                    if self.QJoinObjects.count < 1 {
-                        
-                        self.buildNoQsQuestion()
-                    }
-                    
-                    // Reload table data
-                    self.tableView.reloadData()
-                    
-                    // Kill refresher when query finished
-                    self.refresher.endRefreshing()
-                }
-            })
-//        }
+//                            
+////                            object.pinInBackgroundWithBlock { (success, error) -> Void in
+////                                
+////                                if error == nil {
+////                                    
+////                                    print("Their Qs QJoin Object \(object.objectId!) pinned!")
+////                                }
+////                                
+////                                //                                    if let test = object.objectId {
+////                                //                                        self.alreadyRetrieved.append(test)
+////                                //                                    }
+////                            }
+//                        }
+//                    }
+//                    
+//                    if self.QJoinObjects.count < 1 {
+//                        
+//                        self.buildNoQsQuestion()
+//                    }
+//                    
+//                    // Reload table data
+//                    self.tableView.reloadData()
+//                    
+//                    // update tabBar badge
+//                    self.updateBadge()
+//                    
+//                    // Kill refresher when query finished
+//                    self.refresher.endRefreshing()
+//                    
+//                } else {
+//                    
+//                    print("There was an error retrieving new Qs from the database:")
+//                    print(error)
+//                    
+//                    if self.QJoinObjects.count < 1 {
+//                        
+//                        self.buildNoQsQuestion()
+//                    }
+//                    
+//                    // Reload table data
+//                    self.tableView.reloadData()
+//                    
+//                    // update tabBar badge
+//                    self.updateBadge()
+//                    
+//                    // Kill refresher when query finished
+//                    self.refresher.endRefreshing()
+//                }
+//            })
+////        }
     }
     
     
     func buildNoQsQuestion() {
         
         // Build a temp question when none are available
-        QJoinObjects.removeAll(keepCapacity: true)
+        theirQJoinObjects.removeAll(keepCapacity: true)
         
         print("NO THEIRQS!!")
         
@@ -382,8 +432,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         noQsAskerObject.setObject("SocialQs Team", forKey: "name")
         
         noQsQuestionObject.setObject("No Qs! Don't you have friends?", forKey: "questionText")
-        noQsQuestionObject.setObject("I don't 😥, but I'll invite some!", forKey: "option1Text")
-        noQsQuestionObject.setObject("I do 😃, but I'll invite more!", forKey: "option2Text")
+        noQsQuestionObject.setObject("I don't 😥 but I'll make some and invite them!", forKey: "option1Text")
+        noQsQuestionObject.setObject("I do 😃 and I'll invite more!", forKey: "option2Text")
         noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")
         
         let qImageData = UIImagePNGRepresentation(UIImage(named: "scenery3.png")!)
@@ -421,7 +471,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         
         noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
         
-        self.QJoinObjects = [noQsJoinObject]
+        theirQJoinObjects = [noQsJoinObject]
     }
 
     

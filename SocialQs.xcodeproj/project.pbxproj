@@ -77,6 +77,7 @@
 		90FE1F231B43A941005F2D68 /* VotesTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE1F221B43A941005F2D68 /* VotesTableVC.swift */; };
 		90FFFA701B9A6958005E9CDD /* QsTheirVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FFFA6F1B9A6958005E9CDD /* QsTheirVC.swift */; };
 		90FFFA721B9A6ABA005E9CDD /* QSTheirCellNEW.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FFFA711B9A6ABA005E9CDD /* QSTheirCellNEW.swift */; };
+		B717879DE8C977256F1C6E78 /* Pods_SocialQs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3089B449516367B2DB95AC1A /* Pods_SocialQs.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,6 +91,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		139738585319B147435740DD /* Pods-SocialQs.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SocialQs.release.xcconfig"; path = "Pods/Target Support Files/Pods-SocialQs/Pods-SocialQs.release.xcconfig"; sourceTree = "<group>"; };
+		3089B449516367B2DB95AC1A /* Pods_SocialQs.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SocialQs.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		561CCFDFBAF796785121158E /* Pods-SocialQs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SocialQs.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SocialQs/Pods-SocialQs.debug.xcconfig"; sourceTree = "<group>"; };
 		90002B841BC207ED00425FF1 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		90002B861BC207FD00425FF1 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
 		90002B881BC2080800425FF1 /* libz.1.1.3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.1.3.tbd; path = usr/lib/libz.1.1.3.tbd; sourceTree = SDKROOT; };
@@ -199,6 +203,7 @@
 				900183421BC2290500C382DB /* FBSDKCoreKit.framework in Frameworks */,
 				90A1473D1B2E4CBA00947B33 /* AudioToolbox.framework in Frameworks */,
 				9001833F1BC2290500C382DB /* FacebookSDK.framework in Frameworks */,
+				B717879DE8C977256F1C6E78 /* Pods_SocialQs.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,6 +217,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		813450C4AB048BDFE5E00746 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				561CCFDFBAF796785121158E /* Pods-SocialQs.debug.xcconfig */,
+				139738585319B147435740DD /* Pods-SocialQs.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		90002BA71BC20CFF00425FF1 /* DocSets */ = {
 			isa = PBXGroup;
 			children = (
@@ -232,6 +246,7 @@
 				904122FE1B26A67B00397132 /* SocialQs */,
 				904123161B26A67C00397132 /* SocialQsTests */,
 				904122FD1B26A67B00397132 /* Products */,
+				813450C4AB048BDFE5E00746 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -344,6 +359,7 @@
 				90A147481B2E4CDC00947B33 /* Security.framework */,
 				90A147541B2E4D0D00947B33 /* Social.framework */,
 				90A1474C1B2E4CE800947B33 /* SystemConfiguration.framework */,
+				3089B449516367B2DB95AC1A /* Pods_SocialQs.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -365,9 +381,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9041231D1B26A67C00397132 /* Build configuration list for PBXNativeTarget "SocialQs" */;
 			buildPhases = (
+				630E01DD301981C22DBBDE29 /* Check Pods Manifest.lock */,
 				904122F81B26A67B00397132 /* Sources */,
 				904122F91B26A67B00397132 /* Frameworks */,
 				904122FA1B26A67B00397132 /* Resources */,
+				D62C69F801283A1633F77744 /* Embed Pods Frameworks */,
+				87C415900527039D0BC378CF /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -465,6 +484,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		630E01DD301981C22DBBDE29 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		87C415900527039D0BC378CF /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SocialQs/Pods-SocialQs-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D62C69F801283A1633F77744 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SocialQs/Pods-SocialQs-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		904122F81B26A67B00397132 /* Sources */ = {
@@ -632,6 +699,7 @@
 		};
 		9041231E1B26A67C00397132 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 561CCFDFBAF796785121158E /* Pods-SocialQs.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -663,6 +731,7 @@
 		};
 		9041231F1B26A67C00397132 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 139738585319B147435740DD /* Pods-SocialQs.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

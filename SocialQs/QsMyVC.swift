@@ -354,7 +354,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         noQsAskerObject.setObject(profImageFile, forKey: "profilePicture")
         noQsAskerObject.setObject("SocialQs Team", forKey: "name")
 
-        noQsQuestionObject.setObject("Use the ASK button to create a Q!", forKey: "questionText")
+        noQsQuestionObject.setObject("Use the ASK button in the top left to create a Q!", forKey: "questionText")
         noQsQuestionObject.setObject("Tap any of the images to enlarge...", forKey: "option1Text")
         noQsQuestionObject.setObject("...or drag to the right to cast your vote!", forKey: "option2Text")
         noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")

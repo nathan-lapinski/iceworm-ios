@@ -44,6 +44,7 @@ class QSMyCellNEW: UITableViewCell {
     
     var questionBackground: UIImageView! = UIImageView()
     var profilePicture: UIImageView! = UIImageView()
+    
     var questionPicture: UIImageView! = UIImageView()
     
     var option1Background: UIImageView = UIImageView()
@@ -624,7 +625,7 @@ class QSMyCellNEW: UITableViewCell {
                 pushGeneral.setChannel(newChannel)
                 
                 // Create dictionary to send JSON to parse/to other devices
-                let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"0", "sound":""]
+                let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"1", "action":"refresh_\(self.QJoinObject.objectId)"]
                 
                 pushGeneral.setData(dataGeneral)
                 

@@ -18,6 +18,17 @@ var name = ""
 // Profile Picture variables
 var profilePicture = UIImage?()
 
+// Objects to hold questions
+var myAlreadyRetrieved = [String]()
+var myQJoinObjects: [AnyObject] = []
+var theirAlreadyRetrieved = [String]()
+var theirQJoinObjects: [AnyObject] = []
+
+// Variables to keep track of badge counts
+var myQsBadgeCount: Int = 0
+var theirQsBadgeCount: Int = 0
+var newQsBadgeCount: Int = 0
+
 // Set constants for formatting buttons - universal settings
 let bgAlpha: CGFloat = 0.7
 let bgColor = UIColor(red: 58/255, green: 154/255, blue: 188/255, alpha: bgAlpha)

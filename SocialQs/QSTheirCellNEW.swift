@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import M13BadgeView
 
 protocol TheirTableViewCellDelegate {
     //func toDoItemDeleted()
@@ -44,6 +45,10 @@ class QSTheirCellNEW: UITableViewCell {
     
     var questionBackground: UIImageView! = UIImageView()
     var profilePicture: UIImageView! = UIImageView()
+    
+    var badgeViewFrame: UIImageView! = UIImageView()
+    var badgeView: M13BadgeView! = M13BadgeView()
+    
     var questionPicture: UIImageView! = UIImageView()
     
     var option1Background: UIImageView = UIImageView()
@@ -95,6 +100,7 @@ class QSTheirCellNEW: UITableViewCell {
         self.addSubview(option2Background)
         
         self.addSubview(profilePicture)
+        
         self.addSubview(questionPicture)
         
         self.addSubview(option1Stats)
@@ -116,6 +122,9 @@ class QSTheirCellNEW: UITableViewCell {
         
         self.addSubview(option1Checkmark)
         self.addSubview(option2Checkmark)
+        
+        self.addSubview(badgeViewFrame)
+        self.addSubview(badgeView)
         
         self.addSubview(questionZoom)
         self.addSubview(option1Zoom)
@@ -155,8 +164,10 @@ class QSTheirCellNEW: UITableViewCell {
         let usernameString = QJoinObject["question"]!["asker"]!!["name"] as? String
         usernameLabel.text = "From \(usernameString!)"
         
+        questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
+        
         if let questionPhotoThumb = QJoinObject["question"]!["questionImageThumb"] as? PFFile {
-            questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
+            
             getImageFromPFFile(questionPhotoThumb, completion: { (image, error) -> () in
                 if error == nil {
                     self.questionPicture.image = image
@@ -184,7 +195,7 @@ class QSTheirCellNEW: UITableViewCell {
             questionText.text = qText
             questionText.numberOfLines = 0
             questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            questionText.textAlignment = NSTextAlignment.Center
+            questionText.textAlignment = NSTextAlignment.Left
             questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(14))!
             questionText?.textColor = UIColor.whiteColor()
             //questionText.sizeToFit()
@@ -215,11 +226,20 @@ class QSTheirCellNEW: UITableViewCell {
             option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option1Image.alpha = 1.0
             
+            
         } else {
             
             option1Image.image = nil
             option1Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
             //option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 0, 60)
+            
+            
+            option1VoteArrow.frame = option1Checkmark.frame
+            //option1VoteArrow.center = CGPoint(x: option1Image.center.x + option1Image.frame.width/2, y: option1Image.center.y)
+            option1VoteArrow.layer.cornerRadius = option1Checkmark.frame.width/2
+            option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+            option1VoteArrow.image = UIImage(named: "voteArrow.png")
+            option1VoteArrow.alpha = 0.0
         }
         option1Image.layer.cornerRadius = 10
         option1Image.contentMode = UIViewContentMode.ScaleAspectFill
@@ -244,6 +264,13 @@ class QSTheirCellNEW: UITableViewCell {
             option2Image.image = nil
             option2Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
             //option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
+            
+            option2VoteArrow.frame = option2Checkmark.frame
+            //option2VoteArrow.center = CGPoint(x: option2Image.center.x + option2Image.frame.width/2, y: option2Image.center.y)
+            option2VoteArrow.layer.cornerRadius = option2Checkmark.frame.width/2
+            option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+            option2VoteArrow.image = UIImage(named: "voteArrow.png")
+            option2VoteArrow.alpha = 0.0
         }
         option2Image.layer.cornerRadius = 10
         option2Image.contentMode = UIViewContentMode.ScaleAspectFill
@@ -266,31 +293,28 @@ class QSTheirCellNEW: UITableViewCell {
         option2Checkmark.alpha = 0.0
         
         
-    
-        
-        option1VoteArrow.frame = option1Checkmark.frame
-        //option1VoteArrow.center = CGPoint(x: option1Image.center.x + option1Image.frame.width/2, y: option1Image.center.y)
-        option1VoteArrow.layer.cornerRadius = option1Checkmark.frame.width/2
-        option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-        option1VoteArrow.image = UIImage(named: "voteArrow.png")
-        option1VoteArrow.alpha = 0.0
-        
-        option2VoteArrow.frame = option2Checkmark.frame
-        //option2VoteArrow.center = CGPoint(x: option2Image.center.x + option2Image.frame.width/2, y: option2Image.center.y)
-        option2VoteArrow.layer.cornerRadius = option2Checkmark.frame.width/2
-        option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-        option2VoteArrow.image = UIImage(named: "voteArrow.png")
-        option2VoteArrow.alpha = 0.0
-        
-        
-        
-        
         if let _ = QJoinObject["vote"] as? Int {
+            
+            if badgeView.isDescendantOfView(self) {
+                badgeView.removeFromSuperview()
+            }
+            if badgeViewFrame.isDescendantOfView(self) {
+                badgeViewFrame.removeFromSuperview()
+            }
             
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
             
         } else {
+            
+            // Add badge for NEW Q
+            badgeView.text = "!"
+            //badgeView.font = UIFont(name: "Helvetica", size: CGFloat(12.0))
+            badgeView.badgeBackgroundColor = mainColorRed
+            badgeView.horizontalAlignment = M13BadgeViewHorizontalAlignmentLeft
+            badgeViewFrame.frame = CGRectMake(bounds.width - 2*horizontalSpace, 2*horizontalSpace, 0, 0)
+            self.addSubview(badgeViewFrame)
+            badgeViewFrame.addSubview(badgeView)
             
             // add a pan recognizers
             recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
@@ -415,7 +439,7 @@ class QSTheirCellNEW: UITableViewCell {
         }
         option1Text.numberOfLines = 3
         option1Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        option1Text.textAlignment = NSTextAlignment.Center
+        option1Text.textAlignment = NSTextAlignment.Left
         option1Text?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(14))!
         option1Text?.textColor = UIColor.darkTextColor()
         
@@ -433,7 +457,7 @@ class QSTheirCellNEW: UITableViewCell {
         }
         option2Text.numberOfLines = 3
         option2Text.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        option2Text.textAlignment = NSTextAlignment.Center
+        option2Text.textAlignment = NSTextAlignment.Left
         option2Text?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(14))!
         option2Text?.textColor = UIColor.darkTextColor()
         
@@ -625,12 +649,12 @@ class QSTheirCellNEW: UITableViewCell {
                 
                 // SEND BADGE INCREMENT PUSH
                 let objId = self.QJoinObject["question"].objectId!!
-                let newChannel = "Question_\(objId)"
+                let channel = "Question_\(objId)"
                 let pushGeneral:PFPush = PFPush()
-                pushGeneral.setChannel(newChannel)
+                pushGeneral.setChannel(channel)
                 
                 // Create dictionary to send JSON to parse/to other devices
-                let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"0", "sound":""]
+                let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"1", "action":"refresh_\(self.QJoinObject.objectId)"]
                 
                 pushGeneral.setData(dataGeneral)
                 
@@ -638,7 +662,7 @@ class QSTheirCellNEW: UITableViewCell {
                     
                     if error == nil {
                         
-                        print("Badge sent for \(newChannel) sent!")
+                        print("Badge sent for \(channel) sent!")
                     }
                 })
             }
@@ -660,6 +684,27 @@ class QSTheirCellNEW: UITableViewCell {
         computePercents(optionId)
         setOptionText()
         animateStatsBars()
+        
+        // Remove badges!
+        UIView.animateWithDuration(0.5, animations: { () -> Void in
+            
+            self.badgeView.alpha = 0.0
+            
+            }) { (isFinished) -> Void in
+                
+                if self.badgeView.isDescendantOfView(self) {
+                    self.badgeView.removeFromSuperview()
+                }
+                if self.badgeViewFrame.isDescendantOfView(self) {
+                    self.badgeViewFrame.removeFromSuperview()
+                }
+        }
+        
+//        // Decrement main badge
+//        updateMainBadge(-1)
+        
+        // Update badge
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
     }
     
     

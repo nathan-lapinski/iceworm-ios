@@ -1,0 +1,508 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		12C4D222EBBA6212070DD502808CAE6B /* M13BadgeView-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1119E548B58780BE902FE8C2881D6648 /* M13BadgeView-dummy.m */; };
+		13CDB1B91B184F88C074B73C46A5CC3C /* M13BadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = A3AF2098C434FF20A49BDEF4D15E2846 /* M13BadgeView.m */; };
+		36D4766CA8EF505BBA393D27E3B14B7B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B18F24645AA4D651DFC7B69A3A0833DB /* QuartzCore.framework */; };
+		3F2246168976B464C5465FEED053C48E /* Pods-SocialQs-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F4072CBBCDE5D640EB1BD6FFA48034EA /* Pods-SocialQs-dummy.m */; };
+		82F9C84F0C4C3371B272EAD00E166DA3 /* M13BadgeView.h in Headers */ = {isa = PBXBuildFile; fileRef = AE98A21946BA4CBF2764D2FA290C6F5B /* M13BadgeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D5FF33FFC85DBD0A45D5477CD919434 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 258B0C8029B3982F03A30ED9FB271283 /* Foundation.framework */; };
+		B8711C3191103912FDF4F4FD8B2172E2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 258B0C8029B3982F03A30ED9FB271283 /* Foundation.framework */; };
+		C30B61A70D8B5330524C24DDCE0E3AEF /* M13BadgeView-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 538740884DB3892EA73ADC6750B58805 /* M13BadgeView-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DD46CB8D91F1DF20B1CDE183AC9ED00E /* Pods-SocialQs-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A24442A99DDB6F498A6360E412D2770 /* Pods-SocialQs-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		485ED852A54BFC887F9F7A77FCCC2EDB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1C1F0C383CD538AE4BBBB0A8E942AFA;
+			remoteInfo = M13BadgeView;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1119E548B58780BE902FE8C2881D6648 /* M13BadgeView-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "M13BadgeView-dummy.m"; sourceTree = "<group>"; };
+		18AD7271E1BD9D9A033C0DEF957E38AF /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		258B0C8029B3982F03A30ED9FB271283 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		538740884DB3892EA73ADC6750B58805 /* M13BadgeView-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "M13BadgeView-umbrella.h"; sourceTree = "<group>"; };
+		646E77B09B1D3E6FEB5AE6CA9CE44862 /* Pods-SocialQs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SocialQs.debug.xcconfig"; sourceTree = "<group>"; };
+		703D4BDB4107998A58CBBA8007CEC6A0 /* Pods-SocialQs.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-SocialQs.modulemap"; sourceTree = "<group>"; };
+		73A0680C1AC01A11E177873F03D63B2F /* M13BadgeView.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = M13BadgeView.modulemap; sourceTree = "<group>"; };
+		7B06833842031EF58275CBF5C3045014 /* Pods-SocialQs-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-SocialQs-acknowledgements.markdown"; sourceTree = "<group>"; };
+		8F95BDCC07A71D3806D68445CC3E2015 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A24442A99DDB6F498A6360E412D2770 /* Pods-SocialQs-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-SocialQs-umbrella.h"; sourceTree = "<group>"; };
+		A3AF2098C434FF20A49BDEF4D15E2846 /* M13BadgeView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = M13BadgeView.m; path = Classes/M13BadgeView.m; sourceTree = "<group>"; };
+		A3BAF842E53092D26B2B9C3A1CCE133B /* Pods-SocialQs-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-SocialQs-frameworks.sh"; sourceTree = "<group>"; };
+		AE98A21946BA4CBF2764D2FA290C6F5B /* M13BadgeView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = M13BadgeView.h; path = Classes/M13BadgeView.h; sourceTree = "<group>"; };
+		B18F24645AA4D651DFC7B69A3A0833DB /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		BD4AF25823A408E03C01379AEB3A16E0 /* M13BadgeView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = M13BadgeView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD24F16462C5611828DC1150C5E5D3F5 /* M13BadgeView-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "M13BadgeView-prefix.pch"; sourceTree = "<group>"; };
+		DD0242F5BC2C5875619A3CEDD46D44CD /* Pods-SocialQs.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SocialQs.release.xcconfig"; sourceTree = "<group>"; };
+		E545CCA4260D37D186F4C304C06FF607 /* Pods-SocialQs-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SocialQs-acknowledgements.plist"; sourceTree = "<group>"; };
+		EBF81DF0F049503B090A4119CAF52384 /* M13BadgeView.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = M13BadgeView.xcconfig; sourceTree = "<group>"; };
+		F4072CBBCDE5D640EB1BD6FFA48034EA /* Pods-SocialQs-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SocialQs-dummy.m"; sourceTree = "<group>"; };
+		F91462F0EB57BE24A74C3425DCFE528B /* Pods_SocialQs.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SocialQs.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD36AD8B7A4BB5C252B2E21BDA399D6F /* Pods-SocialQs-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-SocialQs-resources.sh"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BDD38F1E4370721B8A74E2AA4825F253 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D5FF33FFC85DBD0A45D5477CD919434 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F2F5EE979B3BB3EE79BFB6335F1A2891 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B8711C3191103912FDF4F4FD8B2172E2 /* Foundation.framework in Frameworks */,
+				36D4766CA8EF505BBA393D27E3B14B7B /* QuartzCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13B96492DE75E27D451A48AE9BBC17D0 /* M13BadgeView */ = {
+			isa = PBXGroup;
+			children = (
+				AE98A21946BA4CBF2764D2FA290C6F5B /* M13BadgeView.h */,
+				A3AF2098C434FF20A49BDEF4D15E2846 /* M13BadgeView.m */,
+				87D7C8269C8A3D042CB71A475F0FA412 /* Support Files */,
+			);
+			path = M13BadgeView;
+			sourceTree = "<group>";
+		};
+		3926C638AD0708942C88C2BC89261735 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				258B0C8029B3982F03A30ED9FB271283 /* Foundation.framework */,
+				B18F24645AA4D651DFC7B69A3A0833DB /* QuartzCore.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		433CD3331B6C3787F473C941B61FC68F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3926C638AD0708942C88C2BC89261735 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		58DA0C65E46B261CAC798BCD40289F43 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				8563A1C27CF28CEC1F8F5E7594EA1F1D /* Pods-SocialQs */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */,
+				433CD3331B6C3787F473C941B61FC68F /* Frameworks */,
+				D776150E422729AC7AF68F422E2F608A /* Pods */,
+				EC5EE9AD44C0BA56C9F7CE547FF511F3 /* Products */,
+				58DA0C65E46B261CAC798BCD40289F43 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		8563A1C27CF28CEC1F8F5E7594EA1F1D /* Pods-SocialQs */ = {
+			isa = PBXGroup;
+			children = (
+				18AD7271E1BD9D9A033C0DEF957E38AF /* Info.plist */,
+				703D4BDB4107998A58CBBA8007CEC6A0 /* Pods-SocialQs.modulemap */,
+				7B06833842031EF58275CBF5C3045014 /* Pods-SocialQs-acknowledgements.markdown */,
+				E545CCA4260D37D186F4C304C06FF607 /* Pods-SocialQs-acknowledgements.plist */,
+				F4072CBBCDE5D640EB1BD6FFA48034EA /* Pods-SocialQs-dummy.m */,
+				A3BAF842E53092D26B2B9C3A1CCE133B /* Pods-SocialQs-frameworks.sh */,
+				FD36AD8B7A4BB5C252B2E21BDA399D6F /* Pods-SocialQs-resources.sh */,
+				9A24442A99DDB6F498A6360E412D2770 /* Pods-SocialQs-umbrella.h */,
+				646E77B09B1D3E6FEB5AE6CA9CE44862 /* Pods-SocialQs.debug.xcconfig */,
+				DD0242F5BC2C5875619A3CEDD46D44CD /* Pods-SocialQs.release.xcconfig */,
+			);
+			name = "Pods-SocialQs";
+			path = "Target Support Files/Pods-SocialQs";
+			sourceTree = "<group>";
+		};
+		87D7C8269C8A3D042CB71A475F0FA412 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				8F95BDCC07A71D3806D68445CC3E2015 /* Info.plist */,
+				73A0680C1AC01A11E177873F03D63B2F /* M13BadgeView.modulemap */,
+				EBF81DF0F049503B090A4119CAF52384 /* M13BadgeView.xcconfig */,
+				1119E548B58780BE902FE8C2881D6648 /* M13BadgeView-dummy.m */,
+				CD24F16462C5611828DC1150C5E5D3F5 /* M13BadgeView-prefix.pch */,
+				538740884DB3892EA73ADC6750B58805 /* M13BadgeView-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/M13BadgeView";
+			sourceTree = "<group>";
+		};
+		D776150E422729AC7AF68F422E2F608A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				13B96492DE75E27D451A48AE9BBC17D0 /* M13BadgeView */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		EC5EE9AD44C0BA56C9F7CE547FF511F3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BD4AF25823A408E03C01379AEB3A16E0 /* M13BadgeView.framework */,
+				F91462F0EB57BE24A74C3425DCFE528B /* Pods_SocialQs.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		2ADFFEA19EE1C6F5E57FFDEF27A1EA71 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD46CB8D91F1DF20B1CDE183AC9ED00E /* Pods-SocialQs-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D522364B0735313A1B4FF34811741D70 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C30B61A70D8B5330524C24DDCE0E3AEF /* M13BadgeView-umbrella.h in Headers */,
+				82F9C84F0C4C3371B272EAD00E166DA3 /* M13BadgeView.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		78DDF07FCD6D0C5FB8EF665EAC8DE0F8 /* Pods-SocialQs */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7105B239CBB1B1672E67B2836509B69B /* Build configuration list for PBXNativeTarget "Pods-SocialQs" */;
+			buildPhases = (
+				F97C26759F37D40D00903486DDA46957 /* Sources */,
+				BDD38F1E4370721B8A74E2AA4825F253 /* Frameworks */,
+				2ADFFEA19EE1C6F5E57FFDEF27A1EA71 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7AFC308FCBDEF87A639D611BBCB3CB94 /* PBXTargetDependency */,
+			);
+			name = "Pods-SocialQs";
+			productName = "Pods-SocialQs";
+			productReference = F91462F0EB57BE24A74C3425DCFE528B /* Pods_SocialQs.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		A1C1F0C383CD538AE4BBBB0A8E942AFA /* M13BadgeView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1EEE6A8078478C2727538AB3A5BF77A6 /* Build configuration list for PBXNativeTarget "M13BadgeView" */;
+			buildPhases = (
+				2B3611B0D71F518EEF43032DC87E2FA1 /* Sources */,
+				F2F5EE979B3BB3EE79BFB6335F1A2891 /* Frameworks */,
+				D522364B0735313A1B4FF34811741D70 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = M13BadgeView;
+			productName = M13BadgeView;
+			productReference = BD4AF25823A408E03C01379AEB3A16E0 /* M13BadgeView.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = EC5EE9AD44C0BA56C9F7CE547FF511F3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1C1F0C383CD538AE4BBBB0A8E942AFA /* M13BadgeView */,
+				78DDF07FCD6D0C5FB8EF665EAC8DE0F8 /* Pods-SocialQs */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2B3611B0D71F518EEF43032DC87E2FA1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12C4D222EBBA6212070DD502808CAE6B /* M13BadgeView-dummy.m in Sources */,
+				13CDB1B91B184F88C074B73C46A5CC3C /* M13BadgeView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F97C26759F37D40D00903486DDA46957 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F2246168976B464C5465FEED053C48E /* Pods-SocialQs-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7AFC308FCBDEF87A639D611BBCB3CB94 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = M13BadgeView;
+			target = A1C1F0C383CD538AE4BBBB0A8E942AFA /* M13BadgeView */;
+			targetProxy = 485ED852A54BFC887F9F7A77FCCC2EDB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		08453807E34D64F6130D4F17929C7189 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD0242F5BC2C5875619A3CEDD46D44CD /* Pods-SocialQs.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-SocialQs/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-SocialQs/Pods-SocialQs.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods_SocialQs;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		85D4DDB78A7A2CF6942779086C009CFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBF81DF0F049503B090A4119CAF52384 /* M13BadgeView.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/M13BadgeView/M13BadgeView-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/M13BadgeView/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/M13BadgeView/M13BadgeView.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = M13BadgeView;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		897BB40F636E07028435AD959F48FE1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 646E77B09B1D3E6FEB5AE6CA9CE44862 /* Pods-SocialQs.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-SocialQs/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-SocialQs/Pods-SocialQs.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods_SocialQs;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		A70CDAD61F90AC503C7D04CC22DA2923 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		DE310FD692C4D275E4F029996BA8B770 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBF81DF0F049503B090A4119CAF52384 /* M13BadgeView.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/M13BadgeView/M13BadgeView-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/M13BadgeView/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/M13BadgeView/M13BadgeView.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = M13BadgeView;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		FB45FFD90572718D82AB9092B750F0CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1EEE6A8078478C2727538AB3A5BF77A6 /* Build configuration list for PBXNativeTarget "M13BadgeView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE310FD692C4D275E4F029996BA8B770 /* Debug */,
+				85D4DDB78A7A2CF6942779086C009CFD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A70CDAD61F90AC503C7D04CC22DA2923 /* Debug */,
+				FB45FFD90572718D82AB9092B750F0CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7105B239CBB1B1672E67B2836509B69B /* Build configuration list for PBXNativeTarget "Pods-SocialQs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				897BB40F636E07028435AD959F48FE1E /* Debug */,
+				08453807E34D64F6130D4F17929C7189 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}

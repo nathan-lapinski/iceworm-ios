@@ -1,0 +1,20 @@
+PODS:
+  - M13BadgeView (1.0.4)
+
+DEPENDENCIES:
+  - M13BadgeView (from `https://github.com/Marxon13/M13BadgeView`, commit `cdb065a55cfe492d67061907b7e0c222fb99e035`)
+
+EXTERNAL SOURCES:
+  M13BadgeView:
+    :commit: cdb065a55cfe492d67061907b7e0c222fb99e035
+    :git: https://github.com/Marxon13/M13BadgeView
+
+CHECKOUT OPTIONS:
+  M13BadgeView:
+    :commit: cdb065a55cfe492d67061907b7e0c222fb99e035
+    :git: https://github.com/Marxon13/M13BadgeView
+
+SPEC CHECKSUMS:
+  M13BadgeView: 377c3a232d84f88b02dfe0967b8b64b2a53dd54b
+
+COCOAPODS: 0.39.0
