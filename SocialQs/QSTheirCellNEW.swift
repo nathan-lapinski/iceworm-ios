@@ -158,246 +158,246 @@ class QSTheirCellNEW: UITableViewCell {
 //        }
 //        
 //        
-//        
-//        questionBackground.frame = CGRectMake(8, 8, bounds.width - 16, 60)
-//        questionBackground.layer.cornerRadius = 30
-//        questionBackground.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)//mainColorBlue
-//        
-//        profilePicture.frame = CGRectMake(8, 8, 60, 60)
-//        if (QJoinObject["question"]!["asker"]!!["profilePicture"] as? PFFile != nil) {
-//            getImageFromPFFile(QJoinObject["question"]!["asker"]!!["profilePicture"]!! as! PFFile, completion: { (image, error) -> () in
-//                if error == nil {
-//                    self.profilePicture.image = image
-//                }
-//            })
-//        }
-//        profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
-//        profilePicture.layer.masksToBounds = false
-//        profilePicture.clipsToBounds = true
-//        profilePicture.layer.cornerRadius = profilePicture.frame.width/2
-//        
-//        usernameLabel.frame = CGRectMake(67, 7, 150, 20)
-//        usernameLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
-//        usernameLabel?.textColor = UIColor.whiteColor() // winColor // UIColor.lightGrayColor()
-//        let usernameString = QJoinObject["question"]!["asker"]!!["name"] as? String
-//        usernameLabel.text = "From \(usernameString!)"
-//        
-//        questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
-//        
-//        if let questionPhotoThumb = QJoinObject["question"]!["questionImageThumb"] as? PFFile {
-//            
-//            getImageFromPFFile(questionPhotoThumb, completion: { (image, error) -> () in
-//                if error == nil {
-//                    self.questionPicture.image = image
-//                } else {
-//                    print("There was an error downloading a questionPhoto")
-//                }
-//            })
-//            questionPicture.contentMode = UIViewContentMode.ScaleAspectFill
-//            questionPicture.clipsToBounds = true
-//            questionPicture.hidden = false
-//            
-//            questionZoom.enabled = true
-//            questionZoom.frame = questionPicture.frame
-//            questionZoom.addTarget(self, action: "questionZoom:", forControlEvents: UIControlEvents.TouchUpInside)
-//        } else {
-//            questionPicture.image = nil
-//            questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 0, 60)
-//            questionPicture.hidden = true
-//            questionZoom.enabled = false
-//        }
-//        questionPicture.layer.cornerRadius = questionPicture.frame.width/2
-//        
-//        questionText.frame = CGRectMake(profilePicture.center.x + profilePicture.frame.width/2 + horizontalSpace, 24, bounds.width - profilePicture.frame.width - questionPicture.frame.width - 4*horizontalSpace, 40)
-//        if let qText = self.QJoinObject["question"]!["questionText"] as? String {
-//            questionText.text = qText
-//            questionText.numberOfLines = 0
-//            questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
-//            questionText.textAlignment = NSTextAlignment.Left
-//            questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(14))!
-//            questionText?.textColor = UIColor.whiteColor()
-//            //questionText.sizeToFit()
-//        } else {
-//            questionText.text = ""
-//        }
-//        
-//        option1Background.frame = CGRectMake(horizontalSpace, questionBackground.frame.origin.y + 60 + 3, bounds.width - 2*horizontalSpace, 60)
-//        option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
-//        option1Background.layer.cornerRadius = 10
-//        
-//        option2Background.frame = CGRectMake(horizontalSpace, option1Background.frame.origin.y + 60, bounds.width - 2*horizontalSpace, 60)
-//        option2Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
-//        option2Background.layer.cornerRadius = 10
-//        
-//        option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
-//        option1Zoom.frame = option1Image.frame
-//        if let option1PhotoThumb = QJoinObject["question"]!["option1ImageThumb"] as? PFFile {
-//            
-//            getImageFromPFFile(option1PhotoThumb, completion: { (image, error) -> () in
-//                if error == nil {
-//                    self.option1Image.image = image
-//                } else {
-//                    print("There was an error downloading an option1Photo")
-//                }
-//            })
-//            
-//            option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
-//            option1Image.alpha = 1.0
-//            
-//            
-//        } else {
-//            
-//            option1Image.image = nil
-//            option1Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
-//            //option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 0, 60)
-//            
-//            
-//            option1VoteArrow.frame = option1Checkmark.frame
-//            //option1VoteArrow.center = CGPoint(x: option1Image.center.x + option1Image.frame.width/2, y: option1Image.center.y)
-//            option1VoteArrow.layer.cornerRadius = option1Checkmark.frame.width/2
-//            option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-//            option1VoteArrow.image = UIImage(named: "voteArrow.png")
-//            option1VoteArrow.alpha = 0.0
-//        }
-//        option1Image.layer.cornerRadius = 10
-//        option1Image.contentMode = UIViewContentMode.ScaleAspectFill
-//        option1Image.clipsToBounds = true
-//        
-//        option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
-//        option2Zoom.frame = option2Image.frame
-//        if let option2PhotoThumb = QJoinObject["question"]!["option2ImageThumb"] as? PFFile {
-//            getImageFromPFFile(option2PhotoThumb, completion: { (image, error) -> () in
-//                if error == nil {
-//                    self.option2Image.image = image
-//                } else {
-//                    print("There was an error downloading an option2Photo")
-//                }
-//            })
-//            
-//            option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
-//            option2Image.alpha = 1.0
-//            
-//        } else {
-//            
-//            option2Image.image = nil
-//            option2Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
-//            //option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
-//            
-//            option2VoteArrow.frame = option2Checkmark.frame
-//            //option2VoteArrow.center = CGPoint(x: option2Image.center.x + option2Image.frame.width/2, y: option2Image.center.y)
-//            option2VoteArrow.layer.cornerRadius = option2Checkmark.frame.width/2
-//            option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-//            option2VoteArrow.image = UIImage(named: "voteArrow.png")
-//            option2VoteArrow.alpha = 0.0
-//        }
-//        option2Image.layer.cornerRadius = 10
-//        option2Image.contentMode = UIViewContentMode.ScaleAspectFill
-//        option2Image.clipsToBounds = true
-//        
-//        option1Checkmark.frame = CGRectMake(0, 0, 30, 30)
-//        option1Checkmark.center = CGPoint(x: profilePicture.center.x, y: option1Image.center.y)
-//        option1Checkmark.layer.cornerRadius = option1Checkmark.frame.width/2
-//        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-//        option1Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-//        option1Checkmark.image = UIImage(named: "voteCheckmark.png")
-//        option1Checkmark.alpha = 0.0
-//        
-//        option2Checkmark.frame = CGRectMake(0, 0, 30, 30)
-//        option2Checkmark.center = CGPoint(x: profilePicture.center.x, y: option2Image.center.y)
-//        option2Checkmark.layer.cornerRadius = option2Checkmark.frame.width/2
-//        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-//        option2Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-//        option2Checkmark.image = UIImage(named: "voteCheckmark.png")
-//        option2Checkmark.alpha = 0.0
-//        
-//        
-//        if let _ = QJoinObject["vote"] as? Int {
-//            
-//            if badgeView.isDescendantOfView(self) {
-//                badgeView.removeFromSuperview()
-//            }
-//            if badgeViewFrame.isDescendantOfView(self) {
-//                badgeViewFrame.removeFromSuperview()
-//            }
-//            
-//            option1VoteArrow.alpha = 0.0
-//            option2VoteArrow.alpha = 0.0
-//            
-//        } else {
-//            
-//            // Add badge for NEW Q
-//            badgeView.text = "!"
-//            //badgeView.font = UIFont(name: "Helvetica", size: CGFloat(12.0))
-//            badgeView.badgeBackgroundColor = mainColorRed
-//            badgeView.horizontalAlignment = M13BadgeViewHorizontalAlignmentLeft
-//            badgeViewFrame.frame = CGRectMake(bounds.width - 2*horizontalSpace, 2*horizontalSpace, 0, 0)
-//            self.addSubview(badgeViewFrame)
-//            badgeViewFrame.addSubview(badgeView)
-//            
-//            // add a pan recognizers
-//            recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
-//            recognizer1.delegate = self
-//            option1Zoom.addGestureRecognizer(recognizer1)
-//            
-//            recognizer2 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier2:")
-//            recognizer2.delegate = self
-//            option2Zoom.addGestureRecognizer(recognizer2)
-//            
-//            option1VoteArrow.alpha = 0.8
-//            option2VoteArrow.alpha = 0.8
-//        }
-//        
-//        totalResponses = (self.QJoinObject["question"]!["option1Stats"] as! Int) + (QJoinObject["question"]!["option2Stats"] as! Int)
-//        if totalResponses != 0 {
-//            option1Percent = computePercents(1)
-//            option2Percent = 100 - option1Percent//computePercents(2)
-//        }
-//        
-//        option1Stats.backgroundColor = winColor
-//        option2Stats.backgroundColor = winColor
-//        option1Stats.alpha = 0.0
-//        option2Stats.alpha = 0.0
-//        if option1Percent < option2Percent {
-//            option1Stats.backgroundColor = mainColorBlue
-//        } else if option2Percent < option1Percent {
-//            option2Stats.backgroundColor = mainColorBlue
-//        }
-//        
-//        setOptionText()
-//        
-//        resp = "responses"
-//        if totalResponses == 1 { resp = "response" }
-//        responsesText.frame = CGRectMake(bounds.width - horizontalSpace - 100, bounds.height - 21, 100, 20)
-//        responsesText.textAlignment = NSTextAlignment.Right
-//        responsesText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(12))!
-//        responsesText?.textColor = UIColor.darkGrayColor()
-//        responsesText.text = "\(totalResponses) \(resp)"
-//        
-//        textCenterStart.x = bounds.width/2 // bounds.width - option1Text.frame.width/2 - 2*horizontalSpace
-//        textCenterEnd.x = textCenterStart.x // bounds.width - textCenterStart.x
-//        voteCenterStart.x = option1Checkmark.frame.width/2
-//        
-//        imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
-//        imageCenterEnd.x = bounds.width - option1Image.frame.width/2 - 8
-//        option1PercentText.alpha = 0.0
-//        option2PercentText.alpha = 0.0
-//        
-//        if let test = QJoinObject["vote"] as? Int {
-//            option1PercentText.hidden = false
-//            option2PercentText.hidden = false
-//            option1VoteArrow.alpha = 0.0
-//            option2VoteArrow.alpha = 0.0
-//            animateStatsBars()
-//            if test == 1 {
-//                //option1Checkmark.layer.borderWidth = 2.0
-//                //option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-//                option1Checkmark.alpha = 0.8
-//            } else if test == 2 {
-//                //option2Checkmark.layer.borderWidth = 2.0
-//                //option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-//                option2Checkmark.alpha = 0.8
-//            }
-//        }
+        
+        questionBackground.frame = CGRectMake(8, 8, bounds.width - 16, 60)
+        questionBackground.layer.cornerRadius = 30
+        questionBackground.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)//mainColorBlue
+        
+        profilePicture.frame = CGRectMake(8, 8, 60, 60)
+        if (QJoinObject["question"]!["asker"]!!["profilePicture"] as? PFFile != nil) {
+            getImageFromPFFile(QJoinObject["question"]!["asker"]!!["profilePicture"]!! as! PFFile, completion: { (image, error) -> () in
+                if error == nil {
+                    self.profilePicture.image = image
+                }
+            })
+        }
+        profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
+        profilePicture.layer.masksToBounds = false
+        profilePicture.clipsToBounds = true
+        profilePicture.layer.cornerRadius = profilePicture.frame.width/2
+        
+        usernameLabel.frame = CGRectMake(67, 7, 150, 20)
+        usernameLabel?.font = UIFont(name: "HelveticaNeue-Thin", size: CGFloat(12))!
+        usernameLabel?.textColor = UIColor.whiteColor() // winColor // UIColor.lightGrayColor()
+        let usernameString = QJoinObject["question"]!["asker"]!!["name"] as? String
+        usernameLabel.text = "From \(usernameString!)"
+        
+        questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 60, 60)
+        
+        if let questionPhotoThumb = QJoinObject["question"]!["questionImageThumb"] as? PFFile {
+            
+            getImageFromPFFile(questionPhotoThumb, completion: { (image, error) -> () in
+                if error == nil {
+                    self.questionPicture.image = image
+                } else {
+                    print("There was an error downloading a questionPhoto")
+                }
+            })
+            questionPicture.contentMode = UIViewContentMode.ScaleAspectFill
+            questionPicture.clipsToBounds = true
+            questionPicture.hidden = false
+            
+            questionZoom.enabled = true
+            questionZoom.frame = questionPicture.frame
+            questionZoom.addTarget(self, action: "questionZoom:", forControlEvents: UIControlEvents.TouchUpInside)
+        } else {
+            questionPicture.image = nil
+            questionPicture.frame = CGRectMake(bounds.width - 60 - horizontalSpace, 8, 0, 60)
+            questionPicture.hidden = true
+            questionZoom.enabled = false
+        }
+        questionPicture.layer.cornerRadius = questionPicture.frame.width/2
+        
+        questionText.frame = CGRectMake(profilePicture.center.x + profilePicture.frame.width/2 + horizontalSpace, 24, bounds.width - profilePicture.frame.width - questionPicture.frame.width - 4*horizontalSpace, 40)
+        if let qText = self.QJoinObject["question"]!["questionText"] as? String {
+            questionText.text = qText
+            questionText.numberOfLines = 0
+            questionText.lineBreakMode = NSLineBreakMode.ByWordWrapping
+            questionText.textAlignment = NSTextAlignment.Left
+            questionText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(14))!
+            questionText?.textColor = UIColor.whiteColor()
+            //questionText.sizeToFit()
+        } else {
+            questionText.text = ""
+        }
+        
+        option1Background.frame = CGRectMake(horizontalSpace, questionBackground.frame.origin.y + 60 + 3, bounds.width - 2*horizontalSpace, 60)
+        option1Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
+        option1Background.layer.cornerRadius = 10
+        
+        option2Background.frame = CGRectMake(horizontalSpace, option1Background.frame.origin.y + 60, bounds.width - 2*horizontalSpace, 60)
+        option2Background.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.25)//mainColorTeal
+        option2Background.layer.cornerRadius = 10
+        
+        option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
+        option1Zoom.frame = option1Image.frame
+        if let option1PhotoThumb = QJoinObject["question"]!["option1ImageThumb"] as? PFFile {
+            
+            getImageFromPFFile(option1PhotoThumb, completion: { (image, error) -> () in
+                if error == nil {
+                    self.option1Image.image = image
+                } else {
+                    print("There was an error downloading an option1Photo")
+                }
+            })
+            
+            option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
+            option1Image.alpha = 1.0
+            
+            
+        } else {
+            
+            option1Image.image = nil
+            option1Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+            //option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 0, 60)
+            
+            
+            option1VoteArrow.frame = option1Checkmark.frame
+            //option1VoteArrow.center = CGPoint(x: option1Image.center.x + option1Image.frame.width/2, y: option1Image.center.y)
+            option1VoteArrow.layer.cornerRadius = option1Checkmark.frame.width/2
+            option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+            option1VoteArrow.image = UIImage(named: "voteArrow.png")
+            option1VoteArrow.alpha = 0.0
+        }
+        option1Image.layer.cornerRadius = 10
+        option1Image.contentMode = UIViewContentMode.ScaleAspectFill
+        option1Image.clipsToBounds = true
+        
+        option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
+        option2Zoom.frame = option2Image.frame
+        if let option2PhotoThumb = QJoinObject["question"]!["option2ImageThumb"] as? PFFile {
+            getImageFromPFFile(option2PhotoThumb, completion: { (image, error) -> () in
+                if error == nil {
+                    self.option2Image.image = image
+                } else {
+                    print("There was an error downloading an option2Photo")
+                }
+            })
+            
+            option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
+            option2Image.alpha = 1.0
+            
+        } else {
+            
+            option2Image.image = nil
+            option2Image.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+            //option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 0, 60)
+            
+            option2VoteArrow.frame = option2Checkmark.frame
+            //option2VoteArrow.center = CGPoint(x: option2Image.center.x + option2Image.frame.width/2, y: option2Image.center.y)
+            option2VoteArrow.layer.cornerRadius = option2Checkmark.frame.width/2
+            option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+            option2VoteArrow.image = UIImage(named: "voteArrow.png")
+            option2VoteArrow.alpha = 0.0
+        }
+        option2Image.layer.cornerRadius = 10
+        option2Image.contentMode = UIViewContentMode.ScaleAspectFill
+        option2Image.clipsToBounds = true
+        
+        option1Checkmark.frame = CGRectMake(0, 0, 30, 30)
+        option1Checkmark.center = CGPoint(x: profilePicture.center.x, y: option1Image.center.y)
+        option1Checkmark.layer.cornerRadius = option1Checkmark.frame.width/2
+        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        option1Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option1Checkmark.image = UIImage(named: "voteCheckmark.png")
+        option1Checkmark.alpha = 0.0
+        
+        option2Checkmark.frame = CGRectMake(0, 0, 30, 30)
+        option2Checkmark.center = CGPoint(x: profilePicture.center.x, y: option2Image.center.y)
+        option2Checkmark.layer.cornerRadius = option2Checkmark.frame.width/2
+        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        option2Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option2Checkmark.image = UIImage(named: "voteCheckmark.png")
+        option2Checkmark.alpha = 0.0
+        
+        
+        if let _ = QJoinObject["vote"] as? Int {
+            
+            if badgeView.isDescendantOfView(self) {
+                badgeView.removeFromSuperview()
+            }
+            if badgeViewFrame.isDescendantOfView(self) {
+                badgeViewFrame.removeFromSuperview()
+            }
+            
+            option1VoteArrow.alpha = 0.0
+            option2VoteArrow.alpha = 0.0
+            
+        } else {
+            
+            // Add badge for NEW Q
+            badgeView.text = "!"
+            //badgeView.font = UIFont(name: "Helvetica", size: CGFloat(12.0))
+            badgeView.badgeBackgroundColor = mainColorRed
+            badgeView.horizontalAlignment = M13BadgeViewHorizontalAlignmentLeft
+            badgeViewFrame.frame = CGRectMake(bounds.width - 2*horizontalSpace, 2*horizontalSpace, 0, 0)
+            self.addSubview(badgeViewFrame)
+            badgeViewFrame.addSubview(badgeView)
+            
+            // add a pan recognizers
+            recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
+            recognizer1.delegate = self
+            option1Zoom.addGestureRecognizer(recognizer1)
+            
+            recognizer2 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier2:")
+            recognizer2.delegate = self
+            option2Zoom.addGestureRecognizer(recognizer2)
+            
+            option1VoteArrow.alpha = 0.8
+            option2VoteArrow.alpha = 0.8
+        }
+        
+        totalResponses = (self.QJoinObject["question"]!["option1Stats"] as! Int) + (QJoinObject["question"]!["option2Stats"] as! Int)
+        if totalResponses != 0 {
+            option1Percent = computePercents(1)
+            option2Percent = 100 - option1Percent//computePercents(2)
+        }
+        
+        option1Stats.backgroundColor = winColor
+        option2Stats.backgroundColor = winColor
+        option1Stats.alpha = 0.0
+        option2Stats.alpha = 0.0
+        if option1Percent < option2Percent {
+            option1Stats.backgroundColor = mainColorBlue
+        } else if option2Percent < option1Percent {
+            option2Stats.backgroundColor = mainColorBlue
+        }
+        
+        setOptionText()
+        
+        resp = "responses"
+        if totalResponses == 1 { resp = "response" }
+        responsesText.frame = CGRectMake(bounds.width - horizontalSpace - 100, bounds.height - 21, 100, 20)
+        responsesText.textAlignment = NSTextAlignment.Right
+        responsesText?.font = UIFont(name: "HelveticaNeue-Light", size: CGFloat(12))!
+        responsesText?.textColor = UIColor.darkGrayColor()
+        responsesText.text = "\(totalResponses) \(resp)"
+        
+        textCenterStart.x = bounds.width/2 // bounds.width - option1Text.frame.width/2 - 2*horizontalSpace
+        textCenterEnd.x = textCenterStart.x // bounds.width - textCenterStart.x
+        voteCenterStart.x = option1Checkmark.frame.width/2
+        
+        imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
+        imageCenterEnd.x = bounds.width - option1Image.frame.width/2 - 8
+        option1PercentText.alpha = 0.0
+        option2PercentText.alpha = 0.0
+        
+        if let test = QJoinObject["vote"] as? Int {
+            option1PercentText.hidden = false
+            option2PercentText.hidden = false
+            option1VoteArrow.alpha = 0.0
+            option2VoteArrow.alpha = 0.0
+            animateStatsBars()
+            if test == 1 {
+                //option1Checkmark.layer.borderWidth = 2.0
+                //option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option1Checkmark.alpha = 0.8
+            } else if test == 2 {
+                //option2Checkmark.layer.borderWidth = 2.0
+                //option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option2Checkmark.alpha = 0.8
+            }
+        }
     }
     
     
@@ -722,7 +722,8 @@ class QSTheirCellNEW: UITableViewCell {
 //        updateMainBadge(-1)
         
         // Update badge
-        NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
+        updateBadge("their")
+        //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
     }
     
     

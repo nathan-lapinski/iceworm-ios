@@ -27,7 +27,12 @@ var theirQJoinObjects: [AnyObject] = []
 // Variables to keep track of badge counts
 var myQsBadgeCount: Int = 0
 var theirQsBadgeCount: Int = 0
-var newQsBadgeCount: Int = 0
+var newTheirQsBadgeCount: Int = 0
+var newMyQsBadgeCount: Int = 0
+
+// Blank Qs Qs
+var noTheirQJoinObjects: PFObject? = nil
+var noMyQJoinObjects: PFObject? = nil
 
 // Set constants for formatting buttons - universal settings
 let bgAlpha: CGFloat = 0.7

@@ -150,6 +150,9 @@ class WelcomeVC: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         
+        if noMyQJoinObjects == nil { buildNoMyQsQuestion() }
+        if noTheirQJoinObjects == nil { buildNoTheirQsQuestion() }
+        
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
             

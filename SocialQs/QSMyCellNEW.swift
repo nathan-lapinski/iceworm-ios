@@ -657,6 +657,10 @@ class QSMyCellNEW: UITableViewCell {
         computePercents(optionId)
         setOptionText()
         animateStatsBars()
+        
+        // Update badge
+        updateBadge("my")
+        //NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
     }
     
     

@@ -10,6 +10,8 @@ import UIKit
 
 class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, TheirTableViewCellDelegate {
     
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+    
 //    var alreadyRetrieved = [String]()
     
 //    var QJoinObjects: [AnyObject] = []
@@ -105,29 +107,31 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         cell.delegate = self
         
         
-        ////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////
-        let allKeys = theirQJoinObjects[indexPath.row]["question"]!!.allKeys
-        var optionStrings: [String] = []
-        for str in allKeys {
-            if str.containsString("option") {
-                optionStrings.append(str as! String)
-            }
-        }
-        ////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////
+//        ////////////////////////////////////////////////////////////////////////////////////
+//        ////////////////////////////////////////////////////////////////////////////////////
+//        let allKeys = theirQJoinObjects[indexPath.row]["question"]!!.allKeys
+//        var optionStrings: [String] = []
+//        for str in allKeys {
+//            if str.containsString("option") {
+//                optionStrings.append(str as! String)
+//            }
+//        }
+//        ////////////////////////////////////////////////////////////////////////////////////
+//        ////////////////////////////////////////////////////////////////////////////////////
+//        
+//        //cell.optionStrings = optionStrings
+//        //cell.optionStringCount = optionStrings.count
+//        //cell.optionBackgrounds = [UIImageView](count: optionStrings.count, repeatedValue: UIImageView())
+//        
+//        let testView = UITextField()
+//        testView.frame = CGRectMake(0, 0, cell.bounds.width, 60)
+//        testView.text = "TEST TEST TEST TEST"
+//        testView.textColor = UIColor.blackColor()
+//        testView.font = UIFont(name: "Helvetice", size: 40)
+//        cell.addSubview(testView)
         
-        //cell.optionStrings = optionStrings
-        //cell.optionStringCount = optionStrings.count
-        //cell.optionBackgrounds = [UIImageView](count: optionStrings.count, repeatedValue: UIImageView())
         
-        let testView = UITextField()
-        testView.frame = CGRectMake(0, 0, cell.bounds.width, 60)
-        testView.text = "TEST TEST TEST TEST"
-        testView.textColor = UIColor.blackColor()
-        testView.font = UIFont(name: "Helvetice", size: 40)
-        cell.addSubview(testView)
-        //cell.QJoinObject = theirQJoinObjects[indexPath.row] as! PFObject
+        cell.QJoinObject = theirQJoinObjects[indexPath.row] as! PFObject
         
         return cell
     }
@@ -227,7 +231,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
             theirQJoinObjects.removeAtIndex(indexPath.row)
             
             // Update badge
-            NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
+            updateBadge("their")
+            //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
             
             tableView.beginUpdates()
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
@@ -274,40 +279,44 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     func refresh() {
         
+        //buildNoTheirQsQuestion()
+        
         downloadTheirQs { (completion) -> Void in
             
             if completion == true {
-                
-                if theirQJoinObjects.count < 1 {
-                    
-                    buildNoQsQuestion()
-                }
                 
                 // Reload table data
                 self.tableView.reloadData()
                 
                 // update tabBar badge
-                let theirCount = updateBadge("their")
-                self.tabBarController!.tabBar.items![1].badgeValue = "\(theirCount)"
+                updateBadge("their")
+                //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
                 
                 // Kill refresher when query finished
                 self.refresher.endRefreshing()
                 
             } else {
                 
-                if theirQJoinObjects.count < 1 {
-                    
-                    buildNoQsQuestion()
-                }
+//                if theirQJoinObjects.count < 1 {
+//                    
+//                    buildNoQsQuestion()
+//                }
 
 //                // Reload table data
 //                self.tableView.reloadData()
 //                
-//                // update tabBar badge
-//                //self.updateBadge()
-//                
-//                // Kill refresher when query finished
-//                self.refresher.endRefreshing()
+                // update tabBar badge
+                //self.updateBadge()
+                
+                popErrorMessage = "Q refresh failed! Please check your network and try again!"
+                popDirection = "top"
+                let overlayVC = self.storyboard!.instantiateViewControllerWithIdentifier("errorOverlayViewController")
+                self.prepareOverlayVC(overlayVC)
+                self.presentViewController(overlayVC, animated: true, completion: nil)
+                
+                
+                // Kill refresher when query finished
+                self.refresher.endRefreshing()
                 
             }
         }
@@ -453,7 +462,11 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
 ////        }
     }
     
-
+    
+    private func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .Custom
+    }
     
     
     override func didReceiveMemoryWarning() {

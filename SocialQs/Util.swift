@@ -771,6 +771,103 @@ func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
 }
 
 
+func downloadMyQs(completion: (Bool) -> Void) {
+    
+    //        let qQueryLocal = PFQuery(className: "QJoin")
+    //        qQueryLocal.fromLocalDatastore()
+    //        qQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+    //        qQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
+    //        qQueryLocal.orderByDescending("createdAt")
+    //        qQueryLocal.whereKey("deleted", equalTo: false)
+    //        qQueryLocal.includeKey("from")
+    //        qQueryLocal.includeKey("question")
+    //        qQueryLocal.includeKey("images")
+    //        qQueryLocal.limit = 1000
+    //
+    //        qQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+    //
+    //            if error == nil {
+    //
+    //                self.QJoinObjects = objects!
+    //
+    //                for temp in objects! {
+    //                    if let tempId: String = temp.objectId {
+    //                        self.alreadyRetrievedMyQs.append(tempId)
+    //                    }
+    //                }
+    //
+    //            } else {
+    //
+    //                print("There was an error loading Qs from local data store:")
+    //                print(error)
+    //            }
+    
+    // Get Qs that are not in localdata store
+    let qQueryServer = PFQuery(className: "QJoin")
+    qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!)
+    qQueryServer.whereKey("from", equalTo: PFUser.currentUser()!)
+    if myAlreadyRetrieved.count > 0 {
+        qQueryServer.whereKey("objectId", notContainedIn: myAlreadyRetrieved)
+    }
+    qQueryServer.orderByDescending("createdAt")
+    qQueryServer.whereKey("deleted", equalTo: false)
+    qQueryServer.includeKey("asker")
+    qQueryServer.includeKey("question")
+    qQueryServer.includeKey("images")
+    qQueryServer.limit = 1000
+    
+    qQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+        
+        if error == nil {
+            
+            myQJoinObjects.removeAll(keepCapacity: true)
+            
+            // Append to local array of PFObjects
+            myQJoinObjects = myQJoinObjects + objects!
+            
+            //                    // Pin new Qs to local datastore
+            //                    if let temp: [PFObject] = objects {
+            //
+            //                        for object in temp {
+            //
+            //                            object.pinInBackgroundWithBlock { (success, error) -> Void in
+            //
+            //                                if error == nil {
+            //
+            //                                    print("My Qs QJoin Object \(object.objectId!) pinned!")
+            //                                }
+            //
+            //                                //                                    if let test = object.objectId {
+            //                                //                                        self.alreadyRetrievedMyQs.append(test)
+            //                                //                                    }
+            //                            }
+            //                        }
+            //                    }
+            
+            completion(true)
+            
+            if myQJoinObjects.count < 1 {
+                if noMyQJoinObjects != nil {
+                    myQJoinObjects = [noMyQJoinObjects!]
+                }
+            }
+            
+            // Update badge
+            updateBadge("my")
+            //NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
+            
+        } else {
+            
+            print("There was an error retrieving new Qs from the database:")
+            print(error)
+            
+            completion(false)
+        }
+    })
+    //        }
+}
+
+
 func downloadTheirQs(completion: (Bool) -> Void) {
     
     //        let qJoinQueryLocal = PFQuery(className: "QJoin")
@@ -807,7 +904,7 @@ func downloadTheirQs(completion: (Bool) -> Void) {
     let qJoinQueryServer = PFQuery(className: "QJoin")
     qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!)
     qJoinQueryServer.whereKey("from", notEqualTo: PFUser.currentUser()!)
-    if myAlreadyRetrieved.count > 0 {
+    if theirAlreadyRetrieved.count > 0 {
         qJoinQueryServer.whereKey("objectId", notContainedIn: myAlreadyRetrieved)
     }
     qJoinQueryServer.orderByDescending("createdAt")
@@ -824,71 +921,73 @@ func downloadTheirQs(completion: (Bool) -> Void) {
         
         if error == nil {
             
-            if theirQJoinObjects.count > 1 {
+            if objects!.count > 0 {
                 theirQJoinObjects.removeAll(keepCapacity: true)
             }
             
             // Append to local array of PFObjects
             theirQJoinObjects = theirQJoinObjects + objects!
             
-            // Pin new Qs to local datastore
-            if let temp: [PFObject] = objects!{
-                
-                for object in temp {
-                    
-                    let objId = object["question"].objectId!!
-                    let newChannel = "Question_\(objId)"
-                    let currentInstallation = PFInstallation.currentInstallation()
-                    
-                    // If user has current channels, check if this one is NOT there and add it
-                    if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
-                        
-                        if !channels.contains(newChannel) {
-                            currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-                            currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-                                
-                                if error == nil {
-                                    
-                                    print("Subscribed to \(newChannel)")
-                                }
-                            })
-                        }
-                        
-                    } else { // else add it as the first
-                        
-                        currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-                        currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-                            
-                            if error == nil {
-                                
-                                print("Subscribed to \(newChannel)")
-                            }
-                        })
-                    }
-                    
-                    //                            object.pinInBackgroundWithBlock { (success, error) -> Void in
-                    //
-                    //                                if error == nil {
-                    //
-                    //                                    print("Their Qs QJoin Object \(object.objectId!) pinned!")
-                    //                                }
-                    //
-                    //                                //                                    if let test = object.objectId {
-                    //                                //                                        self.alreadyRetrieved.append(test)
-                    //                                //                                    }
-                    //                            }
-                }
-            }
+//            // Pin new Qs to local datastore
+//            if let temp: [PFObject] = objects!{
+//                
+//                for object in temp {
+//                    
+////                    let objId = object["question"].objectId!!
+////                    let newChannel = "Question_\(objId)"
+////                    let currentInstallation = PFInstallation.currentInstallation()
+////                    
+////                    // If user has current channels, check if this one is NOT there and add it
+////                    if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
+////                        
+////                        if !channels.contains(newChannel) {
+////                            currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+////                            currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+////                                
+////                                if error == nil {
+////                                    
+////                                    print("Subscribed to \(newChannel)")
+////                                }
+////                            })
+////                        }
+////                        
+////                    } else { // else add it as the first
+////                        
+////                        currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+////                        currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+////                            
+////                            if error == nil {
+////                                
+////                                print("Subscribed to \(newChannel)")
+////                            }
+////                        })
+////                    }
+//                    
+//                    //                            object.pinInBackgroundWithBlock { (success, error) -> Void in
+//                    //
+//                    //                                if error == nil {
+//                    //
+//                    //                                    print("Their Qs QJoin Object \(object.objectId!) pinned!")
+//                    //                                }
+//                    //
+//                    //                                //                                    if let test = object.objectId {
+//                    //                                //                                        self.alreadyRetrieved.append(test)
+//                    //                                //                                    }
+//                    //                            }
+//                }
+//            }
             
             completion(true)
             
             if theirQJoinObjects.count < 1 {
-                
-                buildNoQsQuestion()
+                if noTheirQJoinObjects != nil {
+                    theirQJoinObjects = [noTheirQJoinObjects!]
+                }
             }
             
             // Update badge
-            NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
+            updateBadge("their")
+            //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
             
         } else {
             
@@ -900,7 +999,66 @@ func downloadTheirQs(completion: (Bool) -> Void) {
     })
     //        }
 }
-func buildNoQsQuestion() {
+
+
+func buildNoMyQsQuestion() {
+    
+    // Build a temp question when none are available
+    myQJoinObjects.removeAll(keepCapacity: true)
+    
+    print("NO MYQS!!")
+    
+    let noQsJoinObject = PFObject(className: "QJoin")
+    let noQsQuestionObject = PFObject(className: "SocialQs")
+    //        var noQsPhotoJoinQObject = PFObject(className: "PhotoJoin")
+    //        var noQsPhotoJoin1Object = PFObject(className: "PhotoJoin")
+    //        var noQsPhotoJoin2Object = PFObject(className: "PhotoJoin")
+    let noQsAskerObject = PFObject(className: "User")
+    
+    let profImageData = UIImagePNGRepresentation(UIImage(named: "arrowToAsk.png")!)
+    let profImageFile: PFFile = PFFile(name: "arrowToAsk.png", data: profImageData!)
+    noQsAskerObject.setObject(profImageFile, forKey: "profilePicture")
+    noQsAskerObject.setObject("SocialQs Team", forKey: "name")
+    
+    noQsQuestionObject.setObject("Use the ASK button in the top left to create a Q!", forKey: "questionText")
+    noQsQuestionObject.setObject("Tap any of the images to enlarge...", forKey: "option1Text")
+    noQsQuestionObject.setObject("...or drag to the right to cast your vote!", forKey: "option2Text")
+    noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")
+    
+    let qImageData = UIImagePNGRepresentation(UIImage(named: "scenery3.png")!)
+    let qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData!)
+    let o1ImageData = UIImagePNGRepresentation(UIImage(named: "scenery1.png")!)
+    let o1ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o1ImageData!)
+    let o2ImageData = UIImagePNGRepresentation(UIImage(named: "scenery2.png")!)
+    let o2ImageFile: PFFile = PFFile(name: "questionPicture.png", data: o2ImageData!)
+    
+    noQsQuestionObject.setObject(qImageFile, forKey: "questionImageThumb")
+    noQsQuestionObject.setObject(qImageFile, forKey: "questionImageFull")
+    noQsQuestionObject.setObject(o1ImageFile, forKey: "option1ImageThumb")
+    noQsQuestionObject.setObject(o1ImageFile, forKey: "option1ImageFull")
+    noQsQuestionObject.setObject(o2ImageFile, forKey: "option2ImageThumb")
+    noQsQuestionObject.setObject(o2ImageFile, forKey: "option2ImageFull")
+    
+    //var images: [PFObject] = [noQsPhotoJoinQObject, noQsPhotoJoin1Object, noQsPhotoJoin2Object]
+    
+    //        noQsQuestionObject.setObject(noQsPhotoJoinQObject, forKey: "questionImages")
+    //        noQsQuestionObject.setObject(noQsPhotoJoin1Object, forKey: "option1Images")
+    //        noQsQuestionObject.setObject(noQsPhotoJoin2Object, forKey: "option2Images")
+    noQsQuestionObject.setObject(0, forKey: "option1Stats")
+    noQsQuestionObject.setObject(0, forKey: "option2Stats")
+    
+    noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
+    noQsJoinObject.setObject(noQsAskerObject, forKey: "asker")
+    
+    noMyQJoinObjects = noQsJoinObject
+    
+    // Update badge
+    updateBadge("my")
+    //NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
+}
+
+
+func buildNoTheirQsQuestion() {
     
     // Build a temp question when none are available
     theirQJoinObjects.removeAll(keepCapacity: true)
@@ -954,34 +1112,42 @@ func buildNoQsQuestion() {
     
     noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
     
-    theirQJoinObjects = [noQsJoinObject]
+    noTheirQJoinObjects = noQsJoinObject
     
     // Update badge
-    NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
+    updateBadge("their")
+    //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
 }
 
 
-func updateBadge(tabNumber: String) -> Int {
-    
-    // Count badges for tabBar
-    var count: Int = 0
+func updateBadge(tabNumber: String) {
     
     if tabNumber == "my" {
+        
+        newMyQsBadgeCount = 0
+        
         for obj in myQJoinObjects {
             if let _ = obj["vote"] as? Int { } else {
-                count++
+                newMyQsBadgeCount++
             }
         }
+        // Update badge
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
+        
+        
     } else if tabNumber == "their" {
+        
+        newTheirQsBadgeCount = 0
+        
         for obj in theirQJoinObjects {
             //print(obj)
             if let _ = obj["vote"] as? Int { } else {
-                count++
+                newTheirQsBadgeCount++
             }
         }
+        // Update badge
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
     }
-    
-    return count
 }
 
 

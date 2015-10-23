@@ -19,8 +19,11 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         // Notifier for "theirQs badge"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTheirQsBadge", name: "refreshTheirQsBadge", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshMyQsBadge", name: "refreshMyQsBadge", object: nil)
         
+        refreshMyQsBadge()
         refreshTheirQsBadge()
+        
         
 //        // Active text color
 //        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: activeTabColor], forState: UIControlState.Selected)
@@ -123,20 +126,43 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     
     
     func refreshTheirQsBadge() {
-        print("Updating theirBadge (2)")
         
-        //let theirCount = updateBadge("their")
-        newQsBadgeCount = 0
-        for obj in theirQJoinObjects {
-            if let _ = obj["vote"] as? Int { } else {
-                newQsBadgeCount++
-            }
-        }
+        //print("Updating theirBadge (2)")
         
-        if newQsBadgeCount > 0 {
-            self.tabBar.items![1].badgeValue = "\(newQsBadgeCount)"
+        //newTheirQsBadgeCount = updateBadge("their")
+        
+//        newQsBadgeCount = 0
+//        for obj in theirQJoinObjects {
+//            if let _ = obj["vote"] as? Int { } else {
+//                newQsBadgeCount++
+//            }
+//        }
+        
+        if newTheirQsBadgeCount > 0 {
+            self.tabBar.items![1].badgeValue = "\(newTheirQsBadgeCount)"
         } else {
             self.tabBar.items![1].badgeValue = nil
+        }
+    }
+    
+    
+    func refreshMyQsBadge() {
+        
+        //print("Updating myBadge (2)")
+        
+        //newMyQsBadgeCount = updateBadge("my")
+        
+        //        newQsBadgeCount = 0
+        //        for obj in theirQJoinObjects {
+        //            if let _ = obj["vote"] as? Int { } else {
+        //                newQsBadgeCount++
+        //            }
+        //        }
+        
+        if newMyQsBadgeCount > 0 {
+            self.tabBar.items![0].badgeValue = "\(newMyQsBadgeCount)"
+        } else {
+            self.tabBar.items![0].badgeValue = nil
         }
     }
     
