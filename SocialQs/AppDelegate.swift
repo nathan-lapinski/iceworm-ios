@@ -69,7 +69,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Setup Parse/Facebook
         PFFacebookUtils.initializeFacebook()
-            
+        let sharedApplication = UIApplication.sharedApplication()
+        let isFacebookAuthorized = sharedApplication.canOpenURL(NSURL(fileURLWithPath: "fbauth://authorize"))
+        
         // [Optional] Track statistics around application opens.
         PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
         

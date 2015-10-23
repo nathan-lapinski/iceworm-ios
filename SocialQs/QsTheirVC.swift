@@ -103,7 +103,31 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSTheirCellNEW
         
         cell.delegate = self
-        cell.QJoinObject = theirQJoinObjects[indexPath.row] as! PFObject
+        
+        
+        ////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////
+        let allKeys = theirQJoinObjects[indexPath.row]["question"]!!.allKeys
+        var optionStrings: [String] = []
+        for str in allKeys {
+            if str.containsString("option") {
+                optionStrings.append(str as! String)
+            }
+        }
+        ////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////
+        
+        //cell.optionStrings = optionStrings
+        //cell.optionStringCount = optionStrings.count
+        //cell.optionBackgrounds = [UIImageView](count: optionStrings.count, repeatedValue: UIImageView())
+        
+        let testView = UITextField()
+        testView.frame = CGRectMake(0, 0, cell.bounds.width, 60)
+        testView.text = "TEST TEST TEST TEST"
+        testView.textColor = UIColor.blackColor()
+        testView.font = UIFont(name: "Helvetice", size: 40)
+        cell.addSubview(testView)
+        //cell.QJoinObject = theirQJoinObjects[indexPath.row] as! PFObject
         
         return cell
     }
@@ -111,6 +135,24 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     //func toDoItemDeleted(){ }
     
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        ////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////
+        let allKeys = theirQJoinObjects[indexPath.row]["question"]!!.allKeys
+        var optionStrings: [String] = []
+        for str in allKeys {
+            if str.containsString("option") {
+                optionStrings.append(str as! String)
+            }
+        }
+        ////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////
+        
+        return CGFloat(68 + 64*optionStrings.count)
+        
+    }
     
     
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
@@ -238,7 +280,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 
                 if theirQJoinObjects.count < 1 {
                     
-                    self.buildNoQsQuestion()
+                    buildNoQsQuestion()
                 }
                 
                 // Reload table data
@@ -255,7 +297,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 
                 if theirQJoinObjects.count < 1 {
                     
-                    self.buildNoQsQuestion()
+                    buildNoQsQuestion()
                 }
 
 //                // Reload table data
@@ -411,68 +453,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
 ////        }
     }
     
-    
-    func buildNoQsQuestion() {
-        
-        // Build a temp question when none are available
-        theirQJoinObjects.removeAll(keepCapacity: true)
-        
-        print("NO THEIRQS!!")
-        
-        let noQsJoinObject = PFObject(className: "QJoin")
-        let noQsQuestionObject = PFObject(className: "SocialQs")
-//        var noQsPhotoJoinQObject = PFObject(className: "PhotoJoin")
-//        var noQsPhotoJoin1Object = PFObject(className: "PhotoJoin")
-//        var noQsPhotoJoin2Object = PFObject(className: "PhotoJoin")
-        let noQsAskerObject = PFObject(className: "User")
-        
-        let profImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png")!)
-        let profImageFile: PFFile = PFFile(name: "logo_square_blueS.png", data: profImageData!)
-        noQsAskerObject.setObject(profImageFile, forKey: "profilePicture")
-        noQsAskerObject.setObject("SocialQs Team", forKey: "name")
-        
-        noQsQuestionObject.setObject("No Qs! Don't you have friends?", forKey: "questionText")
-        noQsQuestionObject.setObject("I don't 😥 but I'll make some and invite them!", forKey: "option1Text")
-        noQsQuestionObject.setObject("I do 😃 and I'll invite more!", forKey: "option2Text")
-        noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")
-        
-        let qImageData = UIImagePNGRepresentation(UIImage(named: "scenery3.png")!)
-        let qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData!)
-        
-        var o1ImageData = NSData()
-        if arc4random_uniform(2) == 0 {
-            o1ImageData = UIImagePNGRepresentation(UIImage(named: "sadNate.png")!)!
-        } else {
-            o1ImageData = UIImagePNGRepresentation(UIImage(named: "sadBrett.png")!)!
-            }
-        let o1ImageFile: PFFile = PFFile(name: "option1Picture.png", data: o1ImageData)
-        
-        var o2ImageData = NSData()
-        if arc4random_uniform(2) == 0 {
-            o2ImageData = UIImagePNGRepresentation(UIImage(named: "happyNate.png")!)!
-        } else {
-            o2ImageData = UIImagePNGRepresentation(UIImage(named: "happyBrett.png")!)!
-        }
-        let o2ImageFile: PFFile = PFFile(name: "option2Picture.png", data: o2ImageData)
-        
-        noQsQuestionObject.setObject(qImageFile, forKey: "questionImageThumb")
-        noQsQuestionObject.setObject(qImageFile, forKey: "questionImageFull")
-        noQsQuestionObject.setObject(o1ImageFile, forKey: "option1ImageThumb")
-        noQsQuestionObject.setObject(o1ImageFile, forKey: "option1ImageFull")
-        noQsQuestionObject.setObject(o2ImageFile, forKey: "option2ImageThumb")
-        noQsQuestionObject.setObject(o2ImageFile, forKey: "option2ImageFull")
-        
-//        var images: [PFObject] = [noQsPhotoJoinQObject, noQsPhotoJoin1Object, noQsPhotoJoin2Object]
-        
-//        noQsQuestionObject.setObject(images, forKey: "images")
-        noQsQuestionObject.setObject(0, forKey: "option1Stats")
-        noQsQuestionObject.setObject(0, forKey: "option2Stats")
-        noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")
-        
-        noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
-        
-        theirQJoinObjects = [noQsJoinObject]
-    }
 
     
     

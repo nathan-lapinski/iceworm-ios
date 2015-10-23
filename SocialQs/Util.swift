@@ -805,7 +805,7 @@ func downloadTheirQs(completion: (Bool) -> Void) {
     
     // Get Qs that are not in localdata store
     let qJoinQueryServer = PFQuery(className: "QJoin")
-    qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+    qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!)
     qJoinQueryServer.whereKey("from", notEqualTo: PFUser.currentUser()!)
     if myAlreadyRetrieved.count > 0 {
         qJoinQueryServer.whereKey("objectId", notContainedIn: myAlreadyRetrieved)
@@ -814,15 +814,19 @@ func downloadTheirQs(completion: (Bool) -> Void) {
     qJoinQueryServer.whereKey("deleted", equalTo: false)
     qJoinQueryServer.includeKey("from")
     qJoinQueryServer.includeKey("question")
+    qJoinQueryServer.includeKey("question.imagesArray")
+//    qJoinQueryServer.includeKey("imagesArray.fullResolution")
+//    qJoinQueryServer.includeKey("imagesArray.thumbnail")
+//    qJoinQueryServer.includeKey("imagesArray")
     qJoinQueryServer.limit = 1000
     
     qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
         
         if error == nil {
             
-            //print("\(objects!.count) objects downloaded)")
-            
-            theirQJoinObjects.removeAll(keepCapacity: true)
+            if theirQJoinObjects.count > 1 {
+                theirQJoinObjects.removeAll(keepCapacity: true)
+            }
             
             // Append to local array of PFObjects
             theirQJoinObjects = theirQJoinObjects + objects!
@@ -878,8 +882,12 @@ func downloadTheirQs(completion: (Bool) -> Void) {
             
             completion(true)
             
+            if theirQJoinObjects.count < 1 {
+                
+                buildNoQsQuestion()
+            }
+            
             // Update badge
-            print("Updating theirBadge (1)")
             NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
             
         } else {
@@ -891,6 +899,65 @@ func downloadTheirQs(completion: (Bool) -> Void) {
         }
     })
     //        }
+}
+func buildNoQsQuestion() {
+    
+    // Build a temp question when none are available
+    theirQJoinObjects.removeAll(keepCapacity: true)
+    
+    print("NO THEIRQS!!")
+    
+    let noQsJoinObject = PFObject(className: "QJoin")
+    let noQsQuestionObject = PFObject(className: "SocialQs")
+    let noQsAskerObject = PFObject(className: "User")
+    
+    let profImageData = UIImagePNGRepresentation(UIImage(named: "logo_square_blueS.png")!)
+    let profImageFile: PFFile = PFFile(name: "logo_square_blueS.png", data: profImageData!)
+    noQsAskerObject.setObject(profImageFile, forKey: "profilePicture")
+    noQsAskerObject.setObject("SocialQs Team", forKey: "name")
+    
+    noQsQuestionObject.setObject("No Qs! Don't you have friends?", forKey: "questionText")
+    noQsQuestionObject.setObject("I don't 😥 but I'll make some and invite them!", forKey: "option1Text")
+    noQsQuestionObject.setObject("I do 😃 and I'll invite more!", forKey: "option2Text")
+    noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")
+    
+    let qImageData = UIImagePNGRepresentation(UIImage(named: "scenery3.png")!)
+    let qImageFile: PFFile = PFFile(name: "questionPicture.png", data: qImageData!)
+    
+    var o1ImageData = NSData()
+    let randInt = arc4random_uniform(2)
+    if randInt == 0 {
+        o1ImageData = UIImagePNGRepresentation(UIImage(named: "sadNate.png")!)!
+    } else {
+        o1ImageData = UIImagePNGRepresentation(UIImage(named: "sadBrett.png")!)!
+    }
+    let o1ImageFile: PFFile = PFFile(name: "option1Picture.png", data: o1ImageData)
+    
+    var o2ImageData = NSData()
+    if randInt != 0 {
+        o2ImageData = UIImagePNGRepresentation(UIImage(named: "happyNate.png")!)!
+    } else {
+        o2ImageData = UIImagePNGRepresentation(UIImage(named: "happyBrett.png")!)!
+    }
+    let o2ImageFile: PFFile = PFFile(name: "option2Picture.png", data: o2ImageData)
+    
+    noQsQuestionObject.setObject(qImageFile, forKey: "questionImageThumb")
+    noQsQuestionObject.setObject(qImageFile, forKey: "questionImageFull")
+    noQsQuestionObject.setObject(o1ImageFile, forKey: "option1ImageThumb")
+    noQsQuestionObject.setObject(o1ImageFile, forKey: "option1ImageFull")
+    noQsQuestionObject.setObject(o2ImageFile, forKey: "option2ImageThumb")
+    noQsQuestionObject.setObject(o2ImageFile, forKey: "option2ImageFull")
+    
+    noQsQuestionObject.setObject(0, forKey: "option1Stats")
+    noQsQuestionObject.setObject(0, forKey: "option2Stats")
+    noQsQuestionObject.setObject(noQsAskerObject, forKey: "asker")
+    
+    noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
+    
+    theirQJoinObjects = [noQsJoinObject]
+    
+    // Update badge
+    NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
 }
 
 

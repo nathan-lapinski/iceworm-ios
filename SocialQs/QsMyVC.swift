@@ -230,107 +230,107 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     
     func refresh() {
-        
-//        let qQueryLocal = PFQuery(className: "QJoin")
-//        qQueryLocal.fromLocalDatastore()
-//        qQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-//        qQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
-//        qQueryLocal.orderByDescending("createdAt")
-//        qQueryLocal.whereKey("deleted", equalTo: false)
-//        qQueryLocal.includeKey("from")
-//        qQueryLocal.includeKey("question")
-//        qQueryLocal.includeKey("images")
-//        qQueryLocal.limit = 1000
 //        
-//        qQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//                self.QJoinObjects = objects!
-//                
-//                for temp in objects! {
-//                    if let tempId: String = temp.objectId {
-//                        self.alreadyRetrievedMyQs.append(tempId)
-//                    }
-//                }
-//                
-//            } else {
-//                
-//                print("There was an error loading Qs from local data store:")
-//                print(error)
+////        let qQueryLocal = PFQuery(className: "QJoin")
+////        qQueryLocal.fromLocalDatastore()
+////        qQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+////        qQueryLocal.whereKey("asker", equalTo: PFUser.currentUser()!)
+////        qQueryLocal.orderByDescending("createdAt")
+////        qQueryLocal.whereKey("deleted", equalTo: false)
+////        qQueryLocal.includeKey("from")
+////        qQueryLocal.includeKey("question")
+////        qQueryLocal.includeKey("images")
+////        qQueryLocal.limit = 1000
+////        
+////        qQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+////            
+////            if error == nil {
+////                
+////                self.QJoinObjects = objects!
+////                
+////                for temp in objects! {
+////                    if let tempId: String = temp.objectId {
+////                        self.alreadyRetrievedMyQs.append(tempId)
+////                    }
+////                }
+////                
+////            } else {
+////                
+////                print("There was an error loading Qs from local data store:")
+////                print(error)
+////            }
+//        
+//            // Get Qs that are not in localdata store
+//            let qQueryServer = PFQuery(className: "QJoin")
+//            qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
+//            qQueryServer.whereKey("from", equalTo: PFUser.currentUser()!)
+//            if self.alreadyRetrievedMyQs.count > 0 {
+//                qQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrievedMyQs)
 //            }
-        
-            // Get Qs that are not in localdata store
-            let qQueryServer = PFQuery(className: "QJoin")
-            qQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-            qQueryServer.whereKey("from", equalTo: PFUser.currentUser()!)
-            if self.alreadyRetrievedMyQs.count > 0 {
-                qQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrievedMyQs)
-            }
-            qQueryServer.orderByDescending("createdAt")
-            qQueryServer.whereKey("deleted", equalTo: false)
-            qQueryServer.includeKey("asker")
-            qQueryServer.includeKey("question")
-            qQueryServer.includeKey("images")
-            qQueryServer.limit = 1000
-            
-            qQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-                
-                if error == nil {
-                    
-                    self.QJoinObjects.removeAll(keepCapacity: true)
-                    
-                    // Append to local array of PFObjects
-                    self.QJoinObjects = self.QJoinObjects + objects!
-                    
-//                    // Pin new Qs to local datastore
-//                    if let temp: [PFObject] = objects {
+//            qQueryServer.orderByDescending("createdAt")
+//            qQueryServer.whereKey("deleted", equalTo: false)
+//            qQueryServer.includeKey("asker")
+//            qQueryServer.includeKey("question")
+//            qQueryServer.includeKey("images")
+//            qQueryServer.limit = 1000
+//            
+//            qQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
+//                
+//                if error == nil {
+//                    
+//                    self.QJoinObjects.removeAll(keepCapacity: true)
+//                    
+//                    // Append to local array of PFObjects
+//                    self.QJoinObjects = self.QJoinObjects + objects!
+//                    
+////                    // Pin new Qs to local datastore
+////                    if let temp: [PFObject] = objects {
+////                        
+////                        for object in temp {
+////                            
+////                            object.pinInBackgroundWithBlock { (success, error) -> Void in
+////                                
+////                                if error == nil {
+////                                    
+////                                    print("My Qs QJoin Object \(object.objectId!) pinned!")
+////                                }
+////                                
+////                                //                                    if let test = object.objectId {
+////                                //                                        self.alreadyRetrievedMyQs.append(test)
+////                                //                                    }
+////                            }
+////                        }
+////                    }
+//                    
+//                    if self.QJoinObjects.count < 1 {
 //                        
-//                        for object in temp {
-//                            
-//                            object.pinInBackgroundWithBlock { (success, error) -> Void in
-//                                
-//                                if error == nil {
-//                                    
-//                                    print("My Qs QJoin Object \(object.objectId!) pinned!")
-//                                }
-//                                
-//                                //                                    if let test = object.objectId {
-//                                //                                        self.alreadyRetrievedMyQs.append(test)
-//                                //                                    }
-//                            }
-//                        }
+//                        self.buildNoQsQuestion()
 //                    }
-                    
-                    if self.QJoinObjects.count < 1 {
-                        
-                        self.buildNoQsQuestion()
-                    }
-                    
-                    // Reload table data
-                    self.tableView.reloadData()
-                    
-                    // Kill refresher when query finished
-                    self.refresher.endRefreshing()
-                    
-                } else {
-                    
-                    print("There was an error retrieving new Qs from the database:")
-                    print(error)
-                    
-                    if self.QJoinObjects.count < 1 {
-                        
-                        self.buildNoQsQuestion()
-                    }
-                    
-                    // Reload table data
-                    self.tableView.reloadData()
-                    
-                    // Kill refresher when query finished
-                    self.refresher.endRefreshing()
-                }
-            })
-//        }
+//                    
+//                    // Reload table data
+//                    self.tableView.reloadData()
+//                    
+//                    // Kill refresher when query finished
+//                    self.refresher.endRefreshing()
+//                    
+//                } else {
+//                    
+//                    print("There was an error retrieving new Qs from the database:")
+//                    print(error)
+//                    
+//                    if self.QJoinObjects.count < 1 {
+//                        
+//                        self.buildNoQsQuestion()
+//                    }
+//                    
+//                    // Reload table data
+//                    self.tableView.reloadData()
+//                    
+//                    // Kill refresher when query finished
+//                    self.refresher.endRefreshing()
+//                }
+//            })
+////        }
     }
     
     

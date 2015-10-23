@@ -177,9 +177,16 @@ class SettingsNEWViewController: UIViewController, UIImagePickerControllerDelega
             
             if error == nil {
                 
+                let loginManager: FBSDKLoginManager = FBSDKLoginManager()
+                loginManager.logOut()
+                FBSDKAccessToken.setCurrentAccessToken(nil)
+                FBSDKProfile.setCurrentProfile(nil)
+                
                 // Switch back to welcome screen
                 print("Logout complete, performing segue to welcome view")
                 self.performSegueWithIdentifier("logout", sender: self)
+                
+                UIApplication.sharedApplication().applicationIconBadgeNumber = 0
             }
             
             displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.boxView, _blurView: self.blurView, progressText: nil, sender: self.presentingViewController!)
