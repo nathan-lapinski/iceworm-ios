@@ -107,10 +107,6 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     }
     
     
-    //func toDoItemDeleted(){ }
-    
-    
-    
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
         
         if indexPath.row < 0 { return [] }

@@ -126,6 +126,40 @@ class VotesVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         let cell = votesTable.dequeueReusableCellWithIdentifier("votesCell", forIndexPath: indexPath)
         
+        func buildTextLabel(voterName: String) -> UILabel {
+            
+            let nameLabel = UILabel()
+            nameLabel.frame = CGRectMake(48, 2, self.view.bounds.width - 52, 40)
+            nameLabel.text = voterName
+            nameLabel.font = UIFont(name: "HelveticaNeue-Thin", size: tableFontSize)
+            
+            return nameLabel
+        }
+        
+        func buildProfilePicture(imagePFFile: PFFile) {
+            
+            let profilePicture = UIImageView()
+            profilePicture.frame = CGRectMake(2, 2, 40, 40)
+            
+            getImageFromPFFile(imagePFFile, completion: { (image, error) -> () in
+                
+                if error == nil {
+                    
+                    profilePicture.image = image
+                    
+                    cell.addSubview(profilePicture)
+                    
+                } else {
+                    
+                    print("There was an error downloading voter profPic - votesTableVC")
+                    
+                    profilePicture.image = UIImage(named: "profile.png")
+                    
+                    cell.addSubview(profilePicture)
+                }
+            })
+        }
+        
         if indexPath.section == 0 {
             
             cell.textLabel?.text = ""
@@ -133,18 +167,31 @@ class VotesVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         } else if indexPath.section == 1 {
             
             if let textString = option1Objects[indexPath.row]["to"]!["name"] as? String {
-                cell.textLabel?.text = textString
+                //cell.textLabel?.text = textString
+                cell.addSubview(buildTextLabel(textString))
+            }
+            
+            if (option1Objects[indexPath.row]["to"]!["profilePicture"] as? PFFile != nil) {
+                
+                buildProfilePicture(option1Objects[indexPath.row]["to"]!["profilePicture"] as! PFFile)
             }
             
         } else if indexPath.section == 2 {
             
             if let textString = option2Objects[indexPath.row]["to"]!["name"] as? String {
-                cell.textLabel?.text = textString
+                //cell.textLabel?.text = textString
+                cell.addSubview(buildTextLabel(textString))
+            }
+            
+            if (option2Objects[indexPath.row]["to"]!["profilePicture"] as? PFFile != nil) {
+                
+                buildProfilePicture(option2Objects[indexPath.row]["to"]!["profilePicture"] as! PFFile)
             }
         }
         
         // Make cells non-selectable
         cell.selectionStyle = UITableViewCellSelectionStyle.None
+        cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
         
         return cell
     }
@@ -225,8 +272,6 @@ class VotesVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     
                     if error == nil {
                         
-                        print("Adding image to section \(section) header")
-                        
                         headerImageView.image = image
                         headerImageView.contentMode = UIViewContentMode.ScaleAspectFill
                         headerImageView.clipsToBounds = true
@@ -256,7 +301,7 @@ class VotesVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(votesTable: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        //print("SELECTED \(indexPath.row)")
+        print("SELECTED \(indexPath.row)")
         
         
     }
