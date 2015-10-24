@@ -196,9 +196,10 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         
         print("Swiped MY row: \(indexPath.row)")
         
+        
         if indexPath.row > -1 {
             
-            if let _: Int = myQJoinObjects[indexPath.row]["vote"] as? Int {
+            if (((myQJoinObjects[indexPath.row] as! PFObject)["question"]!["option1Stats"] as! Int) + ((myQJoinObjects[indexPath.row] as! PFObject)["question"]!["option2Stats"] as! Int)) > 0 {
                 
                 return [trash, view] // Order = appearance order, right to left on screen
                 

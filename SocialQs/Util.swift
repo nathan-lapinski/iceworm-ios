@@ -1124,11 +1124,11 @@ func updateBadge(tabNumber: String) {
     
     if tabNumber == "my" {
         
-        newMyQsBadgeCount = 0
+        myQsBadgeCount = 0
         
         for obj in myQJoinObjects {
             if let _ = obj["vote"] as? Int { } else {
-                newMyQsBadgeCount++
+                myQsBadgeCount++
             }
         }
         // Update badge
@@ -1137,32 +1137,42 @@ func updateBadge(tabNumber: String) {
         
     } else if tabNumber == "their" {
         
-        newTheirQsBadgeCount = 0
+        theirQsBadgeCount = 0
         
         for obj in theirQJoinObjects {
             //print(obj)
             if let _ = obj["vote"] as? Int { } else {
-                newTheirQsBadgeCount++
+                theirQsBadgeCount++
             }
         }
         // Update badge
         NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
     }
-}
-
-
-func updateMainBadge(delta: Int) {
     
-    print("Updating Main Badge")
+    // Set home screen badge when closing app
+    let countSum = theirQsBadgeCount + myQsBadgeCount + theirVotesBadgeCount// + myVotesBadgeCount
+    UIApplication.sharedApplication().applicationIconBadgeNumber = countSum
     
-    let currentInstallation = PFInstallation.currentInstallation()
-    if currentInstallation.badge + delta >= 0 {
-        currentInstallation.badge = currentInstallation.badge + delta
-    } else {
-        currentInstallation.badge = 0
+    // If home screen badge == 0 update parse badge
+    // We can use this later to send period reminders that a user has activities waiting to be seen
+    if countSum == 0 {
+        PFInstallation.currentInstallation().badge = 0
     }
-    currentInstallation.saveInBackground()
 }
+
+
+//func updateMainBadge(delta: Int) {
+//    
+//    print("Updating Main Badge")
+//    
+//    let currentInstallation = PFInstallation.currentInstallation()
+//    if currentInstallation.badge + delta >= 0 {
+//        currentInstallation.badge = currentInstallation.badge + delta
+//    } else {
+//        currentInstallation.badge = 0
+//    }
+//    currentInstallation.saveInBackground()
+//}
 
 
 // Sets globals, changes to custom NSUserDefault keys and fills that data in

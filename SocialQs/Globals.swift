@@ -27,8 +27,8 @@ var theirQJoinObjects: [AnyObject] = []
 // Variables to keep track of badge counts
 var myQsBadgeCount: Int = 0
 var theirQsBadgeCount: Int = 0
-var newTheirQsBadgeCount: Int = 0
-var newMyQsBadgeCount: Int = 0
+var theirVotesBadgeCount: Int = 0
+//var myVotesBadgeCount: Int = 0 // Don't need this, we know when WE'VE voted :P
 
 // Blank Qs Qs
 var noTheirQJoinObjects: PFObject? = nil

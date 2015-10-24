@@ -10,28 +10,29 @@
 		90002B851BC207ED00425FF1 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B841BC207ED00425FF1 /* libsqlite3.0.tbd */; };
 		90002B871BC207FD00425FF1 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B861BC207FD00425FF1 /* libstdc++.6.0.9.tbd */; };
 		90002B891BC2080800425FF1 /* libz.1.1.3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B881BC2080800425FF1 /* libz.1.1.3.tbd */; };
-		90002B921BC208CE00425FF1 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B901BC208CE00425FF1 /* Parse.framework */; settings = {ASSET_TAGS = (); }; };
-		90002B931BC208CE00425FF1 /* ParseFacebookUtilsV4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B911BC208CE00425FF1 /* ParseFacebookUtilsV4.framework */; settings = {ASSET_TAGS = (); }; };
-		90002B951BC208DB00425FF1 /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B941BC208DB00425FF1 /* ParseCrashReporting.framework */; settings = {ASSET_TAGS = (); }; };
-		90002C9B1BC20D0000425FF1 /* FacebookAudienceNetworkSDK-4_6-for-iOS.docset in Resources */ = {isa = PBXBuildFile; fileRef = 90002BA81BC20CFF00425FF1 /* FacebookAudienceNetworkSDK-4_6-for-iOS.docset */; settings = {ASSET_TAGS = (); }; };
-		90002C9C1BC20D0000425FF1 /* FacebookMessengerShareKitSDK-1_3-for-iOS.docset in Resources */ = {isa = PBXBuildFile; fileRef = 90002BA91BC20CFF00425FF1 /* FacebookMessengerShareKitSDK-1_3-for-iOS.docset */; settings = {ASSET_TAGS = (); }; };
-		90002C9D1BC20D0000425FF1 /* FacebookSDK-4_6-for-iOS.docset in Resources */ = {isa = PBXBuildFile; fileRef = 90002BAA1BC20CFF00425FF1 /* FacebookSDK-4_6-for-iOS.docset */; settings = {ASSET_TAGS = (); }; };
-		90002C9E1BC20D0000425FF1 /* install_docsets.sh in Resources */ = {isa = PBXBuildFile; fileRef = 90002BAB1BC20CFF00425FF1 /* install_docsets.sh */; settings = {ASSET_TAGS = (); }; };
-		9001833E1BC2290500C382DB /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900183361BC2290400C382DB /* Bolts.framework */; settings = {ASSET_TAGS = (); }; };
-		9001833F1BC2290500C382DB /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900183371BC2290400C382DB /* FacebookSDK.framework */; settings = {ASSET_TAGS = (); }; };
-		900183411BC2290500C382DB /* FBAudienceNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900183391BC2290400C382DB /* FBAudienceNetwork.framework */; settings = {ASSET_TAGS = (); }; };
-		900183421BC2290500C382DB /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9001833A1BC2290400C382DB /* FBSDKCoreKit.framework */; settings = {ASSET_TAGS = (); }; };
-		900183431BC2290500C382DB /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9001833B1BC2290400C382DB /* FBSDKLoginKit.framework */; settings = {ASSET_TAGS = (); }; };
-		900183441BC2290500C382DB /* FBSDKMessengerShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9001833C1BC2290400C382DB /* FBSDKMessengerShareKit.framework */; settings = {ASSET_TAGS = (); }; };
-		900183451BC2290500C382DB /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9001833D1BC2290500C382DB /* FBSDKShareKit.framework */; settings = {ASSET_TAGS = (); }; };
+		90002B921BC208CE00425FF1 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B901BC208CE00425FF1 /* Parse.framework */; };
+		90002B931BC208CE00425FF1 /* ParseFacebookUtilsV4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B911BC208CE00425FF1 /* ParseFacebookUtilsV4.framework */; };
+		90002B951BC208DB00425FF1 /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90002B941BC208DB00425FF1 /* ParseCrashReporting.framework */; };
+		90002C9B1BC20D0000425FF1 /* FacebookAudienceNetworkSDK-4_6-for-iOS.docset in Resources */ = {isa = PBXBuildFile; fileRef = 90002BA81BC20CFF00425FF1 /* FacebookAudienceNetworkSDK-4_6-for-iOS.docset */; };
+		90002C9C1BC20D0000425FF1 /* FacebookMessengerShareKitSDK-1_3-for-iOS.docset in Resources */ = {isa = PBXBuildFile; fileRef = 90002BA91BC20CFF00425FF1 /* FacebookMessengerShareKitSDK-1_3-for-iOS.docset */; };
+		90002C9D1BC20D0000425FF1 /* FacebookSDK-4_6-for-iOS.docset in Resources */ = {isa = PBXBuildFile; fileRef = 90002BAA1BC20CFF00425FF1 /* FacebookSDK-4_6-for-iOS.docset */; };
+		90002C9E1BC20D0000425FF1 /* install_docsets.sh in Resources */ = {isa = PBXBuildFile; fileRef = 90002BAB1BC20CFF00425FF1 /* install_docsets.sh */; };
+		9001833E1BC2290500C382DB /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900183361BC2290400C382DB /* Bolts.framework */; };
+		9001833F1BC2290500C382DB /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900183371BC2290400C382DB /* FacebookSDK.framework */; };
+		900183411BC2290500C382DB /* FBAudienceNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900183391BC2290400C382DB /* FBAudienceNetwork.framework */; };
+		900183421BC2290500C382DB /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9001833A1BC2290400C382DB /* FBSDKCoreKit.framework */; };
+		900183431BC2290500C382DB /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9001833B1BC2290400C382DB /* FBSDKLoginKit.framework */; };
+		900183441BC2290500C382DB /* FBSDKMessengerShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9001833C1BC2290400C382DB /* FBSDKMessengerShareKit.framework */; };
+		900183451BC2290500C382DB /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9001833D1BC2290500C382DB /* FBSDKShareKit.framework */; };
 		900ED8821B75279D005FED93 /* GroupiesSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900ED8811B75279D005FED93 /* GroupiesSettingsTableViewController.swift */; };
 		900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900ED8831B752AB1005FED93 /* GroupiesSettingsCell.swift */; };
+		902646A91BDB318100726F01 /* VotesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902646A81BDB318100726F01 /* VotesVC.swift */; };
 		902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */; };
 		902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */; };
 		902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D41B3EA21300B67ACE /* TabBarController.swift */; };
 		902D871D1B574559001F9954 /* PeekPagedScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */; };
 		902D871F1B5747A9001F9954 /* ScrollViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */; };
-		9035C7101BC88F16008C3ABD /* PseudoCodeForCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035C70F1BC88F16008C3ABD /* PseudoCodeForCloud.swift */; settings = {ASSET_TAGS = (); }; };
+		9035C7101BC88F16008C3ABD /* PseudoCodeForCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035C70F1BC88F16008C3ABD /* PseudoCodeForCloud.swift */; };
 		903CF0F41B7A8283002BF72D /* SocialQs.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 903CF0F21B7A8283002BF72D /* SocialQs.xcdatamodeld */; };
 		904123021B26A67C00397132 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123011B26A67C00397132 /* AppDelegate.swift */; };
 		904123091B26A67C00397132 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 904123071B26A67C00397132 /* Main.storyboard */; };
@@ -39,7 +40,7 @@
 		9041230E1B26A67C00397132 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9041230C1B26A67C00397132 /* LaunchScreen.xib */; };
 		9041231A1B26A67C00397132 /* SocialQsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904123191B26A67C00397132 /* SocialQsTests.swift */; };
 		904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */; };
-		904866B61BC21A9B007F5F94 /* ParseFacebookUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 904866B51BC21A9B007F5F94 /* ParseFacebookUtils.framework */; settings = {ASSET_TAGS = (); }; };
+		904866B61BC21A9B007F5F94 /* ParseFacebookUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 904866B51BC21A9B007F5F94 /* ParseFacebookUtils.framework */; };
 		904E29CB1B59DC10007E17D2 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904E29CA1B59DC10007E17D2 /* Util.swift */; };
 		905B2D961B322625001A74EE /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905B2D951B322625001A74EE /* Globals.swift */; };
 		908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */; };
@@ -67,7 +68,7 @@
 		90A66E3A1BC07B400015F27E /* GroupiesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A66E391BC07B400015F27E /* GroupiesVC.swift */; };
 		90D0B4EB1BA7EE7B009E284C /* QsGlobalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */; };
 		90D7F3F81B62216B001284FA /* UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D7F3F71B62216B001284FA /* UsernameViewController.swift */; };
-		90DFCDE01BC22DD400B10E84 /* FacebookSDKStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 90DFCDDF1BC22DD400B10E84 /* FacebookSDKStrings.bundle */; settings = {ASSET_TAGS = (); }; };
+		90DFCDE01BC22DD400B10E84 /* FacebookSDKStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 90DFCDDF1BC22DD400B10E84 /* FacebookSDKStrings.bundle */; };
 		90DFCDE41BC22E1700B10E84 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90DFCDE31BC22E1700B10E84 /* CoreLocation.framework */; };
 		90DFE2921B5B1C05005F44EC /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */; };
 		90E46CEF1B8EEA4800D5E8AB /* GroupiesNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E46CEE1B8EEA4800D5E8AB /* GroupiesNavigationController.swift */; };
@@ -113,6 +114,7 @@
 		9001833D1BC2290500C382DB /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		900ED8811B75279D005FED93 /* GroupiesSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesSettingsTableViewController.swift; sourceTree = "<group>"; };
 		900ED8831B752AB1005FED93 /* GroupiesSettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesSettingsCell.swift; sourceTree = "<group>"; };
+		902646A81BDB318100726F01 /* VotesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesVC.swift; sourceTree = "<group>"; };
 		902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesTableViewController.swift; sourceTree = "<group>"; };
 		902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesCell.swift; sourceTree = "<group>"; };
 		902B34D41B3EA21300B67ACE /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
+				902646A81BDB318100726F01 /* VotesVC.swift */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
 				902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */,
 				9035C70F1BC88F16008C3ABD /* PseudoCodeForCloud.swift */,
@@ -556,6 +559,7 @@
 				904230DA1B2D19DF0014B1B4 /* SettingsViewController.swift in Sources */,
 				909937471BB7305D00535716 /* QSMyCellNEW.swift in Sources */,
 				900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */,
+				902646A91BDB318100726F01 /* VotesVC.swift in Sources */,
 				90A66E341BC053A70015F27E /* AskVC.swift in Sources */,
 				90EF88421B83B92400752A27 /* WelcomeVC.swift in Sources */,
 				90A66E321BBFB2420015F27E /* SettingsNEWViewController.swift in Sources */,

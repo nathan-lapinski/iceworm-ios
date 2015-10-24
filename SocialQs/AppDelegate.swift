@@ -183,15 +183,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NSUserDefaults.standardUserDefaults().setObject(theirQsBadgeCount, forKey: "theirQsBadgeCount")
         }
         
-        // Set home screen badge when closing app
-        let countSum = newTheirQsBadgeCount + theirQsBadgeCount + myQsBadgeCount + newMyQsBadgeCount
-        UIApplication.sharedApplication().applicationIconBadgeNumber = countSum
-        
-        // If home screen badge == 0 update parse badge
-        // We can use this later to send period reminders that a user has activities waiting to be seen
-        if countSum == 0 {
-            PFInstallation.currentInstallation().badge = 0
-        }
+//        // Set home screen badge when closing app
+//        let countSum = newTheirQsBadgeCount + theirQsBadgeCount + myQsBadgeCount + newMyQsBadgeCount
+//        UIApplication.sharedApplication().applicationIconBadgeNumber = countSum
+//        
+//        // If home screen badge == 0 update parse badge
+//        // We can use this later to send period reminders that a user has activities waiting to be seen
+//        if countSum == 0 {
+//            PFInstallation.currentInstallation().badge = 0
+//        }
     }
 
     func applicationWillEnterForeground(application: UIApplication) {

@@ -666,21 +666,40 @@ class QSTheirCellNEW: UITableViewCell {
                 print("Successful vote cast in SocialQs!")
                 
                 // SEND BADGE INCREMENT PUSH
-                let objId = self.QJoinObject["question"].objectId!!
-                let channel = "Question_\(objId)"
-                let pushGeneral:PFPush = PFPush()
-                pushGeneral.setChannel(channel)
+                // Pull all "to" users
+                let toUsersQuery = PFQuery(className: "QJoin")
+                toUsersQuery.whereKey("question", equalTo: self.QJoinObject["question"])
                 
-                // Create dictionary to send JSON to parse/to other devices
-                let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"1", "action":"refresh_\(self.QJoinObject.objectId)"]
-                
-                pushGeneral.setData(dataGeneral)
-                
-                pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                toUsersQuery.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
                     
                     if error == nil {
-                        
-                        print("Badge sent for \(channel) sent!")
+                        if let temp = objects {
+                            
+                            var toChannels: [String] = []
+                            toChannels.removeAll(keepCapacity: true)
+                            
+                            for object in temp {
+                                
+                                let userObjId = object["asker"].objectId!!
+                                toChannels.append("user_\(userObjId)")
+                            }
+                            
+                            let pushGeneral:PFPush = PFPush()
+                            pushGeneral.setChannels(toChannels)
+                            
+                            // Create dictionary to send JSON to parse/to other devices
+                            let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"1", "action":"refresh_\(self.QJoinObject.objectId)"]
+                            
+                            pushGeneral.setData(dataGeneral)
+                            
+                            pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+                                
+                                if error == nil {
+                                    
+                                    print("Badge for \(toChannels) sent!")
+                                }
+                            })
+                        }
                     }
                 })
             }

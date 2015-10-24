@@ -325,73 +325,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         // Don't block UI - this could take a while...
         displaySpinnerView(spinnerActive: true, UIBlock: false, _boxView: askBoxView, _blurView: askBlurView, progressText: "Submitting Q", sender: self)
         
-//        // Submit Q using cloud code!!! -------------------------------------------
-//        func createImageData(image: UIImage, name: String) -> (PFFile) {
-//            
-//            let imageData = UIImagePNGRepresentation(image)
-//            let imageFile: PFFile = PFFile(name: name, data: imageData!)
-//            return imageFile
-//        }
-//        
-//        // Add images
-//        var imageThumbs: Dictionary<String, NSData> = [:]
-//        var imageFull: Dictionary<String, NSData> = [:]
-//        if self.chosenImageThumbnail[0] != nil {
-//            imageThumbs["q"] = UIImagePNGRepresentation(self.chosenImageThumbnail[0]!)
-//            imageFull["q"] = UIImagePNGRepresentation(self.chosenImageHighRes[0]!)
-//        }
-//        if self.chosenImageThumbnail[1] != nil {
-//            imageThumbs["1"] = UIImagePNGRepresentation(self.chosenImageThumbnail[1]!)
-//            imageFull["1"] = UIImagePNGRepresentation(self.chosenImageHighRes[1]!)
-//        }
-//        if self.chosenImageThumbnail[2] != nil {
-//            imageThumbs["2"] = UIImagePNGRepresentation(self.chosenImageThumbnail[2]!)
-//            imageFull["2"] = UIImagePNGRepresentation(self.chosenImageHighRes[2]!)
-//        }
-//        
-//        // Add text
-//        var stringData: Dictionary<String, String> = [:]
-//        if question != nil { stringData["questionText"] = question }
-//        if option1  != nil { stringData["option1Text"]  = option1  }
-//        if option2  != nil { stringData["option2Text"]  = option2  }
-//        
-//        var toIds: [String] = Array(Set(facebookWithAppGroupies)) as [String]
-//        toIds.append(PFUser.currentUser()!["facebookId"] as! String)
-//        print(toIds)
-//        let toUsers = ["facebook": toIds]
-//        print(toUsers)
-//
-////        let parameters = ["optionImageThumbs": imageThumbs,
-////            "optionImageFull": imageFull,
-////            "stringData": stringData,
-////            "currentUserId": PFUser.currentUser()!.objectId!,
-////            "to": toUsers]
-//        
-//        PFCloud.callFunctionInBackground("submitQuestion", withParameters: [
-//            "optionImageThumbs": imageThumbs,
-//            "optionImageFull": imageFull,
-//            "stringData": stringData,
-//            "currentUserId": PFUser.currentUser()!.objectId!,
-//            "to": toUsers
-//            ]) { (objects, error) -> Void in
-//            
-//            if error == nil {
-//                
-//            } else {
-//                
-//                print("SUBMIT CODE BORKED:")
-//                print(error)
-//            }
-//        }
-        
-        
-        
-        
-        
-        
-        
-        //blockUI(true, askSpinner, askBlurView, self)
-        
         func createPNG(image: UIImage, name: String) -> (PFFile) {
             
             let imageData = UIImagePNGRepresentation(image)
@@ -509,40 +442,56 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
             
             if error == nil {
                 
-                // Subscribe to channel
-                let objId = socialQ.objectId!
-                let newChannel = "Question_\(objId)"
-                let currentInstallation = PFInstallation.currentInstallation()
-                
-                // If user has current channels, check if this one is NOT there and add it
-                if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
-                    
-                    if !channels.contains(newChannel) {
-                        currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-                        currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-                            
-                            if error == nil {
-                                
-                                print("Subscribed to \(newChannel)")
-                            }
-                        })
-                    }
-                    
-                } else { // else add it as the first
-                    
-                    currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-                    currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-                        
-                        if error == nil {
-                            
-                            print("Subscribed to \(newChannel)")
-                        }
-                    })
-                }
+//                // Subscribe to channel
+//                let objId = socialQ.objectId!
+//                let newChannel = "Question_\(objId)"
+//                let currentInstallation = PFInstallation.currentInstallation()
+//                
+//                // If user has current channels, check if this one is NOT there and add it
+//                if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
+//                    
+//                    if !channels.contains(newChannel) {
+//                        currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+//                        currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+//                            
+//                            if error == nil {
+//                                
+//                                print("Subscribed to \(newChannel)")
+//                            }
+//                        })
+//                    }
+//                    
+//                } else { // else add it as the first
+//                    
+//                    currentInstallation.addUniqueObject(newChannel, forKey: "channels")
+//                    currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
+//                        
+//                        if error == nil {
+//                            
+//                            print("Subscribed to \(newChannel)")
+//                        }
+//                    })
+//                }
                 
                 print("Success saving images in background!")
                 
-                // Query for all "to" users
+                // Save "asker's" QJoin
+                qJoinCurrentUser.saveEventually({ (success, error) -> Void in
+                    
+                    // Remove spinner...
+                    displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.askBoxView, _blurView: self.askBlurView, progressText: "Submitting Q", sender: self)
+                    
+                    // Refresh "myQs" and return to starting tab view
+                    NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
+                    self.navigationController?.popViewControllerAnimated(true)
+                    
+                    // clear text and photo entries
+                    self.cancelButtonAction(sender)
+                    
+                    print("QJoin entry for SELF successfully created")
+                })
+                
+                // Query for all "to" users - build QJoins and send pushes
                 var sQsGroupieObjects: [PFObject] = []
                 let toUserQuery = PFQuery(className: "_User")
                 toUserQuery.whereKey("facebookId", containedIn: Array(Set(self.facebookWithAppGroupies)))
@@ -556,7 +505,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                 
                                 let qJoin = PFObject(className: "QJoin")
                                 qJoin.setObject(PFUser.currentUser()!, forKey: "asker")
-                                qJoin.setObject(groupie, forKey: "to")
+                                qJoin.setObject(groupie as! PFUser, forKey: "to")
                                 qJoin.setObject(PFUser.currentUser()!, forKey: "from")
                                 qJoin.setObject(false, forKey: "deleted")
                                 qJoin.setObject(socialQ, forKey: "question")
@@ -564,9 +513,31 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
                                 sQsGroupieObjects.append(qJoin)
                                 
                             }
+                            
+                            // ***************************************************
+                            // ***************************************************
+                            // **** NEEDS NETWORK CHECK + RETRY FUNCTIONALITY ****
+                            // ***************************************************
+                            // ***************************************************
+                            PFObject.saveAllInBackground(sQsGroupieObjects, block: { (success, error) -> Void in
+                                
+                                if error == nil {
+                                    
+                                    print("sQs QJoin entries created")
+                                    
+                                    // *******************
+                                    //
+                                    self.sendPushes(users)
+                                    //
+                                    // *******************
+                                    
+                                } else {
+                                    
+                                    print("There was an error creating sQs QJoin entries: \n\(error)")
+                                }
+                            })
                         }
                     }
-                    
                 })
                 
 //                // Assign to groupies in QJoinTable
@@ -585,44 +556,6 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //                    sQsGroupieObjects.append(qJoin)
 //                    
 //                }
-                
-                // ***************************************************
-                // ***************************************************
-                // **** NEEDS NETWORK CHECK + RETRY FUNCTIONALITY ****
-                // ***************************************************
-                // ***************************************************
-                PFObject.saveAllInBackground(sQsGroupieObjects, block: { (success, error) -> Void in
-                    
-                    if error == nil {
-                        
-                        print("sQs QJoin entries created")
-                        
-                        // *******************
-                        //
-                        self.sendPushes()
-                        //
-                        // *******************
-                        
-                    } else {
-                        
-                        print("There was an error creating sQs QJoin entries: \n\(error)")
-                    }
-                })
-                
-                qJoinCurrentUser.saveEventually({ (success, error) -> Void in
-                    
-                    // Remove spinner...
-                    displaySpinnerView(spinnerActive: false, UIBlock: false, _boxView: self.askBoxView, _blurView: self.askBlurView, progressText: "Submitting Q", sender: self)
-                    
-                    // Refresh "myQs" and return to starting tab view
-                    NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
-                    self.navigationController?.popViewControllerAnimated(true)
-                    
-                    // clear text and photo entries
-                    self.cancelButtonAction(sender)
-
-                    print("QJoin entry for SELF successfully created")
-                })
             }
         })
     }
@@ -631,7 +564,7 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
     
     
     
-    func sendPushes() {
+    func sendPushes(toUsers: [PFObject]) {
         
         print("Sending pushes")
         
@@ -650,11 +583,12 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
 //        })
         
         // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
-        let toUsers: PFQuery = PFUser.query()!
+//        let toUsers: PFQuery = PFUser.query()!
         let pushQuery: PFQuery = PFInstallation.query()!
+//        toUsers.whereKey("facebookId", containedIn: facebookWithAppGroupies)
+//        pushQuery.whereKey("user", matchesQuery: toUsers)
         
-        toUsers.whereKey("facebookId", containedIn: facebookWithAppGroupies)
-        pushQuery.whereKey("user", matchesQuery: toUsers)
+        pushQuery.whereKey("user", containedIn: toUsers)
         
         let pushDirected: PFPush = PFPush()
         pushDirected.setQuery(pushQuery)

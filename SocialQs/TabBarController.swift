@@ -138,8 +138,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
 //            }
 //        }
         
-        if newTheirQsBadgeCount > 0 {
-            self.tabBar.items![1].badgeValue = "\(newTheirQsBadgeCount)"
+        if theirQsBadgeCount > 0 {
+            self.tabBar.items![1].badgeValue = "\(theirQsBadgeCount)"
         } else {
             self.tabBar.items![1].badgeValue = nil
         }
@@ -159,8 +159,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         //            }
         //        }
         
-        if newMyQsBadgeCount > 0 {
-            self.tabBar.items![0].badgeValue = "\(newMyQsBadgeCount)"
+        if myQsBadgeCount > 0 {
+            self.tabBar.items![0].badgeValue = "\(myQsBadgeCount)"
         } else {
             self.tabBar.items![0].badgeValue = nil
         }

@@ -140,23 +140,23 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     //func toDoItemDeleted(){ }
     
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        ////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////
-        let allKeys = theirQJoinObjects[indexPath.row]["question"]!!.allKeys
-        var optionStrings: [String] = []
-        for str in allKeys {
-            if str.containsString("option") {
-                optionStrings.append(str as! String)
-            }
-        }
-        ////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////
-        
-        return CGFloat(68 + 64*optionStrings.count)
-        
-    }
+//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+//        
+//        ////////////////////////////////////////////////////////////////////////////////////
+//        ////////////////////////////////////////////////////////////////////////////////////
+//        let allKeys = theirQJoinObjects[indexPath.row]["question"]!!.allKeys
+//        var optionStrings: [String] = []
+//        for str in allKeys {
+//            if str.containsString("option") {
+//                optionStrings.append(str as! String)
+//            }
+//        }
+//        ////////////////////////////////////////////////////////////////////////////////////
+//        ////////////////////////////////////////////////////////////////////////////////////
+//        
+//        return CGFloat(68 + 64*optionStrings.count)
+//        
+//    }
     
     
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
