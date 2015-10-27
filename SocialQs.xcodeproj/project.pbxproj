@@ -27,6 +27,7 @@
 		900ED8821B75279D005FED93 /* GroupiesSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900ED8811B75279D005FED93 /* GroupiesSettingsTableViewController.swift */; };
 		900ED8841B752AB1005FED93 /* GroupiesSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900ED8831B752AB1005FED93 /* GroupiesSettingsCell.swift */; };
 		901136661BDF3F3100D558B6 /* RefreshContents.xib in Resources */ = {isa = PBXBuildFile; fileRef = 901136651BDF3F3100D558B6 /* RefreshContents.xib */; };
+		901136681BDF4C3D00D558B6 /* ODRefreshControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901136671BDF4C3D00D558B6 /* ODRefreshControl.swift */; };
 		902646A91BDB318100726F01 /* VotesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902646A81BDB318100726F01 /* VotesVC.swift */; };
 		902B34D11B3E77DF00B67ACE /* GroupiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */; };
 		902B34D31B3E7FBA00B67ACE /* GroupiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */; };
@@ -116,6 +117,7 @@
 		900ED8811B75279D005FED93 /* GroupiesSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesSettingsTableViewController.swift; sourceTree = "<group>"; };
 		900ED8831B752AB1005FED93 /* GroupiesSettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesSettingsCell.swift; sourceTree = "<group>"; };
 		901136651BDF3F3100D558B6 /* RefreshContents.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RefreshContents.xib; sourceTree = "<group>"; };
+		901136671BDF4C3D00D558B6 /* ODRefreshControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ODRefreshControl.swift; sourceTree = "<group>"; };
 		902646A81BDB318100726F01 /* VotesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotesVC.swift; sourceTree = "<group>"; };
 		902B34D01B3E77DF00B67ACE /* GroupiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesTableViewController.swift; sourceTree = "<group>"; };
 		902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupiesCell.swift; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 				90A66E331BC053A70015F27E /* AskVC.swift */,
 				901136651BDF3F3100D558B6 /* RefreshContents.xib */,
 				908A03F51B5E01070050C0D9 /* AskViewController.swift */,
+				901136671BDF4C3D00D558B6 /* ODRefreshControl.swift */,
 				90A66E2D1BBF9A770015F27E /* ErrorOverlayViewController.swift */,
 				905B2D951B322625001A74EE /* Globals.swift */,
 				902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */,
@@ -549,6 +552,7 @@
 				909937451BB7289E00535716 /* QsMyVC.swift in Sources */,
 				90FFFA701B9A6958005E9CDD /* QsTheirVC.swift in Sources */,
 				90D0B4EB1BA7EE7B009E284C /* QsGlobalVC.swift in Sources */,
+				901136681BDF4C3D00D558B6 /* ODRefreshControl.swift in Sources */,
 				90F11AA11B3A4B7200AB1914 /* socialQuestionModel.swift in Sources */,
 				908A03F41B5DFE020050C0D9 /* AskTableViewCell.swift in Sources */,
 				902B34D51B3EA21300B67ACE /* TabBarController.swift in Sources */,

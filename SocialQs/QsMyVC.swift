@@ -15,7 +15,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     //var alreadyRetrievedMyQs = [String]()
     
     //var QJoinObjects: [AnyObject] = []
-    var refresher: UIRefreshControl!
+    //var refresher: UIRefreshControl!
     var myQsSpinner = UIView()
     var myQsBlurView = globalBlurView()
     
@@ -24,19 +24,22 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
+        let refreshControl = ODRefreshControl(scrollView: tableView)
+        refreshControl.addTarget(self, action: Selector("dropViewDidBeginRefreshing:"), forControlEvents: .ValueChanged)
+        
         // Initiate Push Notifications
         let userNotificationTypes: UIUserNotificationType = ([UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound])
         let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
         UIApplication.sharedApplication().registerForRemoteNotifications()
         
-        // Pull to refresh --------------------------------------------------------
-        refresher = UIRefreshControl()
-        refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
-        self.tableView.addSubview(refresher)
-        // Pull to refresh --------------------------------------------------------
+//        // Pull to refresh --------------------------------------------------------
+//        refresher = UIRefreshControl()
+//        refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
+//        refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
+//        self.tableView.addSubview(refresher)
+//        // Pull to refresh --------------------------------------------------------
         
         tableView.backgroundColor = UIColor.clearColor()
         
@@ -66,15 +69,38 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         }
     }
     
+    override func shouldAutorotate() -> Bool {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            let interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+            return interfaceOrientation != .PortraitUpsideDown
+        } else {
+            return true
+        }
+    }
+    
+    func dropViewDidBeginRefreshing(refreshControl: ODRefreshControl) {
+//        let delayInSeconds: UInt64 = 3
+//        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * NSEC_PER_SEC))
+//        dispatch_after(popTime, dispatch_get_main_queue()) {
+//            refreshControl.endRefreshing()
+//        }
+        refresh(refreshControl)
+    }
+    
+    
+    
+    
+    
+    
     func refreshMyQs() {
         print("NSNotificationCenter Observer called: refreshMyQs")
         
-        refresh()
+        refresh(nil)
     }
     
     override func viewWillAppear(animated: Bool) {
         
-        refresh()
+        refresh(nil)
     }
     
     
@@ -225,7 +251,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     }
     
     
-    func refresh() {
+    func refresh(refreshControl: ODRefreshControl?) {
         
         downloadMyQs { (completion) -> Void in
             
@@ -239,7 +265,8 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                 //NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
                 
                 // Kill refresher when query finished
-                self.refresher.endRefreshing()
+                //self.refresher.endRefreshing()
+                if refreshControl != nil { refreshControl!.endRefreshing() }
                 
             } else {
                 
@@ -262,7 +289,8 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                 
                 
                 // Kill refresher when query finished
-                self.refresher.endRefreshing()
+                //self.refresher.endRefreshing()
+                if refreshControl != nil { refreshControl!.endRefreshing() }
                 
             }
         }

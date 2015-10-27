@@ -44,9 +44,6 @@ class WelcomeVC: UIViewController {
         
         // Do any additional setup after loading the view, typically from a nib.
         //print(FBSDKAccessToken.currentAccessToken()) //prints nil
-        
-        animateWelcome()
-        
     }
     
     
@@ -150,21 +147,24 @@ class WelcomeVC: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         
+        facebookSignInButton.hidden = true
+        
         if noMyQJoinObjects == nil { buildNoMyQsQuestion() }
         if noTheirQJoinObjects == nil { buildNoTheirQsQuestion() }
         
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
             
+            // No need to store data, pull photo etc... because user is
+            // already logged in and data exists in proper locations
+            performSegueWithIdentifier("alreadySignedIn", sender: self)
+            
+            downloadMyQs { (completion) -> Void in }
             downloadTheirQs { (completion) -> Void in }
             
             if let groups = PFUser.currentUser()!["myGroups"] as? [String] {
                 myGroups = groups
             }
-            
-            // No need to store data, pull photo etc... because user is
-            // already logged in and data exists in proper locations
-            performSegueWithIdentifier("alreadySignedIn", sender: self)
             
             getUserPhoto({ (isFinished) -> Void in
             })
@@ -186,6 +186,7 @@ class WelcomeVC: UIViewController {
             
         } else {
             
+            animateWelcome()
             print("No active PFUser - must log in")
         }
     }
@@ -234,6 +235,7 @@ class WelcomeVC: UIViewController {
         logoImageView.layoutIfNeeded()
         
         facebookSignInButtonTopSpace.constant = self.view.frame.size.height
+        facebookSignInButton.hidden = false
         facebookSignInButton.layoutIfNeeded()
         facebookLogo.layoutIfNeeded()
         
