@@ -143,21 +143,6 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
                     
                     print("question unpinned")
                     
-                    // Unsubscribe from channel
-                    // If user has current channels, check if this one is NOT there and add it
-                    if let channels = (PFInstallation.currentInstallation().channels! as? [String]) {
-                        
-                        if channels.contains(object.objectId!) {
-                            
-                            let currentInstallation = PFInstallation.currentInstallation()
-                            currentInstallation.removeObject("Question_\(object.objectId!)", forKey: "channels")
-                            currentInstallation.saveEventually()
-                        }
-                        
-                        print("Unsubbed from Q channel")
-                        
-                    }
-                    
                     object.saveEventually({ (success, error) -> Void in
                         
                         if error == nil {
@@ -183,6 +168,14 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
             tableView.beginUpdates()
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             tableView.endUpdates()
+            
+            // remove progress bar width entries from dictionary
+            if myOption1LastWidth[theirQJoinObjects[indexPath.row].objectId!!] != nil {
+                myOption1LastWidth[theirQJoinObjects[indexPath.row].objectId!!] = nil
+            }
+            if myOption2LastWidth[theirQJoinObjects[indexPath.row].objectId!!] != nil {
+                myOption2LastWidth[theirQJoinObjects[indexPath.row].objectId!!] = nil
+            }
             
             // Update badge
             updateBadge("my")

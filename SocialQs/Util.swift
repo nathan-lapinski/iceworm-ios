@@ -989,6 +989,8 @@ func downloadTheirQs(completion: (Bool) -> Void) {
             updateBadge("their")
             //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
             
+            
+            
         } else {
             
             print("There was an error retrieving new Qs from the database:")

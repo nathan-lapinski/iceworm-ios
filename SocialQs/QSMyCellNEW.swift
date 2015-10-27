@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import M13BadgeView
 
 protocol MyTableViewCellDelegate {
     //func toDoItemDeleted()
@@ -45,6 +46,9 @@ class QSMyCellNEW: UITableViewCell {
     var questionBackground: UIImageView! = UIImageView()
     var profilePicture: UIImageView! = UIImageView()
     
+    var badgeViewFrame: UIImageView! = UIImageView()
+    var badgeView: M13BadgeView! = M13BadgeView()
+    
     var questionPicture: UIImageView! = UIImageView()
     
     var option1Background: UIImageView = UIImageView()
@@ -73,6 +77,8 @@ class QSMyCellNEW: UITableViewCell {
     var option1PercentText: UILabel! = UILabel()
     var option2PercentText: UILabel! = UILabel()
     var responsesText: UILabel! = UILabel()
+    
+    let maxStatsBarAlpha: CGFloat = 0.7
     
     var QJoinObject: PFObject!
     
@@ -129,6 +135,14 @@ class QSMyCellNEW: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
+        if (myOption1LastWidth[QJoinObject.objectId!] == nil) {
+            myOption1LastWidth[QJoinObject.objectId!] = 0.0
+        }
+        
+        if (myOption2LastWidth[QJoinObject.objectId!] == nil) {
+            myOption2LastWidth[QJoinObject.objectId!] = 0.0
+        }
         
         questionBackground.frame = CGRectMake(8, 8, bounds.width - 16, 60)
         questionBackground.layer.cornerRadius = 30
@@ -282,10 +296,26 @@ class QSMyCellNEW: UITableViewCell {
         
         if let _ = QJoinObject["vote"] as? Int {
             
+            if badgeView.isDescendantOfView(self) {
+                badgeView.removeFromSuperview()
+            }
+            if badgeViewFrame.isDescendantOfView(self) {
+                badgeViewFrame.removeFromSuperview()
+            }
+            
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
             
         } else {
+            
+            // Add badge for NEW Q
+            badgeView.text = "!"
+            //badgeView.font = UIFont(name: "Helvetica", size: CGFloat(12.0))
+            badgeView.badgeBackgroundColor = mainColorRed
+            badgeView.horizontalAlignment = M13BadgeViewHorizontalAlignmentLeft
+            badgeViewFrame.frame = CGRectMake(bounds.width - 2*horizontalSpace, 2*horizontalSpace, 0, 0)
+            self.addSubview(badgeViewFrame)
+            badgeViewFrame.addSubview(badgeView)
             
             // add a pan recognizers
             recognizer1 = UIPanGestureRecognizer(target: self, action: "recognizerIdentifier1:")
@@ -350,39 +380,55 @@ class QSMyCellNEW: UITableViewCell {
             }
         }
         
-        if totalResponses > 0 { animateStatsBars() }
+        if totalResponses > 0 { animateStatsBars(1.0) }
     }
     
     
-    func animateStatsBars() {
+    func animateStatsBars(duration: NSTimeInterval) {
         
         let statsHeight: CGFloat = option1Text.frame.height
-        //let statsWidth: CGFloat = option1Text.frame.width/2
-        
-        //option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
-        //option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
-        option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, option1Image.frame.width, statsHeight)
-        option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, option2Image.frame.width, statsHeight)
+        option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, myOption1LastWidth[QJoinObject.objectId!]! + option1Image.frame.width, statsHeight)
+        option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, myOption2LastWidth[QJoinObject.objectId!]! + option2Image.frame.width, statsHeight)
         
         option1Stats.center.y = option1Image.center.y
         option2Stats.center.y = option2Image.center.y
         option1Stats.layer.cornerRadius = optionRadius
         option2Stats.layer.cornerRadius = optionRadius
-        option1Stats.alpha = 0.0
-        option2Stats.alpha = 0.0
         
-        UIView.animateWithDuration(2.0, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+        if myOption1LastWidth[QJoinObject.objectId!] == 0 && myOption2LastWidth[QJoinObject.objectId!] == 0 {
             
-            self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width) + self.option1Image.frame.width, statsHeight)
-            self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width) + self.option1Image.frame.width, statsHeight)
-            self.option1Stats.center.y = self.option1Image.center.y
-            self.option2Stats.center.y = self.option2Image.center.y
-            self.option1Stats.alpha = 0.5
-            self.option2Stats.alpha = 0.5
-            self.option1PercentText.alpha = 1.0
-            self.option2PercentText.alpha = 1.0
+            option1Stats.alpha = 0.0
+            option2Stats.alpha = 0.0
             
-            }) { (isFinished) -> Void in }
+        } else {
+            
+            option1Stats.alpha = maxStatsBarAlpha
+            option2Stats.alpha = maxStatsBarAlpha
+        }
+        
+        
+        // Animate if there is a change to animate, else change not
+        let test1 = abs(myOption1LastWidth[QJoinObject.objectId!]! - CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width))
+        let test2 = abs(myOption2LastWidth[QJoinObject.objectId!]! - CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width))
+        
+        if test1 > 0.05 || test2 > 0.05 {
+            
+            myOption1LastWidth[QJoinObject.objectId!] = CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width)
+            myOption2LastWidth[QJoinObject.objectId!] = CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width)
+            
+            UIView.animateWithDuration(duration, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, myOption1LastWidth[self.QJoinObject.objectId!]! + self.option1Image.frame.width, statsHeight)
+                self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, myOption2LastWidth[self.QJoinObject.objectId!]! + self.option1Image.frame.width, statsHeight)
+                self.option1Stats.center.y = self.option1Image.center.y
+                self.option2Stats.center.y = self.option2Image.center.y
+                self.option1Stats.alpha = self.maxStatsBarAlpha
+                self.option2Stats.alpha = self.maxStatsBarAlpha
+                self.option1PercentText.alpha = 1.0
+                self.option2PercentText.alpha = 1.0
+                
+                }) { (isFinished) -> Void in }
+        }
     }
     
     
@@ -675,7 +721,7 @@ class QSMyCellNEW: UITableViewCell {
         // Update percentage stats and option text
         computePercents(optionId)
         setOptionText()
-        animateStatsBars()
+        animateStatsBars(2.0)
         
         // Update badge
         updateBadge("my")

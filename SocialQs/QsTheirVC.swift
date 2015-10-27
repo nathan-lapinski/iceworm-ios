@@ -16,21 +16,44 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
 //    var QJoinObjects: [AnyObject] = []
     var refresher: UIRefreshControl!
+    
+    
+    
+    var refreshControl: UIRefreshControl!
+    var customView: UIView!
+    var labelsArray: Array<UILabel> = []
+    var isAnimating = false
+    var currentColorIndex = 0
+    var currentLabelIndex = 0
+    var timer: NSTimer!
+    
+    
+    
     var myQsSpinner = UIView()
     var myQsBlurView = globalBlurView()
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var backgroundImageView: UIImageView!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Pull to refresh --------------------------------------------------------
-        refresher = UIRefreshControl()
-        refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
-        self.tableView.addSubview(refresher)
-        // Pull to refresh --------------------------------------------------------
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.registerClass(QSTheirCellNEW.self, forCellReuseIdentifier: "cell")
+        
+//        // Pull to refresh --------------------------------------------------------
+//        refresher = UIRefreshControl()
+//        refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
+//        refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
+//        self.tableView.addSubview(refresher)
+//        // Pull to refresh --------------------------------------------------------
+        refreshControl = UIRefreshControl()
+        refreshControl.backgroundColor = UIColor.redColor()
+        refreshControl.tintColor = UIColor.yellowColor()
+        tableView.addSubview(refreshControl)
+        loadCustomRefreshContents()
         
         backgroundImageView.image = UIImage(named: "bg5.png")
         tableView.backgroundColor = UIColor.clearColor()
@@ -38,9 +61,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         // Create observer to montior for return from sequed push view
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTheirQs", name: "refreshTheirQs", object: nil)
         
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.registerClass(QSTheirCellNEW.self, forCellReuseIdentifier: "cell")
     }
     
     func refreshTheirQs() {
@@ -49,44 +69,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     
     override func viewWillAppear(animated: Bool) {
-        
-//        if returningFromSettings == false && returningFromPopover == false {
-//            
-//            println("Page loaded from tab bar")
-//            
-//            topOffset = 64
-//            
-            refresh()
-//        }
-//        
-//        if returningFromPopover {
-//            
-//            println("Returned from popover")
-//            
-//            returningFromPopover = false
-//            
-//            if myViewReturnedOnce == false {
-//                myViewReturnedOnce = true
-//                topOffset = 0
-//            } else {
-//                topOffset = 64
-//            }
-//            
-//            tableView.reloadData()
-//        }
-//        
-//        if returningFromSettings {
-//            
-//            println("Returned from settings")
-//            
-//            returningFromSettings = false
-//            
-//            topOffset = 0
-//            
-//            tableView.reloadData()
-//        }
-//        
-//        self.tableView.contentInset = UIEdgeInsetsMake(topOffset,0,52,0)  // T, L, B, R
     }
     
     
@@ -193,21 +175,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                     
                     print("question unpinned")
                     
-                    // Unsubscribe from channel
-                    // If user has current channels, check if this one is NOT there and add it
-                    if let channels = (PFInstallation.currentInstallation().channels! as? [String]) {
-                        
-                        if channels.contains(object.objectId!) {
-                            
-                            let currentInstallation = PFInstallation.currentInstallation()
-                            currentInstallation.removeObject("Question_\(object.objectId!)", forKey: "channels")
-                            currentInstallation.saveEventually()
-                        }
-                        
-                        print("Unsubbed from Q channel")
-                        
-                    }
-                    
                     object.saveEventually({ (success, error) -> Void in
                         
                         if error == nil {
@@ -237,6 +204,14 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
             tableView.beginUpdates()
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             tableView.endUpdates()
+            
+            // remove progress bar width entries from dictionary
+            if theirOption1LastWidth[theirQJoinObjects[indexPath.row].objectId!!] != nil {
+                theirOption1LastWidth[theirQJoinObjects[indexPath.row].objectId!!] = nil
+            }
+            if theirOption2LastWidth[theirQJoinObjects[indexPath.row].objectId!!] != nil {
+                theirOption2LastWidth[theirQJoinObjects[indexPath.row].objectId!!] = nil
+            }
         }
         trash.backgroundColor = UIColor.redColor()
         
@@ -260,8 +235,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     }
     
     
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell,
-        forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
             cell.backgroundColor = UIColor.clearColor()
     }
     
@@ -273,6 +248,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     
     func segueToZoom() {
+        
         self.performSegueWithIdentifier("zoomTheirPhotoSegue", sender: self)
     }
     
@@ -293,20 +269,9 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
                 
                 // Kill refresher when query finished
-                self.refresher.endRefreshing()
+                //self.refresher.endRefreshing()
                 
             } else {
-                
-//                if theirQJoinObjects.count < 1 {
-//                    
-//                    buildNoQsQuestion()
-//                }
-
-//                // Reload table data
-//                self.tableView.reloadData()
-//                
-                // update tabBar badge
-                //self.updateBadge()
                 
                 popErrorMessage = "Q refresh failed! Please check your network and try again!"
                 popDirection = "top"
@@ -314,152 +279,11 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 self.prepareOverlayVC(overlayVC)
                 self.presentViewController(overlayVC, animated: true, completion: nil)
                 
-                
                 // Kill refresher when query finished
-                self.refresher.endRefreshing()
+                //self.refresher.endRefreshing()
                 
             }
         }
-        
-        
-        
-//
-////        let qJoinQueryLocal = PFQuery(className: "QJoin")
-////        qJoinQueryLocal.fromLocalDatastore()
-////        qJoinQueryLocal.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-////        qJoinQueryLocal.whereKey("from", notEqualTo: PFUser.currentUser()!)
-////        qJoinQueryLocal.orderByDescending("createdAt")
-////        qJoinQueryLocal.whereKey("deleted", equalTo: false)
-////        qJoinQueryLocal.includeKey("from")
-////        qJoinQueryLocal.includeKey("question")
-////        qJoinQueryLocal.limit = 1000
-////        
-////        qJoinQueryLocal.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
-////            
-////            if error == nil {
-////                
-////                self.QJoinObjects = objects!
-////                
-////                for temp in objects! {
-////                    
-////                    if let tempId: String = temp.objectId {
-////                        
-////                        self.alreadyRetrieved.append(tempId)
-////                    }
-////                }
-////                
-////            } else {
-////                
-////                print("There was an error loading Qs from local data store:")
-////                print(error)
-////            }
-//        
-//            // Get Qs that are not in localdata store
-//            let qJoinQueryServer = PFQuery(className: "QJoin")
-//            qJoinQueryServer.whereKey("to", equalTo: PFUser.currentUser()!["facebookId"] as! String)
-//            qJoinQueryServer.whereKey("from", notEqualTo: PFUser.currentUser()!)
-//            if self.alreadyRetrieved.count > 0 {
-//                qJoinQueryServer.whereKey("objectId", notContainedIn: self.alreadyRetrieved)
-//            }
-//            qJoinQueryServer.orderByDescending("createdAt")
-//            qJoinQueryServer.whereKey("deleted", equalTo: false)
-//            qJoinQueryServer.includeKey("from")
-//            qJoinQueryServer.includeKey("question")
-//            qJoinQueryServer.limit = 1000
-//            
-//            qJoinQueryServer.findObjectsInBackgroundWithBlock({ (objects, error) -> Void in
-//                
-//                if error == nil {
-//                    
-//                    self.QJoinObjects.removeAll(keepCapacity: true)
-//                    
-//                    // Append to local array of PFObjects
-//                    self.QJoinObjects = self.QJoinObjects + objects!
-//                    
-//                    // Pin new Qs to local datastore
-//                    if let temp: [PFObject] = objects!{
-//                        
-//                        for object in temp {
-//                            
-//                            let objId = object["question"].objectId!!
-//                            let newChannel = "Question_\(objId)"
-//                            let currentInstallation = PFInstallation.currentInstallation()
-//                            
-//                            // If user has current channels, check if this one is NOT there and add it
-//                            if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
-//                                
-//                                if !channels.contains(newChannel) {
-//                                    currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-//                                    currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-//                                        
-//                                        if error == nil {
-//                                            
-//                                            print("Subscribed to \(newChannel)")
-//                                        }
-//                                    })
-//                                }
-//                                
-//                            } else { // else add it as the first
-//                                
-//                                currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-//                                currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-//                                    
-//                                    if error == nil {
-//                                        
-//                                        print("Subscribed to \(newChannel)")
-//                                    }
-//                                })
-//                            }
-//                            
-////                            object.pinInBackgroundWithBlock { (success, error) -> Void in
-////                                
-////                                if error == nil {
-////                                    
-////                                    print("Their Qs QJoin Object \(object.objectId!) pinned!")
-////                                }
-////                                
-////                                //                                    if let test = object.objectId {
-////                                //                                        self.alreadyRetrieved.append(test)
-////                                //                                    }
-////                            }
-//                        }
-//                    }
-//                    
-//                    if self.QJoinObjects.count < 1 {
-//                        
-//                        self.buildNoQsQuestion()
-//                    }
-//                    
-//                    // Reload table data
-//                    self.tableView.reloadData()
-//                    
-//                    // update tabBar badge
-//                    self.updateBadge()
-//                    
-//                    // Kill refresher when query finished
-//                    self.refresher.endRefreshing()
-//                    
-//                } else {
-//                    
-//                    print("There was an error retrieving new Qs from the database:")
-//                    print(error)
-//                    
-//                    if self.QJoinObjects.count < 1 {
-//                        
-//                        self.buildNoQsQuestion()
-//                    }
-//                    
-//                    // Reload table data
-//                    self.tableView.reloadData()
-//                    
-//                    // update tabBar badge
-//                    self.updateBadge()
-//                    
-//                    // Kill refresher when query finished
-//                    self.refresher.endRefreshing()
-//                }
-//            })
-////        }
     }
     
     
@@ -472,6 +296,159 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK: UIScrollView delegate method implementation
+    
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        if refreshControl.refreshing {
+            if !isAnimating {
+                doSomething()
+                animateRefreshStep1()
+            }
+        }
+    }
+    
+    
+    // MARK: Custom function implementation
+    
+    func loadCustomRefreshContents() {
+        let refreshContents = NSBundle.mainBundle().loadNibNamed("RefreshContents", owner: self, options: nil)
+        
+        customView = refreshContents[0] as! UIView
+        customView.frame = refreshControl.bounds
+        
+        print(customView.subviews.count)
+        
+        for var i=0; i<customView.subviews.count - 1; ++i {
+            labelsArray.append(customView.viewWithTag(i + 1) as! UILabel)
+        }
+        
+        refreshControl.addSubview(customView)
+    }
+    
+    
+    func animateRefreshStep1() {
+        isAnimating = true
+        
+        UIView.animateWithDuration(0.05, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
+            self.labelsArray[self.currentLabelIndex].transform = CGAffineTransformMakeRotation(CGFloat(M_PI_4))
+            self.labelsArray[self.currentLabelIndex].textColor = self.getNextColor()
+            
+            }, completion: { (finished) -> Void in
+                
+                UIView.animateWithDuration(0.03, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
+                    self.labelsArray[self.currentLabelIndex].transform = CGAffineTransformIdentity
+                    self.labelsArray[self.currentLabelIndex].textColor = UIColor.blackColor()
+                    
+                    }, completion: { (finished) -> Void in
+                        ++self.currentLabelIndex
+                        
+                        if self.currentLabelIndex < self.labelsArray.count {
+                            self.animateRefreshStep1()
+                        }
+                        else {
+                            self.animateRefreshStep2()
+                        }
+                })
+        })
+    }
+    
+    
+    func animateRefreshStep2() {
+        
+        let maxScale: CGFloat = 1.25
+        
+        UIView.animateWithDuration(0.25, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
+            self.labelsArray[0].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[1].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[2].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[3].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[4].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[5].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[6].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[7].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[8].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[9].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[10].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[11].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[12].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[13].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[14].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+            self.labelsArray[15].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+            
+            }, completion: { (finished) -> Void in
+                UIView.animateWithDuration(0.25, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
+                    self.labelsArray[0].transform  = CGAffineTransformIdentity
+                    self.labelsArray[1].transform  = CGAffineTransformIdentity
+                    self.labelsArray[2].transform  = CGAffineTransformIdentity
+                    self.labelsArray[3].transform  = CGAffineTransformIdentity
+                    self.labelsArray[4].transform  = CGAffineTransformIdentity
+                    self.labelsArray[5].transform  = CGAffineTransformIdentity
+                    self.labelsArray[6].transform  = CGAffineTransformIdentity
+                    self.labelsArray[7].transform  = CGAffineTransformIdentity
+                    self.labelsArray[8].transform  = CGAffineTransformIdentity
+                    self.labelsArray[9].transform  = CGAffineTransformIdentity
+                    self.labelsArray[10].transform = CGAffineTransformIdentity
+                    self.labelsArray[11].transform = CGAffineTransformIdentity
+                    self.labelsArray[12].transform = CGAffineTransformIdentity
+                    self.labelsArray[13].transform = CGAffineTransformIdentity
+                    self.labelsArray[14].transform = CGAffineTransformIdentity
+                    self.labelsArray[15].transform = CGAffineTransformIdentity
+                    
+                    }, completion: { (finished) -> Void in
+                        if self.refreshControl.refreshing {
+                            self.currentLabelIndex = 0
+                            self.animateRefreshStep1()
+                        }
+                        else {
+                            self.isAnimating = false
+                            self.currentLabelIndex = 0
+                            for var i=0; i<self.labelsArray.count; ++i {
+                                self.labelsArray[i].textColor = UIColor.blackColor()
+                                self.labelsArray[i].transform = CGAffineTransformIdentity
+                            }
+                        }
+                })
+        })
+    }
+    
+    
+    func getNextColor() -> UIColor {
+        var colorsArray: Array<UIColor> = [UIColor.magentaColor(), UIColor.brownColor(), UIColor.yellowColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.orangeColor()]
+        
+        if currentColorIndex == colorsArray.count {
+            currentColorIndex = 0
+        }
+        
+        let returnColor = colorsArray[currentColorIndex]
+        ++currentColorIndex
+        
+        return returnColor
+    }
+    
+    
+    func doSomething() {
+        timer = NSTimer.scheduledTimerWithTimeInterval(4.0, target: self, selector: "endOfWork", userInfo: nil, repeats: true)
+    }
+    
+    
+    func endOfWork() {
+        
+        for var i = 0; i < 16; i++ {
+            self.labelsArray[i].textColor = UIColor.clearColor()
+        }
+        refreshControl.endRefreshing()
+        
+        timer.invalidate()
+        timer = nil
     }
     
     

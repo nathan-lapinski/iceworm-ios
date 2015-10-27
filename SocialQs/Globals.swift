@@ -76,6 +76,13 @@ var myGroups = [String]() // Stores strings of group names
 var myFriends = [String]() // Stores usernames of socialQs-typed users
 
 
+// Variables for progress bar "lastWidth" storage
+var myOption1LastWidth: Dictionary<String,CGFloat> = [:]
+var myOption2LastWidth: Dictionary<String,CGFloat> = [:]
+var theirOption1LastWidth: Dictionary<String,CGFloat> = [:]
+var theirOption2LastWidth: Dictionary<String,CGFloat> = [:]
+
+
 // Variable for passing image to zoom and on which image to start (1 or 2)
 var questionToView: PFObject? = nil
 var zoomPage = Int()

@@ -18,9 +18,6 @@ class QSTheirCellNEW: UITableViewCell {
     
     // Objects passed from tableViewController
     var QJoinObject: PFObject!
-    //var optionStrings: [String]!
-    //var optionStringCount: Int!
-    //var optionBackgrounds: [UIImageView!]
     
     //
     var delegate: TheirTableViewCellDelegate?
@@ -29,6 +26,8 @@ class QSTheirCellNEW: UITableViewCell {
     var option2Offset: CGFloat = 38.0
     var horizontalSpace: CGFloat = 8.0
     var imageBarExtraSpace: CGFloat = 3.0
+//    var option1LastWidthLocal: CGFloat = 0.0
+//    var option2LastWidthLocal: CGFloat = 0.0
     
     var indicatorAlpha = CGFloat(0.6)
     var optionRadius = CGFloat(10)
@@ -85,6 +84,8 @@ class QSTheirCellNEW: UITableViewCell {
     var option1PercentText: UILabel! = UILabel()
     var option2PercentText: UILabel! = UILabel()
     var responsesText: UILabel! = UILabel()
+    
+    let maxStatsBarAlpha: CGFloat = 0.7
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -147,6 +148,13 @@ class QSTheirCellNEW: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        if (theirOption1LastWidth[QJoinObject.objectId!] == nil) {
+            theirOption1LastWidth[QJoinObject.objectId!] = 0.0
+        }
+        
+        if (theirOption2LastWidth[QJoinObject.objectId!] == nil) {
+            theirOption2LastWidth[QJoinObject.objectId!] = 0.0
+        }
         
 //        // Extract optionStrings
 //        let allKeys = QJoinObject["question"].allKeys
@@ -170,6 +178,9 @@ class QSTheirCellNEW: UITableViewCell {
                     self.profilePicture.image = image
                 }
             })
+        } else {
+            
+            self.profilePicture.image = UIImage(named: "profile.png")
         }
         profilePicture.contentMode = UIViewContentMode.ScaleAspectFill
         profilePicture.layer.masksToBounds = false
@@ -387,49 +398,64 @@ class QSTheirCellNEW: UITableViewCell {
             option2PercentText.hidden = false
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
-            animateStatsBars()
+            animateStatsBars(1.0)
             if test == 1 {
-                //option1Checkmark.layer.borderWidth = 2.0
-                //option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option1Checkmark.layer.borderWidth = 2.0
+                option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                 option1Checkmark.alpha = 0.8
             } else if test == 2 {
-                //option2Checkmark.layer.borderWidth = 2.0
-                //option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option2Checkmark.layer.borderWidth = 2.0
+                option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                 option2Checkmark.alpha = 0.8
             }
         }
     }
     
     
-    func animateStatsBars() {
+    func animateStatsBars(duration: NSTimeInterval) {
         
         let statsHeight: CGFloat = option1Text.frame.height
-        //let statsWidth: CGFloat = option1Text.frame.width/2
-        
-        //option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
-        //option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, statsWidth + horizontalSpace, statsHeight)
-        option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, option1Image.frame.width, statsHeight)
-        option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, option2Image.frame.width, statsHeight)
+        option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, theirOption1LastWidth[QJoinObject.objectId!]! + option1Image.frame.width, statsHeight)
+        option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, theirOption2LastWidth[QJoinObject.objectId!]! + option2Image.frame.width, statsHeight)
         
         option1Stats.center.y = option1Image.center.y
         option2Stats.center.y = option2Image.center.y
         option1Stats.layer.cornerRadius = optionRadius
         option2Stats.layer.cornerRadius = optionRadius
-        option1Stats.alpha = 0.0
-        option2Stats.alpha = 0.0
         
-        UIView.animateWithDuration(2.0, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+        if theirOption1LastWidth[QJoinObject.objectId!] == 0 && theirOption2LastWidth[QJoinObject.objectId!] == 0 {
             
-            self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width) + self.option1Image.frame.width, statsHeight)
-            self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width) + self.option1Image.frame.width, statsHeight)
-            self.option1Stats.center.y = self.option1Image.center.y
-            self.option2Stats.center.y = self.option2Image.center.y
-            self.option1Stats.alpha = 0.5
-            self.option2Stats.alpha = 0.5
-            self.option1PercentText.alpha = 1.0
-            self.option2PercentText.alpha = 1.0
+            option1Stats.alpha = 0.0
+            option2Stats.alpha = 0.0
             
-            }) { (isFinished) -> Void in }
+        } else {
+            
+            option1Stats.alpha = maxStatsBarAlpha
+            option2Stats.alpha = maxStatsBarAlpha
+        }
+        
+        // Animate if there is a change to animate, else change not
+        let test1 = abs(theirOption1LastWidth[QJoinObject.objectId!]! - CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width))
+        let test2 = abs(theirOption2LastWidth[QJoinObject.objectId!]! - CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width))
+        
+        if test1 > 0.05 || test2 > 0.05 {
+            
+            theirOption1LastWidth[QJoinObject.objectId!] = CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width)
+            theirOption2LastWidth[QJoinObject.objectId!] = CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width)
+            
+            UIView.animateWithDuration(duration, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, theirOption1LastWidth[self.QJoinObject.objectId!]! + self.option1Image.frame.width, statsHeight)
+                self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, theirOption2LastWidth[self.QJoinObject.objectId!]! + self.option1Image.frame.width, statsHeight)
+                self.option1Stats.center.y = self.option1Image.center.y
+                self.option2Stats.center.y = self.option2Image.center.y
+                self.option1Stats.alpha = self.maxStatsBarAlpha
+                self.option2Stats.alpha = self.maxStatsBarAlpha
+                self.option1PercentText.alpha = 1.0
+                self.option2PercentText.alpha = 1.0
+                
+                }) { (isFinished) -> Void in }
+        }
     }
     
     
@@ -559,7 +585,7 @@ class QSTheirCellNEW: UITableViewCell {
             option1VoteArrow.center = option1Checkmark.center
             
             if percentMoved >= 0.5 {
-                option1Checkmark.alpha = 0.8
+                option1Checkmark.alpha = 1.0
                 option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                 option1Checkmark.layer.borderWidth = 2.0
                 option1VoteArrow.alpha = 0.0
@@ -576,7 +602,7 @@ class QSTheirCellNEW: UITableViewCell {
             option2VoteArrow.center = option2Checkmark.center
             
             if percentMoved >= 0.5 {
-                option2Checkmark.alpha = 0.8
+                option2Checkmark.alpha = 1.0
                 option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                 option2Checkmark.layer.borderWidth = 2.0
                 option2VoteArrow.alpha = 0.0
@@ -720,7 +746,7 @@ class QSTheirCellNEW: UITableViewCell {
         // Update percentage stats and option text
         computePercents(optionId)
         setOptionText()
-        animateStatsBars()
+        animateStatsBars(2.0)
         
         // Remove badges!
         UIView.animateWithDuration(0.5, animations: { () -> Void in

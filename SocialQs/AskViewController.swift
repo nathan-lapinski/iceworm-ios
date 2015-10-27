@@ -568,53 +568,78 @@ class AskViewController: UIViewController, UITableViewDataSource, UITableViewDel
         
         print("Sending pushes")
         
-//        // SEND CHANNEL PUSH -----------------------------------------------------
-//        var pushGeneral:PFPush = PFPush()
-//        pushGeneral.setChannel("reloadTheirTable")
-//        
-//        // Create dictionary to send JSON to parse/to other devices
-//        var dataGeneral: Dictionary = ["alert":"", "badge":"0", "content-available":"0", "sound":""]
-//        
-//        pushGeneral.setData(dataGeneral)
-//        
-//        pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
-//            if error == nil { //println("General push sent!")
-//            }
-//        })
+        var toChannels: [String] = []
+        toChannels.removeAll(keepCapacity: true)
         
-        // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
-//        let toUsers: PFQuery = PFUser.query()!
-        let pushQuery: PFQuery = PFInstallation.query()!
-//        toUsers.whereKey("facebookId", containedIn: facebookWithAppGroupies)
-//        pushQuery.whereKey("user", matchesQuery: toUsers)
+        for object in toUsers {
+            
+            let userObjId = object.objectId!
+            toChannels.append("user_\(userObjId)")
+        }
         
-        pushQuery.whereKey("user", containedIn: toUsers)
-        
-        let pushDirected: PFPush = PFPush()
-        pushDirected.setQuery(pushQuery)
+        let pushGeneral:PFPush = PFPush()
+        pushGeneral.setChannels(toChannels)
         
         // Create dictionary to send JSON to parse/to other devices
-        let dataDirected: Dictionary = ["alert":"New Q from \(name)!", "badge":"Increment", "content-available":"1", "action":"newQ"]
-        pushDirected.setData(dataDirected)
-        //pushDirected.setMessage("New Q from \(name)!")
+        let dataGeneral: Dictionary = ["alert":"New Q from \(name)!", "badge":"Increment", "content-available":"1", "action":"newQ"]
         
-        // Send Push Notifications
-        pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+        pushGeneral.setData(dataGeneral)
+        
+        pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
             
             if error == nil {
                 
-                self.facebookWithAppGroupies.removeAll(keepCapacity: true)
-                
-                print("Directed push notification sent!")
-                
-            } else {
-                
-                self.facebookWithAppGroupies.removeAll(keepCapacity: true)
-                
-                print("There was an error sending notifications")
+                print("Badge for \(toChannels) sent!")
             }
         })
-        // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
+        
+        
+        
+        
+////        // SEND CHANNEL PUSH -----------------------------------------------------
+////        var pushGeneral:PFPush = PFPush()
+////        pushGeneral.setChannel("reloadTheirTable")
+////        
+////        pushGeneral.setData(dataGeneral)
+////        
+////        pushGeneral.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+////            if error == nil { //println("General push sent!")
+////            }
+////        })
+//        
+//        // SEND SEGMENT PUSH NOTIFICATION ---------------------------------------
+////        let toUsers: PFQuery = PFUser.query()!
+//        let pushQuery: PFQuery = PFInstallation.query()!
+////        toUsers.whereKey("facebookId", containedIn: facebookWithAppGroupies)
+////        pushQuery.whereKey("user", matchesQuery: toUsers)
+//        
+//        pushQuery.whereKey("user", containedIn: toUsers)
+//        
+//        let pushDirected: PFPush = PFPush()
+//        pushDirected.setQuery(pushQuery)
+//        
+//        // Create dictionary to send JSON to parse/to other devices
+//        let dataDirected: Dictionary = ["alert":"New Q from \(name)!", "badge":"Increment", "content-available":"1", "action":"newQ"]
+//        pushDirected.setData(dataDirected)
+//        //pushDirected.setMessage("New Q from \(name)!")
+//        
+//        // Send Push Notifications
+//        pushDirected.sendPushInBackgroundWithBlock({ (success, error) -> Void in
+//            
+//            if error == nil {
+//                
+//                self.facebookWithAppGroupies.removeAll(keepCapacity: true)
+//                
+//                print("Directed push notification sent!")
+//                
+//            } else {
+//                
+//                self.facebookWithAppGroupies.removeAll(keepCapacity: true)
+//                
+//                print("There was an error sending notifications")
+//            }
+//        })
+//        // SEND DIRECTED PUSH NOTIFICATION ---------------------------------------
     }
     
     
