@@ -40,6 +40,9 @@ class WelcomeVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        facebookSignInButton.hidden = true
+        facebookLogo.hidden = true
+        
         //NSNotificationCenter.defaultCenter().addObserver(self, selector: "onProfileUpdated:", name:FBSDKProfileDidChangeNotification, object: nil)
         
         // Do any additional setup after loading the view, typically from a nib.
@@ -147,8 +150,6 @@ class WelcomeVC: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         
-        facebookSignInButton.hidden = true
-        
         if noMyQJoinObjects == nil { buildNoMyQsQuestion() }
         if noTheirQJoinObjects == nil { buildNoTheirQsQuestion() }
         
@@ -166,8 +167,7 @@ class WelcomeVC: UIViewController {
                 myGroups = groups
             }
             
-            getUserPhoto({ (isFinished) -> Void in
-            })
+            getUserPhoto({ (isFinished) -> Void in })
             
             storeUserInfo(PFUser.currentUser()!.username!, isNew: false, completion: { (isFinished) -> Void in
                 
@@ -237,6 +237,7 @@ class WelcomeVC: UIViewController {
         facebookSignInButtonTopSpace.constant = self.view.frame.size.height
         facebookSignInButton.hidden = false
         facebookSignInButton.layoutIfNeeded()
+        facebookLogo.hidden = false
         facebookLogo.layoutIfNeeded()
         
         postWarningTextViewTopSpace.constant = 10 * spacingMultiplier
@@ -263,7 +264,8 @@ class WelcomeVC: UIViewController {
 //        logo2ImageView.alpha = 0.0
 //        logo2ImageView.layoutIfNeeded()
         
-        UIView.animateWithDuration(3.0, delay: 1.0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.3, options: [], animations: { () -> Void in
+        UIView.animateWithDuration(1.5, delay: 0.2, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+//        UIView.animateWithDuration(2.0, delay: 1.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 2, options: [], animations: { () -> Void in
             
             self.backgroundImageViewTopSpace.constant = -150
             self.logoImageViewTopSpace.constant = -100

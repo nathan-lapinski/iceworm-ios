@@ -114,11 +114,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if let action = temp.objectForKey("action") as? String {
                     
                     switch action {
+                        
                     case "newQ":
                         // refresh theirQs
                         print("Refresh TheirQs from push")
-                        downloadTheirQs({ (isFinished) -> Void in })
-                        //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
+                        downloadTheirQs({ (isFinished) -> Void in }) // updateBadge is in this function
+                        NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+                       
+                     // Use this case to eventually refresh and move to specified Q
+                    case "newVote":
+                        // my/their Qs must build an array of objectIds so we can test whether to refresh my or their Qs view::
+                        // refresh theirQs
+                        NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+                        // refresh myQs
+                        NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
                         
                     default:
                         // Do ???

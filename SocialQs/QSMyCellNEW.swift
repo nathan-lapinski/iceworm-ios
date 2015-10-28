@@ -370,12 +370,12 @@ class QSMyCellNEW: UITableViewCell {
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
             if test == 1 {
-                //option1Checkmark.layer.borderWidth = 2.0
-                //option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option1Checkmark.layer.borderWidth = 2.0
+                option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                 option1Checkmark.alpha = 0.8
             } else if test == 2 {
-                //option2Checkmark.layer.borderWidth = 2.0
-                //option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+                option2Checkmark.layer.borderWidth = 2.0
+                option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                 option2Checkmark.alpha = 0.8
             }
         }
@@ -385,6 +385,8 @@ class QSMyCellNEW: UITableViewCell {
     
     
     func animateStatsBars(duration: NSTimeInterval) {
+        
+        print("Animating stats bars")
         
         let statsHeight: CGFloat = option1Text.frame.height
         option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, myOption1LastWidth[QJoinObject.objectId!]! + option1Image.frame.width, statsHeight)
@@ -594,7 +596,7 @@ class QSMyCellNEW: UITableViewCell {
         if recognizer.state == UIGestureRecognizerState.Ended {
             
             // Had to move this from inside the animation block - didn't work there
-            if percentMoved >= 0.5 { self.castVote(id) }
+            if percentMoved >= 0.5 { castVote(id) }
             
             // Re-enable buttons (disabled when first gestre recognized, to prevent swiping both options)
             option1Zoom.enabled = true
@@ -652,12 +654,12 @@ class QSMyCellNEW: UITableViewCell {
         
         QJoinObject!.setObject(optionId, forKey: "vote")
         QJoinObject!["question"]!.incrementKey("option\(optionId)Stats")
-        QJoinObject.pinInBackgroundWithBlock { (success, error) -> Void in
-            
-            if error == nil {
-                print("Vote has been pinned from MyQs")
-            }
-        }
+//        QJoinObject.pinInBackgroundWithBlock { (success, error) -> Void in
+//            
+//            if error == nil {
+//                print("Vote has been pinned from MyQs")
+//            }
+//        }
         
         QJoinObject!.saveEventually { (success, error) -> Void in
             if error == nil {
@@ -674,20 +676,23 @@ class QSMyCellNEW: UITableViewCell {
                     if error == nil {
                         if let temp = objects {
                             
+                            print(temp)
+                            
                             var toChannels: [String] = []
                             toChannels.removeAll(keepCapacity: true)
                             
                             for object in temp {
                                 
-                                let userObjId = object["asker"].objectId!!
-                                toChannels.append("user_\(userObjId)")
+                                toChannels.append("user_\(object["to"].objectId!!)")
                             }
+                            
+                            print(toChannels)
                             
                             let pushGeneral:PFPush = PFPush()
                             pushGeneral.setChannels(toChannels)
                             
                             // Create dictionary to send JSON to parse/to other devices
-                            let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"1", "action":"refresh_\(self.QJoinObject.objectId)"]
+                            let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"1", "action":"newVote", "qid":"\(self.QJoinObject.objectId!)"]
                             
                             pushGeneral.setData(dataGeneral)
                             
@@ -711,17 +716,30 @@ class QSMyCellNEW: UITableViewCell {
         // Lock Q cell for voting
         if option1Zoom.gestureRecognizers != nil {
             option1Zoom.removeGestureRecognizer(recognizer1)
-            print("removed recog 1")
         }
         if option2Zoom.gestureRecognizers != nil {
             option2Zoom.removeGestureRecognizer(recognizer2)
-            print("removed recog 2")
         }
 
         // Update percentage stats and option text
         computePercents(optionId)
         setOptionText()
         animateStatsBars(2.0)
+        
+        // Remove badges!
+        UIView.animateWithDuration(0.5, animations: { () -> Void in
+            
+            self.badgeView.alpha = 0.0
+            
+            }) { (isFinished) -> Void in
+                
+                if self.badgeView.isDescendantOfView(self) {
+                    self.badgeView.removeFromSuperview()
+                }
+                if self.badgeViewFrame.isDescendantOfView(self) {
+                    self.badgeViewFrame.removeFromSuperview()
+                }
+        }
         
         // Update badge
         updateBadge("my")

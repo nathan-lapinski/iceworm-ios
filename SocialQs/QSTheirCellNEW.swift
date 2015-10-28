@@ -679,12 +679,12 @@ class QSTheirCellNEW: UITableViewCell {
         
         QJoinObject!.setObject(optionId, forKey: "vote")
         QJoinObject!["question"]!.incrementKey("option\(optionId)Stats")
-        QJoinObject.pinInBackgroundWithBlock { (success, error) -> Void in
-            
-            if error == nil {
-                print("Vote has been pinned from MyQs")
-            }
-        }
+//        QJoinObject.pinInBackgroundWithBlock { (success, error) -> Void in
+//            
+//            if error == nil {
+//                print("Vote has been pinned from MyQs")
+//            }
+//        }
         
         QJoinObject!.saveEventually { (success, error) -> Void in
             if error == nil {
@@ -706,7 +706,7 @@ class QSTheirCellNEW: UITableViewCell {
                             
                             for object in temp {
                                 
-                                let userObjId = object["asker"].objectId!!
+                                let userObjId = object["to"].objectId!!
                                 toChannels.append("user_\(userObjId)")
                             }
                             
@@ -714,7 +714,7 @@ class QSTheirCellNEW: UITableViewCell {
                             pushGeneral.setChannels(toChannels)
                             
                             // Create dictionary to send JSON to parse/to other devices
-                            let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"1", "action":"refresh_\(self.QJoinObject.objectId)"]
+                            let dataGeneral: Dictionary = ["alert":"", "badge":"Increment", "content-available":"1", "action":"newVote", "qid":"\(self.QJoinObject.objectId!)"]
                             
                             pushGeneral.setData(dataGeneral)
                             
