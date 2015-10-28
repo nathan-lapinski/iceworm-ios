@@ -69,6 +69,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         }
     }
     
+    
     override func shouldAutorotate() -> Bool {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             let interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation

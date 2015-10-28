@@ -13,24 +13,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     let overlayTransitioningDelegate = OverlayTransitioningDelegate()
     
 //    var alreadyRetrieved = [String]()
-    
 //    var QJoinObjects: [AnyObject] = []
     var refresher: UIRefreshControl!
-    
-    
-    
-    var refreshControl: UIRefreshControl!
-    var customView: UIView!
-    var labelsArray: Array<UILabel> = []
-    var isAnimating = false
-    var currentColorIndex = 0
-    var currentLabelIndex = 0
-    var timer: NSTimer!
-    
-    
-    
-    var myQsSpinner = UIView()
-    var myQsBlurView = globalBlurView()
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var backgroundImageView: UIImageView!
@@ -39,9 +23,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.registerClass(QSTheirCellNEW.self, forCellReuseIdentifier: "cell")
+        let refreshControl = ODRefreshControl(scrollView: tableView)
+        refreshControl.addTarget(self, action: Selector("dropViewDidBeginRefreshing:"), forControlEvents: .ValueChanged)
         
 //        // Pull to refresh --------------------------------------------------------
 //        refresher = UIRefreshControl()
@@ -49,11 +32,6 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
 //        refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
 //        self.tableView.addSubview(refresher)
 //        // Pull to refresh --------------------------------------------------------
-        refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = UIColor.redColor()
-        refreshControl.tintColor = UIColor.yellowColor()
-        tableView.addSubview(refreshControl)
-        loadCustomRefreshContents()
         
         backgroundImageView.image = UIImage(named: "bg5.png")
         tableView.backgroundColor = UIColor.clearColor()
@@ -61,10 +39,34 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         // Create observer to montior for return from sequed push view
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTheirQs", name: "refreshTheirQs", object: nil)
         
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.registerClass(QSTheirCellNEW.self, forCellReuseIdentifier: "cell")
+
     }
     
+    
+    override func shouldAutorotate() -> Bool {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            let interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+            return interfaceOrientation != .PortraitUpsideDown
+        } else {
+            return true
+        }
+    }
+    
+    func dropViewDidBeginRefreshing(refreshControl: ODRefreshControl) {
+        //        let delayInSeconds: UInt64 = 3
+        //        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * NSEC_PER_SEC))
+        //        dispatch_after(popTime, dispatch_get_main_queue()) {
+        //            refreshControl.endRefreshing()
+        //        }
+        refresh(refreshControl)
+    }
+    
+    
     func refreshTheirQs() {
-        refresh()
+        refresh(nil)
     }
     
     
@@ -253,9 +255,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     }
     
     
-    func refresh() {
-        
-        //buildNoTheirQsQuestion()
+    func refresh(refreshControl: ODRefreshControl?) {
         
         downloadTheirQs { (completion) -> Void in
             
@@ -270,6 +270,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 
                 // Kill refresher when query finished
                 //self.refresher.endRefreshing()
+                if refreshControl != nil { refreshControl!.endRefreshing() }
                 
             } else {
                 
@@ -281,7 +282,7 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
                 
                 // Kill refresher when query finished
                 //self.refresher.endRefreshing()
-                
+                if refreshControl != nil { refreshControl!.endRefreshing() }
             }
         }
     }
@@ -305,151 +306,185 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     
     
-    // MARK: UIScrollView delegate method implementation
-    
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        if refreshControl.refreshing {
-            if !isAnimating {
-                doSomething()
-                animateRefreshStep1()
-            }
-        }
-    }
     
     
-    // MARK: Custom function implementation
-    
-    func loadCustomRefreshContents() {
-        let refreshContents = NSBundle.mainBundle().loadNibNamed("RefreshContents", owner: self, options: nil)
-        
-        customView = refreshContents[0] as! UIView
-        customView.frame = refreshControl.bounds
-        
-        print(customView.subviews.count)
-        
-        for var i=0; i<customView.subviews.count - 1; ++i {
-            labelsArray.append(customView.viewWithTag(i + 1) as! UILabel)
-        }
-        
-        refreshControl.addSubview(customView)
-    }
     
     
-    func animateRefreshStep1() {
-        isAnimating = true
-        
-        UIView.animateWithDuration(0.05, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
-            self.labelsArray[self.currentLabelIndex].transform = CGAffineTransformMakeRotation(CGFloat(M_PI_4))
-            self.labelsArray[self.currentLabelIndex].textColor = self.getNextColor()
-            
-            }, completion: { (finished) -> Void in
-                
-                UIView.animateWithDuration(0.03, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
-                    self.labelsArray[self.currentLabelIndex].transform = CGAffineTransformIdentity
-                    self.labelsArray[self.currentLabelIndex].textColor = UIColor.blackColor()
-                    
-                    }, completion: { (finished) -> Void in
-                        ++self.currentLabelIndex
-                        
-                        if self.currentLabelIndex < self.labelsArray.count {
-                            self.animateRefreshStep1()
-                        }
-                        else {
-                            self.animateRefreshStep2()
-                        }
-                })
-        })
-    }
     
     
-    func animateRefreshStep2() {
-        
-        let maxScale: CGFloat = 1.25
-        
-        UIView.animateWithDuration(0.25, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
-            self.labelsArray[0].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[1].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[2].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[3].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[4].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[5].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[6].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[7].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[8].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[9].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[10].transform = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[11].transform = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[12].transform = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[13].transform = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[14].transform = CGAffineTransformMakeScale(maxScale, maxScale)
-            self.labelsArray[15].transform = CGAffineTransformMakeScale(maxScale, maxScale)
-            
-            }, completion: { (finished) -> Void in
-                UIView.animateWithDuration(0.25, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
-                    self.labelsArray[0].transform  = CGAffineTransformIdentity
-                    self.labelsArray[1].transform  = CGAffineTransformIdentity
-                    self.labelsArray[2].transform  = CGAffineTransformIdentity
-                    self.labelsArray[3].transform  = CGAffineTransformIdentity
-                    self.labelsArray[4].transform  = CGAffineTransformIdentity
-                    self.labelsArray[5].transform  = CGAffineTransformIdentity
-                    self.labelsArray[6].transform  = CGAffineTransformIdentity
-                    self.labelsArray[7].transform  = CGAffineTransformIdentity
-                    self.labelsArray[8].transform  = CGAffineTransformIdentity
-                    self.labelsArray[9].transform  = CGAffineTransformIdentity
-                    self.labelsArray[10].transform = CGAffineTransformIdentity
-                    self.labelsArray[11].transform = CGAffineTransformIdentity
-                    self.labelsArray[12].transform = CGAffineTransformIdentity
-                    self.labelsArray[13].transform = CGAffineTransformIdentity
-                    self.labelsArray[14].transform = CGAffineTransformIdentity
-                    self.labelsArray[15].transform = CGAffineTransformIdentity
-                    
-                    }, completion: { (finished) -> Void in
-                        if self.refreshControl.refreshing {
-                            self.currentLabelIndex = 0
-                            self.animateRefreshStep1()
-                        }
-                        else {
-                            self.isAnimating = false
-                            self.currentLabelIndex = 0
-                            for var i=0; i<self.labelsArray.count; ++i {
-                                self.labelsArray[i].textColor = UIColor.blackColor()
-                                self.labelsArray[i].transform = CGAffineTransformIdentity
-                            }
-                        }
-                })
-        })
-    }
     
     
-    func getNextColor() -> UIColor {
-        var colorsArray: Array<UIColor> = [UIColor.magentaColor(), UIColor.brownColor(), UIColor.yellowColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.orangeColor()]
-        
-        if currentColorIndex == colorsArray.count {
-            currentColorIndex = 0
-        }
-        
-        let returnColor = colorsArray[currentColorIndex]
-        ++currentColorIndex
-        
-        return returnColor
-    }
     
     
-    func doSomething() {
-        timer = NSTimer.scheduledTimerWithTimeInterval(4.0, target: self, selector: "endOfWork", userInfo: nil, repeats: true)
-    }
     
     
-    func endOfWork() {
-        
-        for var i = 0; i < 16; i++ {
-            self.labelsArray[i].textColor = UIColor.clearColor()
-        }
-        refreshControl.endRefreshing()
-        
-        timer.invalidate()
-        timer = nil
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+//    // MARK: UIScrollView delegate method implementation
+//    
+//    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+//        if refreshControl.refreshing {
+//            if !isAnimating {
+//                doSomething()
+//                animateRefreshStep1()
+//            }
+//        }
+//    }
+//    
+//    
+//    // MARK: Custom function implementation
+//    
+//    func loadCustomRefreshContents() {
+//        let refreshContents = NSBundle.mainBundle().loadNibNamed("RefreshContents", owner: self, options: nil)
+//        
+//        customView = refreshContents[0] as! UIView
+//        customView.frame = refreshControl.bounds
+//        
+//        for var i=0; i<customView.subviews.count - 1; ++i {
+//            labelsArray.append(customView.viewWithTag(i + 1) as! UILabel)
+//        }
+//        
+//        refreshControl.addSubview(customView)
+//    }
+//    
+//    
+//    func animateRefreshStep1() {
+//        isAnimating = true
+//        
+//        UIView.animateWithDuration(0.05, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
+//            self.labelsArray[self.currentLabelIndex].transform = CGAffineTransformMakeRotation(CGFloat(M_PI_4))
+//            self.labelsArray[self.currentLabelIndex].textColor = self.getNextColor()
+//            
+//            }, completion: { (finished) -> Void in
+//                
+//                UIView.animateWithDuration(0.03, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
+//                    self.labelsArray[self.currentLabelIndex].transform = CGAffineTransformIdentity
+//                    self.labelsArray[self.currentLabelIndex].textColor = UIColor.blackColor()
+//                    
+//                    }, completion: { (finished) -> Void in
+//                        ++self.currentLabelIndex
+//                        
+//                        if self.currentLabelIndex < self.labelsArray.count {
+//                            self.animateRefreshStep1()
+//                        }
+//                        else {
+//                            self.animateRefreshStep2()
+//                        }
+//                })
+//        })
+//    }
+//    
+//    
+//    func animateRefreshStep2() {
+//        
+//        let maxScale: CGFloat = 1.25
+//        
+//        UIView.animateWithDuration(0.25, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
+//            self.labelsArray[0].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[1].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[2].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[3].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[4].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[5].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[6].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[7].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[8].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[9].transform  = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[10].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[11].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[12].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[13].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[14].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+//            self.labelsArray[15].transform = CGAffineTransformMakeScale(maxScale, maxScale)
+//            
+//            }, completion: { (finished) -> Void in
+//                UIView.animateWithDuration(0.25, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: { () -> Void in
+//                    self.labelsArray[0].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[1].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[2].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[3].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[4].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[5].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[6].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[7].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[8].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[9].transform  = CGAffineTransformIdentity
+//                    self.labelsArray[10].transform = CGAffineTransformIdentity
+//                    self.labelsArray[11].transform = CGAffineTransformIdentity
+//                    self.labelsArray[12].transform = CGAffineTransformIdentity
+//                    self.labelsArray[13].transform = CGAffineTransformIdentity
+//                    self.labelsArray[14].transform = CGAffineTransformIdentity
+//                    self.labelsArray[15].transform = CGAffineTransformIdentity
+//                    
+//                    }, completion: { (finished) -> Void in
+//                        if self.refreshControl.refreshing {
+//                            self.currentLabelIndex = 0
+//                            self.animateRefreshStep1()
+//                        }
+//                        else {
+//                            self.isAnimating = false
+//                            self.currentLabelIndex = 0
+//                            for var i=0; i<self.labelsArray.count; ++i {
+//                                self.labelsArray[i].textColor = UIColor.blackColor()
+//                                self.labelsArray[i].transform = CGAffineTransformIdentity
+//                            }
+//                        }
+//                })
+//        })
+//    }
+//    
+//    
+//    func getNextColor() -> UIColor {
+//        var colorsArray: Array<UIColor> = [UIColor.magentaColor(), UIColor.brownColor(), UIColor.yellowColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.orangeColor()]
+//        
+//        if currentColorIndex == colorsArray.count {
+//            currentColorIndex = 0
+//        }
+//        
+//        let returnColor = colorsArray[currentColorIndex]
+//        ++currentColorIndex
+//        
+//        return returnColor
+//    }
+//    
+//    
+//    func doSomething() {
+//        
+//        refresh()
+//        
+//        //timer = NSTimer.scheduledTimerWithTimeInterval(4.0, target: self, selector: "endOfWork", userInfo: nil, repeats: true)
+//    }
+//    
+//    
+//    func endOfWork() {
+//        
+//        print("6")
+//        
+//        for var i = 0; i < 16; i++ {
+//            self.labelsArray[i].hidden = true
+//        }
+//        refreshControl.endRefreshing()
+//        
+//        print("7")
+//        
+////        timer.invalidate()
+////        timer = nil
+//        
+//        print("8")
+//        
+//        for var i = 0; i < 16; i++ {
+//            self.labelsArray[i].hidden = false
+//        }
+//        
+//        print("9")
+//    }
     
     
 }

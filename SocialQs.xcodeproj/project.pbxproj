@@ -244,6 +244,14 @@
 			path = FacebookSDK/DocSets;
 			sourceTree = "<group>";
 		};
+		901136691BE07C4700D558B6 /* ODRefresher */ = {
+			isa = PBXGroup;
+			children = (
+				901136671BDF4C3D00D558B6 /* ODRefreshControl.swift */,
+			);
+			name = ODRefresher;
+			sourceTree = "<group>";
+		};
 		904122F31B26A67B00397132 = {
 			isa = PBXGroup;
 			children = (
@@ -271,9 +279,7 @@
 				904123011B26A67C00397132 /* AppDelegate.swift */,
 				908A03F31B5DFE020050C0D9 /* AskTableViewCell.swift */,
 				90A66E331BC053A70015F27E /* AskVC.swift */,
-				901136651BDF3F3100D558B6 /* RefreshContents.xib */,
 				908A03F51B5E01070050C0D9 /* AskViewController.swift */,
-				901136671BDF4C3D00D558B6 /* ODRefreshControl.swift */,
 				90A66E2D1BBF9A770015F27E /* ErrorOverlayViewController.swift */,
 				905B2D951B322625001A74EE /* Globals.swift */,
 				902B34D21B3E7FBA00B67ACE /* GroupiesCell.swift */,
@@ -285,16 +291,17 @@
 				9041230A1B26A67C00397132 /* Images.xcassets */,
 				9041230C1B26A67C00397132 /* LaunchScreen.xib */,
 				904123071B26A67C00397132 /* Main.storyboard */,
-				902646A81BDB318100726F01 /* VotesVC.swift */,
 				90DFE2911B5B1C05005F44EC /* MainNavigationController.swift */,
+				901136691BE07C4700D558B6 /* ODRefresher */,
 				902D871C1B574559001F9954 /* PeekPagedScrollViewController.swift */,
-				9035C70F1BC88F16008C3ABD /* PseudoCodeForCloud.swift */,
 				90A66E261BBF9A030015F27E /* Popover Present */,
+				9035C70F1BC88F16008C3ABD /* PseudoCodeForCloud.swift */,
 				90D0B4EA1BA7EE7B009E284C /* QsGlobalVC.swift */,
 				909937461BB7305D00535716 /* QSMyCellNEW.swift */,
 				909937441BB7289E00535716 /* QsMyVC.swift */,
 				90FFFA711B9A6ABA005E9CDD /* QSTheirCellNEW.swift */,
 				90FFFA6F1B9A6958005E9CDD /* QsTheirVC.swift */,
+				901136651BDF3F3100D558B6 /* RefreshContents.xib */,
 				902D871E1B5747A9001F9954 /* ScrollViewContainer.swift */,
 				90A66E311BBFB2420015F27E /* SettingsNEWViewController.swift */,
 				904230D91B2D19DF0014B1B4 /* SettingsViewController.swift */,
@@ -305,6 +312,7 @@
 				904E29CA1B59DC10007E17D2 /* Util.swift */,
 				90FE1F1E1B43A89F005F2D68 /* VotesCell.swift */,
 				90FE1F221B43A941005F2D68 /* VotesTableVC.swift */,
+				902646A81BDB318100726F01 /* VotesVC.swift */,
 				90EF88411B83B92400752A27 /* WelcomeVC.swift */,
 			);
 			path = SocialQs;

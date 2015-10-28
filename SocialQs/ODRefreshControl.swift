@@ -74,7 +74,7 @@ class ODRefreshControl: UIControl {
     var kMinArrowRadius    : CGFloat = 5
     var kMaxArrowRadius    : CGFloat = 7
     /////////////////////////////////////////////
-    var kMaxDistance       : CGFloat = 44 // 53
+    var kMaxDistance       : CGFloat = 40 // 53
     /////////////////////////////////////////////
 
     var scrollView: UIScrollView!
