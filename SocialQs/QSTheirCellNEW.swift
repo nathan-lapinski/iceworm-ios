@@ -26,8 +26,6 @@ class QSTheirCellNEW: UITableViewCell {
     var option2Offset: CGFloat = 38.0
     var horizontalSpace: CGFloat = 8.0
     var imageBarExtraSpace: CGFloat = 3.0
-//    var option1LastWidthLocal: CGFloat = 0.0
-//    var option2LastWidthLocal: CGFloat = 0.0
     
     var indicatorAlpha = CGFloat(0.6)
     var optionRadius = CGFloat(10)
@@ -59,7 +57,6 @@ class QSTheirCellNEW: UITableViewCell {
     
     var option1Background: UIImageView = UIImageView()
     var option2Background: UIImageView = UIImageView()
-    //var optionBackgrounds: [UIImageView] = []//(count: 10, repeatedValue: nil)
     
     var option1Stats: UIImageView = UIImageView()
     var option2Stats: UIImageView = UIImageView()
@@ -104,7 +101,6 @@ class QSTheirCellNEW: UITableViewCell {
         self.addSubview(option1Background)
         self.addSubview(questionBackground)
         self.addSubview(option2Background)
-        //self.addSubview(optionBackgrounds)
         
         self.addSubview(profilePicture)
         
@@ -242,6 +238,13 @@ class QSTheirCellNEW: UITableViewCell {
         
         option1Image.frame = CGRectMake(option1Background.frame.origin.x, option1Background.frame.origin.y, 60, 60)
         option1Zoom.frame = option1Image.frame
+        option1Checkmark.frame = CGRectMake(0, 0, 30, 30)
+        option1Checkmark.center = CGPoint(x: profilePicture.center.x, y: option1Image.center.y)
+        option1Checkmark.layer.cornerRadius = option1Checkmark.frame.width/2
+        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        option1Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option1Checkmark.image = UIImage(named: "voteCheckmark.png")
+        option1Checkmark.alpha = 0.0
         if let option1PhotoThumb = QJoinObject["question"]!["option1ImageThumb"] as? PFFile {
             
             getImageFromPFFile(option1PhotoThumb, completion: { (image, error) -> () in
@@ -255,7 +258,6 @@ class QSTheirCellNEW: UITableViewCell {
             option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option1Image.alpha = 1.0
             
-            
         } else {
             
             option1Image.image = nil
@@ -268,7 +270,7 @@ class QSTheirCellNEW: UITableViewCell {
             option1VoteArrow.layer.cornerRadius = option1Checkmark.frame.width/2
             option1VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
             option1VoteArrow.image = UIImage(named: "voteArrow.png")
-            option1VoteArrow.alpha = 0.0
+            option1VoteArrow.alpha = 0.8
         }
         option1Image.layer.cornerRadius = 10
         option1Image.contentMode = UIViewContentMode.ScaleAspectFill
@@ -276,6 +278,13 @@ class QSTheirCellNEW: UITableViewCell {
         
         option2Image.frame = CGRectMake(option2Background.frame.origin.x, option2Background.frame.origin.y, 60, 60)
         option2Zoom.frame = option2Image.frame
+        option2Checkmark.frame = CGRectMake(0, 0, 30, 30)
+        option2Checkmark.center = CGPoint(x: profilePicture.center.x, y: option2Image.center.y)
+        option2Checkmark.layer.cornerRadius = option2Checkmark.frame.width/2
+        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
+        option2Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
+        option2Checkmark.image = UIImage(named: "voteCheckmark.png")
+        option2Checkmark.alpha = 0.0
         if let option2PhotoThumb = QJoinObject["question"]!["option2ImageThumb"] as? PFFile {
             getImageFromPFFile(option2PhotoThumb, completion: { (image, error) -> () in
                 if error == nil {
@@ -299,27 +308,11 @@ class QSTheirCellNEW: UITableViewCell {
             option2VoteArrow.layer.cornerRadius = option2Checkmark.frame.width/2
             option2VoteArrow.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
             option2VoteArrow.image = UIImage(named: "voteArrow.png")
-            option2VoteArrow.alpha = 0.0
+            option2VoteArrow.alpha = 0.8
         }
         option2Image.layer.cornerRadius = 10
         option2Image.contentMode = UIViewContentMode.ScaleAspectFill
         option2Image.clipsToBounds = true
-        
-        option1Checkmark.frame = CGRectMake(0, 0, 30, 30)
-        option1Checkmark.center = CGPoint(x: profilePicture.center.x, y: option1Image.center.y)
-        option1Checkmark.layer.cornerRadius = option1Checkmark.frame.width/2
-        option1Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-        option1Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-        option1Checkmark.image = UIImage(named: "voteCheckmark.png")
-        option1Checkmark.alpha = 0.0
-        
-        option2Checkmark.frame = CGRectMake(0, 0, 30, 30)
-        option2Checkmark.center = CGPoint(x: profilePicture.center.x, y: option2Image.center.y)
-        option2Checkmark.layer.cornerRadius = option2Checkmark.frame.width/2
-        option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
-        option2Checkmark.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.4)
-        option2Checkmark.image = UIImage(named: "voteCheckmark.png")
-        option2Checkmark.alpha = 0.0
         
         
         if let _ = QJoinObject["vote"] as? Int {
@@ -390,12 +383,12 @@ class QSTheirCellNEW: UITableViewCell {
         
         imageCenterStart.x = option1Image.frame.width/2 + horizontalSpace
         imageCenterEnd.x = bounds.width - option1Image.frame.width/2 - 8
-        option1PercentText.alpha = 0.0
-        option2PercentText.alpha = 0.0
+//        option1PercentText.alpha = 0.0
+//        option2PercentText.alpha = 0.0
         
         if let test = QJoinObject["vote"] as? Int {
-            option1PercentText.hidden = false
-            option2PercentText.hidden = false
+//            option1PercentText.hidden = false
+//            option2PercentText.hidden = false
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
             animateStatsBars(1.0)
