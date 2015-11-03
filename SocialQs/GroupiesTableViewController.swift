@@ -15,6 +15,8 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
         var sectionObjects: [String]!
     }
     
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+    
     var textView = UITextView()
     
     var viewWillAppearCount = 0
@@ -243,12 +245,31 @@ class GroupiesTableViewController: UITableViewController, UISearchBarDelegate, U
     override func viewWillAppear(animated: Bool) {
         
         downloadFacebookFriends { (success) -> Void in
-            print(friendsDictionary)
+            
+            if success {
+                
+                print(friendsDictionary)
+                
+                if friendsDictionary.count < 1 {
+                    
+                    popErrorMessage = "None of your friends have SocialQs. Go tell them to get it!!"
+                    popDirection = "top"
+                    let overlayVC = self.storyboard!.instantiateViewControllerWithIdentifier("errorOverlayViewController")
+                    self.prepareOverlayVC(overlayVC)
+                    self.presentViewController(overlayVC, animated: true, completion: nil)
+                }
+            }
         }
         
         //topOffset = 64
         
         tableView.reloadData()
+    }
+    
+    
+    private func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .Custom
     }
     
     

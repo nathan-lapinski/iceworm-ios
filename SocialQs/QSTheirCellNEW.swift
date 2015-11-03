@@ -37,6 +37,9 @@ class QSTheirCellNEW: UITableViewCell {
     var imageBarCenterStart = CGPoint()
     var voteCenterStart = CGPoint()
     
+    var theirOption1LastWidthLocal: CGFloat = CGFloat()
+    var theirOption2LastWidthLocal: CGFloat = CGFloat()
+    
     var totalResponses: Int = 0
     var resp = "responses"
     var option1Percent = Float(0.0)
@@ -144,12 +147,38 @@ class QSTheirCellNEW: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        if (theirOption1LastWidth[QJoinObject.objectId!] == nil) {
-            theirOption1LastWidth[QJoinObject.objectId!] = 0.0
-        }
-        
-        if (theirOption2LastWidth[QJoinObject.objectId!] == nil) {
-            theirOption2LastWidth[QJoinObject.objectId!] = 0.0
+        if QJoinObject.objectId != nil {
+            
+            if (theirOption1LastWidth[QJoinObject.objectId!] == nil) {
+                theirOption1LastWidth[QJoinObject.objectId!] = 0.0
+                theirOption1LastWidthLocal = 0.0
+            } else {
+                theirOption1LastWidthLocal = theirOption1LastWidth[QJoinObject.objectId!]!
+            }
+            
+            if (theirOption2LastWidth[QJoinObject.objectId!] == nil) {
+                theirOption2LastWidth[QJoinObject.objectId!] = 0.0
+                theirOption2LastWidthLocal = 0.0
+            } else {
+                theirOption2LastWidthLocal = theirOption2LastWidth[QJoinObject.objectId!]!
+            }
+            
+        } else {
+            
+            if (theirOption1LastWidth["demoMyQ"] == nil) {
+                theirOption1LastWidth["demoMyQ"] = 0.0
+                theirOption1LastWidthLocal = 0.0
+            } else {
+                theirOption1LastWidthLocal = theirOption1LastWidth["demoMyQ"]!
+            }
+            
+            if (theirOption2LastWidth["demoMyQ"] == nil) {
+                theirOption2LastWidth["demoMyQ"] = 0.0
+                theirOption2LastWidthLocal = 0.0
+                
+            } else {
+                theirOption2LastWidthLocal = theirOption2LastWidth["demoMyQ"]!
+            }
         }
         
 //        // Extract optionStrings
@@ -257,6 +286,7 @@ class QSTheirCellNEW: UITableViewCell {
             
             option1Zoom.addTarget(self, action: "image1Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option1Image.alpha = 1.0
+            option1VoteArrow.alpha = 0.0
             
         } else {
             
@@ -296,6 +326,7 @@ class QSTheirCellNEW: UITableViewCell {
             
             option2Zoom.addTarget(self, action: "image2Zoom:", forControlEvents: UIControlEvents.TouchUpInside)
             option2Image.alpha = 1.0
+            option2VoteArrow.alpha = 0.0
             
         } else {
             
@@ -387,8 +418,8 @@ class QSTheirCellNEW: UITableViewCell {
 //        option2PercentText.alpha = 0.0
         
         if let test = QJoinObject["vote"] as? Int {
-//            option1PercentText.hidden = false
-//            option2PercentText.hidden = false
+            option1PercentText.hidden = false
+            option2PercentText.hidden = false
             option1VoteArrow.alpha = 0.0
             option2VoteArrow.alpha = 0.0
             animateStatsBars(1.0)
@@ -401,6 +432,10 @@ class QSTheirCellNEW: UITableViewCell {
                 option2Checkmark.layer.borderColor = UIColor.whiteColor().CGColor
                 option2Checkmark.alpha = 0.8
             }
+        } else {
+            
+            option1PercentText.hidden = true
+            option2PercentText.hidden = true
         }
     }
     
@@ -408,15 +443,15 @@ class QSTheirCellNEW: UITableViewCell {
     func animateStatsBars(duration: NSTimeInterval) {
         
         let statsHeight: CGFloat = option1Text.frame.height
-        option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, theirOption1LastWidth[QJoinObject.objectId!]! + option1Image.frame.width, statsHeight)
-        option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, theirOption2LastWidth[QJoinObject.objectId!]! + option2Image.frame.width, statsHeight)
+        option1Stats.frame = CGRectMake(8, option1Text.frame.origin.y, theirOption1LastWidthLocal + option1Image.frame.width, statsHeight)
+        option2Stats.frame = CGRectMake(8, option2Text.frame.origin.y, theirOption2LastWidthLocal + option2Image.frame.width, statsHeight)
         
         option1Stats.center.y = option1Image.center.y
         option2Stats.center.y = option2Image.center.y
         option1Stats.layer.cornerRadius = optionRadius
         option2Stats.layer.cornerRadius = optionRadius
         
-        if theirOption1LastWidth[QJoinObject.objectId!] == 0 && theirOption2LastWidth[QJoinObject.objectId!] == 0 {
+        if theirOption1LastWidthLocal == 0 && theirOption2LastWidthLocal == 0 {
             
             option1Stats.alpha = 0.0
             option2Stats.alpha = 0.0
@@ -428,18 +463,18 @@ class QSTheirCellNEW: UITableViewCell {
         }
         
         // Animate if there is a change to animate, else change not
-        let test1 = abs(theirOption1LastWidth[QJoinObject.objectId!]! - CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width))
-        let test2 = abs(theirOption2LastWidth[QJoinObject.objectId!]! - CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width))
+        let test1 = abs(theirOption1LastWidthLocal - CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width))
+        let test2 = abs(theirOption2LastWidthLocal - CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width))
         
         if test1 > 0.05 || test2 > 0.05 {
             
-            theirOption1LastWidth[QJoinObject.objectId!] = CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width)
-            theirOption2LastWidth[QJoinObject.objectId!] = CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width)
+            theirOption1LastWidthLocal = CGFloat(self.option1Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width)
+            theirOption2LastWidthLocal = CGFloat(self.option2Percent/100)*(self.option1Background.frame.width - self.option1Image.frame.width)
             
             UIView.animateWithDuration(duration, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
                 
-                self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, theirOption1LastWidth[self.QJoinObject.objectId!]! + self.option1Image.frame.width, statsHeight)
-                self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, theirOption2LastWidth[self.QJoinObject.objectId!]! + self.option1Image.frame.width, statsHeight)
+                self.option1Stats.frame = CGRectMake(8, self.option1Text.frame.origin.y, self.theirOption1LastWidthLocal + self.option1Image.frame.width, statsHeight)
+                self.option2Stats.frame = CGRectMake(8, self.option2Text.frame.origin.y, self.theirOption2LastWidthLocal + self.option1Image.frame.width, statsHeight)
                 self.option1Stats.center.y = self.option1Image.center.y
                 self.option2Stats.center.y = self.option2Image.center.y
                 self.option1Stats.alpha = self.maxStatsBarAlpha
@@ -449,6 +484,20 @@ class QSTheirCellNEW: UITableViewCell {
                 
                 }) { (isFinished) -> Void in }
         }
+        
+        if QJoinObject.objectId != nil {
+            
+            theirOption1LastWidth[QJoinObject.objectId!] = theirOption1LastWidthLocal
+            theirOption2LastWidth[QJoinObject.objectId!] = theirOption2LastWidthLocal
+            
+        } else {
+            
+            theirOption1LastWidth["demoMyQ"] = theirOption1LastWidthLocal
+            theirOption2LastWidth["demoMyQ"] = theirOption2LastWidthLocal
+        }
+        
+        NSUserDefaults.standardUserDefaults().setObject(theirOption1LastWidth, forKey: "theirOption1LastWidth")
+        NSUserDefaults.standardUserDefaults().setObject(theirOption2LastWidth, forKey: "theirOption2LastWidth")
     }
     
     

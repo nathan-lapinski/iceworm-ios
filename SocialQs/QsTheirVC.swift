@@ -66,11 +66,18 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     
     
     func refreshTheirQs() {
+        
+        print("NSNotificationCenter Observer called: refreshTheirQs")
+        
         refresh(nil)
     }
     
     
     override func viewWillAppear(animated: Bool) {
+        
+        refresh(nil)
+        
+        print("Objects at theirQsVC: \(theirQJoinObjects.count)")
     }
     
     
@@ -79,7 +86,12 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
     }
     
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return theirQJoinObjects.count }
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        print("Number of rows to build = \(myQJoinObjects.count)")
+        
+        return theirQJoinObjects.count
+    }
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

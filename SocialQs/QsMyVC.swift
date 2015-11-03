@@ -24,7 +24,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+            
         let refreshControl = ODRefreshControl(scrollView: tableView)
         refreshControl.addTarget(self, action: Selector("dropViewDidBeginRefreshing:"), forControlEvents: .ValueChanged)
         
@@ -67,6 +67,13 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
 //                }
 //            }
         }
+        
+        if firstTime == true {
+            
+            firstTime = false
+            
+            displayAlert("Tutorial", message: "Please review the tutorial Q shown before asking your own Qs!", sender: self)
+        }
     }
     
     override func shouldAutorotate() -> Bool {
@@ -93,6 +100,7 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     
     func refreshMyQs() {
+        
         print("NSNotificationCenter Observer called: refreshMyQs")
         
         refresh(nil)
@@ -101,6 +109,8 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     override func viewWillAppear(animated: Bool) {
         
         refresh(nil)
+        
+        //print("Objects at myQsVC: \(myQJoinObjects.count)")
     }
     
     
@@ -112,22 +122,46 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        print("Number of rows to build = \(myQJoinObjects.count)")
+        //print("Number of rows to build = \(myQJoinObjects.count)")
         
         return myQJoinObjects.count
     }
     
     
+//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+//        
+//        print("1")
+//        
+//        if let _ = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as? QSMyCellNEW {
+//            print("dat shit worked!")
+//        } else {
+//            print("dat shit borked!")
+//        }
+//        
+//        //let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSMyCellNEW
+//        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSMyCellNEW
+//        
+//        cell.delegate = self
+//        
+//        if indexPath.row >= 0 {
+//            //print(myQJoinObjects[indexPath.row])
+//            cell.QJoinObject = myQJoinObjects[indexPath.row] as! PFObject
+//        } else {
+//            print("WTF?!? indexPath.row = \(indexPath.row)")
+//        }
+//        
+//        print(cell.QJoinObject)
+//        
+//        return cell
+//    }
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSMyCellNEW
         
-        if indexPath.row >= 0 {
-            cell.delegate = self
-            cell.QJoinObject = myQJoinObjects[indexPath.row] as! PFObject
-        } else {
-            print("WTF?!? indexPath.row = \(indexPath.row)")
-        }
+        cell.delegate = self
+        
+        cell.QJoinObject = myQJoinObjects[indexPath.row] as! PFObject
         
         return cell
     }

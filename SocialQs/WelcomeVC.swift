@@ -92,6 +92,8 @@ class WelcomeVC: UIViewController {
                             
                             if user.isNew {
                                 
+                                firstTime = true
+                                
                                 print("User signed up and logged in through Facebook!")
                                 
                                 getUserPhoto({ (isFinished) -> Void in })
@@ -150,8 +152,11 @@ class WelcomeVC: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         
+        if theirQJoinObjects.count == 0 { self.tabBarController?.tabBar.items![1].badgeValue = "1" }
+        
         if noMyQJoinObjects == nil { buildNoMyQsQuestion() }
         if noTheirQJoinObjects == nil { buildNoTheirQsQuestion() }
+        
         
         // Skip login procedure if user is already logged in
         if PFUser.currentUser() != nil {
@@ -263,6 +268,11 @@ class WelcomeVC: UIViewController {
 //        //logo2ImageViewTopSpace.constant = 500
 //        logo2ImageView.alpha = 0.0
 //        logo2ImageView.layoutIfNeeded()
+        
+        backgroundImageView.setNeedsLayout()
+        logoImageView.setNeedsLayout()
+        facebookSignInButton.setNeedsLayout()
+        facebookLogo.setNeedsLayout()
         
         UIView.animateWithDuration(1.5, delay: 0.2, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
 //        UIView.animateWithDuration(2.0, delay: 1.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 2, options: [], animations: { () -> Void in

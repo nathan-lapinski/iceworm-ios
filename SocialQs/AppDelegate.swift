@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //////////////////////////////////////////
         //////////////////////////////////////////
-        let mode = "dev"
+        let mode = "test"
         //////////////////////////////////////////
         //////////////////////////////////////////
         
@@ -39,8 +39,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // -----------------------------------------------------------------
         case "test":
             // SocialQs Test 5 -------------------------------------------------
-            parseAppId = "d7CUQUOHn2tn9bIxpch99L23SixOabT7058UftQ3"
-            parseClientKey = "LY3NJ0LXUJh7x0YWu955qJ2sWRdvnr4RwTSB91O5"
+            //parseAppId = "d7CUQUOHn2tn9bIxpch99L23SixOabT7058UftQ3"
+            //parseClientKey = "LY3NJ0LXUJh7x0YWu955qJ2sWRdvnr4RwTSB91O5"
+            // -----------------------------------------------------------------
+            // SocialQs Test 6 -------------------------------------------------
+            parseAppId = "ihGBifEgzvdXCfGKTcj8BmttbCZL9ZW7ggu3xdUQ"
+            parseClientKey = "MXMkHm3TOzttdicWqklYmco4li1NQSoZJJp5aazf"
             // -----------------------------------------------------------------
         default:
             // SocialQs Dev ----------------------------------------------------
@@ -93,6 +97,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        
+//        if ( application.applicationState == UIApplicationStateActive )
+//        // app was already in the foreground
+//        else
+//        // app was just brought from background to foreground
+//        ...
         
         print(userInfo)
         
@@ -210,43 +220,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
-        // Compute vote deltas
-        if PFUser.currentUser() != nil {
-            
-            // Compute new myVotes
-//            if myQJoinObjects.count > 0 {
-//                
-//                for var i = 0; i < myQJoinObjects.count; i++ {
-//                    
-//                    let tempObject = myQJoinObjects[i] as! PFObject
-//                    
-//                    let count = (tempObject["question"]!["option1Stats"] as! Int) + (tempObject["question"]!["option1Stats"] as! Int)
-//                    myQsBadgeCount = myQsBadgeCount + count
-//                }
-//            }
-            // Compute delta and store back
-            if NSUserDefaults.standardUserDefaults().objectForKey("myQsBadgeCount") != nil {
-                
-                myQsBadgeCount = myQsBadgeCount - (NSUserDefaults.standardUserDefaults().objectForKey("myQsBadgeCount")! as! Int)
-            }
-            
-            // Compute new theirVotes
-//            if theirQJoinObjects.count > 0 {
-//                
-//                for var i = 0; i < theirQJoinObjects.count; i++ {
-//                    
-//                    let tempObject = theirQJoinObjects[i] as! PFObject
-//                    
-//                    let count = (tempObject["question"]!["option1Stats"] as! Int) + (tempObject["question"]!["option1Stats"] as! Int)
-//                    theirQsBadgeCount = theirQsBadgeCount + count
-//                }
-//            }
-            // Compute delta and store back
-            if NSUserDefaults.standardUserDefaults().objectForKey("theirQsBadgeCount") != nil {
-                
-                theirQsBadgeCount = theirQsBadgeCount - (NSUserDefaults.standardUserDefaults().objectForKey("theirQsBadgeCount")! as! Int)
-            }
+        // Restore stats bar locations
+        if NSUserDefaults.standardUserDefaults().objectForKey("myOption1LastWidth") != nil {
+            myOption1LastWidth = NSUserDefaults.standardUserDefaults().objectForKey("myOption1LastWidth") as! Dictionary
         }
+        if NSUserDefaults.standardUserDefaults().objectForKey("myOption2LastWidth") != nil {
+            myOption2LastWidth = NSUserDefaults.standardUserDefaults().objectForKey("myOption2LastWidth") as! Dictionary
+        }
+        if NSUserDefaults.standardUserDefaults().objectForKey("theirOption1LastWidth") != nil {
+            theirOption1LastWidth = NSUserDefaults.standardUserDefaults().objectForKey("theirOption1LastWidth") as! Dictionary
+        }
+        if NSUserDefaults.standardUserDefaults().objectForKey("theirOption2LastWidth") != nil {
+            theirOption2LastWidth = NSUserDefaults.standardUserDefaults().objectForKey("theirOption2LastWidth") as! Dictionary
+        }
+        
+//        // Compute vote deltas
+//        if PFUser.currentUser() != nil {
+//            
+//            // Compute new myVotes
+////            if myQJoinObjects.count > 0 {
+////                
+////                for var i = 0; i < myQJoinObjects.count; i++ {
+////                    
+////                    let tempObject = myQJoinObjects[i] as! PFObject
+////                    
+////                    let count = (tempObject["question"]!["option1Stats"] as! Int) + (tempObject["question"]!["option1Stats"] as! Int)
+////                    myQsBadgeCount = myQsBadgeCount + count
+////                }
+////            }
+//            // Compute delta and store back
+//            if NSUserDefaults.standardUserDefaults().objectForKey("myQsBadgeCount") != nil {
+//                
+//                myQsBadgeCount = myQsBadgeCount - (NSUserDefaults.standardUserDefaults().objectForKey("myQsBadgeCount")! as! Int)
+//            }
+//            
+//            // Compute new theirVotes
+////            if theirQJoinObjects.count > 0 {
+////                
+////                for var i = 0; i < theirQJoinObjects.count; i++ {
+////                    
+////                    let tempObject = theirQJoinObjects[i] as! PFObject
+////                    
+////                    let count = (tempObject["question"]!["option1Stats"] as! Int) + (tempObject["question"]!["option1Stats"] as! Int)
+////                    theirQsBadgeCount = theirQsBadgeCount + count
+////                }
+////            }
+//            // Compute delta and store back
+//            if NSUserDefaults.standardUserDefaults().objectForKey("theirQsBadgeCount") != nil {
+//                
+//                theirQsBadgeCount = theirQsBadgeCount - (NSUserDefaults.standardUserDefaults().objectForKey("theirQsBadgeCount")! as! Int)
+//            }
+//        }
         
         // Clear badges
 //        let currentInstallation = PFInstallation.currentInstallation()

@@ -65,6 +65,8 @@ var myFriendsStorageKey = "myFriends"
 var viewQ = Dictionary<String, Any>()
 var isUploading = [String]()
 
+var firstTime: Bool = false
+
 // Friends and Groupies variables
 var groupiesGroups = [Dictionary<String,AnyObject>]()
 var friendsDictionary = [Dictionary<String, AnyObject>]()

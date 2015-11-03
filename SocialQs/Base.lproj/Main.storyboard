@@ -441,46 +441,6 @@
             </objects>
             <point key="canvasLocation" x="-190" y="-2061"/>
         </scene>
-        <!--Votes-->
-        <scene sceneID="cBY-7y-nQi">
-            <objects>
-                <tableViewController id="34W-AU-OGO" customClass="VotesTableVC" customModule="SocialQs" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Ka9-eh-LAI">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="votesCell" id="iXN-7e-MrV" customClass="VotesCell" customModule="SocialQs" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="22" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iXN-7e-MrV" id="KIl-bP-fGV">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="34W-AU-OGO" id="an8-O1-u1U"/>
-                            <outlet property="delegate" destination="34W-AU-OGO" id="Z3B-P3-p67"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Votes" id="NxN-Hs-Jyk">
-                        <barButtonItem key="leftBarButtonItem" systemItem="stop" id="08B-GA-xzf">
-                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                            <connections>
-                                <action selector="dismissPressed:" destination="34W-AU-OGO" id="Mi0-mQ-RA8"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-                    <connections>
-                        <outlet property="doneButton" destination="08B-GA-xzf" id="aqx-70-w5m"/>
-                    </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="BKH-AA-Tpr" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-189.5" y="-242.5"/>
-        </scene>
         <!--VotesVC-->
         <scene sceneID="0Wq-ws-N1v">
             <objects>
@@ -1709,20 +1669,14 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" rowHeight="214" id="vJu-Gs-BYo" customClass="QSMyCellNEW" customModule="SocialQs" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" id="AvT-te-Hn3" customClass="QSMyCellNEW" customModule="SocialQs" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="22" width="375" height="214"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="vJu-Gs-BYo" id="VI7-4X-hLd">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="AvT-te-Hn3" id="Oh4-2B-PDd">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="213"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <connections>
-                                            <segue destination="aCK-j1-yh3" kind="popoverPresentation" identifier="viewVotesMyQs" popoverAnchorView="YBB-yL-q7s" id="J4v-Ho-5l9">
-                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                            </segue>
-                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -2610,7 +2564,6 @@
         <image name="theirQs" width="26" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="J4v-Ho-5l9"/>
         <segue reference="qDC-td-61u"/>
         <segue reference="px8-el-IHk"/>
     </inferredMetricsTieBreakers>

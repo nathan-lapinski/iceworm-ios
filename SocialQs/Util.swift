@@ -848,17 +848,20 @@ func downloadMyQs(completion: (Bool) -> Void) {
                 //                        }
                 //                    }
                 
-                completion(true)
-                
                 if myQJoinObjects.count < 1 {
+                    //print("no MyQs downloaded")
                     if noMyQJoinObjects != nil {
-                        myQJoinObjects = [noMyQJoinObjects!]
+                        //print("adding tutorial myQ")
+                        myQJoinObjects.append(noMyQJoinObjects!)
+                        //print(myQJoinObjects.count)
                     }
                 }
                 
                 // Update badge
                 updateBadge("my")
                 //NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
+                
+                completion(true)
                 
             } else {
                 
@@ -943,35 +946,6 @@ func downloadTheirQs(completion: (Bool) -> Void) {
                 //
                 //                for object in temp {
                 //
-                ////                    let objId = object["question"].objectId!!
-                ////                    let newChannel = "Question_\(objId)"
-                ////                    let currentInstallation = PFInstallation.currentInstallation()
-                ////
-                ////                    // If user has current channels, check if this one is NOT there and add it
-                ////                    if let channels = (PFInstallation.currentInstallation().channels as? [String]) {
-                ////
-                ////                        if !channels.contains(newChannel) {
-                ////                            currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-                ////                            currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-                ////
-                ////                                if error == nil {
-                ////
-                ////                                    print("Subscribed to \(newChannel)")
-                ////                                }
-                ////                            })
-                ////                        }
-                ////
-                ////                    } else { // else add it as the first
-                ////
-                ////                        currentInstallation.addUniqueObject(newChannel, forKey: "channels")
-                ////                        currentInstallation.saveInBackgroundWithBlock({ (success, error) -> Void in
-                ////
-                ////                            if error == nil {
-                ////
-                ////                                print("Subscribed to \(newChannel)")
-                ////                            }
-                ////                        })
-                ////                    }
                 //
                 //                    //                            object.pinInBackgroundWithBlock { (success, error) -> Void in
                 //                    //
@@ -987,19 +961,19 @@ func downloadTheirQs(completion: (Bool) -> Void) {
                 //                }
                 //            }
                 
-                completion(true)
-                
                 if theirQJoinObjects.count < 1 {
+                    print("no theirQs found")
                     if noTheirQJoinObjects != nil {
+                        print("adding tutorial theirQ")
                         theirQJoinObjects = [noTheirQJoinObjects!]
                     }
                 }
                 
+                completion(true)
+                
                 // Update badge
                 updateBadge("their")
                 //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
-                
-                
                 
             } else {
                 
@@ -1064,18 +1038,26 @@ func buildNoMyQsQuestion() {
         //        noQsQuestionObject.setObject(noQsPhotoJoin2Object, forKey: "option2Images")
         noQsQuestionObject.setObject(0, forKey: "option1Stats")
         noQsQuestionObject.setObject(0, forKey: "option2Stats")
+        //noQsQuestionObject.setObject("1234567890qwertyuiopasdfghjklzxcvbnm!@#$%^&*()", forKey: "testId")
         
         noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
         noQsJoinObject.setObject(noQsAskerObject, forKey: "asker")
         
         noMyQJoinObjects = noQsJoinObject
         
-        // Update badge
-        updateBadge("my")
         //NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
         },
         completion: {
             // A function to run in the foreground when the background thread is complete
+            
+            print("finished building noMyQ")
+            print(myQJoinObjects.count)
+            
+            // Refresh MyQs
+            NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
+            
+            // Update badge
+            //updateBadge("my")
     });
 }
 
@@ -1085,7 +1067,7 @@ func buildNoTheirQsQuestion() {
     backgroundThread(background: {
         
         // Build a temp question when none are available
-        theirQJoinObjects.removeAll(keepCapacity: true)
+        theirQJoinObjects.removeAll(keepCapacity: false)
         
         print("NO THEIRQS!!")
         
@@ -1137,13 +1119,18 @@ func buildNoTheirQsQuestion() {
         noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
         
         noTheirQJoinObjects = noQsJoinObject
-        
-        // Update badge
-        updateBadge("their")
-        //NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQsBadge", object: nil)
         },
         completion: {
             // A function to run in the foreground when the background thread is complete
+            
+            print("finished building noTheirQ")
+            print(theirQJoinObjects.count)
+            
+            // Refresh TheirQs
+            NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
+            
+            // Update badge
+            //updateBadge("their")
     });
 }
 
