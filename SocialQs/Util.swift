@@ -772,10 +772,6 @@ func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
 
 
 func downloadMyQs(completion: (Bool) -> Void) {
-    
-    backgroundThread(background: {
-        // Your function here to run in the background
-        
         
         //        let qQueryLocal = PFQuery(className: "QJoin")
         //        qQueryLocal.fromLocalDatastore()
@@ -824,10 +820,20 @@ func downloadMyQs(completion: (Bool) -> Void) {
             
             if error == nil {
                 
-                myQJoinObjects.removeAll(keepCapacity: true)
-                
                 // Append to local array of PFObjects
-                myQJoinObjects = myQJoinObjects + objects!
+                //myQJoinObjects = myQJoinObjects + objects!
+                if objects?.count > 0 {
+                    myQJoinObjects.removeAll(keepCapacity: true)
+                    myQJoinObjects = objects!
+                } else {
+                    //print("no MyQs downloaded")
+                    if noMyQJoinObjects != nil {
+                        //print("adding tutorial myQ")
+                        myQJoinObjects = [noMyQJoinObjects!]
+                        //print(myQJoinObjects.count)
+                        //print(myQJoinObjects)
+                    }
+                }
                 
                 //                    // Pin new Qs to local datastore
                 //                    if let temp: [PFObject] = objects {
@@ -848,15 +854,6 @@ func downloadMyQs(completion: (Bool) -> Void) {
                 //                        }
                 //                    }
                 
-                if myQJoinObjects.count < 1 {
-                    //print("no MyQs downloaded")
-                    if noMyQJoinObjects != nil {
-                        //print("adding tutorial myQ")
-                        myQJoinObjects.append(noMyQJoinObjects!)
-                        //print(myQJoinObjects.count)
-                    }
-                }
-                
                 // Update badge
                 updateBadge("my")
                 //NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
@@ -872,16 +869,10 @@ func downloadMyQs(completion: (Bool) -> Void) {
             }
         })
         //        }
-        },
-        completion: {
-            // A function to run in the foreground when the background thread is complete
-    });
 }
 
 
 func downloadTheirQs(completion: (Bool) -> Void) {
-    
-    backgroundThread(background: {
         
         //        let qJoinQueryLocal = PFQuery(className: "QJoin")
         //        qJoinQueryLocal.fromLocalDatastore()
@@ -984,16 +975,10 @@ func downloadTheirQs(completion: (Bool) -> Void) {
             }
         })
         //        }
-        },
-        completion: {
-            // A function to run in the foreground when the background thread is complete
-    });
 }
 
 
 func buildNoMyQsQuestion() {
-    
-    backgroundThread(background: {
         
         // Build a temp question when none are available
         myQJoinObjects.removeAll(keepCapacity: true)
@@ -1044,27 +1029,18 @@ func buildNoMyQsQuestion() {
         noQsJoinObject.setObject(noQsAskerObject, forKey: "asker")
         
         noMyQJoinObjects = noQsJoinObject
-        
-        //NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQsBadge", object: nil)
-        },
-        completion: {
-            // A function to run in the foreground when the background thread is complete
             
             print("finished building noMyQ")
-            print(myQJoinObjects.count)
             
             // Refresh MyQs
             NSNotificationCenter.defaultCenter().postNotificationName("refreshMyQs", object: nil)
             
             // Update badge
             //updateBadge("my")
-    });
 }
 
 
 func buildNoTheirQsQuestion() {
-    
-    backgroundThread(background: {
         
         // Build a temp question when none are available
         theirQJoinObjects.removeAll(keepCapacity: false)
@@ -1119,19 +1095,14 @@ func buildNoTheirQsQuestion() {
         noQsJoinObject.setObject(noQsQuestionObject, forKey: "question")
         
         noTheirQJoinObjects = noQsJoinObject
-        },
-        completion: {
-            // A function to run in the foreground when the background thread is complete
             
             print("finished building noTheirQ")
-            print(theirQJoinObjects.count)
             
             // Refresh TheirQs
             NSNotificationCenter.defaultCenter().postNotificationName("refreshTheirQs", object: nil)
             
             // Update badge
             //updateBadge("their")
-    });
 }
 
 

@@ -98,7 +98,8 @@ class QsTheirVC: UIViewController, UITableViewDataSource, UITableViewDelegate, T
         
         print(indexPath.row)
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSTheirCellNEW
+        //let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSTheirCellNEW
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell") as! QSTheirCellNEW
         
         cell.delegate = self
         

@@ -76,14 +76,14 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
         }
     }
     
-    override func shouldAutorotate() -> Bool {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            let interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
-            return interfaceOrientation != .PortraitUpsideDown
-        } else {
-            return true
-        }
-    }
+//    override func shouldAutorotate() -> Bool {
+//        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+//            let interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+//            return interfaceOrientation != .PortraitUpsideDown
+//        } else {
+//            return true
+//        }
+//    }
     
     func dropViewDidBeginRefreshing(refreshControl: ODRefreshControl) {
 //        let delayInSeconds: UInt64 = 3
@@ -93,8 +93,6 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
 //        }
         refresh(refreshControl)
     }
-    
-    
     
     
     
@@ -157,11 +155,14 @@ class QsMyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, MyTa
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSMyCellNEW
+        //let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! QSMyCellNEW
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell") as! QSMyCellNEW
         
         cell.delegate = self
         
         cell.QJoinObject = myQJoinObjects[indexPath.row] as! PFObject
+        
+        print(cell.QJoinObject)
         
         return cell
     }

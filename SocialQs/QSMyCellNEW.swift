@@ -139,6 +139,8 @@ class QSMyCellNEW: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        print(QJoinObject)
+        
         if QJoinObject.objectId != nil {
             
             if (myOption1LastWidth[QJoinObject.objectId!] == nil) {
